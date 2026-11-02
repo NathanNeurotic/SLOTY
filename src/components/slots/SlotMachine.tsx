@@ -256,19 +256,21 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 truncate whitespace-nowrap animate-bounce-soft">
                 <button
                   onClick={handlePrevWinningLine}
-                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white flex-shrink-0"
+                  className="p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
+                  title="Previous Winning Line"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <ChevronLeft className="w-3.5 h-3.5 text-cyan-300" />
                 </button>
-                <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light truncate">
-                  <Award className="w-4 h-4 inline mr-1 text-gold-bright flex-shrink-0" />
+                <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light truncate drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
+                  <Award className="w-4 h-4 inline mr-1 text-gold-bright flex-shrink-0 animate-pulse" />
                   LINE {activeWin.lineIndex + 1}: {activeWin.count}x {SYMBOLS[activeWin.symbolId]?.name.toUpperCase()} (+{activeWin.payout.toLocaleString()} COINS)
                 </span>
                 <button
                   onClick={handleNextWinningLine}
-                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white flex-shrink-0"
+                  className="p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
+                  title="Next Winning Line"
                 >
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-3.5 h-3.5 text-cyan-300" />
                 </button>
               </div>
             ) : (

@@ -91,13 +91,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             }}
             className={`relative flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${
               canClaimBonus
-                ? 'bg-gradient-to-r from-pink-600 to-purple-600 border-pink-400 text-white shadow-[0_0_15px_rgba(236,72,153,0.6)] animate-pulse'
-                : 'bg-casino-900 border-white/10 text-slate-300 hover:text-white'
+                ? 'bg-gradient-to-r from-pink-600 to-purple-600 border-pink-400 text-white shadow-[0_0_15px_rgba(236,72,153,0.7)] animate-pulse'
+                : 'vlt-btn-stepper text-amber-300 hover:text-white'
             }`}
           >
-            <Gift className={`w-4 h-4 ${canClaimBonus ? 'animate-bounce text-yellow-300' : ''}`} />
-            <span className="hidden md:inline">
-              {canClaimBonus ? 'Free Coins!' : timeUntilBonus}
+            <Gift className={`w-4 h-4 ${canClaimBonus ? 'animate-bounce text-yellow-300' : 'text-amber-400'}`} />
+            <span className="hidden md:inline font-mono">
+              {canClaimBonus ? 'FREE COINS!' : timeUntilBonus}
             </span>
           </button>
 
@@ -108,9 +108,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               onToggleMute();
             }}
             title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-            className="p-2 rounded-xl bg-casino-900 hover:bg-casino-800 border border-white/10 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white transition-colors"
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-cyan-300" />}
           </button>
 
           {/* Paytable & Rules Modal Button */}
@@ -120,9 +120,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               onOpenPaytable();
             }}
             title="Paytable & Rules"
-            className="p-2 rounded-xl bg-casino-900 hover:bg-casino-800 border border-white/10 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white transition-colors"
           >
-            <HelpCircle className="w-4 h-4" />
+            <HelpCircle className="w-4 h-4 text-amber-300" />
           </button>
 
           {/* Debug Menu Toggle */}
@@ -132,9 +132,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               onToggleDebug();
             }}
             title="Open Developer Debug Suite (~ / D)"
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold transition-all shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-b from-emerald-900 to-emerald-950 border border-emerald-400/50 text-emerald-300 text-xs font-mono font-bold transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)] hover:brightness-110 active:translate-y-0.5"
           >
-            <Terminal className="w-3.5 h-3.5" />
+            <Terminal className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden lg:inline">DEBUG</span>
           </button>
         </div>

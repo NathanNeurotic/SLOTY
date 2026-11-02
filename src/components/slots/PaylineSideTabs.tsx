@@ -68,33 +68,27 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                 isWinning || isActive || isHovered
                   ? color
                   : isLineActiveInGame
-                  ? `${color}70`
-                  : 'rgba(255, 255, 255, 0.1)',
+                  ? `${color}90`
+                  : 'rgba(255, 255, 255, 0.12)',
               backgroundColor: isActive
                 ? color
                 : isWinning
-                ? `${color}50`
+                ? `${color}55`
                 : isHovered
                 ? `${color}35`
                 : isLineActiveInGame
-                ? 'rgba(15, 20, 32, 0.9)'
-                : 'rgba(10, 12, 18, 0.6)',
-              color: isActive
-                ? '#000'
-                : isWinning || isHovered
-                ? '#FFF'
-                : isLineActiveInGame
-                ? 'rgba(255, 255, 255, 0.85)'
-                : 'rgba(255, 255, 255, 0.25)',
+                ? 'rgba(15, 23, 42, 0.95)'
+                : 'rgba(10, 12, 18, 0.65)',
+              color: isActive ? '#000' : isWinning || isHovered ? '#FFF' : isLineActiveInGame ? '#FFF' : 'rgba(255, 255, 255, 0.3)',
               boxShadow:
                 isWinning || isActive
-                  ? `0 0 8px ${color}`
+                  ? `0 0 10px ${color}, inset 0 1px 0 rgba(255,255,255,0.6)`
                   : isHovered
-                  ? `0 0 5px ${color}`
-                  : 'none',
+                  ? `0 0 6px ${color}`
+                  : 'inset 0 1px 0 rgba(255,255,255,0.15)',
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
             }}
-            className={`w-4 h-3.5 sm:w-6 sm:h-4.5 md:w-6.5 md:h-5 rounded-[3px] text-[8px] sm:text-[9px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-110 active:scale-95 leading-none ${
+            className={`w-4 h-3.5 sm:w-6 sm:h-4.5 md:w-6.5 md:h-5 rounded-[4px] text-[8px] sm:text-[9px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''
             }`}
           >
