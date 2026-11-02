@@ -27,6 +27,17 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
   peers,
   onClose,
 }) => {
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [onClose]);
   // Combine user profile and peers into a sorted leaderboard
   const entries: LeaderboardEntry[] = [
     {

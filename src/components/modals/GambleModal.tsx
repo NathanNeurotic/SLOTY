@@ -68,6 +68,35 @@ export const GambleModal: React.FC<GambleModalProps> = ({
     onCollect(currentPot);
   };
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' || e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isFlipping) handlePickColor('RED');
+      } else if (e.key === 'ArrowRight' || e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isFlipping) handlePickColor('BLACK');
+      } else if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (gambleStatus === 'WON') {
+          handleCollect();
+        } else if (gambleStatus === 'LOST') {
+          onLose();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleCollect();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [isFlipping, gambleStatus, currentPot]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
       <div className="relative max-w-md w-full max-h-[92vh] overflow-y-auto bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-gold-bright/60 shadow-[0_0_50px_rgba(251,191,36,0.5)] rounded-3xl p-4 sm:p-7 flex flex-col items-center">

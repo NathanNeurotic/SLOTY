@@ -75,6 +75,16 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
 
     animationFrameRef.current = requestAnimationFrame(tick);
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSkipOrCollect();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -82,6 +92,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       if (autoDismissTimerRef.current) {
         clearTimeout(autoDismissTimerRef.current);
       }
+      window.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [winTier, winAmount]);
 
@@ -167,18 +178,19 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
         </div>
 
         {/* Tap to collect hint */}
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col items-center">
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleSkipOrCollect();
             }}
-            className="gold-btn px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest text-casino-950 shadow-xl hover:scale-105 active:scale-95 transition-transform"
+            className="gold-btn px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest text-casino-950 shadow-xl hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2"
           >
-            {isFinishedCounting ? 'COLLECT COINS' : 'SKIP TO END'}
+            <span>{isFinishedCounting ? 'COLLECT COINS' : 'SKIP TO END'}</span>
+            <span className="px-1.5 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>
           </button>
           <div className="text-[11px] text-slate-400 mt-2">
-            Click anywhere on screen to {isFinishedCounting ? 'dismiss' : 'fast-forward'}
+            Press Space or click anywhere to {isFinishedCounting ? 'dismiss' : 'fast-forward'}
           </div>
         </div>
       </div>

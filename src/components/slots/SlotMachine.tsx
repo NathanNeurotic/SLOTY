@@ -337,14 +337,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       )}
 
       {/* Handcrafted Rustic Log Pediment Crest / Fort Knox Pediment Crest */}
+      {/* Top Machine Pediment Sign */}
       <div className="w-full flex justify-center -mb-1 relative z-20 pointer-events-none">
         {isTimber ? (
-          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-2 border-x-2 border-[#b45309] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
-            <span className="text-amber-400 text-sm animate-pulse">🌲</span>
+          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-4 border-x-4 border-[#78350f] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
+            <span className="text-amber-400 text-sm animate-pulse">🐻</span>
             <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#fde047] uppercase font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-              HANDCRAFTED TIMBER CABIN
+              🌲 TIMBERLAND CRITTERS: CABIN SLOTS 🌲
             </span>
-            <span className="text-amber-400 text-sm animate-pulse">🌲</span>
+            <span className="text-amber-400 text-sm animate-pulse">🦉</span>
           </div>
         ) : (
           <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-amber-700 via-yellow-500 to-amber-700 border-t-2 border-x-2 border-yellow-200 shadow-[0_-6px_20px_rgba(245,158,11,0.6)]">
@@ -361,8 +362,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       <div
         className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
           isTimber
-            ? 'border-4 border-[#78350f] bg-gradient-to-b from-[#2e180e] via-[#1a0d07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_20px_50px_rgba(0,0,0,0.95)]'
-            : 'neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
+            ? 'border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
+            : 'border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >
         <div
@@ -378,22 +379,30 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 ? 'bg-gradient-to-b from-emerald-900 via-stone-900 to-[#120a05] shadow-[0_0_50px_rgba(16,185,129,0.6)] border-2 border-emerald-400'
                 : 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
               : isTimber
-              ? 'bg-gradient-to-b from-[#182a1d] via-[#0d1810] to-[#050a06] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-emerald-700/50'
+              ? 'bg-gradient-to-b from-[#182a1d] via-[#0d1810] to-[#050a06] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-emerald-700/60'
               : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
           }`}
         >
-          {/* 4 Ornate Corner Brackets */}
-          <div className="absolute top-1.5 left-1.5 w-5 h-5 border-t-2 border-l-2 border-yellow-300 rounded-tl pointer-events-none z-30 flex items-start justify-start p-0.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
+          {/* 4 Ornate Corner Brackets: Forged Iron for Timber, Polished Gold for Vault */}
+          <div className={`absolute top-1.5 left-1.5 w-6 h-6 border-t-3 border-l-3 rounded-tl pointer-events-none z-30 flex items-start justify-start p-0.5 ${
+            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
-          <div className="absolute top-1.5 right-1.5 w-5 h-5 border-t-2 border-r-2 border-yellow-300 rounded-tr pointer-events-none z-30 flex items-start justify-end p-0.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
+          <div className={`absolute top-1.5 right-1.5 w-6 h-6 border-t-3 border-r-3 rounded-tr pointer-events-none z-30 flex items-start justify-end p-0.5 ${
+            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
-          <div className="absolute bottom-1.5 left-1.5 w-5 h-5 border-b-2 border-l-2 border-yellow-300 rounded-bl pointer-events-none z-30 flex items-end justify-start p-0.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
+          <div className={`absolute bottom-1.5 left-1.5 w-6 h-6 border-b-3 border-l-3 rounded-bl pointer-events-none z-30 flex items-end justify-start p-0.5 ${
+            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
-          <div className="absolute bottom-1.5 right-1.5 w-5 h-5 border-b-2 border-r-2 border-yellow-300 rounded-br pointer-events-none z-30 flex items-end justify-end p-0.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
+          <div className={`absolute bottom-1.5 right-1.5 w-6 h-6 border-b-3 border-r-3 rounded-br pointer-events-none z-30 flex items-end justify-end p-0.5 ${
+            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
 
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}

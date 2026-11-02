@@ -6,11 +6,13 @@ export function getMaxBetForLevel(level: number): number {
 }
 
 // XP delta needed to advance from level to level + 1.
-// Compounding +45% scaling per level ensures that leveling steadily paces apart
-// and requires progressively more spins, outpacing the max bet increases (which double every 2 levels = ~41.4% per level).
+// Paced so Level 1 requires 20 spins at max bet (10,000 XP), and each subsequent
+// level compounds by +15% spins, ensuring levels pace steadily apart
+// and prevent multiple level-ups per spin.
 export function getXpDeltaForLevel(level: number): number {
-  const base = 5000;
-  return Math.round(base * Math.pow(1.45, Math.max(0, level - 1)));
+  const currentMaxBet = getMaxBetForLevel(level);
+  const spinsNeeded = Math.round(20 * Math.pow(1.15, Math.max(0, level - 1)));
+  return Math.max(10000, currentMaxBet * spinsNeeded);
 }
 
 export function getXpRequiredForLevel(targetLevel: number): number {
@@ -47,6 +49,6 @@ export function calculateProgression(totalXp: number): ProgressionState {
 }
 
 export function getLevelUpReward(level: number): number {
-  // Reward scales with level progression
-  return Math.min(1000000, level * 5000);
+  // Reward scales with 5x max bet for that level
+  return Math.min(5000000, getMaxBetForLevel(level) * 5);
 }

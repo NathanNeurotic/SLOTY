@@ -17,6 +17,19 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
   const paylines = gameDef.paylines;
   const rows = gameDef.rows;
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        soundManager.playButtonClick();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md select-none overflow-y-auto animate-fadeIn">
       <div className={`relative max-w-2xl w-full bg-casino-950 border-2 ${isTimber ? 'border-emerald-400/80 shadow-[0_0_50px_rgba(16,185,129,0.5)]' : 'border-yellow-400/80 shadow-[0_0_50px_rgba(245,158,11,0.5)]'} rounded-3xl p-4 sm:p-6 max-h-[90vh] flex flex-col`}>

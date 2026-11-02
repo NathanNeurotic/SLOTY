@@ -94,8 +94,18 @@ export const App: React.FC = () => {
       setActiveGameId(gameId);
       soundManager.setGameTheme(gameId);
       storage.setItem('sloty_active_game', gameId);
-      setSelectedLines(target.defaultLines);
-      storage.setItem('sloty_lines', target.defaultLines.toString());
+      const lines = target.defaultLines;
+      setSelectedLines(lines);
+      storage.setItem('sloty_lines', lines.toString());
+
+      // Ensure bet never exceeds balance when switching games
+      if (balance > 0 && lines * betPerLine > balance) {
+        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
+        const affordable = steps.find((s) => s * lines <= balance) || 1;
+        setBetPerLine(affordable);
+        storage.setItem('sloty_bet_per_line', affordable.toString());
+      }
+
       const newGrid = generateRandomGrid(target);
       setCurrentGrid(newGrid);
       storage.setJSON('sloty_grid', newGrid);
@@ -107,7 +117,7 @@ export const App: React.FC = () => {
         soundManager.playCashRegister();
       }
     },
-    [activeGameId]
+    [activeGameId, balance, betPerLine]
   );
 
   useEffect(() => {
@@ -342,7 +352,9 @@ export const App: React.FC = () => {
     // Deduct wager and add XP
     if (!isFreeSpin) {
       setBalance((b) => Math.max(0, b - totalBet));
-      setTotalXp((xp) => xp + totalBet);
+      // Cap XP gained from a single spin to that level's max bet increment
+      const earnedXp = Math.min(totalBet, progression.maxBet);
+      setTotalXp((xp) => xp + earnedXp);
       setStats((s) => ({
         ...s,
         totalSpins: s.totalSpins + 1,
@@ -577,7 +589,7 @@ export const App: React.FC = () => {
     isTurbo,
   ]);
 
-  // --- Keyboard Shortcuts ---
+  // --- Keyboard Shortcuts & Zero-Mouse Navigation ---
   const levelUpDataRef = useRef(levelUpData);
   levelUpDataRef.current = levelUpData;
   const balanceRef = useRef(balance);
@@ -586,8 +598,20 @@ export const App: React.FC = () => {
   totalBetRef.current = totalBet;
   const freeSpinsRemainingRef = useRef(freeSpinsRemaining);
   freeSpinsRemainingRef.current = freeSpinsRemaining;
+  const betPerLineRef = useRef(betPerLine);
+  betPerLineRef.current = betPerLine;
+  const selectedLinesRef = useRef(selectedLines);
+  selectedLinesRef.current = selectedLines;
+  const maxBetRef = useRef(progression.maxBet);
+  maxBetRef.current = progression.maxBet;
+  const activeGameIdRef = useRef(activeGameId);
+  activeGameIdRef.current = activeGameId;
+  const autoSpinsRemainingRef = useRef(autoSpinsRemaining);
+  autoSpinsRemainingRef.current = autoSpinsRemaining;
 
   useEffect(() => {
+    const BET_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // Avoid hotkeys when typing in debug input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
@@ -617,6 +641,53 @@ export const App: React.FC = () => {
             setShowBonusWheelModal(true);
           }
         }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const cur = betPerLineRef.current;
+        let idx = BET_STEPS.indexOf(cur);
+        if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
+        if (idx < BET_STEPS.length - 1) {
+          const nextStep = BET_STEPS[idx + 1];
+          const maxAllowed = Math.min(balanceRef.current, maxBetRef.current);
+          if (nextStep * selectedLinesRef.current <= maxAllowed) {
+            setBetPerLine(nextStep);
+            soundManager.playChipClick();
+          }
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const cur = betPerLineRef.current;
+        let idx = BET_STEPS.indexOf(cur);
+        if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
+        if (idx > 0) {
+          setBetPerLine(BET_STEPS[idx - 1]);
+          soundManager.playChipClick();
+        }
+      } else if (e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        handleMaxBet();
+      } else if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        if (autoSpinsRemainingRef.current > 0) {
+          setAutoSpinsRemaining(0);
+        } else {
+          setAutoSpinsRemaining(25);
+          executeSpin();
+        }
+      } else if (e.key === 'g' || e.key === 'G') {
+        e.preventDefault();
+        const nextGame = activeGameIdRef.current === 'vault-24k' ? 'timber-critters' : 'vault-24k';
+        handleSelectGame(nextGame);
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        setIsFloorMode((prev) => {
+          const next = !prev;
+          storage.setItem('sloty_floor_mode', next.toString());
+          return next;
+        });
+      } else if (e.key === 'l' || e.key === 'L' || e.key === 'p' || e.key === 'P' || e.key === '?') {
+        e.preventDefault();
+        setShowPaytableModal((prev) => !prev);
       } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
         setShowDebugDrawer((prev) => !prev);
       } else if (e.key === 'm' || e.key === 'M') {
@@ -636,6 +707,8 @@ export const App: React.FC = () => {
     showGambleModal,
     executeSpin,
     handleQuickStop,
+    handleMaxBet,
+    handleSelectGame,
   ]);
 
   const isTimber = activeGameId === 'timber-critters';

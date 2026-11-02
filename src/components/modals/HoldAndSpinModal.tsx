@@ -175,6 +175,27 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
     onComplete(totalPot);
   };
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isFinished) {
+          handleCollectAndExit();
+        } else if (!isSpinning && respinsLeft > 0) {
+          handleRespin();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleCollectAndExit();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [isFinished, isSpinning, respinsLeft, totalPot]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
       <div className={`relative max-w-2xl w-full max-h-[92vh] overflow-y-auto rounded-3xl p-3 sm:p-6 flex flex-col items-center ${
@@ -301,6 +322,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             >
               <CheckCircle2 className="w-5 h-5" />
               <span>COLLECT +${totalPot.toLocaleString()} CASH &amp; RETURN TO SLOTS</span>
+              <span className="px-2 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>
             </button>
           ) : (
             <>
@@ -316,6 +338,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
               >
                 <RefreshCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
                 <span>{isSpinning ? 'SPINNING...' : `RESPIN (${respinsLeft} LEFT)`}</span>
+                {!isSpinning && <span className="px-1.5 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>}
               </button>
 
               {/* Auto complete remaining respins button */}

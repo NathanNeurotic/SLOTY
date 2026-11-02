@@ -128,114 +128,137 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
       {/* Desktop Full 3D Sculptural Centerpiece & Pods */}
       <div className="hidden sm:flex relative flex-col items-center">
         {/* ========================================================================= */}
-        {/* 1. TOWERING CENTERPIECE: GRAND JACKPOT ARCH                               */}
+        {/* 1. TOWERING CENTERPIECE: TIMBER CABIN GABLE vs FORT KNOX VAULT MARQUEE   */}
         {/* ========================================================================= */}
         <div
           onClick={handleJackpotClick}
           className="relative w-full max-w-xl mx-auto z-20 cursor-pointer group"
           title={`${gameDef.theme.grandTitle} - Click for Audio`}
         >
-          {/* Radial Sunburst / Canopy Glow */}
-          <div
-            className={`absolute -top-3 left-1/2 -translate-x-1/2 w-80 h-16 rounded-full filter blur-lg pointer-events-none ${
-              isTimber
-                ? 'bg-gradient-to-t from-emerald-500/30 to-transparent'
-                : 'bg-gradient-to-t from-yellow-500/30 to-transparent'
-            }`}
-          />
+          {isTimber ? (
+            /* --- TIMBERLAND: Handcrafted Mountain Lodge Log Cabin Gable --- */
+            <div className="relative pt-2">
+              {/* Warm Forest Fireplace / Lantern Glow */}
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-96 h-16 rounded-full bg-gradient-to-t from-amber-600/30 via-emerald-600/20 to-transparent filter blur-xl pointer-events-none" />
 
-          {/* Sculptural Tiered Arch Pediment Frame */}
-          <div
-            className={`relative p-[2.5px] sm:p-[3px] rounded-t-[28px] sm:rounded-t-[42px] rounded-b-xl group-hover:scale-[1.01] transition-transform duration-200 ${
-              isTimber
-                ? 'bg-gradient-to-b from-emerald-500 via-amber-700 to-[#120a05] shadow-[0_10px_35px_rgba(16,185,129,0.6)]'
-                : 'bg-gradient-to-b from-amber-300 via-yellow-600 to-amber-950 shadow-[0_10px_35px_rgba(245,158,11,0.7)]'
-            }`}
-          >
-            {/* Scalloped Crest Cap */}
-            <div
-              className={`absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center justify-center space-x-1 sm:space-x-1.5 px-3 sm:px-5 py-0.5 rounded-full border-2 shadow-[0_4px_12px_rgba(0,0,0,0.9)] z-30 ${
-                isTimber
-                  ? 'bg-gradient-to-r from-stone-900 via-emerald-700 to-stone-900 border-emerald-300 text-emerald-100'
-                  : 'bg-gradient-to-r from-amber-700 via-yellow-300 to-amber-700 border-yellow-100 text-amber-950'
-              }`}
-            >
-              {isTimber ? (
-                <Trees className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-emerald-300" />
-              ) : (
-                <Crown className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-950 fill-amber-950 animate-bounce" />
-              )}
-              <span className="text-[7.5px] xs:text-[8.5px] sm:text-[10px] font-black uppercase tracking-widest font-sans whitespace-nowrap">
-                {gameDef.theme.grandTitle}
-              </span>
-              <Sparkles className={`w-3 sm:w-3.5 h-3 sm:h-3.5 ${isTimber ? 'text-amber-300' : 'text-amber-950'}`} />
-            </div>
+              {/* A-Frame Log Cabin Gable Truss */}
+              <div className="relative bg-gradient-to-b from-[#451a03] via-[#2e180e] to-[#1a0d07] border-4 border-[#78350f] rounded-t-[32px] rounded-b-xl shadow-[0_12px_35px_rgba(0,0,0,0.95),0_0_30px_rgba(16,185,129,0.3)] p-1.5 transition-transform duration-200 group-hover:scale-[1.01]">
+                {/* Carved Pine Crest Signboard */}
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center justify-center space-x-2 px-5 py-0.5 rounded-full bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] border-2 border-amber-400 text-amber-200 shadow-[0_4px_12px_rgba(0,0,0,0.9)] z-30">
+                  <Trees className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest font-sans whitespace-nowrap text-amber-200 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    🌲 {gameDef.theme.grandTitle} 🌲
+                  </span>
+                  <span className="text-xs">🌰</span>
+                </div>
 
-            {/* Inner Glass Chamber */}
-            <div
-              className={`relative rounded-t-[25px] sm:rounded-t-[38px] rounded-b-lg px-2 sm:px-6 pt-3 sm:pt-4 pb-1.5 sm:pb-2 flex items-center justify-between border overflow-hidden ${
-                isTimber
-                  ? 'bg-gradient-to-b from-[#06180d] via-black to-[#041008] border-emerald-500/40'
-                  : 'bg-gradient-to-b from-red-950/95 via-black to-slate-950 border-yellow-300/40'
-              }`}
-            >
-              {/* Metallic Light Sweep */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer-sweep pointer-events-none" />
+                {/* Log Cabin Interior Chamber */}
+                <div className="relative bg-gradient-to-b from-[#120703] via-[#08140c] to-[#040805] rounded-t-[26px] rounded-b-lg px-4 sm:px-6 pt-3 sm:pt-4 pb-2 border-2 border-[#b45309]/50 flex items-center justify-between overflow-hidden">
+                  {/* Left Rustic Lantern Sconce */}
+                  <div className="flex items-center space-x-1.5 z-10 flex-shrink-0">
+                    <div className="w-6 h-7 rounded-md bg-[#2e180e] border border-amber-500/70 shadow-[0_0_12px_rgba(245,158,11,0.8)] flex items-center justify-center relative overflow-hidden">
+                      <div className="w-2.5 h-3 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#F59E0B]" />
+                      <div className="absolute -top-0.5 w-3 h-1 bg-[#78350f] rounded-t" />
+                    </div>
+                    <div className="flex flex-col space-y-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shadow-[0_0_6px_#34D399]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#FBBF24]" />
+                    </div>
+                  </div>
 
-              {/* Left Chasing Bulbs */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full animate-pulse ${
-                      isTimber
-                        ? i % 2 === 0
-                          ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
-                          : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
-                        : 'bg-yellow-300 shadow-[0_0_8px_#FCD34D]'
-                    }`}
-                    style={{ animationDuration: '600ms', animationDelay: `${i * 150}ms` }}
-                  />
-                ))}
-              </div>
+                  {/* Center: Chiseled Cedar Log Readout */}
+                  <div className="flex flex-col items-center z-10 mx-auto px-2">
+                    <div className="flex items-baseline font-mono">
+                      <span className="text-sm sm:text-lg font-black text-amber-400 mr-1">$</span>
+                      <span className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_20px_rgba(52,211,153,1)]">
+                        {Math.floor(grand).toLocaleString()}
+                      </span>
+                      <span className="text-xs sm:text-lg font-bold text-emerald-400/90 ml-0.5">
+                        .{(grand % 1).toFixed(2).slice(2)}
+                      </span>
+                    </div>
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-amber-300/80 mt-0.5">
+                      MOUNTAIN LODGE FOREST PROGRESSIVE
+                    </span>
+                  </div>
 
-              {/* Center: Glowing Digital Readout */}
-              <div className="flex items-baseline font-mono z-10 mx-auto px-1">
-                <span className={`text-xs sm:text-base font-black mr-0.5 sm:mr-1 ${isTimber ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  $
-                </span>
-                <span
-                  className={`text-lg xs:text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none font-mono ${
-                    isTimber
-                      ? 'text-emerald-200 drop-shadow-[0_0_18px_rgba(52,211,153,1)]'
-                      : 'text-yellow-300 drop-shadow-[0_0_18px_rgba(253,224,71,1)]'
-                  }`}
-                >
-                  {Math.floor(grand).toLocaleString()}
-                </span>
-                <span className={`text-[10px] xs:text-xs sm:text-lg font-bold ml-0.5 ${isTimber ? 'text-emerald-400/90' : 'text-amber-400/90'}`}>
-                  .{(grand % 1).toFixed(2).slice(2)}
-                </span>
-              </div>
-
-              {/* Right Chasing Bulbs */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full animate-pulse ${
-                      isTimber
-                        ? (3 - i) % 2 === 0
-                          ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
-                          : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
-                        : 'bg-yellow-300 shadow-[0_0_8px_#FCD34D]'
-                    }`}
-                    style={{ animationDuration: '600ms', animationDelay: `${(3 - i) * 150}ms` }}
-                  />
-                ))}
+                  {/* Right Rustic Lantern Sconce */}
+                  <div className="flex items-center space-x-1.5 z-10 flex-shrink-0">
+                    <div className="flex flex-col space-y-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#FBBF24]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shadow-[0_0_6px_#34D399]" />
+                    </div>
+                    <div className="w-6 h-7 rounded-md bg-[#2e180e] border border-amber-500/70 shadow-[0_0_12px_rgba(245,158,11,0.8)] flex items-center justify-center relative overflow-hidden">
+                      <div className="w-2.5 h-3 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#F59E0B]" />
+                      <div className="absolute -top-0.5 w-3 h-1 bg-[#78350f] rounded-t" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            /* --- 24K VAULT: Fort Knox Armored Bank Vault Marquee --- */
+            <div className="relative pt-2">
+              {/* Radial Golden Sunburst Glow */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-80 h-16 rounded-full bg-gradient-to-t from-yellow-500/30 to-transparent filter blur-lg pointer-events-none" />
+
+              {/* Armored Titanium & Solid Gold Bullion Pediment Frame */}
+              <div className="relative p-[3px] rounded-t-[38px] rounded-b-xl bg-gradient-to-b from-amber-300 via-yellow-600 to-amber-950 shadow-[0_10px_35px_rgba(245,158,11,0.7)] group-hover:scale-[1.01] transition-transform duration-200">
+                {/* Fort Knox Bullion Crest Cap */}
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center justify-center space-x-2 px-5 py-0.5 rounded-full bg-gradient-to-r from-amber-700 via-yellow-300 to-amber-700 border-2 border-yellow-100 text-amber-950 shadow-[0_4px_12px_rgba(0,0,0,0.9)] z-30">
+                  <Crown className="w-3.5 h-3.5 text-amber-950 fill-amber-950 animate-bounce" />
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest font-sans whitespace-nowrap">
+                    ★ {gameDef.theme.grandTitle} ★
+                  </span>
+                  <Sparkles className="w-3.5 h-3.5 text-amber-950" />
+                </div>
+
+                {/* Armored Bank Vault Digital Glass Chamber */}
+                <div className="relative rounded-t-[34px] rounded-b-lg px-4 sm:px-6 pt-3 sm:pt-4 pb-2 bg-gradient-to-b from-red-950/95 via-black to-slate-950 border border-yellow-300/40 flex items-center justify-between overflow-hidden">
+                  {/* Metallic Shimmer Sweep */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer-sweep pointer-events-none" />
+
+                  {/* Left Chasing Gold Bulbs */}
+                  <div className="flex items-center space-x-1.5 z-10 flex-shrink-0">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FCD34D] animate-pulse"
+                        style={{ animationDuration: '600ms', animationDelay: `${i * 150}ms` }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Center: Glowing Digital 7-Segment Readout */}
+                  <div className="flex flex-col items-center z-10 mx-auto px-2">
+                    <div className="flex items-baseline font-mono">
+                      <span className="text-sm sm:text-base font-black text-amber-400 mr-1">$</span>
+                      <span className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_18px_rgba(253,224,71,1)]">
+                        {Math.floor(grand).toLocaleString()}
+                      </span>
+                      <span className="text-xs sm:text-lg font-bold text-amber-400/90 ml-0.5">
+                        .{(grand % 1).toFixed(2).slice(2)}
+                      </span>
+                    </div>
+                    <span className="text-[8px] font-bold uppercase tracking-widest text-amber-400/80 mt-0.5">
+                      LAS VEGAS HIGH-ROLLER PROGRESSIVE
+                    </span>
+                  </div>
+
+                  {/* Right Chasing Gold Bulbs */}
+                  <div className="flex items-center space-x-1.5 z-10 flex-shrink-0">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FCD34D] animate-pulse"
+                        style={{ animationDuration: '600ms', animationDelay: `${(3 - i) * 150}ms` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ========================================================================= */}

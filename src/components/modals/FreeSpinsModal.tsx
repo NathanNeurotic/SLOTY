@@ -17,7 +17,19 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
   useEffect(() => {
     soundManager.playJackpotFanfare();
     launchCoinFountain('mega');
-  }, []);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        soundManager.playButtonClick();
+        onStart();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [onStart]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md select-none">
@@ -59,9 +71,10 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
             soundManager.playButtonClick();
             onStart();
           }}
-          className="gold-btn w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-casino-950 hover:scale-105 active:scale-95 transition-transform"
+          className="gold-btn w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-casino-950 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2 shadow-[0_0_25px_rgba(245,158,11,0.7)]"
         >
-          START FREE SPINS
+          <span>START FREE SPINS</span>
+          <span className="px-2 py-0.5 rounded bg-black/25 text-[11px] font-mono tracking-tight font-bold">SPACE</span>
         </button>
       </div>
     </div>

@@ -65,6 +65,32 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
     }, 4500);
   };
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (wonAmount !== null) {
+          soundManager.playButtonClick();
+          onClose();
+        } else if (canClaim && !isSpinning) {
+          handleSpinWheel();
+        } else if (!canClaim) {
+          soundManager.playButtonClick();
+          onClose();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        soundManager.playButtonClick();
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [wonAmount, canClaim, isSpinning, onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md select-none">
       <div className="relative max-w-md w-full max-h-[92vh] overflow-y-auto bg-casino-950 border-2 border-gold-bright/60 shadow-[0_0_60px_rgba(245,158,11,0.5)] rounded-3xl p-4 sm:p-6 text-center flex flex-col items-center">
@@ -175,19 +201,26 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
         {/* Result Announcement or Spin Button */}
         <div className="mt-4 w-full">
           {wonAmount !== null ? (
-            <div className="flex flex-col items-center bg-casino-900 border border-gold-bright/40 p-3 rounded-2xl animate-bounce-soft">
-              <span className="text-xs font-bold text-slate-300">YOU WON!</span>
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onClose();
+              }}
+              className="w-full flex flex-col items-center bg-casino-900 border border-gold-bright/40 p-3 rounded-2xl animate-bounce-soft hover:scale-[1.02] active:scale-95 transition-transform"
+            >
+              <span className="text-xs font-bold text-slate-300">YOU WON! (CLICK OR SPACE TO COLLECT)</span>
               <span className="text-2xl font-black text-gold-light">
                 +{wonAmount.toLocaleString()} COINS
               </span>
-            </div>
+            </button>
           ) : canClaim ? (
             <button
               onClick={handleSpinWheel}
               disabled={isSpinning}
-              className="gold-btn w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-casino-950 hover:scale-105 active:scale-95 transition-transform"
+              className="gold-btn w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-casino-950 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2"
             >
-              {isSpinning ? 'SPINNING...' : 'SPIN FOR FREE COINS!'}
+              <span>{isSpinning ? 'SPINNING...' : 'SPIN FOR FREE COINS!'}</span>
+              {!isSpinning && <span className="px-2 py-0.5 rounded bg-black/25 text-[11px] font-mono font-bold">SPACE</span>}
             </button>
           ) : (
             <div className="bg-casino-900/80 border border-white/10 p-3 rounded-2xl text-center">
