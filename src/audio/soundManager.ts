@@ -13,6 +13,7 @@ class SoundManager {
   private musicTimerId: number | null = null;
   private musicTempo: number = 116; // BPM for Vegas VIP Lounge Funk
   private isOverdriveMusic: boolean = false;
+  private ratchetBuffer: AudioBuffer | null = null;
 
   constructor() {
     this.isMuted = storage.getBoolean('sloty_muted', false);
@@ -32,6 +33,17 @@ class SoundManager {
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
+    }
+    // Pre-allocate ratchet click noise buffer once to avoid per-tick allocations on mobile
+    if (this.ctx && !this.ratchetBuffer) {
+      try {
+        const bufferLength = Math.floor(this.ctx.sampleRate * 0.015);
+        this.ratchetBuffer = this.ctx.createBuffer(1, bufferLength, this.ctx.sampleRate);
+        const data = this.ratchetBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 60);
+        }
+      } catch {}
     }
   }
 
@@ -107,6 +119,14 @@ class SoundManager {
       now + duration
     );
     gain.connect(this.ctx.destination);
+
+    // Auto-garbage collect audio node after playback finishes to prevent mobile memory leaks
+    setTimeout(() => {
+      try {
+        gain.disconnect();
+      } catch {}
+    }, (duration + 0.15) * 1000);
+
     return gain;
   }
 
@@ -536,7 +556,7 @@ class SoundManager {
     osc.stop(this.ctx.currentTime + 0.06);
   }
 
-  // --- Continuous Stimulating Oregon Lottery / Vegas Reel Spin Audio Loop ---
+  // --- Continuous Stimulating Deluxe VLT Reel Spin Audio Loop ---
   private spinRollTimerId: number | null = null;
   private spinRollStep: number = 0;
   private isSpinRolling: boolean = false;
@@ -578,7 +598,7 @@ class SoundManager {
     clack.stop(now + 0.09);
   }
 
-  // Continuous stimulating Oregon Lottery spin arpeggio & mechanical ratchet ticker
+  // Continuous stimulating Deluxe Casino spin arpeggio & mechanical ratchet ticker
   public startSpinRollLoop(isFever: boolean = false) {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
@@ -588,7 +608,7 @@ class SoundManager {
     this.isAnticipationRolling = false;
     this.spinRollStep = 0;
 
-    // Classic Oregon Lottery VLT ascending arpeggio notes (bright pentatonic chime sequence)
+    // Classic VLT ascending arpeggio notes (bright pentatonic chime sequence)
     const rollNotes = isFever
       ? [587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51, 1567.98]
       : [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51];
@@ -601,28 +621,33 @@ class SoundManager {
       const now = this.ctx.currentTime;
       const step = this.spinRollStep;
 
-      // 1. Mechanical Stepper Ratchet Click (Rapid physical wheel ticking)
-      const clickBuffer = this.ctx.createBuffer(1, Math.floor(this.ctx.sampleRate * 0.015), this.ctx.sampleRate);
-      const clickData = clickBuffer.getChannelData(0);
-      for (let i = 0; i < clickData.length; i++) {
-        clickData[i] = (Math.random() * 2 - 1) * Math.exp(-i / 60);
+      // 1. Mechanical Stepper Ratchet Click (Rapid physical wheel ticking - reusing preallocated buffer)
+      if (this.ratchetBuffer) {
+        const clickSource = this.ctx.createBufferSource();
+        clickSource.buffer = this.ratchetBuffer;
+
+        const clickFilter = this.ctx.createBiquadFilter();
+        clickFilter.type = 'bandpass';
+        clickFilter.frequency.setValueAtTime(2600 + (step % 4) * 250, now);
+        clickFilter.Q.setValueAtTime(2.2, now);
+
+        const clickGain = this.ctx.createGain();
+        clickGain.gain.setValueAtTime(0.38 * this.sfxVolume, now);
+        clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.018);
+
+        clickSource.connect(clickFilter);
+        clickFilter.connect(clickGain);
+        clickGain.connect(this.ctx.destination);
+        clickSource.start(now);
+
+        setTimeout(() => {
+          try {
+            clickSource.disconnect();
+            clickFilter.disconnect();
+            clickGain.disconnect();
+          } catch {}
+        }, 25);
       }
-      const clickSource = this.ctx.createBufferSource();
-      clickSource.buffer = clickBuffer;
-
-      const clickFilter = this.ctx.createBiquadFilter();
-      clickFilter.type = 'bandpass';
-      clickFilter.frequency.setValueAtTime(2600 + (step % 4) * 250, now);
-      clickFilter.Q.setValueAtTime(2.2, now);
-
-      const clickGain = this.ctx.createGain();
-      clickGain.gain.setValueAtTime(0.38 * this.sfxVolume, now);
-      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.018);
-
-      clickSource.connect(clickFilter);
-      clickFilter.connect(clickGain);
-      clickGain.connect(this.ctx.destination);
-      clickSource.start(now);
 
       // 2. High-Energy Ascending Casino Marimba / Bell Chime Pulse
       const pitch = this.isAnticipationRolling
@@ -643,6 +668,13 @@ class SoundManager {
       toneGain.connect(this.ctx.destination);
       toneOsc.start(now);
       toneOsc.stop(now + 0.09);
+
+      setTimeout(() => {
+        try {
+          toneOsc.disconnect();
+          toneGain.disconnect();
+        } catch {}
+      }, 100);
 
       this.spinRollStep = (this.spinRollStep + 1) % 32;
       this.spinRollTimerId = window.setTimeout(playRollTick, stepIntervalMs);

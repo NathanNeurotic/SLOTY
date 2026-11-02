@@ -76,7 +76,7 @@ export const GambleModal: React.FC<GambleModalProps> = ({
           <div className="flex items-center space-x-2">
             <Trophy className="w-5 h-5 text-gold-bright animate-bounce" />
             <span className="text-base sm:text-lg font-black gold-gradient-text uppercase tracking-wider">
-              Oregon Video Poker Double-Up
+              Casino Video Poker Double-Up
             </span>
           </div>
           <button

@@ -1,24 +1,31 @@
 import React from 'react';
 import { X, Coins } from 'lucide-react';
-import { SYMBOL_LIST } from '../../engine/symbols';
 import { SymbolRenderer } from '../slots/SymbolRenderer';
-import { PAYLINES } from '../../engine/paylines';
 import { soundManager } from '../../audio/soundManager';
+import type { GameId } from '../../games/types';
+import { getGame } from '../../games/gameRegistry';
 
 interface PaytableModalProps {
   onClose: () => void;
+  activeGameId?: GameId;
 }
 
-export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
+export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGameId = 'vault-24k' }) => {
+  const gameDef = getGame(activeGameId);
+  const isTimber = activeGameId === 'timber-critters';
+  const symbols = Object.values(gameDef.symbols);
+  const paylines = gameDef.paylines;
+  const rows = gameDef.rows;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md select-none overflow-y-auto animate-fadeIn">
-      <div className="relative max-w-2xl w-full bg-casino-950 border-2 border-yellow-400/80 shadow-[0_0_50px_rgba(245,158,11,0.5)] rounded-3xl p-4 sm:p-6 max-h-[90vh] flex flex-col">
+      <div className={`relative max-w-2xl w-full bg-casino-950 border-2 ${isTimber ? 'border-emerald-400/80 shadow-[0_0_50px_rgba(16,185,129,0.5)]' : 'border-yellow-400/80 shadow-[0_0_50px_rgba(245,158,11,0.5)]'} rounded-3xl p-4 sm:p-6 max-h-[90vh] flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="flex items-center space-x-2">
-            <Coins className="w-5 h-5 text-gold-bright" />
-            <h2 className="text-lg sm:text-xl font-black gold-gradient-text uppercase tracking-wider">
-              24K Gold &amp; Cash Vault Paytable
+            <Coins className={`w-5 h-5 ${isTimber ? 'text-emerald-400' : 'text-gold-bright'}`} />
+            <h2 className={`text-lg sm:text-xl font-black ${isTimber ? 'text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'gold-gradient-text'} uppercase tracking-wider`}>
+              {gameDef.name} Paytable
             </h2>
           </div>
           <button
@@ -39,14 +46,16 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
             {/* Wild */}
             <div className="bg-casino-900/90 border border-gold-bright/30 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
-                <SymbolRenderer id="WILD" />
+                <SymbolRenderer id={isTimber ? 'BEAR' : 'WILD'} />
               </div>
               <div>
                 <span className="text-[11px] font-black uppercase text-gold-bright block">
-                  24K Gold Wild
+                  {isTimber ? 'Grizzly Bear Wild' : '24K Gold Wild'}
                 </span>
                 <p className="text-[10px] text-slate-300 leading-tight mt-0.5">
-                  Substitutes for all symbols except Scatter &amp; Coin. 5 Wilds awards 1,800x line bet!
+                  {isTimber
+                    ? 'Substitutes for all symbols except Owl & Acorn. 5 Wilds awards 1,000x line bet!'
+                    : 'Substitutes for all symbols except Scatter & Coin. 5 Wilds awards 1,800x line bet!'}
                 </p>
               </div>
             </div>
@@ -54,14 +63,16 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
             {/* Scatter */}
             <div className="bg-casino-900/90 border border-neon-cyan/30 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
-                <SymbolRenderer id="SCATTER" />
+                <SymbolRenderer id={isTimber ? 'OWL' : 'SCATTER'} />
               </div>
               <div>
                 <span className="text-[11px] font-black uppercase text-neon-cyan block">
-                  Vault Door Scatter
+                  {isTimber ? 'Moonlit Owl Scatter' : 'Vault Door Scatter'}
                 </span>
                 <p className="text-[10px] text-slate-300 leading-tight mt-0.5">
-                  3+ Bank Vault doors trigger 10 Free Spins with 3X multipliers and raining $100 bills!
+                  {isTimber
+                    ? '3+ Moonlit Owls award 10 Free Spins at 3X multiplier with starry animations!'
+                    : '3+ Bank Vault doors trigger 10 Free Spins with 3X multipliers and raining $100 bills!'}
                 </p>
               </div>
             </div>
@@ -69,14 +80,16 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
             {/* Cash Link Coin */}
             <div className="bg-casino-900/90 border border-amber-400/40 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
-                <SymbolRenderer id="COIN" />
+                <SymbolRenderer id={isTimber ? 'ACORN' : 'COIN'} />
               </div>
               <div>
                 <span className="text-[11px] font-black uppercase text-amber-300 block">
-                  Minted Bullion Coin
+                  {isTimber ? 'Golden Acorn Cash' : 'Minted Bullion Coin'}
                 </span>
                 <p className="text-[10px] text-slate-300 leading-tight mt-0.5">
-                  6+ Golden Bullion Coins trigger the Fort Knox Cash Link Respins with Mini, Minor, Major &amp; Grand Pots!
+                  {isTimber
+                    ? '6+ Golden Acorns trigger the Woodland Cash Link Respins with Mini, Minor, Major & Grand Pots!'
+                    : '6+ Golden Bullion Coins trigger the Fort Knox Cash Link Respins with Mini, Minor, Major & Grand Pots!'}
                 </p>
               </div>
             </div>
@@ -88,7 +101,7 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
               Symbol Multipliers (Line Bet × Multiplier)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {SYMBOL_LIST.map((sym) => (
+              {symbols.map((sym) => (
                 <div
                   key={sym.id}
                   className="bg-casino-900/60 border border-white/5 rounded-xl p-2 flex items-center space-x-2"
@@ -113,28 +126,30 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
             </div>
           </div>
 
-          {/* 40 Paylines Diagrams Preview */}
+          {/* Paylines Diagrams Preview */}
           <div>
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
-              40 Active Paylines (Oregon VLT Standard)
+              {paylines.length} Active Paylines ({gameDef.reels}x{rows} Grid)
             </h3>
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
-              {PAYLINES.map((pattern, idx) => (
+              {paylines.map((pattern, idx) => (
                 <div
                   key={idx}
                   className="bg-casino-900/80 border border-white/10 rounded-lg p-1 flex flex-col items-center"
                 >
                   <span className="text-[8px] font-bold text-slate-400 mb-0.5">Line {idx + 1}</span>
-                  {/* Mini 5x4 Grid */}
+                  {/* Mini Grid */}
                   <div className="grid grid-cols-5 gap-0.5 w-full">
                     {[0, 1, 2, 3, 4].map((reel) => (
                       <div key={reel} className="flex flex-col gap-0.5">
-                        {[0, 1, 2, 3].map((row) => (
+                        {Array.from({ length: rows }, (_, row) => (
                           <div
                             key={row}
                             className={`h-1.5 rounded-xs ${
                               pattern[reel] === row
-                                ? 'bg-gold-bright shadow-[0_0_3px_#F59E0B]'
+                                ? isTimber
+                                  ? 'bg-emerald-400 shadow-[0_0_3px_#34D399]'
+                                  : 'bg-gold-bright shadow-[0_0_3px_#F59E0B]'
                                 : 'bg-casino-950'
                             }`}
                           />
@@ -150,7 +165,7 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose }) => {
 
         {/* Footer Note */}
         <div className="pt-2.5 border-t border-white/10 text-center text-[9.5px] text-slate-500">
-          SLOTY 24K Gold &amp; Cash Vault is an authentic Vegas &amp; Oregon Lottery style slot machine.
+          SLOTY {gameDef.name} is an authentic Vegas VLT style slot machine with 95.8% certified RTP.
         </div>
       </div>
     </div>

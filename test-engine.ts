@@ -99,4 +99,19 @@ console.log(`- Hit Frequency: ${hitRate}%`);
 console.log(`- Free Spins Hit: ${freeSpinsCount} times (${((freeSpinsCount / 20000) * 100).toFixed(2)}%)`);
 console.log(`- Hold & Spin Hit: ${holdAndSpinCount} times (${((holdAndSpinCount / 20000) * 100).toFixed(2)}%)`);
 
+// 5. Timberland Critters (5x3, 25 paylines) Verification
+console.log('Checking Timberland Critters game:');
+const { getGame } = await import('./src/games/gameRegistry');
+const timber = getGame('timber-critters');
+console.log(`- Loaded: ${timber.name} (${timber.reels}x${timber.rows}, ${timber.defaultLines} lines)`);
+if (timber.rows !== 3) throw new Error('Expected 3 rows');
+if (timber.paylines.length !== 25) throw new Error('Expected 25 paylines');
+
+const timberGrid = generateRandomGrid(timber);
+if (timberGrid.length !== 5) throw new Error('Expected 5 reels');
+if (timberGrid[0].length !== 3) throw new Error('Expected 3 rows per reel');
+const sampleResult = evaluateSpin(timberGrid, 25, 25, 1, timber);
+console.log(`- Sample spin result: ${sampleResult.winningLines.length} line wins, payout: ${sampleResult.totalPayout}`);
+console.log('✓ Timberland Critters 5x3 verification passed!');
+
 console.log('✓ ALL ENGINE & MATH CHECKS PASSED SUCCESSFULLY!');

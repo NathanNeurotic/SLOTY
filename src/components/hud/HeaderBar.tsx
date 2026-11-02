@@ -12,9 +12,10 @@ import {
   Play,
 } from 'lucide-react';
 import type { ProgressionState } from '../../engine/types';
+import type { GameId } from '../../games/types';
 import { soundManager } from '../../audio/soundManager';
 import { SlotyLogo } from './SlotyLogo';
-import { SceneSelector } from '../scenes/SceneSelector';
+import { GameSelector } from './GameSelector';
 import type { CasinoSceneId } from '../scenes/SceneTypes';
 
 interface HeaderBarProps {
@@ -25,6 +26,9 @@ interface HeaderBarProps {
   timeUntilBonus: string;
   currentSceneId: CasinoSceneId;
   onSelectScene: (sceneId: CasinoSceneId) => void;
+  activeGameId: GameId;
+  onSelectGame: (gameId: GameId) => void;
+  isSpinning?: boolean;
   onToggleMute: () => void;
   onOpenPaytable: () => void;
   onOpenBonusWheel: () => void;
@@ -37,8 +41,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isMuted,
   canClaimBonus,
   timeUntilBonus,
-  currentSceneId,
-  onSelectScene,
+  currentSceneId: _currentSceneId,
+  onSelectScene: _onSelectScene,
+  activeGameId,
+  onSelectGame,
+  isSpinning = false,
   onToggleMute,
   onOpenPaytable,
   onOpenBonusWheel,
@@ -126,11 +133,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           </div>
         </div>
 
-        {/* Center: Full Scenic Environment Selector */}
-        <div className="hidden lg:flex items-center">
-          <SceneSelector
-            currentSceneId={currentSceneId}
-            onSelectScene={onSelectScene}
+        {/* Center: Multi-Game Machine Switcher (24K Gold Vault vs Timberland Critters) */}
+        <div className="flex items-center">
+          <GameSelector
+            activeGameId={activeGameId}
+            onSelectGame={onSelectGame}
+            disabled={isSpinning}
           />
         </div>
 

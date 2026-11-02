@@ -20,7 +20,7 @@ const IDLE_QUOTES = [
   "Feelin' lucky? The reels are runnin' hot!",
   "Barnaby smells a jackpot in the air!",
   "Give her a spin! Fortune favors the bold!",
-  "24 karats of pure Oregon gold waitin' for ya!",
+  "24 karats of pure gold waitin' for ya!",
   "Tap my hat for a little pocket change!",
 ];
 
@@ -211,7 +211,7 @@ export const BarnabyBullion: React.FC<BarnabyBullionProps> = ({
       }`}
       title="Click Barnaby Bullion for a high-roller tip & free gold coins!"
     >
-      {/* Dynamic Comic Speech Bubble with Oregon VLT Voice Quotes */}
+      {/* Dynamic Comic Speech Bubble with Deluxe VLT Voice Quotes */}
       <div className="relative mb-1 z-30 max-w-[210px] sm:max-w-[240px]">
         <div
           className={`relative px-3 py-1.5 rounded-2xl border-2 text-[11px] sm:text-xs font-black shadow-xl tracking-wide transition-all ${

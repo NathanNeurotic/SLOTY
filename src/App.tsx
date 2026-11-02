@@ -12,6 +12,8 @@ import {
   generateForcedGrid,
   generateRandomGrid,
 } from './engine/evaluator';
+import type { GameId } from './games/types';
+import { getGame } from './games/gameRegistry';
 import { soundManager } from './audio/soundManager';
 import { storage } from './utils/storage';
 import { HeaderBar } from './components/hud/HeaderBar';
@@ -71,13 +73,36 @@ export const App: React.FC = () => {
   );
 
   // --- Active Game & Bet State (Persisted) ---
+  const [activeGameId, setActiveGameId] = useState<GameId>(() =>
+    (storage.getItem('sloty_active_game') as GameId) || 'vault-24k'
+  );
+  const activeGameDef = getGame(activeGameId);
+
   const [selectedLines, setSelectedLines] = useState<number>(() =>
-    storage.getNumber('sloty_lines', 40)
+    storage.getNumber('sloty_lines', activeGameDef.defaultLines)
   );
   const [betPerLine, setBetPerLine] = useState<number>(() =>
     storage.getNumber('sloty_bet_per_line', 5)
   );
   const totalBet = selectedLines * betPerLine;
+
+  const handleSelectGame = useCallback(
+    (gameId: GameId) => {
+      if (gameId === activeGameId) return;
+      const target = getGame(gameId);
+      setActiveGameId(gameId);
+      storage.setItem('sloty_active_game', gameId);
+      setSelectedLines(target.defaultLines);
+      storage.setItem('sloty_lines', target.defaultLines.toString());
+      const newGrid = generateRandomGrid(target);
+      setCurrentGrid(newGrid);
+      storage.setJSON('sloty_grid', newGrid);
+      setSpinResult(null);
+      setWinAmount(0);
+      soundManager.playCashRegister();
+    },
+    [activeGameId]
+  );
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
@@ -152,7 +177,6 @@ export const App: React.FC = () => {
   );
   const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
   const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
-  const [hasInteractedAudio, setHasInteractedAudio] = useState(false);
 
   useEffect(() => {
     storage.setItem('sloty_scene', currentSceneId);
@@ -179,7 +203,6 @@ export const App: React.FC = () => {
   // Auto-unlock Web Audio and start background lounge music on user interaction
   useEffect(() => {
     const handleFirstGesture = () => {
-      setHasInteractedAudio(true);
       soundManager.unlockAudio();
     };
 
@@ -323,7 +346,6 @@ export const App: React.FC = () => {
       }));
     }
 
-    setHasInteractedAudio(true);
     soundManager.unlockAudio();
     soundManager.playSpinStart();
     setIsSpinning(true);
@@ -331,21 +353,21 @@ export const App: React.FC = () => {
     setSpinResult(null); // Keep results hidden while reels are spinning
     casinoRoomManager.broadcastSpinStart(totalBet);
 
-    // Generate grid: check forced scenario first, then random
+    // Generate grid: check forced scenario first, then random for active game definition
     const nextGrid = forcedScenario
       ? generateForcedGrid(forcedScenario)
-      : generateRandomGrid();
+      : generateRandomGrid(activeGameDef);
 
     // Reset one-time forced scenario
     if (forcedScenario) setForcedScenario(null);
 
     // Free spins gives 3x multiplier, Fever Mode gives 2x
     const multiplier = (isFreeSpin ? 3 : 1) * (feverSpinsLeft > 0 ? 2 : 1);
-    const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier);
+    const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier, activeGameDef);
 
     pendingResultRef.current = evaluated;
     setCurrentGrid(nextGrid);
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef]);
 
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
@@ -582,21 +604,6 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* Prominent Audio Unlock Banner for Browsers Requiring Interaction */}
-      {!hasInteractedAudio && (
-        <div
-          onClick={() => {
-            setHasInteractedAudio(true);
-            soundManager.unlockAudio();
-          }}
-          className="w-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 text-amber-950 font-black text-center py-1 px-3 text-[11px] sm:text-xs uppercase tracking-widest cursor-pointer shadow-lg animate-pulse z-40 flex items-center justify-center space-x-2 select-none border-b border-yellow-200"
-        >
-          <span>🔊</span>
-          <span>CLICK ANYWHERE TO UNMUTE VIP CASINO LOUNGE MUSIC &amp; AUDIO</span>
-          <span>🔊</span>
-        </div>
-      )}
-
       {/* Header Bar */}
       <HeaderBar
         balance={balance}
@@ -606,15 +613,18 @@ export const App: React.FC = () => {
         timeUntilBonus={timeUntilBonus}
         currentSceneId={currentSceneId}
         onSelectScene={handleSelectScene}
+        activeGameId={activeGameId}
+        onSelectGame={handleSelectGame}
+        isSpinning={isSpinning}
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
         onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
       />
 
-      {/* Main Gaming Stage with bottom padding to accommodate fixed controls dock */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full pb-44 sm:pb-40">
-        {/* 4-Tier Vegas & Oregon Lottery Progressive Jackpots */}
+      {/* Main Gaming Stage with responsive padding */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full pb-32 sm:pb-36">
+        {/* 4-Tier Deluxe Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} />
 
         {/* Live Casino LED Marquee Ticker */}
@@ -655,6 +665,8 @@ export const App: React.FC = () => {
               setBalance((b) => b + amount);
               soundManager.playCoinTally();
             }}
+            activeGameId={activeGameId}
+            isFloorMode={isFloorMode}
           />
         </CasinoFloorBank>
       </main>
@@ -684,10 +696,12 @@ export const App: React.FC = () => {
           }}
           onAutoSpinStop={() => setAutoSpinsRemaining(0)}
           onOpenGamble={() => setShowGambleModal(true)}
+          availableLines={activeGameDef.availableLines}
+          maxLines={activeGameDef.defaultLines}
         />
 
-        {/* Integrated Footer info banner */}
-        <footer className="py-1 border-t border-white/5 text-center text-[9px] sm:text-[10px] text-slate-500 bg-casino-950/90 flex-shrink-0">
+        {/* Integrated Footer info banner (desktop only) */}
+        <footer className="hidden sm:block py-1 border-t border-white/5 text-center text-[9px] sm:text-[10px] text-slate-500 bg-casino-950/90 flex-shrink-0">
           PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
         </footer>
       </div>
@@ -703,7 +717,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Oregon Lottery Video Poker Double-Up Gamble Modal */}
+      {/* Video Poker Double-Up Gamble Modal */}
       {showGambleModal && (
         <GambleModal
           initialPot={winAmount}
@@ -768,7 +782,10 @@ export const App: React.FC = () => {
 
       {/* Paytable & Rules Modal */}
       {showPaytableModal && (
-        <PaytableModal onClose={() => setShowPaytableModal(false)} />
+        <PaytableModal
+          activeGameId={activeGameId}
+          onClose={() => setShowPaytableModal(false)}
+        />
       )}
 
       {/* Level Up Celebration Modal */}

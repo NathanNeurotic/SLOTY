@@ -11,6 +11,8 @@ import { soundManager } from '../../audio/soundManager';
 import { CompanionLounge } from '../character/CompanionLounge';
 import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
+import type { GameId } from '../../games/types';
+import { getGame } from '../../games/gameRegistry';
 
 interface SlotMachineProps {
   currentGrid: SymbolGrid;
@@ -27,6 +29,8 @@ interface SlotMachineProps {
   isFeverMode?: boolean;
   currentSceneId?: CasinoSceneId;
   onRewardCoins?: (amount: number) => void;
+  activeGameId?: GameId;
+  isFloorMode?: boolean;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -44,7 +48,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   isFeverMode = false,
   currentSceneId = 'VAULT',
   onRewardCoins,
+  activeGameId = 'vault-24k',
+  isFloorMode = false,
 }) => {
+  const gameDef = getGame(activeGameId);
+  const isTimber = activeGameId === 'timber-critters';
+  const rowCount = gameDef.rows;
+  const totalLines = gameDef.defaultLines;
   // Track spinning state per reel [0..4]
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
@@ -86,7 +96,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       setActiveWinningLineIdx(null);
       setHoveredLineIndex(null);
 
-      // Start the continuous stimulating Oregon Lottery reel roll arpeggio & stepper ticker
+      // Start the continuous stimulating Deluxe Casino reel roll arpeggio & stepper ticker
       soundManager.startSpinRollLoop(isFeverMode);
 
       timersRef.current.forEach((t) => clearTimeout(t));
@@ -189,7 +199,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     setActiveWinningLineIdx(spinResult.winningLines[prevIdx].lineIndex);
   };
 
-  // Winning line details for Oregon Lottery style banner
+  // Winning line details for Deluxe Casino style banner
   const activeWin = useMemo(() => {
     if (isAnyReelSpinning || !spinResult || activeWinningLineIdx === null) return null;
     return spinResult.winningLines.find((w) => w.lineIndex === activeWinningLineIdx) || null;
@@ -257,8 +267,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
-      {/* Desktop Hostess Flank: Ruby Sparkle cleanly placed beside the cabinet */}
-      <div className="hidden 2xl:block absolute -left-64 top-8 z-20">
+      {/* Desktop Hostess Flank: Ruby Sparkle cleanly placed beside the cabinet (hidden in floor mode to prevent overlapping neighbor terminals) */}
+      <div className={`${isFloorMode ? 'hidden' : 'hidden 2xl:block'} absolute -left-64 top-8 z-20`}>
         <CompanionLounge
           position="desktop-flank"
           isSpinning={isSpinning}
@@ -271,8 +281,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       </div>
 
-      {/* Mobile / Compact Responsive VIP Companion Lounge Bar */}
-      <div className="2xl:hidden flex justify-center mb-1.5 w-full px-1">
+      {/* Responsive VIP Companion Lounge Bar (hidden on small phones to maximize reel height) */}
+      <div className="hidden md:flex 2xl:hidden justify-center mb-1 w-full px-1">
         <CompanionLounge
           position="mobile-bar"
           isSpinning={isSpinning}
@@ -285,17 +295,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       </div>
 
-      {/* 3D Interactive Vegas Slot Pull-Arm Lever */}
-      <SlotLever
-        isSpinning={isSpinning}
-        disabled={!canSpin}
-        onPull={() => {
-          if (onSpin) onSpin();
-        }}
-      />
+      {/* 3D Interactive Vegas Slot Pull-Arm Lever (hidden in floor mode to prevent overlapping neighbor machine) */}
+      {!isFloorMode && (
+        <SlotLever
+          isSpinning={isSpinning}
+          disabled={!canSpin}
+          onPull={() => {
+            if (onSpin) onSpin();
+          }}
+        />
+      )}
 
-      {/* Outer Luxury Cabinet Frame with Chasing Neon Perimeter Border */}
-      <div className="relative p-[3px] rounded-2xl sm:rounded-3xl neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]">
+      {/* Outer Luxury Cabinet Frame with Chasing Perimeter Border */}
+      <div
+        className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
+          isTimber
+            ? 'border-2 border-emerald-500/80 shadow-[0_0_35px_rgba(16,185,129,0.5)]'
+            : 'neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
+        }`}
+      >
         <div
           className={`relative p-2 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
@@ -304,6 +322,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
               : freeSpinsRemaining > 0
               ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
+              : isTimber
+              ? 'bg-gradient-to-b from-stone-900 via-emerald-950 to-stone-950 shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-emerald-500/40'
               : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
           }`}
         >
@@ -370,7 +390,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 </button>
                 <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light truncate drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
                   <Award className="w-4 h-4 inline mr-1 text-gold-bright flex-shrink-0 animate-pulse" />
-                  LINE {activeWin.lineIndex + 1}: {activeWin.count}x {SYMBOLS[activeWin.symbolId]?.name.toUpperCase()} (+{activeWin.payout.toLocaleString()} COINS)
+                  LINE {activeWin.lineIndex + 1}: {activeWin.count}x {(gameDef.symbols[activeWin.symbolId]?.name || SYMBOLS[activeWin.symbolId]?.name || '').toUpperCase()} (+{activeWin.payout.toLocaleString()} COINS)
                 </span>
                 <button
                   onClick={handleNextWinningLine}
@@ -381,8 +401,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 </button>
               </div>
             ) : (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase gold-gradient-text truncate whitespace-nowrap">
-                ★ 24K GOLD &amp; CASH VAULT • 40 PAYLINES ★
+              <span className={`text-xs sm:text-sm font-black tracking-widest uppercase truncate whitespace-nowrap ${isTimber ? 'text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'gold-gradient-text'}`}>
+                {gameDef.theme.marqueeTitle}
               </span>
             )}
           </div>
@@ -422,9 +442,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
         </div>
 
-        {/* Central Playing Stage Flanked by Oregon Lottery Numbered Tabs */}
+        {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs */}
         <div className="flex items-center space-x-1 sm:space-x-2 w-full">
-          {/* Left Flank: Lines 1 to 20 */}
+          {/* Left Flank */}
           <PaylineSideTabs
             side="left"
             selectedLines={selectedLines}
@@ -437,15 +457,18 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               soundManager.playButtonClick();
             }}
             onSelectLines={onSelectLines}
+            totalLinesCount={totalLines}
           />
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
-          <div className="relative flex-1 flex space-x-1 sm:space-x-1.5 bg-casino-950/95 p-1 sm:p-2 rounded-xl border border-white/10 shadow-inner overflow-hidden h-[320px] sm:h-[400px] md:h-[480px]">
+          <div className="relative flex-1 flex space-x-1 sm:space-x-1.5 bg-casino-950/95 p-1 sm:p-2 rounded-xl border border-white/10 shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px]">
             {/* SVG Payline Glow Overlay: strictly hidden while reels are spinning */}
             <PaylineOverlay
               winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
               activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
               previewLineIndex={hoveredLineIndex}
+              rowCount={rowCount}
+              paylines={gameDef.paylines}
             />
 
             {/* Floating Win Badges on Active Winning Paylines */}
@@ -474,11 +497,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 isAnticipating={isAnticipating && reelIdx >= 2 && reelSpinning[reelIdx]}
                 winningRows={winningCoordsMap.get(reelIdx)}
                 scatterRows={scatterCoordsMap.get(reelIdx)}
+                rowCount={rowCount}
+                gameId={activeGameId}
               />
             ))}
           </div>
 
-          {/* Right Flank: Lines 21 to 40 */}
+          {/* Right Flank */}
           <PaylineSideTabs
             side="right"
             selectedLines={selectedLines}
@@ -491,6 +516,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               soundManager.playButtonClick();
             }}
             onSelectLines={onSelectLines}
+            totalLinesCount={totalLines}
           />
         </div>
 

@@ -14,7 +14,22 @@ export type SymbolId =
   | 'QUEEN'
   | 'JACK'
   | 'CHERRY'
-  | 'PLUM';
+  | 'PLUM'
+  // Timberland Critters Symbols
+  | 'BEAR'
+  | 'OWL'
+  | 'ACORN'
+  | 'WOLF'
+  | 'FOX'
+  | 'RACCOON'
+  | 'SQUIRREL'
+  | 'PINECONE'
+  | 'BERRIES'
+  | 'MUSHROOM'
+  | 'WOOD_A'
+  | 'WOOD_K'
+  | 'WOOD_Q'
+  | 'WOOD_J';
 
 export type SymbolTier = 'special' | 'high' | 'mid' | 'low';
 

@@ -67,7 +67,33 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1 sm:mb-2 select-none flex-shrink-0">
-      <div className="relative flex flex-col items-center">
+      {/* Mobile Ultra-Compact Jackpot Ribbon (Height 28px, saves 110px on phones) */}
+      <div
+        onClick={handleJackpotClick}
+        className="sm:hidden w-full bg-gradient-to-r from-amber-950 via-casino-950 to-amber-950 border border-yellow-400/60 rounded-xl px-2 py-1 shadow-md flex items-center justify-between text-[9px] font-mono cursor-pointer"
+        title="Fort Knox Progressive Jackpots"
+      >
+        <div className="flex items-center space-x-1">
+          <Crown className="w-3 h-3 text-yellow-300 fill-yellow-300 animate-pulse flex-shrink-0" />
+          <span className="font-sans font-black text-amber-400 text-[8px]">GRAND</span>
+          <span className="font-bold text-yellow-200 leading-none">${Math.floor(grand).toLocaleString()}</span>
+        </div>
+        <div className="h-3 w-px bg-white/15" />
+        <div className="flex items-center space-x-1">
+          <Gem className="w-2.5 h-2.5 text-purple-300 flex-shrink-0" />
+          <span className="font-sans font-black text-purple-300 text-[8px]">MAJ</span>
+          <span className="font-bold text-purple-200 leading-none">${Math.floor(major).toLocaleString()}</span>
+        </div>
+        <div className="h-3 w-px bg-white/15" />
+        <div className="flex items-center space-x-1">
+          <Coins className="w-2.5 h-2.5 text-cyan-300 flex-shrink-0" />
+          <span className="font-sans font-black text-cyan-300 text-[8px]">MIN</span>
+          <span className="font-bold text-cyan-200 leading-none">${Math.floor(minor).toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* Desktop Full 3D Sculptural Centerpiece & Pods */}
+      <div className="hidden sm:flex relative flex-col items-center">
         {/* ========================================================================= */}
         {/* 1. TOWERING CENTERPIECE: 24K FORT KNOX IMPERIAL VAULT CROWN (GRAND)       */}
         {/* ========================================================================= */}

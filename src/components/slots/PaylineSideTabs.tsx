@@ -11,6 +11,8 @@ interface PaylineSideTabsProps {
   onHoverLine: (lineIdx: number | null) => void;
   onClickLine: (lineIdx: number) => void;
   onSelectLines?: (linesCount: number) => void;
+  totalLinesCount?: number;
+  paylineColors?: string[];
 }
 
 export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
@@ -22,25 +24,26 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
   onHoverLine,
   onClickLine,
   onSelectLines,
+  totalLinesCount = 40,
+  paylineColors = PAYLINE_COLORS,
 }) => {
-  // Left side shows lines 0..19 (displayed as 1..20)
-  // Right side shows lines 20..39 (displayed as 21..40)
+  const halfCount = Math.ceil(totalLinesCount / 2);
   const lineIndices =
     side === 'left'
-      ? Array.from({ length: 20 }, (_, i) => i)
-      : Array.from({ length: 20 }, (_, i) => i + 20);
+      ? Array.from({ length: halfCount }, (_, i) => i)
+      : Array.from({ length: totalLinesCount - halfCount }, (_, i) => i + halfCount);
 
   // Set of winning line indices
   const winningLineIndices = new Set(winningLines.map((w) => w.lineIndex));
 
   return (
-    <div className="flex flex-col justify-between py-1 h-[320px] sm:h-[400px] md:h-[480px] w-5 sm:w-7 select-none z-20 flex-shrink-0">
+    <div className="hidden sm:flex flex-col justify-between py-1 h-full w-5 sm:w-7 select-none z-20 flex-shrink-0">
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;
         const isWinning = winningLineIndices.has(lineIdx);
         const isActive = activeLineIndex === lineIdx;
         const isHovered = hoveredLineIndex === lineIdx;
-        const color = PAYLINE_COLORS[lineIdx % PAYLINE_COLORS.length];
+        const color = paylineColors[lineIdx % paylineColors.length];
 
         const handleClick = () => {
           if (!isLineActiveInGame && onSelectLines) {

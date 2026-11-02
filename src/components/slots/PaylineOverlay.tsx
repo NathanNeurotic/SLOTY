@@ -1,27 +1,33 @@
 import React from 'react';
-import type { WinningLine } from '../../engine/types';
+import type { WinningLine, Payline } from '../../engine/types';
 import { PAYLINES, PAYLINE_COLORS } from '../../engine/paylines';
 
 interface PaylineOverlayProps {
   winningLines: WinningLine[];
   activeLineIndex: number | null; // null means show all winning lines softly or cycle
   previewLineIndex: number | null; // preview a payline when player hovers a side tab
+  rowCount?: number;
+  paylines?: Payline[];
+  paylineColors?: string[];
 }
 
 export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   winningLines,
   activeLineIndex,
   previewLineIndex,
+  rowCount = 4,
+  paylines = PAYLINES,
+  paylineColors = PAYLINE_COLORS,
 }) => {
   // If no winning lines and no previewed line, render nothing
   if (winningLines.length === 0 && previewLineIndex === null) {
     return null;
   }
 
-  // 5 reels (columns 0..4 = 20% each), 4 rows (rows 0..3 = 25% each)
+  // 5 reels (columns 0..4 = 20% each), dynamic rows (3 rows = 33.33% each, 4 rows = 25% each)
   const getCellCenterPercent = (reel: number, row: number): [number, number] => {
-    const x = (reel + 0.5) * 20; // 5 reels = 20% width each
-    const y = (row + 0.5) * 25; // 4 rows = 25% height each
+    const x = (reel + 0.5) * 20;
+    const y = (row + 0.5) * (100 / rowCount);
     return [x, y];
   };
 
@@ -54,13 +60,13 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
       {previewLineIndex !== null && (
         <g>
           {(() => {
-            const pattern = PAYLINES[previewLineIndex];
+            const pattern = paylines[previewLineIndex];
             if (!pattern) return null;
-            const points = pattern.map((row, reel) => getCellCenterPercent(reel, row));
-            const pathData = points.reduce((acc, [x, y], idx) => {
+            const points = pattern.map((row: number, reel: number) => getCellCenterPercent(reel, row));
+            const pathData = points.reduce((acc: string, [x, y]: [number, number], idx: number) => {
               return idx === 0 ? `M ${x} ${y}` : `${acc} L ${x} ${y}`;
             }, '');
-            const color = PAYLINE_COLORS[previewLineIndex % PAYLINE_COLORS.length];
+            const color = paylineColors[previewLineIndex % paylineColors.length];
 
             return (
               <>
@@ -82,7 +88,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                {points.map(([x, y], pIdx) => (
+                {points.map(([x, y]: [number, number], pIdx: number) => (
                   <circle
                     key={pIdx}
                     cx={x}
@@ -104,7 +110,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
       {previewLineIndex === null &&
         winningLines.map((win) => {
           const isHighlighted = activeLineIndex === null || activeLineIndex === win.lineIndex;
-          const color = PAYLINE_COLORS[win.lineIndex % PAYLINE_COLORS.length];
+          const color = paylineColors[win.lineIndex % paylineColors.length];
 
           // Build SVG path across the points of the winning line
           const points = win.coords.map(([reel, row]) => getCellCenterPercent(reel, row));

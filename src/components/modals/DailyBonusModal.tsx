@@ -99,7 +99,7 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
 
           {/* Wheel Frame */}
           <div
-            className="w-full h-full rounded-full border-4 border-gold-bright shadow-[0_0_30px_rgba(245,158,11,0.4)] overflow-hidden relative"
+            className="w-full h-full rounded-full border-4 border-yellow-400 shadow-[0_0_35px_rgba(245,158,11,0.6)] overflow-hidden relative bg-black"
             style={{
               transform: `rotate(${rotationDegrees}deg)`,
               transition: isSpinning
@@ -107,31 +107,68 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
                 : 'none',
             }}
           >
-            {WHEEL_SLICES.map((slice, idx) => {
-              const rotateAngle = idx * 45;
-              return (
-                <div
-                  key={idx}
-                  className="absolute inset-0 flex items-start justify-center origin-center"
-                  style={{ transform: `rotate(${rotateAngle}deg)` }}
-                >
-                  {/* Slice wedge */}
-                  <div
-                    className="w-0 h-0 border-l-[58px] sm:border-l-[66px] border-l-transparent border-r-[58px] sm:border-r-[66px] border-r-transparent border-t-[128px] sm:border-t-[144px]"
-                    style={{ borderTopColor: slice.color }}
-                  />
-                  {/* Slice label */}
-                  <span className="absolute top-4 sm:top-5 text-[11px] sm:text-xs font-black text-white uppercase tracking-wider drop-shadow-md">
-                    {slice.label}
-                  </span>
-                </div>
-              );
-            })}
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <defs>
+                <filter id="wheelShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#000" floodOpacity="0.8" />
+                </filter>
+              </defs>
+              {WHEEL_SLICES.map((slice, idx) => {
+                const startDeg = idx * 45 - 90; // Start at top
+                const endDeg = (idx + 1) * 45 - 90;
+                const midDeg = (idx + 0.5) * 45; // 0..360 for rotation transform
+                const rad0 = (startDeg * Math.PI) / 180;
+                const rad1 = (endDeg * Math.PI) / 180;
+                const R = 98;
+                const x0 = 100 + R * Math.cos(rad0);
+                const y0 = 100 + R * Math.sin(rad0);
+                const x1 = 100 + R * Math.cos(rad1);
+                const y1 = 100 + R * Math.sin(rad1);
+                const d = `M 100 100 L ${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1} Z`;
+
+                return (
+                  <g key={idx}>
+                    {/* Colored Slice Wedge */}
+                    <path d={d} fill={slice.color} stroke="#1C0A00" strokeWidth="1.2" />
+
+                    {/* Radially Oriented Text Label */}
+                    <g transform={`rotate(${midDeg}, 100, 100)`}>
+                      <text
+                        x="100"
+                        y="34"
+                        textAnchor="middle"
+                        fill="#FFFFFF"
+                        stroke="#000000"
+                        strokeWidth="1.2"
+                        paintOrder="stroke fill"
+                        fontSize="10"
+                        fontWeight="900"
+                        fontFamily="monospace"
+                        filter="url(#wheelShadow)"
+                        letterSpacing="0.5"
+                      >
+                        {slice.label}
+                      </text>
+                    </g>
+
+                    {/* Gold Rim Pin at Sector Border */}
+                    <circle
+                      cx={100 + 94 * Math.cos(rad0)}
+                      cy={100 + 94 * Math.sin(rad0)}
+                      r="2.5"
+                      fill="#FEF08A"
+                      stroke="#451A03"
+                      strokeWidth="0.8"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
           </div>
 
           {/* Center Hub */}
-          <div className="absolute z-20 w-14 h-14 rounded-full bg-gradient-to-tr from-amber-600 via-gold-bright to-yellow-300 border-2 border-white shadow-[0_0_15px_rgba(0,0,0,0.8)] flex items-center justify-center">
-            <Gift className="w-6 h-6 text-casino-950" />
+          <div className="absolute z-20 w-14 h-14 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-700 border-2 border-white shadow-[0_0_20px_rgba(0,0,0,0.9)] flex items-center justify-center">
+            <Gift className="w-6 h-6 text-amber-950" />
           </div>
         </div>
 

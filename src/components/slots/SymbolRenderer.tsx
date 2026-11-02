@@ -697,6 +697,364 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           </svg>
         );
 
+      // =========================================================================
+      // --- TIMBERLAND CRITTERS SYMBOLS ---
+      // =========================================================================
+
+      case 'BEAR':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="bearPlaque" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#78350F" />
+                <stop offset="50%" stopColor="#451A03" />
+                <stop offset="100%" stopColor="#1C0A00" />
+              </linearGradient>
+              <linearGradient id="bearFur" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#B45309" />
+                <stop offset="50%" stopColor="#78350F" />
+                <stop offset="100%" stopColor="#451A03" />
+              </linearGradient>
+              <linearGradient id="wildBanner" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#F59E0B" />
+                <stop offset="50%" stopColor="#FEF08A" />
+                <stop offset="100%" stopColor="#D97706" />
+              </linearGradient>
+            </defs>
+            {/* Wooden Plaque Frame */}
+            <rect x="10" y="8" width="80" height="78" rx="16" fill="url(#bearPlaque)" stroke="#F59E0B" strokeWidth="2.5" />
+            <rect x="14" y="12" width="72" height="70" rx="12" fill="none" stroke="#92400E" strokeWidth="1.5" strokeDasharray="4 2" />
+            {/* Bear Ears */}
+            <circle cx="28" cy="24" r="10" fill="#78350F" stroke="#F59E0B" strokeWidth="1.5" />
+            <circle cx="28" cy="24" r="5" fill="#FDE68A" />
+            <circle cx="72" cy="24" r="10" fill="#78350F" stroke="#F59E0B" strokeWidth="1.5" />
+            <circle cx="72" cy="24" r="5" fill="#FDE68A" />
+            {/* Bear Head & Snout */}
+            <ellipse cx="50" cy="42" rx="28" ry="24" fill="url(#bearFur)" />
+            <ellipse cx="50" cy="50" rx="16" ry="12" fill="#FDE68A" />
+            <polygon points="50,44 43,40 57,40" fill="#1C0A00" />
+            {/* Roaring Mouth & Fangs */}
+            <path d="M43 51 Q50 60 57 51 Z" fill="#991B1B" stroke="#451A03" strokeWidth="1" />
+            <polygon points="45,51 46,55 48,51" fill="#FFF" />
+            <polygon points="52,51 54,55 55,51" fill="#FFF" />
+            {/* Glowing Golden Eyes */}
+            <circle cx="38" cy="38" r="4.5" fill="#FEF08A" stroke="#451A03" strokeWidth="1" />
+            <circle cx="39" cy="38" r="2" fill="#1C0A00" />
+            <circle cx="62" cy="38" r="4.5" fill="#FEF08A" stroke="#451A03" strokeWidth="1" />
+            <circle cx="61" cy="38" r="2" fill="#1C0A00" />
+            {/* Golden Claw Scratch Marks */}
+            <path d="M15 15 L22 30 M22 14 L29 28 M29 14 L35 27" stroke="#FEF08A" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
+            {/* Golden WILD Ribbon */}
+            <rect x="18" y="68" width="64" height="20" rx="6" fill="url(#wildBanner)" stroke="#FFF" strokeWidth="1.5" />
+            <text x="50" y="83" textAnchor="middle" fill="#451A03" fontSize="13" fontWeight="900" fontFamily="sans-serif" letterSpacing="2">
+              WILD
+            </text>
+          </svg>
+        );
+
+      case 'OWL':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#1E3A8A" />
+              </linearGradient>
+              <linearGradient id="moonGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FEF08A" />
+                <stop offset="100%" stopColor="#F59E0B" />
+              </linearGradient>
+            </defs>
+            {/* Night Sky Circle */}
+            <circle cx="50" cy="45" r="38" fill="url(#nightSky)" stroke="#60A5FA" strokeWidth="2.5" />
+            {/* Crescent Moon */}
+            <path d="M68 20 A22 22 0 1 1 54 52 A26 26 0 1 0 68 20 Z" fill="url(#moonGold)" opacity="0.9" />
+            {/* Stars */}
+            <circle cx="28" cy="22" r="1.5" fill="#FFF" />
+            <circle cx="36" cy="18" r="1.2" fill="#FEF08A" />
+            <circle cx="72" cy="38" r="1.5" fill="#FFF" />
+            {/* Owl Body & Horn Feathers */}
+            <polygon points="34,22 42,32 30,32" fill="#78350F" />
+            <polygon points="66,22 58,32 70,32" fill="#78350F" />
+            <ellipse cx="50" cy="48" rx="24" ry="22" fill="#92400E" stroke="#B45309" strokeWidth="1" />
+            {/* Big Luminous Eyes */}
+            <circle cx="41" cy="42" r="10" fill="#FEF08A" stroke="#451A03" strokeWidth="2" />
+            <circle cx="41" cy="42" r="5" fill="#0F172A" />
+            <circle cx="43" cy="40" r="1.5" fill="#FFF" />
+            <circle cx="59" cy="42" r="10" fill="#FEF08A" stroke="#451A03" strokeWidth="2" />
+            <circle cx="59" cy="42" r="5" fill="#0F172A" />
+            <circle cx="61" cy="40" r="1.5" fill="#FFF" />
+            {/* Beak & Chest Scallop */}
+            <polygon points="50,47 46,55 54,55" fill="#F59E0B" stroke="#B45309" strokeWidth="0.8" />
+            <path d="M42 58 Q50 63 58 58" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
+            <path d="M44 63 Q50 68 56 63" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
+            {/* SCATTER Pill */}
+            <rect x="14" y="74" width="72" height="18" rx="6" fill="#1E3A8A" stroke="#60A5FA" strokeWidth="1.5" />
+            <text x="50" y="87" textAnchor="middle" fill="#93C5FD" fontSize="10.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.5">
+              SCATTER
+            </text>
+          </svg>
+        );
+
+      case 'ACORN':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="acornGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="30%" stopColor="#FBBF24" />
+                <stop offset="70%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#78350F" />
+              </linearGradient>
+              <linearGradient id="acornCap" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#92400E" />
+                <stop offset="100%" stopColor="#451A03" />
+              </linearGradient>
+            </defs>
+            {/* Green Oak Leaves Behind */}
+            <path d="M25 35 Q10 20 22 8 Q35 15 36 28 Z" fill="#15803D" stroke="#4ADE80" strokeWidth="1" />
+            <path d="M75 35 Q90 20 78 8 Q65 15 64 28 Z" fill="#15803D" stroke="#4ADE80" strokeWidth="1" />
+            {/* Stem */}
+            <path d="M50 20 Q48 10 44 8" fill="none" stroke="#78350F" strokeWidth="4" strokeLinecap="round" />
+            {/* Acorn Body (Golden Nut) */}
+            <path d="M30 38 Q24 64 50 86 Q76 64 70 38 Z" fill="url(#acornGold)" stroke="#FEF08A" strokeWidth="2.5" />
+            {/* Acorn Cap with Texture */}
+            <path d="M26 38 Q50 24 74 38 Q74 44 70 46 Q50 38 30 46 Q26 44 26 38 Z" fill="url(#acornCap)" stroke="#FEF08A" strokeWidth="1.5" />
+            <circle cx="38" cy="34" r="1.5" fill="#FEF08A" />
+            <circle cx="50" cy="32" r="1.5" fill="#FEF08A" />
+            <circle cx="62" cy="34" r="1.5" fill="#FEF08A" />
+            {/* Coin Glow / Sparkles */}
+            <polygon points="50,48 53,56 61,59 53,62 50,70 47,62 39,59 47,56" fill="#FFF" opacity="0.9" />
+            <text x="50" y="80" textAnchor="middle" fill="#451A03" fontSize="8" fontWeight="900" fontFamily="sans-serif">
+              CASH
+            </text>
+          </svg>
+        );
+
+      case 'WOLF':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="wolfBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#082F49" />
+                <stop offset="100%" stopColor="#0C4A6E" />
+              </linearGradient>
+              <linearGradient id="wolfSilver" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#F8FAFC" />
+                <stop offset="50%" stopColor="#CBD5E1" />
+                <stop offset="100%" stopColor="#64748B" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="42" fill="url(#wolfBg)" stroke="#38BDF8" strokeWidth="2.5" />
+            {/* Cyan Moon in background */}
+            <circle cx="70" cy="28" r="12" fill="#BAE6FD" opacity="0.7" />
+            {/* Howling Wolf Silhouette & Silver Highlights */}
+            <path
+              d="M32 78 L35 62 L42 54 L38 38 L48 45 L62 25 L65 35 L60 48 L70 56 L66 78 Z"
+              fill="url(#wolfSilver)"
+              stroke="#FFF"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            {/* Piercing Cyan Eye */}
+            <circle cx="54" cy="40" r="2.5" fill="#38BDF8" stroke="#082F49" strokeWidth="0.8" />
+            <path d="M44 56 Q52 64 62 60" fill="none" stroke="#475569" strokeWidth="1.5" />
+          </svg>
+        );
+
+      case 'FOX':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="foxOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FB923C" />
+                <stop offset="50%" stopColor="#EA580C" />
+                <stop offset="100%" stopColor="#9A3412" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="42" fill="#431407" stroke="#F97316" strokeWidth="2.5" />
+            {/* Fox Ears */}
+            <polygon points="26,18 42,38 24,42" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1" />
+            <polygon points="28,24 38,36 28,38" fill="#1C1917" />
+            <polygon points="74,18 58,38 76,42" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1" />
+            <polygon points="72,24 62,36 72,38" fill="#1C1917" />
+            {/* Fox Face */}
+            <polygon points="24,42 76,42 50,78" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1.5" />
+            {/* White Cheeks */}
+            <polygon points="24,42 42,56 50,78 30,68" fill="#FFFBEB" />
+            <polygon points="76,42 58,56 50,78 70,68" fill="#FFFBEB" />
+            {/* Black Nose */}
+            <ellipse cx="50" cy="74" rx="4" ry="3" fill="#1C1917" />
+            {/* Fox Eyes */}
+            <polygon points="34,46 42,48 37,52" fill="#1C1917" />
+            <circle cx="37" cy="49" r="1" fill="#FEF08A" />
+            <polygon points="66,46 58,48 63,52" fill="#1C1917" />
+            <circle cx="63" cy="49" r="1" fill="#FEF08A" />
+          </svg>
+        );
+
+      case 'RACCOON':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <circle cx="50" cy="50" r="42" fill="#0F172A" stroke="#94A3B8" strokeWidth="2.5" />
+            {/* Raccoon Ears */}
+            <circle cx="28" cy="26" r="9" fill="#475569" stroke="#E2E8F0" strokeWidth="1.5" />
+            <circle cx="28" cy="26" r="5" fill="#0F172A" />
+            <circle cx="72" cy="26" r="9" fill="#475569" stroke="#E2E8F0" strokeWidth="1.5" />
+            <circle cx="72" cy="26" r="5" fill="#0F172A" />
+            {/* Head Face */}
+            <ellipse cx="50" cy="50" rx="28" ry="24" fill="#94A3B8" stroke="#E2E8F0" strokeWidth="1" />
+            {/* Black Bandit Mask */}
+            <path d="M25 46 Q36 38 50 44 Q64 38 75 46 Q70 58 50 56 Q30 58 25 46 Z" fill="#0F172A" />
+            {/* White Eyes in Mask */}
+            <circle cx="38" cy="48" r="4.5" fill="#FFF" />
+            <circle cx="38" cy="48" r="2.5" fill="#0F172A" />
+            <circle cx="62" cy="48" r="4.5" fill="#FFF" />
+            <circle cx="62" cy="48" r="2.5" fill="#0F172A" />
+            {/* White Snout & Nose */}
+            <ellipse cx="50" cy="62" rx="10" ry="7" fill="#F8FAFC" />
+            <polygon points="50,58 46,62 54,62" fill="#0F172A" />
+            {/* Whisker details */}
+            <line x1="28" y1="62" x2="18" y2="60" stroke="#FFF" strokeWidth="1" />
+            <line x1="28" y1="65" x2="18" y2="66" stroke="#FFF" strokeWidth="1" />
+            <line x1="72" y1="62" x2="82" y2="60" stroke="#FFF" strokeWidth="1" />
+            <line x1="72" y1="65" x2="82" y2="66" stroke="#FFF" strokeWidth="1" />
+          </svg>
+        );
+
+      case 'SQUIRREL':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <circle cx="50" cy="50" r="42" fill="#431407" stroke="#EA580C" strokeWidth="2.5" />
+            {/* Giant Bushy Tail curving up */}
+            <path
+              d="M48 78 Q22 72 20 44 Q18 20 40 18 Q50 16 46 32 Q42 46 54 62 Z"
+              fill="#EA580C"
+              stroke="#FDBA74"
+              strokeWidth="2"
+            />
+            {/* Squirrel Body & Head */}
+            <ellipse cx="62" cy="56" rx="14" ry="18" fill="#C2410C" />
+            <circle cx="64" cy="38" r="12" fill="#EA580C" stroke="#FDBA74" strokeWidth="1.5" />
+            {/* Ear */}
+            <polygon points="62,28 68,18 70,28" fill="#C2410C" />
+            {/* Eye */}
+            <circle cx="68" cy="36" r="3" fill="#0F172A" />
+            <circle cx="69" cy="35" r="1" fill="#FFF" />
+            {/* Acorn in Paws */}
+            <circle cx="56" cy="56" r="6" fill="#F59E0B" stroke="#78350F" strokeWidth="1" />
+          </svg>
+        );
+
+      case 'PINECONE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Pine Needles */}
+            <path d="M50 20 L30 10 M50 20 L70 10 M50 20 L24 22 M50 20 L76 22" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Pinecone Scales */}
+            <ellipse cx="50" cy="56" rx="24" ry="32" fill="#78350F" stroke="#F59E0B" strokeWidth="2" />
+            <path d="M38 36 Q50 44 62 36" stroke="#FEF08A" strokeWidth="2" fill="none" />
+            <path d="M32 48 Q50 58 68 48" stroke="#FEF08A" strokeWidth="2" fill="none" />
+            <path d="M34 60 Q50 70 66 60" stroke="#FEF08A" strokeWidth="2" fill="none" />
+            <path d="M40 72 Q50 80 60 72" stroke="#FEF08A" strokeWidth="2" fill="none" />
+          </svg>
+        );
+
+      case 'BERRIES':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Green Leaves */}
+            <path d="M50 36 Q30 20 40 10 Q60 20 50 36 Z" fill="#15803D" stroke="#86EFAC" strokeWidth="1.5" />
+            <path d="M50 36 Q70 20 60 10 Q40 20 50 36 Z" fill="#15803D" stroke="#86EFAC" strokeWidth="1.5" />
+            {/* Berries Cluster */}
+            <circle cx="36" cy="54" r="14" fill="#2563EB" stroke="#93C5FD" strokeWidth="2" />
+            <circle cx="33" cy="50" r="3" fill="#93C5FD" opacity="0.8" />
+            <circle cx="64" cy="54" r="14" fill="#E11D48" stroke="#FDA4AF" strokeWidth="2" />
+            <circle cx="61" cy="50" r="3" fill="#FDA4AF" opacity="0.8" />
+            <circle cx="50" cy="68" r="15" fill="#7C3AED" stroke="#C4B5FD" strokeWidth="2" />
+            <circle cx="47" cy="64" r="3.5" fill="#C4B5FD" opacity="0.8" />
+          </svg>
+        );
+
+      case 'MUSHROOM':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Bioluminescent Spores */}
+            <circle cx="24" cy="30" r="2" fill="#FEF08A" opacity="0.8" />
+            <circle cx="76" cy="32" r="2" fill="#FEF08A" opacity="0.8" />
+            <circle cx="20" cy="58" r="2.5" fill="#FEF08A" opacity="0.8" />
+            <circle cx="80" cy="56" r="2.5" fill="#FEF08A" opacity="0.8" />
+            {/* Mushroom Stem */}
+            <path d="M42 48 L40 82 Q50 86 60 82 L58 48 Z" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2" />
+            {/* Red Cap */}
+            <path d="M16 52 Q50 14 84 52 Q50 58 16 52 Z" fill="#DC2626" stroke="#FEF08A" strokeWidth="2.5" />
+            {/* White Polka Dots */}
+            <circle cx="34" cy="38" r="5" fill="#FFF" />
+            <circle cx="50" cy="28" r="6" fill="#FFF" />
+            <circle cx="66" cy="38" r="5" fill="#FFF" />
+            <circle cx="48" cy="46" r="3.5" fill="#FFF" />
+          </svg>
+        );
+
+      case 'WOOD_A':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="woodAGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#10B981" />
+                <stop offset="50%" stopColor="#059669" />
+                <stop offset="100%" stopColor="#047857" />
+              </linearGradient>
+            </defs>
+            <path d="M50 14 L20 84 L38 84 L44 68 L56 68 L62 84 L80 84 Z M50 36 L54 54 L46 54 Z" fill="url(#woodAGrad)" stroke="#A7F3D0" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* Ivy vine leaf */}
+            <circle cx="28" cy="72" r="3.5" fill="#4ADE80" />
+            <circle cx="72" cy="72" r="3.5" fill="#4ADE80" />
+          </svg>
+        );
+
+      case 'WOOD_K':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="woodKGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#F59E0B" />
+                <stop offset="50%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#92400E" />
+              </linearGradient>
+            </defs>
+            <path d="M26 16 L42 16 L42 46 L64 16 L84 16 L56 50 L84 84 L64 84 L42 56 L42 84 L26 84 Z" fill="url(#woodKGrad)" stroke="#FDE68A" strokeWidth="2.5" strokeLinejoin="round" />
+          </svg>
+        );
+
+      case 'WOOD_Q':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="woodQGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#8B5CF6" />
+                <stop offset="50%" stopColor="#7C3AED" />
+                <stop offset="100%" stopColor="#5B21B6" />
+              </linearGradient>
+            </defs>
+            <path d="M50 16 Q28 16 28 48 Q28 80 50 80 Q62 80 70 72 L76 84 L84 78 L74 64 Q72 48 72 48 Q72 16 50 16 Z M50 32 Q58 32 58 48 Q58 64 50 64 Q42 64 42 48 Q42 32 50 32 Z" fill="url(#woodQGrad)" stroke="#DDD6FE" strokeWidth="2.5" strokeLinejoin="round" />
+          </svg>
+        );
+
+      case 'WOOD_J':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="woodJGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#06B6D4" />
+                <stop offset="50%" stopColor="#0891B2" />
+                <stop offset="100%" stopColor="#0E7490" />
+              </linearGradient>
+            </defs>
+            <path d="M42 16 L76 16 L76 30 L60 30 L60 64 C60 76, 52 84, 38 84 C26 84, 22 76, 22 66 L38 66 C38 72, 40 72, 42 72 C44 72, 44 68, 44 62 L44 30 L42 30 Z" fill="url(#woodJGrad)" stroke="#A5F3FC" strokeWidth="2.5" strokeLinejoin="round" />
+          </svg>
+        );
+
       default:
         return null;
     }

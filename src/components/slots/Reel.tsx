@@ -4,36 +4,23 @@ import { SymbolRenderer } from './SymbolRenderer';
 
 interface ReelProps {
   reelIndex: number;
-  symbols: SymbolId[]; // 4 landing symbols [row 0, row 1, row 2, row 3]
+  symbols: SymbolId[]; // landing symbols [row 0, row 1, ...]
   isSpinning: boolean;
   isAnticipating?: boolean;
   winningRows?: Set<number>;
   scatterRows?: Set<number>;
   onStop?: (reelIndex: number) => void;
+  rowCount?: number;
+  gameId?: string;
 }
 
-// 4 distinct symbols doubled to form a lean, high-framerate 8-symbol infinite roll strip
-const ROLLING_STRIP_A: SymbolId[] = [
-  'WILD',
-  'SEVEN',
-  'DIAMOND',
-  'BELL',
-  'WILD',
-  'SEVEN',
-  'DIAMOND',
-  'BELL',
-];
+// 24K Vault rolling filler strips
+const VAULT_STRIP_A: SymbolId[] = ['WILD', 'SEVEN', 'DIAMOND', 'BELL', 'WILD', 'SEVEN', 'DIAMOND', 'BELL'];
+const VAULT_STRIP_B: SymbolId[] = ['SEVEN', 'COIN', 'KING', 'ACE', 'SEVEN', 'COIN', 'KING', 'ACE'];
 
-const ROLLING_STRIP_B: SymbolId[] = [
-  'SEVEN',
-  'COIN',
-  'KING',
-  'ACE',
-  'SEVEN',
-  'COIN',
-  'KING',
-  'ACE',
-];
+// Timberland Critters rolling filler strips
+const TIMBER_STRIP_A: SymbolId[] = ['BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A', 'BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A'];
+const TIMBER_STRIP_B: SymbolId[] = ['OWL', 'ACORN', 'FOX', 'WOOD_K', 'OWL', 'ACORN', 'FOX', 'WOOD_K'];
 
 export const Reel: React.FC<ReelProps> = ({
   reelIndex,
@@ -43,6 +30,8 @@ export const Reel: React.FC<ReelProps> = ({
   winningRows = new Set(),
   scatterRows = new Set(),
   onStop,
+  rowCount = 4,
+  gameId = 'vault-24k',
 }) => {
   const [hasSettled, setHasSettled] = useState(false);
   const wasSpinningRef = useRef(isSpinning);
@@ -52,8 +41,11 @@ export const Reel: React.FC<ReelProps> = ({
     onStopRef.current = onStop;
   });
 
-  // Stagger slightly different filler strips across adjacent reels
-  const rollingStrip = reelIndex % 2 === 0 ? ROLLING_STRIP_A : ROLLING_STRIP_B;
+  // Stagger slightly different filler strips across adjacent reels depending on active game
+  const isTimber = gameId === 'timber-critters';
+  const rollingStrip = isTimber
+    ? (reelIndex % 2 === 0 ? TIMBER_STRIP_A : TIMBER_STRIP_B)
+    : (reelIndex % 2 === 0 ? VAULT_STRIP_A : VAULT_STRIP_B);
 
   useEffect(() => {
     if (isSpinning) {
@@ -73,9 +65,11 @@ export const Reel: React.FC<ReelProps> = ({
     }
   }, [isSpinning, reelIndex]);
 
+  const activeRowCount = rowCount || symbols.length || 4;
+
   return (
     <div
-      className={`relative flex-1 h-[320px] sm:h-[400px] md:h-[480px] overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
+      className={`relative flex-1 h-full min-h-0 overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
         isAnticipating
           ? 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
           : 'border-white/10'
@@ -101,7 +95,7 @@ export const Reel: React.FC<ReelProps> = ({
       {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
       {isSpinning && (
         <div
-          className="w-full flex flex-col animate-reel-rolling will-change-transform"
+          className="w-full h-full flex flex-col animate-reel-rolling will-change-transform"
           style={{
             animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
           }}
@@ -109,7 +103,8 @@ export const Reel: React.FC<ReelProps> = ({
           {rollingStrip.map((sym, idx) => (
             <div
               key={idx}
-              className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-85"
+              className="w-full flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0 opacity-85"
+              style={{ height: `${100 / activeRowCount}%` }}
             >
               <SymbolRenderer id={sym} />
             </div>
@@ -117,7 +112,7 @@ export const Reel: React.FC<ReelProps> = ({
         </div>
       )}
 
-      {/* 2. Resting / Settling 4-Row Landing Grid */}
+      {/* 2. Resting / Settling Landing Grid */}
       {!isSpinning && (
         <div
           className={`w-full h-full flex flex-col justify-between ${
@@ -131,7 +126,7 @@ export const Reel: React.FC<ReelProps> = ({
             return (
               <div
                 key={rowIdx}
-                className={`h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 transition-all duration-200 ${
+                className={`flex-1 min-h-0 w-full flex items-center justify-center p-0.5 sm:p-1 transition-all duration-200 ${
                   isWinning
                     ? 'bg-gold-500/25 ring-2 ring-gold-bright shadow-[0_0_25px_rgba(251,191,36,0.85)] z-10 animate-win-symbol-juice'
                     : isScatterHighlight

@@ -23,9 +23,11 @@ interface ControlsBarProps {
   onAutoSpinStart: (count: number) => void;
   onAutoSpinStop: () => void;
   onOpenGamble?: () => void;
+  availableLines?: number[];
+  maxLines?: number;
 }
 
-const AVAILABLE_LINES = [1, 5, 10, 20, 30, 40];
+const DEFAULT_LINES = [1, 5, 10, 20, 30, 40];
 const BET_PER_LINE_STEPS = [1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000];
 
 export const ControlsBar: React.FC<ControlsBarProps> = ({
@@ -48,16 +50,18 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   onAutoSpinStart,
   onAutoSpinStop,
   onOpenGamble,
+  availableLines = DEFAULT_LINES,
+  maxLines = 40,
 }) => {
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
   const handleLinesStep = (direction: 'up' | 'down') => {
     soundManager.playChipClick();
-    const curIdx = AVAILABLE_LINES.indexOf(selectedLines);
-    if (direction === 'up' && curIdx < AVAILABLE_LINES.length - 1) {
-      onLinesChange(AVAILABLE_LINES[curIdx + 1]);
+    const curIdx = availableLines.indexOf(selectedLines);
+    if (direction === 'up' && curIdx < availableLines.length - 1) {
+      onLinesChange(availableLines[curIdx + 1]);
     } else if (direction === 'down' && curIdx > 0) {
-      onLinesChange(AVAILABLE_LINES[curIdx - 1]);
+      onLinesChange(availableLines[curIdx - 1]);
     }
   };
 
@@ -139,7 +143,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 </span>
                 <button
                   onClick={() => handleLinesStep('up')}
-                  disabled={isSpinning || isFreeSpins || selectedLines >= 40}
+                  disabled={isSpinning || isFreeSpins || selectedLines >= maxLines}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
                   <Plus className="w-3 h-3 text-cyan-300" />
@@ -202,7 +206,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {/* Animated Rolling Win Display */}
           <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
 
-          {/* Themed Oregon Lottery Video Poker Style Double-Up Gamble Button (Always present to prevent layout shift) */}
+          {/* Themed Video Poker Style Double-Up Gamble Button (Always present to prevent layout shift) */}
           {onOpenGamble && (
             <button
               onClick={() => {
@@ -219,7 +223,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               }`}
               title={
                 winAmount > 0 && !isSpinning && !isFreeSpins
-                  ? 'Risk your win to double it in Oregon Lottery Video Poker'
+                  ? 'Risk your win to double it in Video Poker Double-Up'
                   : 'Win credits on any spin to activate Gamble 2X'
               }
             >

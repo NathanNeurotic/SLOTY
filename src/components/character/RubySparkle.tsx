@@ -22,7 +22,7 @@ const IDLE_QUOTES = [
   "Tap my sparkly dress for a lucky coin shower!",
   "Ooh, these reels are runnin' extra hot today!",
   "Fortune favors the fun, darling!",
-  "Oregon's brightest jackpot is waiting for you!",
+  "America's brightest jackpot is waiting for you!",
 ];
 
 const SPIN_QUOTES = [

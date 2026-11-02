@@ -1,6 +1,6 @@
 import type { SlotSymbol, SymbolId } from './types';
 
-export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
+export const SYMBOLS: Record<string, SlotSymbol> = {
   WILD: {
     id: 'WILD',
     name: '24K Liquid Gold Crown',
