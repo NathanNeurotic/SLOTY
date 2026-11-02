@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
+import { RollingWinDisplay } from './RollingWinDisplay';
 
 interface ControlsBarProps {
   balance: number;
@@ -198,21 +199,8 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 
         {/* Right: Win Payout, Gamble 2X, and Auto-Spin */}
         <div className="flex items-center space-x-2">
-          {/* Win Display */}
-          <div className="flex flex-col items-center justify-center bg-gradient-to-b from-casino-950 to-casino-900 px-3 py-1 rounded-xl border border-gold-bright/40 min-w-[110px] sm:min-w-[130px] shadow-[inset_0_0_12px_rgba(245,158,11,0.2)]">
-            <span className="text-[8px] sm:text-[9px] uppercase font-extrabold tracking-widest text-gold-bright">
-              {isFreeSpins ? 'FREE SPIN WIN' : 'WIN PAYOUT'}
-            </span>
-            <span
-              className={`text-base sm:text-lg font-black ${
-                winAmount > 0
-                  ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_10px_rgba(251,191,36,0.9)]'
-                  : 'text-slate-500'
-              }`}
-            >
-              {winAmount > 0 ? `+${winAmount.toLocaleString()}` : '0'}
-            </span>
-          </div>
+          {/* Animated Rolling Win Display */}
+          <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
 
           {/* Themed Oregon Lottery Video Poker Style Double-Up Gamble Button */}
           {winAmount > 0 && !isSpinning && !isFreeSpins && onOpenGamble && (

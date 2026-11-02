@@ -3,6 +3,7 @@ import type { SpinResult, SymbolGrid } from '../../engine/types';
 import { Reel } from './Reel';
 import { PaylineOverlay } from './PaylineOverlay';
 import { PaylineSideTabs } from './PaylineSideTabs';
+import { FloatingWins } from './FloatingWins';
 import { soundManager } from '../../audio/soundManager';
 import { ChevronLeft, ChevronRight, Award } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
@@ -229,11 +230,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
         <div className="flex items-center justify-between h-10 sm:h-12 px-2 border-b border-white/10 mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-gold-bright shadow-[0_0_8px_#F59E0B] animate-pulse"
-                style={{ animationDelay: `${i * 150}ms` }}
+                className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
+                  activeWin
+                    ? 'bg-amber-300 shadow-[0_0_12px_#FCD34D] animate-ping'
+                    : isAnyReelSpinning
+                    ? 'bg-gold-bright shadow-[0_0_10px_#F59E0B] animate-pulse'
+                    : 'bg-gold-bright shadow-[0_0_6px_#F59E0B]'
+                }`}
+                style={{
+                  animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
+                  animationDelay: `${i * (isAnyReelSpinning ? 70 : 150)}ms`,
+                }}
               />
             ))}
           </div>
@@ -281,11 +291,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
 
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-neon-cyan shadow-[0_0_8px_#00F0FF] animate-pulse"
-                style={{ animationDelay: `${(4 - i) * 150}ms` }}
+                className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
+                  activeWin
+                    ? 'bg-neon-cyan shadow-[0_0_12px_#00F0FF] animate-ping'
+                    : isAnyReelSpinning
+                    ? 'bg-neon-cyan shadow-[0_0_10px_#00F0FF] animate-pulse'
+                    : 'bg-neon-cyan shadow-[0_0_6px_#00F0FF]'
+                }`}
+                style={{
+                  animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
+                  animationDelay: `${(5 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
+                }}
               />
             ))}
           </div>
@@ -316,6 +335,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
               previewLineIndex={hoveredLineIndex}
             />
+
+            {/* Floating Win Badges on Active Winning Paylines */}
+            {!isAnyReelSpinning && activeWin && (
+              <FloatingWins activeWin={activeWin} />
+            )}
 
             {/* 5 Reels */}
             {[0, 1, 2, 3, 4].map((reelIdx) => (

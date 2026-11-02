@@ -99,7 +99,12 @@ export const Reel: React.FC<ReelProps> = ({
     >
       {/* Anticipation border glow */}
       {isAnticipating && (
-        <div className="absolute inset-0 border-2 border-neon-cyan animate-pulse pointer-events-none z-30" />
+        <div className="absolute inset-0 border-2 border-neon-cyan bg-cyan-500/10 animate-pulse pointer-events-none z-30 shadow-[inset_0_0_25px_rgba(0,240,255,0.4)]" />
+      )}
+
+      {/* Reel Stop Landing Impact Shockwave Flare */}
+      {hasSettled && (
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gold-bright/70 via-amber-400/30 to-transparent pointer-events-none z-30 animate-landing-flare" />
       )}
 
       {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
@@ -135,9 +140,9 @@ export const Reel: React.FC<ReelProps> = ({
             return (
               <div
                 key={rowIdx}
-                className={`h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 transition-opacity duration-200 ${
+                className={`h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 transition-all duration-200 ${
                   isWinning
-                    ? 'bg-gold-500/20 ring-2 ring-gold-bright shadow-[0_0_20px_rgba(251,191,36,0.6)] z-10 scale-105'
+                    ? 'bg-gold-500/25 ring-2 ring-gold-bright shadow-[0_0_25px_rgba(251,191,36,0.85)] z-10 animate-win-symbol-juice'
                     : isScatterHighlight
                     ? 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.6)] z-10 scale-105'
                     : winningRows.size > 0

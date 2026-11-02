@@ -14,8 +14,10 @@ import {
 } from './engine/evaluator';
 import { soundManager } from './audio/soundManager';
 import { HeaderBar } from './components/hud/HeaderBar';
+import { JackpotMarquee } from './components/hud/JackpotMarquee';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
+import { launchCoinFountain } from './fx/celebrations';
 import { WinCelebrationModal } from './components/modals/WinCelebrationModal';
 import { FreeSpinsModal } from './components/modals/FreeSpinsModal';
 import { DailyBonusModal } from './components/modals/DailyBonusModal';
@@ -233,6 +235,9 @@ export const App: React.FC = () => {
         setCelebration({ tier: winTier, amount: totalPayout });
       } else {
         soundManager.playWinChime(winTier === 'REGULAR' ? 3 : 1);
+        if (totalPayout >= totalBet * 2) {
+          launchCoinFountain('big');
+        }
       }
     }
 
@@ -383,7 +388,10 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-1 sm:py-4 w-full">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-1 sm:py-3 w-full">
+        {/* 4-Tier Vegas & Oregon Lottery Progressive Jackpots */}
+        <JackpotMarquee totalBet={totalBet} />
+
         <SlotMachine
           currentGrid={currentGrid}
           isSpinning={isSpinning}

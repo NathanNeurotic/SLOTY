@@ -32,10 +32,19 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
       className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
     >
       <defs>
-        <filter id="lineNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <filter id="lineNeonGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <filter id="superNeonGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3.5" result="blur1" />
+          <feGaussianBlur stdDeviation="1.5" result="blur2" />
+          <feMerge>
+            <feMergeNode in="blur1" />
+            <feMergeNode in="blur2" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
@@ -107,43 +116,82 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
           return (
             <g key={win.lineIndex} className="transition-opacity duration-300">
-              {/* Outer soft glow line */}
+              {/* 1. Deep Neon Ambient Aura */}
               <path
                 d={pathData}
                 fill="none"
                 stroke={color}
-                strokeWidth={isHighlighted ? '2.5' : '1.2'}
-                strokeOpacity={isHighlighted ? 0.9 : 0.25}
+                strokeWidth={isHighlighted ? '4.5' : '1.8'}
+                strokeOpacity={isHighlighted ? 0.75 : 0.2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                filter="url(#superNeonGlow)"
+              />
+
+              {/* 2. Primary Vibrant Laser Beam */}
+              <path
+                d={pathData}
+                fill="none"
+                stroke={color}
+                strokeWidth={isHighlighted ? '2.8' : '1.2'}
+                strokeOpacity={isHighlighted ? 0.95 : 0.3}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 filter="url(#lineNeonGlow)"
               />
 
-              {/* Inner crisp moving stroke */}
+              {/* 3. High-Voltage Traveling Laser Stream */}
+              {isHighlighted && (
+                <path
+                  d={pathData}
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="animate-laser-stream"
+                />
+              )}
+
+              {/* 4. White-Hot Core Laser Thread */}
               <path
                 d={pathData}
                 fill="none"
                 stroke="#FFFFFF"
-                strokeWidth={isHighlighted ? '1' : '0.5'}
+                strokeWidth={isHighlighted ? '0.9' : '0.4'}
                 strokeOpacity={isHighlighted ? 1 : 0.4}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeDasharray={isHighlighted ? '3 1.5' : 'none'}
               />
 
-              {/* Circular node indicators on winning symbols */}
+              {/* 5. Concentric Shockwave Ripples & Glowing Nodes on Symbols */}
               {points.map(([x, y], pIdx) => (
-                <circle
-                  key={pIdx}
-                  cx={x}
-                  cy={y}
-                  r={isHighlighted ? 3 : 1.8}
-                  fill={color}
-                  stroke="#FFF"
-                  strokeWidth="0.8"
-                  filter="url(#lineNeonGlow)"
-                  className={isHighlighted ? 'animate-pulse' : ''}
-                />
+                <g key={pIdx}>
+                  {isHighlighted && (
+                    <circle
+                      cx={x}
+                      cy={y}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="1.2"
+                      className="animate-node-shockwave"
+                    />
+                  )}
+                  {/* Glowing Node Base */}
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={isHighlighted ? 3.4 : 1.8}
+                    fill={color}
+                    stroke="#FFF"
+                    strokeWidth={isHighlighted ? 1 : 0.6}
+                    filter="url(#lineNeonGlow)"
+                  />
+                  {/* White Center Flare Core */}
+                  {isHighlighted && (
+                    <circle cx={x} cy={y} r={1.2} fill="#FFFFFF" />
+                  )}
+                </g>
               ))}
             </g>
           );
