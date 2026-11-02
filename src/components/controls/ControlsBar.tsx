@@ -19,7 +19,7 @@ interface ControlsBarProps {
   onAutoSpinStop: () => void;
 }
 
-const BET_STEPS = [20, 40, 60, 100, 200, 400, 800, 1500, 3000, 6000, 12000, 25000, 50000];
+const BET_STEPS = [20, 40, 60, 100, 200, 400, 1000, 2000, 5000, 10000, 20000, 50000];
 
 export const ControlsBar: React.FC<ControlsBarProps> = ({
   balance,
@@ -102,29 +102,52 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             <Zap className={`w-5 h-5 ${isTurbo ? 'fill-amber-400 animate-pulse' : ''}`} />
           </button>
 
-          {/* Bet Display Box */}
-          <div className="flex flex-col items-center bg-casino-950 px-3 py-1.5 rounded-xl border border-white/10 min-w-[130px] sm:min-w-[150px]">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-              Total Bet (20 Lines)
-            </span>
-            <div className="flex items-center space-x-2 mt-0.5">
-              <button
-                onClick={() => handleBetStep('down')}
-                disabled={isSpinning || isFreeSpins || currentBet <= 20}
-                className="w-7 h-7 rounded-lg bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
-              <span className="text-base sm:text-lg font-black text-amber-300 min-w-[60px] text-center">
+          {/* Lines & Bet Display Box (Oregon Lottery VLT Style) */}
+          <div className="flex items-center space-x-2 bg-casino-950 px-3 py-1.5 rounded-xl border border-white/10">
+            {/* Active Lines badge */}
+            <div className="flex flex-col items-center pr-2 border-r border-white/10">
+              <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
+                Lines
+              </span>
+              <span className="text-sm font-black text-neon-cyan">
+                20
+              </span>
+            </div>
+
+            {/* Bet Per Line with - / + buttons */}
+            <div className="flex flex-col items-center px-1">
+              <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
+                Bet/Line
+              </span>
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <button
+                  onClick={() => handleBetStep('down')}
+                  disabled={isSpinning || isFreeSpins || currentBet <= 20}
+                  className="w-6 h-6 rounded-md bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-sm font-black text-white min-w-[32px] text-center">
+                  {Math.max(1, Math.floor(currentBet / 20)).toLocaleString()}
+                </span>
+                <button
+                  onClick={() => handleBetStep('up')}
+                  disabled={isSpinning || isFreeSpins || currentBet >= maxBet}
+                  className="w-6 h-6 rounded-md bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Total Bet Calculation */}
+            <div className="flex flex-col items-center pl-2 border-l border-white/10 min-w-[70px]">
+              <span className="text-[9px] uppercase font-bold tracking-wider text-gold-bright">
+                Total Bet
+              </span>
+              <span className="text-base font-black text-amber-300">
                 {currentBet.toLocaleString()}
               </span>
-              <button
-                onClick={() => handleBetStep('up')}
-                disabled={isSpinning || isFreeSpins || currentBet >= maxBet}
-                className="w-7 h-7 rounded-lg bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
             </div>
           </div>
 
