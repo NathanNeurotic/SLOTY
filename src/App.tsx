@@ -92,23 +92,47 @@ export const App: React.FC = () => {
   );
   const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
   const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
+  const [hasInteractedAudio, setHasInteractedAudio] = useState(false);
 
   useEffect(() => {
     storage.setItem('sloty_scene', currentSceneId);
   }, [currentSceneId]);
 
+  // Scene switcher: Only runs blast doors on manual user selection
   const handleSelectScene = useCallback(
-    (sceneId: CasinoSceneId) => {
+    (sceneId: CasinoSceneId, withBlastDoors: boolean = true) => {
       if (sceneId === currentSceneId) return;
       const target = CASINO_SCENES[sceneId];
-      setTransitioningScene(target);
-      setIsVaultDoorTransitionOpen(true);
-      setTimeout(() => {
+      if (withBlastDoors) {
+        setTransitioningScene(target);
+        setIsVaultDoorTransitionOpen(true);
+        setTimeout(() => {
+          setCurrentSceneId(sceneId);
+        }, 400);
+      } else {
         setCurrentSceneId(sceneId);
-      }, 650);
+      }
     },
     [currentSceneId]
   );
+
+  // Auto-unlock Web Audio and start background lounge music on user interaction
+  useEffect(() => {
+    const handleFirstGesture = () => {
+      setHasInteractedAudio(true);
+      soundManager.unlockAudio();
+    };
+
+    window.addEventListener('pointerdown', handleFirstGesture, { passive: true });
+    window.addEventListener('keydown', handleFirstGesture, { passive: true });
+    window.addEventListener('click', handleFirstGesture, { passive: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('click', handleFirstGesture);
+    };
+  }, []);
 
   // Initial 5 reels x 4 rows grid (Persisted)
   const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() =>
@@ -241,6 +265,8 @@ export const App: React.FC = () => {
       }));
     }
 
+    setHasInteractedAudio(true);
+    soundManager.unlockAudio();
     soundManager.playSpinStart();
     setIsSpinning(true);
     setWinAmount(0);
@@ -257,10 +283,6 @@ export const App: React.FC = () => {
     // Free spins gives 3x multiplier, Fever Mode gives 2x
     const multiplier = (isFreeSpin ? 3 : 1) * (feverSpinsLeft > 0 ? 2 : 1);
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier);
-
-    if (feverSpinsLeft === 0) {
-      setFeverCharge((c) => Math.min(100, c + 3));
-    }
 
     pendingResultRef.current = evaluated;
     setCurrentGrid(nextGrid);
@@ -285,24 +307,6 @@ export const App: React.FC = () => {
         biggestWin: Math.max(s.biggestWin, totalPayout),
       }));
 
-      if (feverSpinsLeft === 0) {
-        setFeverCharge((c) => {
-          const next = Math.min(100, c + 18);
-          if (next >= 100) {
-            setTimeout(() => {
-              setFeverSpinsLeft(5);
-              setFeverCharge(0);
-              soundManager.playFeverSurge();
-              soundManager.setOverdriveMusic(true);
-              soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
-              handleSelectScene('MINT');
-              launchCoinFountain('jackpot');
-            }, 800);
-          }
-          return next >= 100 ? 100 : next;
-        });
-      }
-
       // Trigger tiered celebrations & voice announcements
       if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN') {
         soundManager.playJackpotSiren();
@@ -323,17 +327,34 @@ export const App: React.FC = () => {
       }
     }
 
-    // Free Spins Triggered
+    // Fever charge progression: +1% on spin, +3% on regular win, +6% on big win (requires ~25-35 spins)
+    if (feverSpinsLeft === 0) {
+      const chargeIncrement = totalPayout > 0 ? (totalPayout >= totalBet * 5 ? 6 : 3) : 1;
+      setFeverCharge((c) => {
+        const next = c + chargeIncrement;
+        if (next >= 100) {
+          setFeverSpinsLeft(5);
+          soundManager.playFeverSurge();
+          soundManager.setOverdriveMusic(true);
+          soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
+          launchCoinFountain('jackpot');
+          return 0;
+        }
+        return next;
+      });
+    }
+
+    // Free Spins Triggered (Smooth backdrop switch, no blast doors interruption)
     if (isFreeSpinsTriggered) {
       soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
-      handleSelectScene('PENTHOUSE');
+      handleSelectScene('PENTHOUSE', false);
       setShowFreeSpinsModal(true);
     }
 
-    // Hold & Spin Cash Respins Triggered
+    // Hold & Spin Cash Respins Triggered (Smooth backdrop switch, no blast doors interruption)
     if (isHoldAndSpinTriggered) {
       soundManager.speakAnnouncer("Fort Knox Cash Link Vault!");
-      handleSelectScene('HEIST');
+      handleSelectScene('HEIST', false);
       setHoldAndSpinInitialCoins(coinCount);
       setShowHoldAndSpinModal(true);
     }
@@ -362,7 +383,6 @@ export const App: React.FC = () => {
         const next = prev - 1;
         if (next === 0) {
           soundManager.setOverdriveMusic(false);
-          handleSelectScene('VAULT');
         }
         return next;
       });
@@ -480,8 +500,26 @@ export const App: React.FC = () => {
       <VaultBlastDoors
         isOpen={isVaultDoorTransitionOpen}
         targetScene={transitioningScene}
-        onTransitionComplete={() => setIsVaultDoorTransitionOpen(false)}
+        onTransitionComplete={() => {
+          setIsVaultDoorTransitionOpen(false);
+          setTransitioningScene(null);
+        }}
       />
+
+      {/* Prominent Audio Unlock Banner for Browsers Requiring Interaction */}
+      {!hasInteractedAudio && (
+        <div
+          onClick={() => {
+            setHasInteractedAudio(true);
+            soundManager.unlockAudio();
+          }}
+          className="w-full bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 text-amber-950 font-black text-center py-1 px-3 text-[11px] sm:text-xs uppercase tracking-widest cursor-pointer shadow-lg animate-pulse z-40 flex items-center justify-center space-x-2 select-none border-b border-yellow-200"
+        >
+          <span>🔊</span>
+          <span>CLICK ANYWHERE TO UNMUTE VIP CASINO LOUNGE MUSIC &amp; AUDIO</span>
+          <span>🔊</span>
+        </div>
+      )}
 
       {/* Header Bar */}
       <HeaderBar

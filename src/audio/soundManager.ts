@@ -1,22 +1,27 @@
+import { storage } from '../utils/storage';
+
 class SoundManager {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
   private isMusicMutedState: boolean = false;
-  private sfxVolume: number = 0.7;
-  private musicVolume: number = 0.35;
+  private sfxVolume: number = 0.85;
+  private musicVolume: number = 0.70;
 
   // Background Music Sequencer State
   private isMusicPlayingState: boolean = false;
   private musicStep: number = 0;
   private musicTimerId: number | null = null;
-  private musicTempo: number = 114; // BPM for Vegas Lounge Funk
+  private musicTempo: number = 116; // BPM for Vegas VIP Lounge Funk
   private isOverdriveMusic: boolean = false;
 
   constructor() {
-    // AudioContext will be initialized on first user gesture
+    this.isMuted = storage.getBoolean('sloty_muted', false);
+    this.isMusicMutedState = !storage.getBoolean('sloty_music_enabled', true);
+    this.sfxVolume = storage.getNumber('sloty_sfx_volume', 85) / 100;
+    this.musicVolume = storage.getNumber('sloty_music_volume', 70) / 100;
   }
 
-  private initContext() {
+  public initContext() {
     if (!this.ctx) {
       const AudioCtx =
         window.AudioContext ||
@@ -30,12 +35,25 @@ class SoundManager {
     }
   }
 
+  // Auto-unlock audio and start background music on first user gesture
+  public unlockAudio() {
+    this.initContext();
+    if (this.ctx && this.ctx.state === 'running' && !this.isMuted && !this.isMusicMutedState) {
+      if (!this.isMusicPlayingState) {
+        this.startMusic(this.isOverdriveMusic);
+      }
+    }
+  }
+
   // --- Volume & Mute Controls ---
 
   public setMuted(muted: boolean) {
     this.isMuted = muted;
+    storage.setItem('sloty_muted', muted ? 'true' : 'false');
     if (muted && this.isMusicPlayingState) {
       this.stopMusic();
+    } else if (!muted && !this.isMusicMutedState) {
+      this.startMusic(this.isOverdriveMusic);
     }
   }
 
@@ -45,10 +63,11 @@ class SoundManager {
 
   public setMusicMuted(muted: boolean) {
     this.isMusicMutedState = muted;
+    storage.setItem('sloty_music_enabled', muted ? 'false' : 'true');
     if (muted) {
       this.stopMusic();
     } else {
-      this.startMusic();
+      this.startMusic(this.isOverdriveMusic);
     }
   }
 
@@ -58,10 +77,12 @@ class SoundManager {
 
   public setVolume(vol: number) {
     this.sfxVolume = Math.max(0, Math.min(1, vol));
+    storage.setItem('sloty_sfx_volume', Math.round(this.sfxVolume * 100).toString());
   }
 
   public setMusicVolume(vol: number) {
     this.musicVolume = Math.max(0, Math.min(1, vol));
+    storage.setItem('sloty_music_volume', Math.round(this.musicVolume * 100).toString());
   }
 
   public getMusicVolume(): number {
@@ -95,9 +116,15 @@ class SoundManager {
 
   public startMusic(overdrive: boolean = false) {
     this.initContext();
-    if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+    if (this.isMuted || this.isMusicMutedState) return;
 
     this.isOverdriveMusic = overdrive;
+    this.musicTempo = overdrive ? 128 : 116;
+
     if (this.isMusicPlayingState) return;
 
     this.isMusicPlayingState = true;
@@ -122,12 +149,12 @@ class SoundManager {
   }
 
   public isMusicPlaying(): boolean {
-    return this.isMusicPlayingState;
+    return this.isMusicPlayingState && !this.isMusicMutedState && !this.isMuted;
   }
 
   public setOverdriveMusic(overdrive: boolean) {
     this.isOverdriveMusic = overdrive;
-    this.musicTempo = overdrive ? 128 : 114;
+    this.musicTempo = overdrive ? 128 : 116;
   }
 
   private scheduleNextMusicBeat() {
@@ -149,96 +176,183 @@ class SoundManager {
     if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
+    const vol = this.musicVolume;
 
-    // 1. Kick & Snare / Rimshot
-    if (step % 8 === 0) {
-      // Warm lounge kick drum
+    // 1. Kick Drum: Warm punchy 808/909 kick
+    if (step % 8 === 0 || (isOverdrive && step % 4 === 0) || (!isOverdrive && step === 14)) {
       const kickOsc = this.ctx.createOscillator();
       const kickGain = this.ctx.createGain();
-      kickGain.gain.setValueAtTime(0.28 * this.musicVolume, now);
-      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      kickOsc.frequency.setValueAtTime(isOverdrive ? 130 : 100, now);
-      kickOsc.frequency.exponentialRampToValueAtTime(35, now + 0.1);
+      kickGain.gain.setValueAtTime(0.55 * vol, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.16 : 0.22));
+
+      kickOsc.type = 'sine';
+      kickOsc.frequency.setValueAtTime(isOverdrive ? 150 : 120, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+
       kickOsc.connect(kickGain);
       kickGain.connect(this.ctx.destination);
       kickOsc.start(now);
-      kickOsc.stop(now + 0.12);
-    } else if (step % 8 === 4) {
-      // Snare / Shaker click
-      const snareOsc = this.ctx.createOscillator();
-      const snareGain = this.ctx.createGain();
-      snareGain.gain.setValueAtTime(0.14 * this.musicVolume, now);
-      snareGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-      snareOsc.type = 'triangle';
-      snareOsc.frequency.setValueAtTime(320, now);
-      snareOsc.frequency.exponentialRampToValueAtTime(120, now + 0.07);
-      snareOsc.connect(snareGain);
-      snareGain.connect(this.ctx.destination);
-      snareOsc.start(now);
-      snareOsc.stop(now + 0.08);
+      kickOsc.stop(now + 0.24);
     }
 
-    // 2. Closed Hi-Hat Pulse on 16th notes
-    if (step % 2 === 0) {
+    // 2. Snare / Funk Rimshot & Shaker
+    if (step % 8 === 4) {
+      // Snappy noise snare
+      const bufferSize = this.ctx.sampleRate * 0.12;
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const noiseNode = this.ctx.createBufferSource();
+      noiseNode.buffer = buffer;
+
+      const noiseFilter = this.ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(1400, now);
+      noiseFilter.Q.setValueAtTime(1.8, now);
+
+      const noiseGain = this.ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.38 * vol, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+      noiseNode.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(this.ctx.destination);
+      noiseNode.start(now);
+
+      // Body tone
+      const bodyOsc = this.ctx.createOscillator();
+      const bodyGain = this.ctx.createGain();
+      bodyGain.gain.setValueAtTime(0.25 * vol, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      bodyOsc.type = 'triangle';
+      bodyOsc.frequency.setValueAtTime(220, now);
+      bodyOsc.frequency.exponentialRampToValueAtTime(110, now + 0.07);
+
+      bodyOsc.connect(bodyGain);
+      bodyGain.connect(this.ctx.destination);
+      bodyOsc.start(now);
+      bodyOsc.stop(now + 0.09);
+    }
+
+    // 3. Crisp Hi-Hat Sizzle (16th note swing)
+    if (step % 2 === 0 || (isOverdrive && step % 4 === 2)) {
       const hatOsc = this.ctx.createOscillator();
       const hatGain = this.ctx.createGain();
-      const hatVol = step % 4 === 2 ? 0.08 : 0.04;
-      hatGain.gain.setValueAtTime(hatVol * this.musicVolume, now);
-      hatGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
-      hatOsc.type = 'sine';
-      hatOsc.frequency.setValueAtTime(7500, now);
-      hatOsc.connect(hatGain);
+      const isAccent = step % 8 === 2 || step % 8 === 6;
+      const hatVol = isAccent ? 0.22 : 0.12;
+
+      hatGain.gain.setValueAtTime(hatVol * vol, now);
+      hatGain.gain.exponentialRampToValueAtTime(0.001, now + (isAccent ? 0.07 : 0.04));
+
+      hatOsc.type = 'highpass' as unknown as OscillatorType;
+      // High frequency sizzle square + highpass filter
+      const sizzleOsc = this.ctx.createOscillator();
+      sizzleOsc.type = 'square';
+      sizzleOsc.frequency.setValueAtTime(8400, now);
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(6500, now);
+
+      sizzleOsc.connect(filter);
+      filter.connect(hatGain);
       hatGain.connect(this.ctx.destination);
-      hatOsc.start(now);
-      hatOsc.stop(now + 0.035);
+      sizzleOsc.start(now);
+      sizzleOsc.stop(now + 0.08);
     }
 
-    // 3. Funky Bassline (F / G / C / A minor groove)
+    // 4. Punchy Funk Walking Bassline (C minor / Eb / F / G groove)
     const bassline = [
-      65.41, 65.41, 0, 77.78, 65.41, 0, 87.31, 0, // C2 - D#2 - F2
-      58.27, 58.27, 0, 69.3, 58.27, 0, 87.31, 0,  // A#1 - C#2 - F2
-      55.0, 55.0, 0, 65.41, 55.0, 0, 73.42, 0,    // A1 - C2 - D2
-      65.41, 0, 73.42, 0, 87.31, 0, 98.0, 130.81,  // C2 - D2 - F2 - G2 - C3
+      65.41, 0, 65.41, 77.78, 87.31, 0, 98.0, 0,       // C2 - C2 - Eb2 - F2 - G2
+      65.41, 0, 77.78, 0, 87.31, 98.0, 110.0, 0,      // C2 - Eb2 - F2 - G2 - A2
+      58.27, 0, 58.27, 69.3, 77.78, 0, 87.31, 0,       // Bb1 - Bb1 - Db2 - Eb2 - F2
+      65.41, 77.78, 87.31, 98.0, 116.54, 0, 130.81, 0 // C2 - Eb2 - F2 - G2 - Bb2 - C3
     ];
 
     const bassFreq = bassline[step];
     if (bassFreq > 0) {
       const bassOsc = this.ctx.createOscillator();
       const bassGain = this.ctx.createGain();
-      bassGain.gain.setValueAtTime((isOverdrive ? 0.28 : 0.22) * this.musicVolume, now);
-      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      bassGain.gain.setValueAtTime((isOverdrive ? 0.48 : 0.40) * vol, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.15 : 0.22));
+
       bassOsc.type = isOverdrive ? 'sawtooth' : 'triangle';
       bassOsc.frequency.setValueAtTime(bassFreq, now);
 
-      // Lowpass filter for smooth round bass
       const filter = this.ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(isOverdrive ? 650 : 380, now);
+      filter.frequency.setValueAtTime(isOverdrive ? 900 : 480, now);
+      filter.frequency.exponentialRampToValueAtTime(140, now + 0.18);
 
       bassOsc.connect(filter);
       filter.connect(bassGain);
       bassGain.connect(this.ctx.destination);
       bassOsc.start(now);
-      bassOsc.stop(now + 0.2);
+      bassOsc.stop(now + 0.24);
     }
 
-    // 4. Velvet Electric Piano Chords on beat 0 and 16
-    if (step === 0 || step === 16) {
-      const chord = step === 0 ? [261.63, 329.63, 392.0, 493.88] : [220.0, 261.63, 329.63, 392.0]; // Cmaj7 or Am7
-      chord.forEach((note) => {
+    // 5. Velvet Electric Piano Chords on beats 0, 4, 8, 12, 16, 20, 24, 28
+    if (step % 4 === 0) {
+      // Four luxury chord voicings across the 32-step loop
+      // Cm9 -> Fm9 -> Bb13 -> G7#9
+      let chordNotes: number[] = [];
+      if (step < 8) {
+        chordNotes = [261.63, 311.13, 392.0, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
+      } else if (step < 16) {
+        chordNotes = [261.63, 311.13, 349.23, 440.0, 523.25]; // Fm9 (C4, Eb4, F4, A4, C5)
+      } else if (step < 24) {
+        chordNotes = [233.08, 293.66, 349.23, 440.0, 523.25]; // Bb13 (Bb3, D4, F4, A4, C5)
+      } else {
+        chordNotes = [246.94, 311.13, 392.0, 493.88, 587.33]; // G7#9 / Bdim
+      }
+
+      const isBeatStart = step % 8 === 0;
+      chordNotes.forEach((note) => {
         if (!this.ctx) return;
         const chordOsc = this.ctx.createOscillator();
         const chordGain = this.ctx.createGain();
-        chordGain.gain.setValueAtTime(0.06 * this.musicVolume, now);
-        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-        chordOsc.type = 'sine';
+        chordGain.gain.setValueAtTime((isBeatStart ? 0.14 : 0.08) * vol, now);
+        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + (isBeatStart ? 0.65 : 0.35));
+
+        chordOsc.type = 'triangle';
         chordOsc.frequency.setValueAtTime(note, now);
+
         chordOsc.connect(chordGain);
         chordGain.connect(this.ctx.destination);
         chordOsc.start(now);
-        chordOsc.stop(now + 1.25);
+        chordOsc.stop(now + (isBeatStart ? 0.70 : 0.40));
       });
     }
+
+    // 6. Casino Bell / Vibraphone Arpeggio Accents
+    if (step === 2 || step === 10 || step === 18 || step === 26) {
+      const bellPitches = [523.25, 622.25, 783.99, 1046.5]; // C5, Eb5, G5, C6
+      const pitch = bellPitches[(step / 8) | 0] || 783.99;
+
+      const bellOsc = this.ctx.createOscillator();
+      const bellGain = this.ctx.createGain();
+      bellGain.gain.setValueAtTime(0.18 * vol, now);
+      bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+
+      bellOsc.type = 'sine';
+      bellOsc.frequency.setValueAtTime(pitch, now);
+
+      bellOsc.connect(bellGain);
+      bellGain.connect(this.ctx.destination);
+      bellOsc.start(now);
+      bellOsc.stop(now + 0.42);
+    }
+  }
+
+  // Quick sound test preview trigger
+  public testAudio() {
+    this.unlockAudio();
+    this.playCashRegister();
+    setTimeout(() => this.playGoldBarClank(), 160);
+    setTimeout(() => this.playCoinTally(), 320);
   }
 
   // =========================================================================

@@ -20,24 +20,23 @@ export const VaultBlastDoors: React.FC<VaultBlastDoorsProps> = ({
       setPhase('closing');
       soundManager.playVaultSlide();
 
-      // Door closed & locked after 450ms
+      // Door closed & locked after 350ms
       const t1 = setTimeout(() => {
         setPhase('locked');
         soundManager.playVaultLock();
-        soundManager.speakAnnouncement(targetScene.name.toUpperCase());
-      }, 550);
+      }, 350);
 
-      // Begin opening after dramatic reveal pause (1200ms)
+      // Begin opening after reveal pause
       const t2 = setTimeout(() => {
         setPhase('opening');
         soundManager.playVaultSlide();
-      }, 1450);
+      }, 950);
 
       // Complete transition
       const t3 = setTimeout(() => {
         setPhase('idle');
         onTransitionComplete();
-      }, 2100);
+      }, 1450);
 
       return () => {
         clearTimeout(t1);
