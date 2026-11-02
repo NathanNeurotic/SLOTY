@@ -50,40 +50,75 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
       {/* ========================================================= */}
       {isTimber ? (
         <>
-          {/* Deep Twilight Evergreen Base */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#011309] via-[#041d11] to-[#010904]" />
+          {/* Deep Twilight Evergreen Night Base */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#021308] via-[#052113] to-[#010a04]" />
 
-          {/* Distant Mountain Ridges & Pine Silhouettes SVG */}
-          <div className="absolute bottom-0 left-0 right-0 h-96 opacity-45 pointer-events-none">
-            <svg viewBox="0 0 1440 320" className="w-full h-full object-cover" preserveAspectRatio="none">
-              {/* Back Mountain Ridge */}
+          {/* Luminous Full Forest Moon */}
+          <div className="absolute top-6 right-16 sm:right-32 w-28 sm:w-36 h-28 sm:h-36 rounded-full bg-gradient-to-br from-[#FFFBEB] via-[#FEF08A] to-[#F59E0B] shadow-[0_0_60px_rgba(254,240,138,0.7),0_0_120px_rgba(245,158,11,0.4)] pointer-events-none opacity-85">
+            {/* Moon craters / lunar texture */}
+            <div className="absolute top-5 left-7 w-6 h-6 rounded-full bg-[#EAB308]/20" />
+            <div className="absolute top-12 left-14 w-8 h-8 rounded-full bg-[#EAB308]/25" />
+            <div className="absolute top-18 left-8 w-5 h-5 rounded-full bg-[#EAB308]/15" />
+          </div>
+
+          {/* Moonlight Volumetric Light Shafts */}
+          <div
+            className="absolute -top-10 right-20 sm:right-40 w-[600px] h-[800px] pointer-events-none opacity-25 transform rotate-25"
+            style={{
+              background: 'radial-gradient(ellipse at 50% 0%, rgba(254, 240, 138, 0.4) 0%, rgba(52, 211, 153, 0.15) 45%, transparent 75%)',
+            }}
+          />
+
+          {/* Distant Mountain Ridges & Dense Pine Silhouettes */}
+          <div className="absolute bottom-0 left-0 right-0 h-[420px] opacity-60 pointer-events-none">
+            <svg viewBox="0 0 1440 420" className="w-full h-full object-cover" preserveAspectRatio="none">
+              {/* Back Mountain Ridge with Misty Valleys */}
               <path
-                d="M0 160 L180 80 L380 190 L620 60 L860 170 L1100 70 L1280 180 L1440 100 L1440 320 L0 320 Z"
-                fill="#072317"
+                d="M0 240 Q180 140 380 230 Q600 110 840 210 Q1060 120 1260 220 L1440 160 L1440 420 L0 420 Z"
+                fill="#0a2e1d"
               />
-              {/* Mid Pine Tree Silhouettes */}
+              {/* Mid Pine Tree Silhouettes Layer */}
               <path
-                d="M0 220 L60 180 L120 220 L180 160 L240 230 L320 170 L400 240 L500 150 L600 230 L720 160 L840 240 L960 170 L1080 230 L1200 150 L1320 220 L1440 160 L1440 320 L0 320 Z"
-                fill="#04160E"
+                d="M0 290 L30 250 L60 295 L100 240 L140 290 L180 235 L220 295 L270 245 L320 300 L370 230 L420 290 L480 240 L540 300 L600 235 L660 295 L720 240 L780 300 L840 230 L900 295 L960 245 L1020 300 L1080 235 L1140 290 L1200 240 L1260 300 L1320 235 L1380 290 L1440 240 L1440 420 L0 420 Z"
+                fill="#051c10"
               />
-              {/* Foreground Dense Pine Forest Silhouette */}
+              {/* Foreground Dense Evergreen Crowns */}
               <path
-                d="M0 260 L40 220 L80 270 L140 210 L200 280 L280 200 L360 270 L440 220 L540 290 L640 210 L760 270 L860 200 L960 280 L1080 210 L1200 270 L1300 200 L1440 260 L1440 320 L0 320 Z"
-                fill="#020C06"
+                d="M0 340 L40 290 L80 345 L130 280 L180 340 L240 285 L300 350 L360 275 L420 345 L490 280 L560 350 L630 270 L700 345 L770 285 L840 350 L910 275 L980 345 L1050 280 L1120 350 L1190 270 L1260 345 L1330 285 L1400 345 L1440 295 L1440 420 L0 420 Z"
+                fill="#020e06"
               />
             </svg>
           </div>
 
-          {/* Moonlight Sunbeams / Light Shafts Slicing Through Trees */}
-          <div
-            className="absolute -top-20 left-1/4 w-[700px] h-[600px] pointer-events-none opacity-30 transform -rotate-12"
-            style={{
-              background: 'radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.28) 0%, rgba(16, 185, 129, 0.15) 45%, transparent 75%)',
-            }}
-          />
+          {/* Towering Ancient Redwood Trunks Framing Left & Right Borders */}
+          {/* Left Trunk */}
+          <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-36 pointer-events-none z-10 opacity-75 sm:opacity-85">
+            <div className="w-full h-full bg-gradient-to-r from-[#170a04] via-[#2c1308] to-transparent border-r border-[#451a03]/30 shadow-[10px_0_25px_rgba(0,0,0,0.8)] relative">
+              {/* Wood bark vertical grooves */}
+              <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_8px,rgba(0,0,0,0.6)_8px,rgba(0,0,0,0.6)_14px)]" />
+              {/* Overhanging Pine Branches from Left */}
+              <svg viewBox="0 0 120 240" className="absolute top-8 -right-16 w-32 h-64 overflow-visible opacity-80 pointer-events-none">
+                <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#062413" strokeWidth="8" strokeLinecap="round" />
+                <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#166534" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
 
-          {/* Woodland Fog Rolling on Floor */}
-          <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#020b05] via-[#041a0e]/40 to-transparent pointer-events-none" />
+          {/* Right Trunk */}
+          <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-36 pointer-events-none z-10 opacity-75 sm:opacity-85">
+            <div className="w-full h-full bg-gradient-to-l from-[#170a04] via-[#2c1308] to-transparent border-l border-[#451a03]/30 shadow-[-10px_0_25px_rgba(0,0,0,0.8)] relative">
+              {/* Wood bark vertical grooves */}
+              <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_8px,rgba(0,0,0,0.6)_8px,rgba(0,0,0,0.6)_14px)]" />
+              {/* Overhanging Pine Branches from Right */}
+              <svg viewBox="0 0 120 240" className="absolute top-20 -left-16 w-32 h-64 overflow-visible opacity-80 pointer-events-none transform -scale-x-100">
+                <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#062413" strokeWidth="8" strokeLinecap="round" />
+                <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#166534" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Swirling Woodland Ground Fog */}
+          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#010904] via-[#041a0e]/50 to-transparent pointer-events-none" />
         </>
       ) : (
         <>

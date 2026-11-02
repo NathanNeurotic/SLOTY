@@ -249,27 +249,33 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             title={`${gameDef.theme.majorTitle} - Click for Audio`}
           >
             <div
-              className="relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105"
-              style={{
-                clipPath: 'polygon(50% 0%, 100% 12%, 100% 86%, 50% 100%, 0% 86%, 0% 12%)',
-              }}
+              className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
+                isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''
+              }`}
+              style={
+                isTimber
+                  ? undefined
+                  : { clipPath: 'polygon(50% 0%, 100% 12%, 100% 86%, 50% 100%, 0% 86%, 0% 12%)' }
+              }
             >
               <div
                 className={`p-[2px] sm:p-[2.5px] ${
                   isTimber
-                    ? 'bg-gradient-to-b from-teal-400 via-emerald-600 to-stone-950'
+                    ? 'bg-gradient-to-b from-[#78350f] via-[#451a03] to-[#1c0a00]'
                     : 'bg-gradient-to-b from-yellow-300 via-purple-600 to-indigo-950'
                 }`}
               >
                 <div
                   className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
                     isTimber
-                      ? 'bg-gradient-to-b from-[#091e17] via-slate-950 to-black'
+                      ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
                       : 'bg-gradient-to-b from-purple-950 via-slate-950 to-black'
                   }`}
-                  style={{
-                    clipPath: 'polygon(50% 0%, 100% 12%, 100% 86%, 50% 100%, 0% 86%, 0% 12%)',
-                  }}
+                  style={
+                    isTimber
+                      ? undefined
+                      : { clipPath: 'polygon(50% 0%, 100% 12%, 100% 86%, 50% 100%, 0% 86%, 0% 12%)' }
+                  }
                 >
                   <div className="flex items-center space-x-1 z-10 mt-0.5">
                     <div
@@ -321,27 +327,33 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             title={`${gameDef.theme.minorTitle} - Click for Audio`}
           >
             <div
-              className="relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105"
-              style={{
-                clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
-              }}
+              className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
+                isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''
+              }`}
+              style={
+                isTimber
+                  ? undefined
+                  : { clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)' }
+              }
             >
               <div
                 className={`p-[2px] sm:p-[2.5px] ${
                   isTimber
-                    ? 'bg-gradient-to-b from-amber-400 via-orange-600 to-stone-950'
+                    ? 'bg-gradient-to-b from-[#78350f] via-[#451a03] to-[#1c0a00]'
                     : 'bg-gradient-to-b from-yellow-300 via-teal-500 to-cyan-950'
                 }`}
               >
                 <div
                   className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
                     isTimber
-                      ? 'bg-gradient-to-b from-[#211107] via-slate-950 to-black'
+                      ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
                       : 'bg-gradient-to-b from-cyan-950 via-slate-950 to-black'
                   }`}
-                  style={{
-                    clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)',
-                  }}
+                  style={
+                    isTimber
+                      ? undefined
+                      : { clipPath: 'polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)' }
+                  }
                 >
                   <div className="flex items-center space-x-1 z-10 mt-0.5">
                     <div
@@ -393,27 +405,33 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             title={`${gameDef.theme.miniTitle} - Click for Audio`}
           >
             <div
-              className="relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105"
-              style={{
-                clipPath: 'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)',
-              }}
+              className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
+                isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''
+              }`}
+              style={
+                isTimber
+                  ? undefined
+                  : { clipPath: 'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)' }
+              }
             >
               <div
                 className={`p-[2px] sm:p-[2.5px] ${
                   isTimber
-                    ? 'bg-gradient-to-b from-emerald-400 via-amber-600 to-[#120a06]'
+                    ? 'bg-gradient-to-b from-[#78350f] via-[#451a03] to-[#1c0a00]'
                     : 'bg-gradient-to-b from-yellow-300 via-emerald-600 to-green-950'
                 }`}
               >
                 <div
                   className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
                     isTimber
-                      ? 'bg-gradient-to-b from-[#0a180e] via-slate-950 to-black'
-                      : 'bg-gradient-to-b from-emerald-950 via-slate-950 to-black'
+                      ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
+                      : 'bg-gradient-to-b from-green-950 via-slate-950 to-black'
                   }`}
-                  style={{
-                    clipPath: 'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)',
-                  }}
+                  style={
+                    isTimber
+                      ? undefined
+                      : { clipPath: 'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)' }
+                  }
                 >
                   <div className="flex items-center space-x-1 z-10 mt-0.5">
                     <div

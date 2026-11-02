@@ -6,7 +6,7 @@ import type {
   SymbolGrid,
   WinTier,
 } from './engine/types';
-import { calculateProgression, getLevelUpReward } from './engine/progression';
+import { calculateProgression, getLevelUpReward, getXpRequiredForLevel } from './engine/progression';
 import {
   evaluateSpin,
   generateForcedGrid,
@@ -651,6 +651,7 @@ export const App: React.FC = () => {
         <CasinoFloorBank
           peers={roomPeers}
           isFloorMode={isFloorMode}
+          activeGameId={activeGameId}
           onToggleFloorMode={() => {
             setIsFloorMode((prev) => {
               const next = !prev;
@@ -837,7 +838,7 @@ export const App: React.FC = () => {
         onSetBalance={(amount) => setBalance(amount)}
         onAddXp={(amount) => setTotalXp((xp) => xp + amount)}
         onSetLevel={(level) => {
-          const xpNeeded = Math.floor(1000 * Math.pow(level - 1, 1.4));
+          const xpNeeded = getXpRequiredForLevel(level);
           setTotalXp(xpNeeded);
         }}
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}

@@ -349,11 +349,24 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       )}
 
+      {/* Handcrafted Rustic Log Pediment Crest for Timberland Critters */}
+      {isTimber && (
+        <div className="w-full flex justify-center -mb-2 relative z-20 pointer-events-none">
+          <div className="flex items-center space-x-2 px-5 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-2 border-x-2 border-[#b45309] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
+            <span className="text-amber-400 text-sm animate-pulse">🌲</span>
+            <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#fde047] uppercase font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+              HANDCRAFTED TIMBER CABIN
+            </span>
+            <span className="text-amber-400 text-sm animate-pulse">🌲</span>
+          </div>
+        </div>
+      )}
+
       {/* Outer Luxury Cabinet Frame with Handcrafted Theming */}
       <div
         className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
           isTimber
-            ? 'border-4 border-[#522e18] bg-gradient-to-b from-[#2e180e] via-[#1a0d07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_20px_50px_rgba(0,0,0,0.95)]'
+            ? 'border-4 border-[#78350f] bg-gradient-to-b from-[#2e180e] via-[#1a0d07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_20px_50px_rgba(0,0,0,0.95)]'
             : 'neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >

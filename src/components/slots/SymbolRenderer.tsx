@@ -162,26 +162,27 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </g>
 
             {/* Center Lock Dial Core */}
-            <circle cx="50" cy="44" r="11" fill="url(#vaultGoldSpoke)" stroke="#FFF" strokeWidth="1.8" />
-            <circle cx="50" cy="44" r="5" fill="#0C0F18" stroke="#FDE047" strokeWidth="1" />
+            <circle cx="50" cy="40" r="11" fill="url(#vaultGoldSpoke)" stroke="#FFF" strokeWidth="1.8" />
+            <circle cx="50" cy="40" r="5" fill="#0C0F18" stroke="#FDE047" strokeWidth="1" />
 
             {/* Top Indicator Alarm LEDs */}
-            <circle cx="43" cy="20" r="2.5" fill="#22C55E" className="animate-pulse" />
-            <circle cx="57" cy="20" r="2.5" fill="#EF4444" className="animate-ping" />
+            <circle cx="43" cy="16" r="2.5" fill="#22C55E" className="animate-pulse" />
+            <circle cx="57" cy="16" r="2.5" fill="#EF4444" className="animate-ping" />
 
-            {/* SCATTER 3D Plaque */}
-            <g transform="translate(0, 1)">
-              <rect x="12" y="75" width="76" height="20" rx="5" fill="#090E17" stroke="#00F0FF" strokeWidth="2.5" />
+            {/* SCATTER 3D Pedestal Plaque */}
+            <g transform="translate(0, 0)">
+              <rect x="10" y="73" width="80" height="23" rx="6" fill="#030712" stroke="#00F0FF" strokeWidth="2" />
+              <rect x="12" y="75" width="76" height="19" rx="4" fill="url(#vaultSteelRing)" opacity="0.4" />
               <text
                 x="50"
-                y="89"
+                y="88.5"
                 textAnchor="middle"
                 fill="#00F0FF"
                 fontWeight="900"
-                fontSize="11.5"
+                fontSize="12.5"
                 fontFamily="sans-serif"
-                letterSpacing="1.8"
-                className="drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]"
+                letterSpacing="2.5"
+                className="drop-shadow-[0_0_8px_rgba(0,240,255,0.9)]"
               >
                 SCATTER
               </text>
@@ -191,12 +192,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'COIN':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
               <radialGradient id="coinGoldFace" cx="35%" cy="35%" r="65%">
                 <stop offset="0%" stopColor="#FFFDEB" />
-                <stop offset="25%" stopColor="#FEF08A" />
-                <stop offset="60%" stopColor="#F59E0B" />
+                <stop offset="20%" stopColor="#FEF08A" />
+                <stop offset="55%" stopColor="#F59E0B" />
                 <stop offset="85%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </radialGradient>
@@ -205,43 +206,67 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                 <stop offset="50%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#FFFBEB" />
               </linearGradient>
+              <linearGradient id="coinPlaqueBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#1E1202" />
+                <stop offset="100%" stopColor="#080401" />
+              </linearGradient>
             </defs>
 
             {/* 3D Drop Shadow */}
-            <circle cx="53" cy="53" r="44" fill="#1E0E03" opacity="0.8" />
+            <circle cx="52" cy="48" r="42" fill="#1E0E03" opacity="0.75" />
 
-            {/* Outer Reeded Security Edge with 32 micro-serrations */}
-            <circle cx="50" cy="50" r="44" fill="url(#reededRim)" stroke="#78350F" strokeWidth="2" />
-            {/* Coin Face */}
-            <circle cx="50" cy="50" r="40" fill="url(#coinGoldFace)" stroke="#FEF08A" strokeWidth="2" />
-            <circle cx="50" cy="50" r="34" fill="none" stroke="#FBBF24" strokeWidth="1.6" strokeDasharray="3 2" />
+            {/* Outer Reeded Security Edge */}
+            <circle cx="50" cy="45" r="41" fill="url(#reededRim)" stroke="#78350F" strokeWidth="1.8" />
+            {/* Mirror Gold Coin Face */}
+            <circle cx="50" cy="45" r="37" fill="url(#coinGoldFace)" stroke="#FEF08A" strokeWidth="1.8" />
+            <circle cx="50" cy="45" r="31" fill="none" stroke="#FBBF24" strokeWidth="1.2" strokeDasharray="3 2" />
 
-            {/* Embossed Bold 3D Dollar Emblem */}
+            {/* Engraved Arch Stars at Top Rim */}
+            <polygon points="50,15 51,18 54,18 51.5,20 52.5,23 50,21 47.5,23 48.5,20 46,18 49,18" fill="#FFFBEB" opacity="0.9" />
+            <polygon points="36,19 37,21 39,21 37.5,22.5 38,24.5 36,23 34,24.5 34.5,22.5 33,21 35,21" fill="#FFFBEB" opacity="0.8" />
+            <polygon points="64,19 65,21 67,21 65.5,22.5 66,24.5 64,23 62,24.5 62.5,22.5 61,21 63,21" fill="#FFFBEB" opacity="0.8" />
+
+            {/* Center Sculpted 3D Dollar Medallion */}
+            <circle cx="50" cy="43" r="18" fill="#1C0A00" stroke="#FDE047" strokeWidth="1.8" />
             <text
               x="50"
-              y="63"
+              y="51"
               textAnchor="middle"
               fill="#FFFFFF"
               fontWeight="900"
-              fontSize="40"
-              fontFamily="monospace"
+              fontSize="24"
+              fontFamily="sans-serif"
               stroke="#78350F"
-              strokeWidth="2.2"
-              className="drop-shadow-[0_3px_6px_rgba(0,0,0,0.8)]"
+              strokeWidth="1.2"
+              className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
             >
               $
             </text>
 
-            {/* Purity & Vault Stamp */}
-            <text x="50" y="24" textAnchor="middle" fill="#78350F" fontWeight="900" fontSize="8" letterSpacing="1">
-              ★ 999.9 ★
-            </text>
-            <text x="50" y="78" textAnchor="middle" fill="#78350F" fontWeight="900" fontSize="7.5" letterSpacing="1.2">
-              BONUS
-            </text>
+            {/* Clean, Raised High-Contrast BONUS Chamber at Bottom */}
+            <g transform="translate(0, 1)">
+              <rect x="14" y="70" width="72" height="21" rx="6" fill="#000" opacity="0.8" />
+              <rect x="12" y="68" width="76" height="21" rx="6" fill="url(#coinGoldFace)" stroke="#FFF" strokeWidth="1.2" />
+              <rect x="14" y="70" width="72" height="17" rx="4" fill="url(#coinPlaqueBg)" stroke="#F59E0B" strokeWidth="0.8" />
+              <text
+                x="50"
+                y="82.5"
+                textAnchor="middle"
+                fill="#FEF08A"
+                stroke="#451A03"
+                strokeWidth="0.8"
+                fontWeight="900"
+                fontSize="12"
+                fontFamily="sans-serif"
+                letterSpacing="2.5"
+                style={{ paintOrder: 'stroke fill' }}
+              >
+                BONUS
+              </text>
+            </g>
 
             {/* Specular Starburst */}
-            <polygon points="76,28 78,33 83,34 78,36 76,41 74,36 69,34 74,33" fill="#FFFFFF" />
+            <polygon points="76,24 78,28 83,29 78,30 76,34 74,30 69,29 74,28" fill="#FFFFFF" />
           </svg>
         );
 
@@ -371,9 +396,11 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="26,30 74,30 62,56 14,56" fill="url(#bullionGoldB)" stroke="#FFF" strokeWidth="2" />
             <polygon points="74,30 86,37 74,63 62,56" fill="#78350F" stroke="#FEF08A" strokeWidth="1.2" />
 
-            {/* Top Bar Stamped Hallmark */}
-            <text x="44" y="46" textAnchor="middle" fill="#78350F" fontWeight="900" fontSize="10.5" fontFamily="sans-serif">
-              ★ 999.9 ★
+            {/* Top Bar Stamped 24K Bullion Hallmark */}
+            <ellipse cx="44" cy="43" rx="16" ry="7" fill="#78350F" opacity="0.35" />
+            <ellipse cx="44" cy="43" rx="14" ry="5.5" fill="none" stroke="#FEF08A" strokeWidth="0.8" />
+            <text x="44" y="46" textAnchor="middle" fill="#FFFBEB" stroke="#451A03" strokeWidth="0.6" fontWeight="900" fontSize="8" fontFamily="sans-serif" letterSpacing="1" style={{ paintOrder: 'stroke fill' }}>
+              24K GOLD
             </text>
 
             {/* Specular Starbursts */}
@@ -456,8 +483,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
             {/* Federal Reserve Security Band */}
             <polygon points="44,26 62,26 52,50 34,50" fill="url(#fedBandBlue)" stroke="#FEF08A" strokeWidth="1.4" />
-            <text x="48" y="41" textAnchor="middle" fill="#FFF" fontWeight="900" fontSize="8.5" fontFamily="sans-serif">
-              $10K
+            <text x="48" y="40.5" textAnchor="middle" fill="#FEF08A" stroke="#0F172A" strokeWidth="0.8" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="0.8" style={{ paintOrder: 'stroke fill' }}>
+              $10,000
             </text>
           </svg>
         );
@@ -524,9 +551,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Ingot 3 (Top) */}
             <polygon points="26,22 74,22 64,40 16,40" fill="url(#ingotBarA)" stroke="#FFF" strokeWidth="1.8" />
 
-            {/* Top Bar Gold Emblem */}
-            <text x="45" y="34" textAnchor="middle" fill="#78350F" fontWeight="900" fontSize="9" fontFamily="sans-serif">
-              ★ GOLD ★
+            {/* Top Bar Engraved Seal */}
+            <ellipse cx="45" cy="31" rx="14" ry="5" fill="#78350F" opacity="0.3" />
+            <text x="45" y="33.5" textAnchor="middle" fill="#FFFBEB" stroke="#78350F" strokeWidth="0.5" fontWeight="900" fontSize="6.5" fontFamily="sans-serif" letterSpacing="1" style={{ paintOrder: 'stroke fill' }}>
+              24K FINE
             </text>
 
             <polygon points="70,24 72,28 77,29 72,30 70,35 68,30 63,29 68,28" fill="#FFFFFF" />
@@ -744,9 +772,23 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="61" cy="38" r="2" fill="#1C0A00" />
             {/* Golden Claw Scratch Marks */}
             <path d="M15 15 L22 30 M22 14 L29 28 M29 14 L35 27" stroke="#FEF08A" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
-            {/* Golden WILD Ribbon */}
-            <rect x="18" y="68" width="64" height="20" rx="6" fill="url(#wildBanner)" stroke="#FFF" strokeWidth="1.5" />
-            <text x="50" y="83" textAnchor="middle" fill="#451A03" fontSize="13" fontWeight="900" fontFamily="sans-serif" letterSpacing="2">
+            {/* Carved Wood WILD Banner */}
+            <rect x="16" y="68" width="68" height="22" rx="7" fill="#000" opacity="0.6" />
+            <rect x="14" y="66" width="72" height="22" rx="7" fill="url(#wildBanner)" stroke="#FFF" strokeWidth="1.5" />
+            <rect x="16" y="68" width="68" height="18" rx="5" fill="#2E1005" stroke="#F59E0B" strokeWidth="1" />
+            <text
+              x="50"
+              y="82"
+              textAnchor="middle"
+              fill="#FEF08A"
+              stroke="#451A03"
+              strokeWidth="0.8"
+              fontSize="12.5"
+              fontWeight="900"
+              fontFamily="sans-serif"
+              letterSpacing="2.5"
+              style={{ paintOrder: 'stroke fill' }}
+            >
               WILD
             </text>
           </svg>
@@ -788,9 +830,22 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="50,47 46,55 54,55" fill="#F59E0B" stroke="#B45309" strokeWidth="0.8" />
             <path d="M42 58 Q50 63 58 58" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
             <path d="M44 63 Q50 68 56 63" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
-            {/* SCATTER Pill */}
-            <rect x="14" y="74" width="72" height="18" rx="6" fill="#1E3A8A" stroke="#60A5FA" strokeWidth="1.5" />
-            <text x="50" y="87" textAnchor="middle" fill="#93C5FD" fontSize="10.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.5">
+            {/* SCATTER Perch Pedestal */}
+            <rect x="12" y="72" width="76" height="22" rx="7" fill="#020617" stroke="#60A5FA" strokeWidth="1.8" />
+            <rect x="14" y="74" width="72" height="18" rx="5" fill="#172554" stroke="#93C5FD" strokeWidth="0.8" />
+            <text
+              x="50"
+              y="87"
+              textAnchor="middle"
+              fill="#93C5FD"
+              stroke="#0F172A"
+              strokeWidth="0.8"
+              fontSize="11"
+              fontWeight="900"
+              fontFamily="sans-serif"
+              letterSpacing="2"
+              style={{ paintOrder: 'stroke fill' }}
+            >
               SCATTER
             </text>
           </svg>
@@ -798,36 +853,94 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'ACORN':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="acornGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="acornNutGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
-                <stop offset="30%" stopColor="#FBBF24" />
-                <stop offset="70%" stopColor="#D97706" />
+                <stop offset="25%" stopColor="#FDE047" />
+                <stop offset="55%" stopColor="#F59E0B" />
+                <stop offset="85%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </linearGradient>
-              <linearGradient id="acornCap" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#92400E" />
-                <stop offset="100%" stopColor="#451A03" />
+              <linearGradient id="acornCapBark" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#B45309" />
+                <stop offset="50%" stopColor="#78350F" />
+                <stop offset="100%" stopColor="#2E1005" />
+              </linearGradient>
+              <linearGradient id="cashPlaqueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#1E293B" />
+                <stop offset="50%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#020617" />
               </linearGradient>
             </defs>
-            {/* Green Oak Leaves Behind */}
-            <path d="M25 35 Q10 20 22 8 Q35 15 36 28 Z" fill="#15803D" stroke="#4ADE80" strokeWidth="1" />
-            <path d="M75 35 Q90 20 78 8 Q65 15 64 28 Z" fill="#15803D" stroke="#4ADE80" strokeWidth="1" />
-            {/* Stem */}
-            <path d="M50 20 Q48 10 44 8" fill="none" stroke="#78350F" strokeWidth="4" strokeLinecap="round" />
-            {/* Acorn Body (Golden Nut) */}
-            <path d="M30 38 Q24 64 50 86 Q76 64 70 38 Z" fill="url(#acornGold)" stroke="#FEF08A" strokeWidth="2.5" />
-            {/* Acorn Cap with Texture */}
-            <path d="M26 38 Q50 24 74 38 Q74 44 70 46 Q50 38 30 46 Q26 44 26 38 Z" fill="url(#acornCap)" stroke="#FEF08A" strokeWidth="1.5" />
-            <circle cx="38" cy="34" r="1.5" fill="#FEF08A" />
-            <circle cx="50" cy="32" r="1.5" fill="#FEF08A" />
-            <circle cx="62" cy="34" r="1.5" fill="#FEF08A" />
-            {/* Coin Glow / Sparkles */}
-            <polygon points="50,48 53,56 61,59 53,62 50,70 47,62 39,59 47,56" fill="#FFF" opacity="0.9" />
-            <text x="50" y="80" textAnchor="middle" fill="#451A03" fontSize="8" fontWeight="900" fontFamily="sans-serif">
-              CASH
-            </text>
+
+            {/* Glowing Golden Aura Behind Acorn */}
+            <circle cx="50" cy="50" r="44" fill="url(#acornNutGold)" opacity="0.25" filter="blur(6px)" />
+
+            {/* Radiant Autumn Leaves Behind */}
+            <path d="M22 36 Q6 16 22 4 Q38 12 36 28 Z" fill="#16A34A" stroke="#86EFAC" strokeWidth="1.5" />
+            <path d="M78 36 Q94 16 78 4 Q62 12 64 28 Z" fill="#EA580C" stroke="#FDBA74" strokeWidth="1.5" />
+
+            {/* Curved Woody Stem */}
+            <path d="M50 18 Q48 6 42 4" fill="none" stroke="#78350F" strokeWidth="4.5" strokeLinecap="round" />
+
+            {/* Large Golden Nut Body */}
+            <path
+              d="M26 36 Q18 68 50 92 Q82 68 74 36 Z"
+              fill="url(#acornNutGold)"
+              stroke="#FFFBEB"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+
+            {/* Specular Nut Highlight */}
+            <path d="M32 40 Q26 62 48 82 Q34 62 38 42 Z" fill="#FFF" opacity="0.4" />
+
+            {/* Textured Oak Cap */}
+            <path
+              d="M22 36 Q50 20 78 36 Q78 44 74 46 Q50 36 26 46 Q22 44 22 36 Z"
+              fill="url(#acornCapBark)"
+              stroke="#FDE047"
+              strokeWidth="1.8"
+            />
+            {/* Cap Studs / Texture */}
+            <circle cx="34" cy="32" r="2" fill="#FEF08A" />
+            <circle cx="50" cy="28" r="2.2" fill="#FEF08A" />
+            <circle cx="66" cy="32" r="2" fill="#FEF08A" />
+            <circle cx="42" cy="36" r="1.8" fill="#F59E0B" />
+            <circle cx="58" cy="36" r="1.8" fill="#F59E0B" />
+
+            {/* ULTRA-READABLE HIGH-CONTRAST RAISED CASH LINK PLAQUE */}
+            <g transform="translate(0, 5)">
+              {/* Plaque 3D Drop Shadow */}
+              <rect x="12" y="47" width="76" height="24" rx="7" fill="#000" opacity="0.75" />
+              {/* Outer Radiant Gold Border */}
+              <rect x="10" y="45" width="80" height="24" rx="7" fill="url(#acornNutGold)" stroke="#FFF" strokeWidth="1.5" />
+              {/* Inner Obsidian Contrast Chamber */}
+              <rect x="12" y="47" width="76" height="20" rx="5" fill="url(#cashPlaqueGrad)" stroke="#F59E0B" strokeWidth="1" />
+
+              {/* Bold, Ultra-Legible Gold/White CASH Text */}
+              <text
+                x="50"
+                y="62.5"
+                textAnchor="middle"
+                fill="#FEF08A"
+                stroke="#451A03"
+                strokeWidth="1.2"
+                fontSize="15"
+                fontWeight="900"
+                fontFamily="sans-serif"
+                letterSpacing="3.5"
+                style={{ paintOrder: 'stroke fill' }}
+              >
+                CASH
+              </text>
+            </g>
+
+            {/* Twinkling 4-Point Diamond Sparkles */}
+            <polygon points="50,22 52,16 54,22 60,22 55,25 57,31 50,27 43,31 45,25 40,22 46,22" fill="#FFF" />
+            <polygon points="80,50 82,45 84,50 89,50 85,53 87,58 82,55 77,58 79,53 74,50 79,50" fill="#FEF08A" />
+            <polygon points="20,55 21,51 23,55 27,55 24,57 25,61 21,59 17,61 19,57 15,55 19,55" fill="#FEF08A" />
           </svg>
         );
 

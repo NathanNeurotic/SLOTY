@@ -186,7 +186,8 @@ class SoundManager {
     const stepIntervalMs = (60 / this.musicTempo / 4) * 1000; // 16th note interval
 
     this.playMusicStep(this.musicStep);
-    this.musicStep = (this.musicStep + 1) % 32;
+    // 16 bars of 16 steps each = 256 steps (33+ seconds per full musical loop)
+    this.musicStep = (this.musicStep + 1) % 256;
 
     this.musicTimerId = window.setTimeout(() => {
       this.scheduleNextMusicBeat();
@@ -202,9 +203,19 @@ class SoundManager {
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
     const vol = this.musicVolume;
+    const bar = Math.floor(step / 16); // 0 to 15
+    const stepInBar = step % 16; // 0 to 15
 
     // 1. Kick Drum: Warm punchy 808/909 kick
-    if (step % 8 === 0 || (isOverdrive && step % 4 === 0) || (!isOverdrive && step === 14)) {
+    // Bars 0-14 groove: steps 0, 8 (or 4 on overdrive) + syncopations; Bar 15 turnaround fill
+    const isKick =
+      stepInBar === 0 ||
+      stepInBar === 8 ||
+      (isOverdrive && stepInBar % 4 === 0) ||
+      (!isOverdrive && (bar % 2 === 1) && stepInBar === 14) ||
+      (bar === 15 && (stepInBar === 10 || stepInBar === 12));
+
+    if (isKick) {
       const kickOsc = this.ctx.createOscillator();
       const kickGain = this.ctx.createGain();
       kickGain.gain.setValueAtTime(0.55 * vol, now);
@@ -221,9 +232,14 @@ class SoundManager {
     }
 
     // 2. Snare / Funk Rimshot & Shaker
-    if (step % 8 === 4) {
-      // Snappy noise snare
-      const bufferSize = this.ctx.sampleRate * 0.12;
+    // Backbeat on steps 4 & 12; plus Bar 15 drum turnaround fill on steps 12, 14, 15
+    const isSnare =
+      stepInBar === 4 ||
+      stepInBar === 12 ||
+      (bar === 15 && (stepInBar === 10 || stepInBar === 14 || stepInBar === 15));
+
+    if (isSnare) {
+      const bufferSize = Math.floor(this.ctx.sampleRate * 0.12);
       const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
       const output = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -264,16 +280,13 @@ class SoundManager {
 
     // 3. Crisp Hi-Hat Sizzle (16th note swing)
     if (step % 2 === 0 || (isOverdrive && step % 4 === 2)) {
-      const hatOsc = this.ctx.createOscillator();
       const hatGain = this.ctx.createGain();
-      const isAccent = step % 8 === 2 || step % 8 === 6;
+      const isAccent = stepInBar === 2 || stepInBar === 6 || stepInBar === 10 || stepInBar === 14;
       const hatVol = isAccent ? 0.22 : 0.12;
 
       hatGain.gain.setValueAtTime(hatVol * vol, now);
       hatGain.gain.exponentialRampToValueAtTime(0.001, now + (isAccent ? 0.07 : 0.04));
 
-      hatOsc.type = 'highpass' as unknown as OscillatorType;
-      // High frequency sizzle square + highpass filter
       const sizzleOsc = this.ctx.createOscillator();
       sizzleOsc.type = 'square';
       sizzleOsc.frequency.setValueAtTime(8400, now);
@@ -289,15 +302,35 @@ class SoundManager {
       sizzleOsc.stop(now + 0.08);
     }
 
-    // 4. Punchy Funk Walking Bassline (C minor / Eb / F / G groove)
-    const bassline = [
-      65.41, 0, 65.41, 77.78, 87.31, 0, 98.0, 0,       // C2 - C2 - Eb2 - F2 - G2
-      65.41, 0, 77.78, 0, 87.31, 98.0, 110.0, 0,      // C2 - Eb2 - F2 - G2 - A2
-      58.27, 0, 58.27, 69.3, 77.78, 0, 87.31, 0,       // Bb1 - Bb1 - Db2 - Eb2 - F2
-      65.41, 77.78, 87.31, 98.0, 116.54, 0, 130.81, 0 // C2 - Eb2 - F2 - G2 - Bb2 - C3
+    // 4. Punchy Funk Walking Bassline (16-Bar 256-step harmonic journey)
+    const funkBassline256 = [
+      // Bars 0-1 (Cm9 establish): C2 - C2 - Eb2 - F2 - G2 - Bb2 - C2 - Eb2
+      65.41, 0, 65.41, 0, 77.78, 0, 87.31, 0, 98.00, 0, 77.78, 0, 87.31, 98.00, 116.54, 0,
+      65.41, 0, 77.78, 0, 87.31, 98.00, 110.00, 0, 98.00, 0, 87.31, 0, 77.78, 0, 65.41, 0,
+      // Bars 2-3 (Fm9 -> G7#9): F2 - Ab2 - Bb2 - C3 - G2 - B2 - D3 - G2
+      87.31, 0, 87.31, 0, 103.83, 0, 116.54, 0, 130.81, 0, 116.54, 0, 103.83, 0, 87.31, 0,
+      98.00, 0, 98.00, 0, 123.47, 0, 146.83, 0, 123.47, 0, 116.54, 0, 98.00, 87.31, 77.78, 0,
+      // Bars 4-5 (Abmaj9 -> Bb13): Ab1 - C2 - Eb2 - G2 - Bb1 - D2 - F2 - Ab2
+      51.91, 0, 51.91, 0, 65.41, 0, 77.78, 0, 103.83, 0, 77.78, 0, 65.41, 0, 51.91, 0,
+      58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0, 116.54, 0, 87.31, 0, 73.42, 0, 58.27, 0,
+      // Bars 6-7 (Gm7 -> C7b9): G1 - Bb1 - D2 - F2 - C2 - E2 - G2 - Bb2
+      49.00, 0, 49.00, 0, 58.27, 0, 73.42, 0, 98.00, 0, 73.42, 0, 58.27, 0, 49.00, 0,
+      65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0, 116.54, 0, 98.00, 0, 82.41, 0, 65.41, 0,
+      // Bars 8-9 (Dm7b5 -> G7alt): D2 - F2 - Ab2 - C3 - G2 - Ab2 - B2 - D3
+      73.42, 0, 73.42, 0, 87.31, 0, 103.83, 0, 130.81, 0, 103.83, 0, 87.31, 0, 73.42, 0,
+      98.00, 0, 103.83, 0, 123.47, 0, 146.83, 0, 123.47, 0, 103.83, 0, 98.00, 0, 87.31, 0,
+      // Bars 10-11 (Cm9 -> F9 lift): C2 - Eb2 - G2 - Bb2 - F2 - A2 - C3 - Eb3
+      65.41, 0, 65.41, 0, 77.78, 0, 98.00, 0, 116.54, 0, 98.00, 0, 77.78, 0, 65.41, 0,
+      87.31, 0, 87.31, 0, 110.00, 0, 130.81, 0, 155.56, 0, 130.81, 0, 110.00, 0, 87.31, 0,
+      // Bars 12-13 (Ebmaj9 -> Fm9): Eb2 - G2 - Bb2 - D3 - F2 - Ab2 - C3 - Eb3
+      77.78, 0, 77.78, 0, 98.00, 0, 116.54, 0, 146.83, 0, 116.54, 0, 98.00, 0, 77.78, 0,
+      87.31, 0, 87.31, 0, 103.83, 0, 130.81, 0, 155.56, 0, 130.81, 0, 103.83, 0, 87.31, 0,
+      // Bars 14-15 (Abmaj7 -> G7alt Turnaround): Ab1 - C2 - Eb2 - G2 - D2 - G2 - B1 - G1
+      51.91, 0, 65.41, 0, 77.78, 0, 103.83, 0, 77.78, 0, 65.41, 0, 51.91, 0, 49.00, 0,
+      73.42, 0, 87.31, 0, 98.00, 0, 123.47, 0, 146.83, 123.47, 98.00, 87.31, 77.78, 73.42, 69.30, 0
     ];
 
-    const bassFreq = bassline[step];
+    const bassFreq = funkBassline256[step];
     if (bassFreq > 0) {
       const bassOsc = this.ctx.createOscillator();
       const bassGain = this.ctx.createGain();
@@ -319,22 +352,40 @@ class SoundManager {
       bassOsc.stop(now + 0.24);
     }
 
-    // 5. Velvet Electric Piano Chords on beats 0, 4, 8, 12, 16, 20, 24, 28
-    if (step % 4 === 0) {
-      // Four luxury chord voicings across the 32-step loop
-      // Cm9 -> Fm9 -> Bb13 -> G7#9
+    // 5. Velvet Electric Piano Chords across 16 bars (syncopated comping on downbeats & offbeats)
+    if (stepInBar === 0 || stepInBar === 6 || stepInBar === 10) {
       let chordNotes: number[] = [];
-      if (step < 8) {
-        chordNotes = [261.63, 311.13, 392.0, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
-      } else if (step < 16) {
-        chordNotes = [261.63, 311.13, 349.23, 440.0, 523.25]; // Fm9 (C4, Eb4, F4, A4, C5)
-      } else if (step < 24) {
-        chordNotes = [233.08, 293.66, 349.23, 440.0, 523.25]; // Bb13 (Bb3, D4, F4, A4, C5)
+      if (bar === 0 || bar === 1) {
+        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
+      } else if (bar === 2) {
+        chordNotes = [261.63, 311.13, 349.23, 415.30, 523.25]; // Fm9 (C4, Eb4, F4, Ab4, C5)
+      } else if (bar === 3) {
+        chordNotes = [246.94, 311.13, 392.00, 466.16, 587.33]; // G7#9 (B3, Eb4, G4, Bb4, D5)
+      } else if (bar === 4 || bar === 5) {
+        chordNotes = [261.63, 311.13, 392.00, 415.30, 523.25]; // Abmaj9 (C4, Eb4, G4, Ab4, C5)
+      } else if (bar === 6) {
+        chordNotes = [233.08, 293.66, 349.23, 440.00, 523.25]; // Bb13 (Bb3, D4, F4, A4, C5)
+      } else if (bar === 7) {
+        chordNotes = [261.63, 329.63, 392.00, 466.16, 554.37]; // C7b9 (C4, E4, G4, Bb4, Db5)
+      } else if (bar === 8) {
+        chordNotes = [293.66, 349.23, 415.30, 493.88, 587.33]; // Dm7b5 (D4, F4, Ab4, B4, D5)
+      } else if (bar === 9) {
+        chordNotes = [246.94, 311.13, 392.00, 415.30, 622.25]; // G7alt (B3, Eb4, G4, Ab4, Eb5)
+      } else if (bar === 10) {
+        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
+      } else if (bar === 11) {
+        chordNotes = [220.00, 261.63, 311.13, 349.23, 440.00]; // F9 (A3, C4, Eb4, F4, A4)
+      } else if (bar === 12) {
+        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Ebmaj9 (C4, Eb4, G4, Bb4, D5)
+      } else if (bar === 13) {
+        chordNotes = [261.63, 311.13, 349.23, 415.30, 523.25]; // Fm9 (C4, Eb4, F4, Ab4, C5)
+      } else if (bar === 14) {
+        chordNotes = [261.63, 311.13, 415.30, 493.88, 523.25]; // Abmaj7 (C4, Eb4, Ab4, B4, C5)
       } else {
-        chordNotes = [246.94, 311.13, 392.0, 493.88, 587.33]; // G7#9 / Bdim
+        chordNotes = [246.94, 311.13, 392.00, 466.16, 622.25]; // G7#9alt resolution
       }
 
-      const isBeatStart = step % 8 === 0;
+      const isBeatStart = stepInBar === 0;
       chordNotes.forEach((note) => {
         if (!this.ctx) return;
         const chordOsc = this.ctx.createOscillator();
@@ -352,23 +403,46 @@ class SoundManager {
       });
     }
 
-    // 6. Casino Bell / Vibraphone Arpeggio Accents
-    if (step === 2 || step === 10 || step === 18 || step === 26) {
-      const bellPitches = [523.25, 622.25, 783.99, 1046.5]; // C5, Eb5, G5, C6
-      const pitch = bellPitches[(step / 8) | 0] || 783.99;
+    // 6. Casino Vibraphone / Bell Melodic Cues across the 16 bars
+    const vibraphonePitches: Record<number, number> = {
+      2: 783.99,   // G5
+      10: 932.33,  // Bb5
+      18: 1046.50, // C6
+      26: 1174.66, // D6
+      42: 880.00,  // A5
+      58: 987.77,  // B5
+      66: 1046.50, // C6
+      74: 1174.66, // D6
+      82: 1244.51, // Eb6
+      98: 932.33,  // Bb5
+      106: 880.00, // A5
+      122: 783.99, // G5
+      138: 830.61, // Ab5
+      154: 987.77, // B5
+      170: 1046.50,// C6
+      186: 1174.66,// D6
+      202: 1244.51,// Eb6
+      218: 1046.50,// C6
+      234: 932.33, // Bb5
+      242: 830.61, // Ab5
+      246: 783.99, // G5
+      250: 622.25, // Eb5
+    };
 
+    const bellPitch = vibraphonePitches[step];
+    if (bellPitch) {
       const bellOsc = this.ctx.createOscillator();
       const bellGain = this.ctx.createGain();
       bellGain.gain.setValueAtTime(0.18 * vol, now);
-      bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+      bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
 
       bellOsc.type = 'sine';
-      bellOsc.frequency.setValueAtTime(pitch, now);
+      bellOsc.frequency.setValueAtTime(bellPitch, now);
 
       bellOsc.connect(bellGain);
       bellGain.connect(this.ctx.destination);
       bellOsc.start(now);
-      bellOsc.stop(now + 0.42);
+      bellOsc.stop(now + 0.44);
     }
   }
 
@@ -381,9 +455,11 @@ class SoundManager {
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
     const vol = this.musicVolume;
+    const bar = Math.floor(step / 16); // 0 to 15
+    const stepInBar = step % 16; // 0 to 15
 
-    // 1. Organic Log Stomp / Acoustic Bass Drum (Steps 0, 8, 16, 24)
-    if (step % 8 === 0 || (isOverdrive && step % 4 === 0)) {
+    // 1. Organic Log Stomp / Acoustic Bass Drum
+    if (stepInBar === 0 || stepInBar === 8 || (isOverdrive && stepInBar % 4 === 0)) {
       const kickOsc = this.ctx.createOscillator();
       const kickGain = this.ctx.createGain();
       kickGain.gain.setValueAtTime(0.48 * vol, now);
@@ -399,15 +475,21 @@ class SoundManager {
       kickOsc.stop(now + 0.22);
     }
 
-    // 2. Resonant Carved Cedar Woodblock Knock (Steps 4, 12, 20, 28)
-    if (step % 8 === 4) {
+    // 2. Resonant Carved Cedar Woodblock Knock
+    // Steps 4, 12; plus Bar 15 hoedown turnaround roll
+    const isWoodblock =
+      stepInBar === 4 ||
+      stepInBar === 12 ||
+      (bar === 15 && (stepInBar === 8 || stepInBar === 10 || stepInBar === 14 || stepInBar === 15));
+
+    if (isWoodblock) {
       const blockOsc = this.ctx.createOscillator();
       const blockGain = this.ctx.createGain();
       blockGain.gain.setValueAtTime(0.55 * vol, now);
       blockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
       blockOsc.type = 'triangle';
-      blockOsc.frequency.setValueAtTime(680, now);
+      blockOsc.frequency.setValueAtTime(680 + (stepInBar % 3) * 60, now);
       blockOsc.frequency.exponentialRampToValueAtTime(340, now + 0.07);
 
       blockOsc.connect(blockGain);
@@ -420,7 +502,7 @@ class SoundManager {
     if (step % 2 === 1) {
       const rustleOsc = this.ctx.createOscillator();
       const rustleGain = this.ctx.createGain();
-      const isAccent = step % 4 === 1;
+      const isAccent = stepInBar === 4 || stepInBar === 12;
       rustleGain.gain.setValueAtTime((isAccent ? 0.18 : 0.10) * vol, now);
       rustleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
@@ -438,15 +520,35 @@ class SoundManager {
       rustleOsc.stop(now + 0.06);
     }
 
-    // 4. Plucked Acoustic Upright Double Bass (G-C-D-Em Country Bop)
-    const woodlandBass = [
-      98.0, 0, 98.0, 0, 146.83, 0, 146.83, 0,    // G2 -> D3
-      65.41, 0, 65.41, 0, 98.0, 0, 98.0, 0,       // C2 -> G2
-      73.42, 0, 73.42, 0, 110.0, 0, 110.0, 0,     // D2 -> A2
-      82.41, 0, 82.41, 0, 73.42, 0, 98.0, 0       // E2 -> D2 -> G2
+    // 4. Plucked Acoustic Upright Double Bass (16-Bar 256-step Country Bluegrass Walking Bass)
+    const woodlandBass256 = [
+      // Bars 0-1 (G major): G2 -> D3 -> G2 -> B2
+      98.00, 0, 98.00, 0, 146.83, 0, 146.83, 0, 98.00, 0, 123.47, 0, 146.83, 0, 123.47, 0,
+      98.00, 0, 98.00, 0, 146.83, 0, 146.83, 0, 98.00, 0, 110.00, 0, 123.47, 0, 110.00, 0,
+      // Bars 2-3 (C -> D7): C2 -> G2 -> D2 -> A2
+      65.41, 0, 65.41, 0, 98.00, 0, 98.00, 0, 65.41, 0, 82.41, 0, 98.00, 0, 82.41, 0,
+      73.42, 0, 73.42, 0, 110.00, 0, 110.00, 0, 73.42, 0, 92.50, 0, 110.00, 0, 92.50, 0,
+      // Bars 4-5 (Em -> Bm): E2 -> B2 -> B1 -> F#2
+      82.41, 0, 82.41, 0, 123.47, 0, 123.47, 0, 82.41, 0, 98.00, 0, 123.47, 0, 98.00, 0,
+      61.74, 0, 61.74, 0, 92.50, 0, 92.50, 0, 61.74, 0, 73.42, 0, 92.50, 0, 73.42, 0,
+      // Bars 6-7 (C -> D): C2 -> G2 -> D2 -> A2
+      65.41, 0, 65.41, 0, 98.00, 0, 98.00, 0, 65.41, 0, 82.41, 0, 98.00, 0, 82.41, 0,
+      73.42, 0, 73.42, 0, 110.00, 0, 110.00, 0, 73.42, 0, 98.00, 0, 110.00, 0, 123.47, 0,
+      // Bars 8-9 (Am -> D): A1 -> E2 -> D2 -> A2
+      55.00, 0, 55.00, 0, 82.41, 0, 82.41, 0, 55.00, 0, 65.41, 0, 82.41, 0, 65.41, 0,
+      73.42, 0, 73.42, 0, 110.00, 0, 110.00, 0, 73.42, 0, 87.31, 0, 98.00, 0, 110.00, 0,
+      // Bars 10-11 (G -> Em): G2 -> D3 -> E2 -> B2
+      98.00, 0, 98.00, 0, 146.83, 0, 146.83, 0, 98.00, 0, 110.00, 0, 123.47, 0, 110.00, 0,
+      82.41, 0, 82.41, 0, 123.47, 0, 123.47, 0, 82.41, 0, 73.42, 0, 65.41, 0, 61.74, 0,
+      // Bars 12-13 (C -> G/B): C2 -> G2 -> B1 -> F#2
+      65.41, 0, 65.41, 0, 98.00, 0, 98.00, 0, 65.41, 0, 82.41, 0, 98.00, 0, 82.41, 0,
+      61.74, 0, 61.74, 0, 92.50, 0, 92.50, 0, 61.74, 0, 73.42, 0, 92.50, 0, 73.42, 0,
+      // Bars 14-15 (Am7 -> D7 Turnaround -> G): A1 -> C2 -> D2 -> F#2 -> G2
+      55.00, 0, 65.41, 0, 82.41, 0, 65.41, 0, 73.42, 0, 92.50, 0, 110.00, 0, 123.47, 0,
+      73.42, 0, 82.41, 0, 92.50, 0, 110.00, 0, 146.83, 123.47, 110.00, 98.00, 82.41, 73.42, 65.41, 0
     ];
 
-    const bassPitch = woodlandBass[step];
+    const bassPitch = woodlandBass256[step];
     if (bassPitch > 0) {
       const bassOsc = this.ctx.createOscillator();
       const bassGain = this.ctx.createGain();
@@ -468,15 +570,31 @@ class SoundManager {
       bassOsc.stop(now + 0.25);
     }
 
-    // 5. Plucked Bluegrass Banjo / Folk Dulcimer Arpeggios (16th-note Rolls)
-    const banjoNotes = [
-      392.0, 493.88, 587.33, 783.99, 587.33, 493.88, 392.0, 440.0,
-      523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 493.88, 392.0,
-      587.33, 739.99, 880.0, 739.99, 587.33, 493.88, 440.0, 392.0,
-      659.25, 783.99, 987.77, 783.99, 587.33, 493.88, 392.0, 440.0
+    // 5. Plucked Bluegrass Banjo / Folk Dulcimer 16-bar Arpeggios (Scruggs-Style Rolls)
+    const banjoChordsByBar = [
+      [392.00, 493.88, 587.33, 783.99], // Bar 0: G
+      [392.00, 493.88, 587.33, 880.00], // Bar 1: G6
+      [523.25, 659.25, 783.99, 1046.5], // Bar 2: C
+      [587.33, 739.99, 880.00, 1174.6], // Bar 3: D7
+      [659.25, 783.99, 987.77, 1318.5], // Bar 4: Em
+      [493.88, 587.33, 739.99, 987.77], // Bar 5: Bm
+      [523.25, 659.25, 783.99, 1046.5], // Bar 6: C
+      [587.33, 739.99, 880.00, 1174.6], // Bar 7: D
+      [440.00, 523.25, 659.25, 880.00], // Bar 8: Am
+      [587.33, 739.99, 880.00, 1174.6], // Bar 9: D7
+      [392.00, 493.88, 587.33, 783.99], // Bar 10: G
+      [659.25, 783.99, 987.77, 1318.5], // Bar 11: Em
+      [523.25, 659.25, 783.99, 1046.5], // Bar 12: C
+      [493.88, 587.33, 783.99, 987.77], // Bar 13: G/B
+      [440.00, 523.25, 659.25, 880.00], // Bar 14: Am7
+      [587.33, 739.99, 880.00, 1174.6], // Bar 15: D7 Turnaround
     ];
 
-    const banjoPitch = banjoNotes[step];
+    const currentBarPitches = banjoChordsByBar[bar] || banjoChordsByBar[0];
+    const rollPattern = [0, 1, 2, 3, 2, 1, 0, 2, 1, 3, 2, 1, 0, 1, 2, 3];
+    const noteIdx = rollPattern[stepInBar];
+    const banjoPitch = currentBarPitches[noteIdx];
+
     if (banjoPitch) {
       const banjoOsc = this.ctx.createOscillator();
       const banjoGain = this.ctx.createGain();
@@ -492,11 +610,26 @@ class SoundManager {
       banjoOsc.stop(now + 0.18);
     }
 
-    // 6. Whimsical Acoustic Forest Wooden Flute Melody (On bar downbeats)
-    if (step % 8 === 0) {
-      const fluteNotes = [783.99, 987.77, 880.0, 1174.66]; // G5, B5, A5, D6
-      const flutePitch = fluteNotes[(step / 8) % fluteNotes.length];
+    // 6. Whimsical Forest Cedar Wood Flute Melody (Sings lyrical phrases in Bars 4-12)
+    const fluteMelody: Record<number, number> = {
+      64: 783.99,   // G5
+      72: 987.77,   // B5
+      80: 1174.66,  // D6
+      96: 1046.50,  // C6
+      104: 987.77,  // B5
+      112: 880.00,  // A5
+      128: 880.00,  // A5
+      136: 1046.50, // C6
+      144: 1174.66, // D6
+      160: 987.77,  // B5
+      168: 880.00,  // A5
+      176: 783.99,  // G5
+      192: 659.25,  // E5
+      200: 783.99,  // G5
+    };
 
+    const flutePitch = fluteMelody[step];
+    if (flutePitch) {
       const fluteOsc = this.ctx.createOscillator();
       const fluteGain = this.ctx.createGain();
       fluteGain.gain.setValueAtTime(0.22 * vol, now);

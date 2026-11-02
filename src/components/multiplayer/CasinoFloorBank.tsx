@@ -2,6 +2,7 @@ import React from 'react';
 import type { CasinoPeerState } from '../../multiplayer/discordTypes';
 import { NeighborTerminal } from './NeighborTerminal';
 import { Users, Trophy } from 'lucide-react';
+import type { GameId } from '../../games/types';
 
 interface CasinoFloorBankProps {
   peers: CasinoPeerState[];
@@ -10,6 +11,7 @@ interface CasinoFloorBankProps {
   onOpenLeaderboard: () => void;
   onTipNeighbor: (peerId: string) => void;
   children: React.ReactNode; // Center stage slot machine
+  activeGameId?: GameId;
 }
 
 export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
@@ -19,6 +21,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   onOpenLeaderboard,
   onTipNeighbor,
   children,
+  activeGameId = 'vault-24k',
 }) => {
   const leftNeighbor = peers[0] || null;
   const rightNeighbor = peers[1] || null;
@@ -61,6 +64,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
               peer={leftNeighbor}
               seatNumber={1}
               onTip={onTipNeighbor}
+              activeGameId={activeGameId}
             />
           </div>
         )}
@@ -77,6 +81,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
               peer={rightNeighbor}
               seatNumber={3}
               onTip={onTipNeighbor}
+              activeGameId={activeGameId}
             />
           </div>
         )}
