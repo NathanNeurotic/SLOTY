@@ -177,6 +177,127 @@ class SoundManager {
     osc.stop(now + 0.04);
   }
 
+  // Rapid cascading coin hopper clatter
+  public playCoinCascade(coins: number = 8) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    for (let i = 0; i < Math.min(25, coins); i++) {
+      const delay = i * 0.045 + Math.random() * 0.015;
+      const startTime = this.ctx.currentTime + delay;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      const freq = 1400 + Math.random() * 1200;
+      gain.gain.setValueAtTime(0.18 * this.volume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.07);
+
+      osc.type = Math.random() > 0.5 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, startTime + 0.06);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.07);
+    }
+  }
+
+  // High-voltage laser zap for energized paylines
+  public playLaserZap() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.createGainNode(0.15, 0.35, 0.01);
+    if (!gain) return;
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(1400, now);
+    osc.frequency.exponentialRampToValueAtTime(150, now + 0.14);
+
+    osc.connect(gain);
+    osc.start();
+    osc.stop(now + 0.15);
+  }
+
+  // Vegas Jackpot Police / Casino Siren
+  public playJackpotSiren() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const cycles = 5;
+    for (let c = 0; c < cycles; c++) {
+      const startTime = this.ctx.currentTime + c * 0.28;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      gain.gain.setValueAtTime(0.3 * this.volume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.27);
+
+      osc.type = 'sawtooth';
+      // High-low whoop siren
+      osc.frequency.setValueAtTime(580, startTime);
+      osc.frequency.linearRampToValueAtTime(1250, startTime + 0.14);
+      osc.frequency.linearRampToValueAtTime(580, startTime + 0.27);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.27);
+    }
+  }
+
+  // Celebration whistle chime
+  public playCelebrationWhistle() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.createGainNode(0.35, 0.4, 0.01);
+    if (!gain) return;
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(900, now);
+    osc.frequency.exponentialRampToValueAtTime(2200, now + 0.2);
+    osc.frequency.linearRampToValueAtTime(1800, now + 0.35);
+
+    osc.connect(gain);
+    osc.start();
+    osc.stop(now + 0.35);
+  }
+
+  // Deep suspenseful heartbeat thump during anticipation
+  public playAnticipationHeartbeat() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    [0, 0.12].forEach((offset) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const startTime = now + offset;
+
+      gain.gain.setValueAtTime(0.5 * this.volume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.1);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(65, startTime);
+      osc.frequency.exponentialRampToValueAtTime(35, startTime + 0.09);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.1);
+    });
+  }
+
   public playWinChime(multiplier: number = 1) {
     this.initContext();
     if (!this.ctx || this.isMuted) return;

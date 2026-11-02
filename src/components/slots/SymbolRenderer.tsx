@@ -114,6 +114,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="34,15 50,35 66,15" fill="#F0F9FF" opacity="0.95" stroke="#BAE6FD" strokeWidth="1" />
             <polygon points="22,35 78,35 50,88" fill="url(#diaBottom)" stroke="#38BDF8" strokeWidth="1.5" />
             <circle cx="38" cy="25" r="2.5" fill="#FFF" />
+            {/* Glistening Specular Star Flare */}
+            <polygon points="50,15 52,22 59,24 52,26 50,33 48,26 41,24 48,22" fill="#FFFFFF" />
           </svg>
         );
 
@@ -128,6 +130,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                 <stop offset="100%" stopColor="#7F1D1D" />
               </linearGradient>
             </defs>
+            {/* Licking Flames */}
+            <path d="M22 18 Q30 4 40 18 Q50 2 60 18 Q70 5 78 18 Z" fill="#F59E0B" opacity="0.85" />
             <path
               d="M20 18 L80 18 L80 32 L54 84 L34 84 L58 35 L20 35 Z"
               fill="url(#sevenGrad)"
@@ -136,7 +140,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               strokeLinejoin="round"
             />
             <path d="M26 23 L74 23 L54 62 L42 62 L60 29 L26 29 Z" fill="#F87171" opacity="0.8" />
-            <circle cx="75" cy="20" r="3.5" fill="#FFF" />
+            <polygon points="75,20 77,24 81,25 77,26 75,30 73,26 69,25 73,24" fill="#FFFFFF" />
           </svg>
         );
 
@@ -324,6 +328,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         isScatterHighlight ? 'scale-110 z-10 filter drop-shadow-[0_0_20px_rgba(0,240,255,0.9)] animate-bounce-soft' : ''
       } ${className}`}
     >
+      {isWinning && (
+        <>
+          <div className="absolute top-0 right-1 text-xs animate-spin pointer-events-none select-none">✨</div>
+          <div className="absolute bottom-0 left-1 text-[10px] animate-ping pointer-events-none select-none">⭐</div>
+        </>
+      )}
       {getSymbolSvg()}
     </div>
   );

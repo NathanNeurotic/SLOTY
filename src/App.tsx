@@ -15,6 +15,8 @@ import {
 import { soundManager } from './audio/soundManager';
 import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
+import { VegasTicker } from './components/hud/VegasTicker';
+import { VegasAmbience } from './components/hud/VegasAmbience';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
 import { launchCoinFountain } from './fx/celebrations';
@@ -231,7 +233,11 @@ export const App: React.FC = () => {
       }));
 
       // Trigger tiered celebrations
-      if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN' || winTier === 'BIG_WIN') {
+      if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN') {
+        soundManager.playJackpotSiren();
+        setCelebration({ tier: winTier, amount: totalPayout });
+      } else if (winTier === 'BIG_WIN') {
+        soundManager.playCelebrationWhistle();
         setCelebration({ tier: winTier, amount: totalPayout });
       } else {
         soundManager.playWinChime(winTier === 'REGULAR' ? 3 : 1);
@@ -367,12 +373,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-casino-950 text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden">
-      {/* Background Atmosphere Lights */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[450px] bg-neon-cyan/5 rounded-full blur-[140px]" />
-      </div>
+      {/* Dynamic Vegas Sky Searchlights & Stardust Particle Field */}
+      <VegasAmbience />
 
       {/* Header Bar */}
       <HeaderBar
@@ -391,6 +393,9 @@ export const App: React.FC = () => {
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-1 sm:py-3 w-full">
         {/* 4-Tier Vegas & Oregon Lottery Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} />
+
+        {/* Live Casino LED Marquee Ticker */}
+        <VegasTicker freeSpinsRemaining={freeSpinsRemaining} />
 
         <SlotMachine
           currentGrid={currentGrid}

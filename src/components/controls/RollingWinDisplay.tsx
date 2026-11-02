@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { soundManager } from '../../audio/soundManager';
 
 interface RollingWinDisplayProps {
   targetAmount: number;
@@ -26,6 +27,10 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
     if (startVal === endVal) {
       setDisplayedAmount(endVal);
       return;
+    }
+
+    if (endVal > 0) {
+      soundManager.playCoinCascade(Math.min(16, Math.max(6, Math.floor(endVal / 250))));
     }
 
     const duration = 650; // ms

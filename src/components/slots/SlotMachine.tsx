@@ -35,6 +35,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
+  const [isCabinetShaking, setIsCabinetShaking] = useState(false);
 
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
@@ -54,6 +55,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
     setReelSpinning([false, false, false, false, false]);
     soundManager.playReelStop(4);
+    setIsCabinetShaking(true);
+    setTimeout(() => setIsCabinetShaking(false), 280);
 
     if (onAllReelsStoppedRef.current) {
       onAllReelsStoppedRef.current();
@@ -101,9 +104,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           // Final reel settled
           if (reelIdx === 4) {
+            setIsCabinetShaking(true);
+            setTimeout(() => setIsCabinetShaking(false), 280);
             if (onAllReelsStoppedRef.current) {
               onAllReelsStoppedRef.current();
             }
+          } else if (anticipation && reelIdx >= 1) {
+            soundManager.playAnticipationHeartbeat();
           }
         }, delay);
 
@@ -125,12 +132,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     if (!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0) {
       if (activeWinningLineIdx === null) {
         setActiveWinningLineIdx(spinResult.winningLines[0].lineIndex);
+        soundManager.playLaserZap();
       }
       const interval = setInterval(() => {
         setActiveWinningLineIdx((prev) => {
           if (prev === null) return spinResult.winningLines[0]?.lineIndex ?? 0;
           const currentIdx = spinResult.winningLines.findIndex((w) => w.lineIndex === prev);
           const nextIdx = (currentIdx + 1) % spinResult.winningLines.length;
+          soundManager.playLaserZap();
           return spinResult.winningLines[nextIdx]?.lineIndex ?? 0;
         });
       }, 1900);
@@ -221,7 +230,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     >
       {/* Outer Luxury Cabinet Frame */}
       <div
-        className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-500 shadow-2xl ${
+        className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-300 shadow-2xl ${
+          isCabinetShaking ? 'animate-cabinet-shake' : ''
+        } ${
           freeSpinsRemaining > 0
             ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
             : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'

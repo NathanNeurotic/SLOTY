@@ -319,4 +319,99 @@
   animation: floatScorePop 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/* --- Vegas Sky Searchlights --- */
+@keyframes spotlightLeftMove {
+  0%, 100% {
+    transform: rotate(-30deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+}
+
+.animate-spotlight-left {
+  animation: spotlightLeftMove 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes spotlightRightMove {
+  0%, 100% {
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.animate-spotlight-right {
+  animation: spotlightRightMove 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* --- Ambient Floating Stardust & Embers --- */
+@keyframes floatSparkleDrift {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  30% {
+    opacity: 0.9;
+    transform: translateY(-20px) scale(1);
+  }
+  80% {
+    opacity: 0.7;
+    transform: translateY(-60px) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(0.5);
+  }
+}
+
+.animate-float-sparkle {
+  animation: floatSparkleDrift 4s ease-in-out infinite;
+}
+
+/* --- Heavy Vegas Cabinet Impact Shake --- */
+@keyframes cabinetImpactShake {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-3px, 2px) rotate(-0.3deg);
+  }
+  40% {
+    transform: translate(3px, -2px) rotate(0.3deg);
+  }
+  60% {
+    transform: translate(-2px, 1px) rotate(-0.15deg);
+  }
+  80% {
+    transform: translate(2px, -1px) rotate(0.15deg);
+  }
+}
+
+.animate-cabinet-shake {
+  animation: cabinetImpactShake 0.28s ease-in-out;
+}
+
+/* --- Live Casino LED Marquee Ticker --- */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marqueeScroll 28s linear infinite;
+  will-change: transform;
+}
+
+
+
 

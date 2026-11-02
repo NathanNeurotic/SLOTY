@@ -2,6 +2,7 @@ import React from 'react';
 import { Coins, Trophy, Gift, Volume2, VolumeX, HelpCircle, Terminal } from 'lucide-react';
 import type { ProgressionState } from '../../engine/types';
 import { soundManager } from '../../audio/soundManager';
+import { SlotyLogo } from './SlotyLogo';
 
 interface HeaderBarProps {
   balance: number;
@@ -30,19 +31,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     <header className="w-full bg-casino-950/90 border-b border-white/10 px-3 sm:px-6 py-2.5 backdrop-blur-md sticky top-0 z-30 select-none">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
         {/* Left: Brand Logo & Title */}
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-gold-bright to-yellow-300 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.5)] flex items-center justify-center">
-            <span className="text-xl sm:text-2xl">🎰</span>
-          </div>
-          <div>
-            <div className="text-sm sm:text-base font-black tracking-wider leading-none gold-gradient-text uppercase">
-              SLOTY DELUXE
-            </div>
-            <div className="text-[9px] sm:text-[10px] text-neon-cyan font-bold tracking-widest leading-none mt-0.5">
-              OREGON LOTTERY VLT 777
-            </div>
-          </div>
-        </div>
+        <SlotyLogo />
 
         {/* Center: Coin Balance & VIP Level Progression */}
         <div className="flex items-center space-x-2 sm:space-x-4">
