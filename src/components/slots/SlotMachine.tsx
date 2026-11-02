@@ -8,6 +8,7 @@ import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { soundManager } from '../../audio/soundManager';
+import { BarnabyBullion } from '../character/BarnabyBullion';
 import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 
@@ -25,6 +26,7 @@ interface SlotMachineProps {
   canSpin?: boolean;
   isFeverMode?: boolean;
   currentSceneId?: CasinoSceneId;
+  onRewardCoins?: (amount: number) => void;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -41,12 +43,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   canSpin = true,
   isFeverMode = false,
   currentSceneId = 'VAULT',
+  onRewardCoins,
 }) => {
   // Track spinning state per reel [0..4]
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
   const [isColossalSlideOpen, setIsColossalSlideOpen] = useState(false);
+  const [isCabinetSlamming, setIsCabinetSlamming] = useState(false);
 
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
@@ -67,6 +71,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     soundManager.stopSpinRollLoop();
     setReelSpinning([false, false, false, false, false]);
     soundManager.playReelStop(4);
+    setIsCabinetSlamming(true);
+    setTimeout(() => setIsCabinetSlamming(false), 380);
 
     if (onAllReelsStoppedRef.current) {
       onAllReelsStoppedRef.current();
@@ -118,6 +124,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           // Final reel settled
           if (reelIdx === 4) {
             soundManager.stopSpinRollLoop();
+            setIsCabinetSlamming(true);
+            setTimeout(() => setIsCabinetSlamming(false), 380);
             if (onAllReelsStoppedRef.current) {
               onAllReelsStoppedRef.current();
             }
@@ -249,6 +257,32 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
+      {/* Desktop Luxury Companion: Barnaby Bullion Mascot perched proudly flanking the machine */}
+      <div className="hidden xl:block absolute -right-36 top-4 z-30">
+        <BarnabyBullion
+          isSpinning={isSpinning}
+          isAnticipating={isAnticipating}
+          isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
+          isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
+          isFeverMode={isFeverMode}
+          winAmount={spinResult?.totalPayout || 0}
+          onRewardCoins={onRewardCoins}
+        />
+      </div>
+
+      {/* Mobile / Tablet Inline Animated Mascot Bar */}
+      <div className="xl:hidden flex justify-center mb-1">
+        <BarnabyBullion
+          isSpinning={isSpinning}
+          isAnticipating={isAnticipating}
+          isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
+          isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
+          isFeverMode={isFeverMode}
+          winAmount={spinResult?.totalPayout || 0}
+          onRewardCoins={onRewardCoins}
+        />
+      </div>
+
       {/* 3D Interactive Vegas Slot Pull-Arm Lever */}
       <SlotLever
         isSpinning={isSpinning}
@@ -261,6 +295,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       {/* Outer Luxury Cabinet Frame */}
       <div
         className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-300 shadow-2xl ${
+          isCabinetSlamming ? 'animate-cabinet-slam' : ''
+        } ${
           isFeverMode
             ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
             : freeSpinsRemaining > 0
@@ -294,6 +330,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             {freeSpinsRemaining > 0 ? (
               <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-pulse truncate whitespace-nowrap">
                 🔥 FREE SPINS ACTIVE: {freeSpinsRemaining} REMAINING (3X WINS) 🔥
+              </span>
+            ) : isAnticipating && isAnyReelSpinning ? (
+              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-cyan-200 animate-pulse truncate whitespace-nowrap bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-neon-cyan shadow-[0_0_12px_rgba(0,240,255,0.8)]">
+                ⚡⚡ SUSPENSE LOCK! 2 VAULT DOORS • NEED 1 MORE! ⚡⚡
               </span>
             ) : isAnyReelSpinning ? (
               <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-amber-300 animate-pulse truncate whitespace-nowrap">

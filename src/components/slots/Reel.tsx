@@ -93,37 +93,48 @@ export const Reel: React.FC<ReelProps> = ({
     <div
       className={`relative flex-1 h-[320px] sm:h-[400px] md:h-[480px] overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
         isAnticipating
-          ? 'border-neon-cyan shadow-[0_0_25px_rgba(0,240,255,0.8)] z-10 scale-[1.02]'
+          ? 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
           : 'border-white/10'
       }`}
     >
-      {/* Anticipation border glow */}
+      {/* High-Voltage Electric Anticipation Tension Frame & Energy Corona */}
       {isAnticipating && (
-        <div className="absolute inset-0 border-2 border-neon-cyan bg-cyan-500/10 animate-pulse pointer-events-none z-30 shadow-[inset_0_0_25px_rgba(0,240,255,0.4)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/20 via-yellow-400/10 to-cyan-500/20 pointer-events-none z-30 shadow-[inset_0_0_30px_rgba(0,240,255,0.7)] flex flex-col justify-between p-1">
+          <div className="w-full text-center text-[8px] font-black tracking-widest text-cyan-200 bg-cyan-950/80 rounded py-0.5 animate-pulse uppercase border border-cyan-400/50">
+            ⚡ SCATTER LOCK ⚡
+          </div>
+          <div className="w-full text-center text-[8px] font-black tracking-widest text-amber-300 bg-amber-950/80 rounded py-0.5 animate-ping uppercase border border-amber-400/50">
+            ★ 1 MORE TO WIN ★
+          </div>
+        </div>
       )}
 
       {/* Reel Stop Landing Impact Shockwave Flare */}
       {hasSettled && (
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gold-bright/70 via-amber-400/30 to-transparent pointer-events-none z-30 animate-landing-flare" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gold-bright/80 via-amber-400/40 to-transparent pointer-events-none z-30 animate-landing-flare" />
       )}
 
       {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
       {isSpinning && (
-        <div
-          className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[0.6px]"
-          style={{
-            animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
-          }}
-        >
-          {rollingStrip.map((sym, idx) => (
-            <div
-              key={idx}
-              className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-80"
-            >
-              <SymbolRenderer id={sym} />
-            </div>
-          ))}
-        </div>
+        <>
+          {/* Vertical Speed Streak Overlays */}
+          <div className="absolute inset-0 pointer-events-none z-10 bg-[repeating-linear-gradient(to_bottom,transparent_0px,transparent_10px,rgba(255,255,255,0.06)_11px,rgba(255,255,255,0.06)_12px)] opacity-60" />
+          <div
+            className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[0.6px]"
+            style={{
+              animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
+            }}
+          >
+            {rollingStrip.map((sym, idx) => (
+              <div
+                key={idx}
+                className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-80"
+              >
+                <SymbolRenderer id={sym} />
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* 2. Resting / Settling 4-Row Landing Grid */}

@@ -561,6 +561,10 @@ export const App: React.FC = () => {
           canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
           isFeverMode={feverSpinsLeft > 0}
           currentSceneId={currentSceneId}
+          onRewardCoins={(amount) => {
+            setBalance((b) => b + amount);
+            soundManager.playCoinTally();
+          }}
         />
       </main>
 
