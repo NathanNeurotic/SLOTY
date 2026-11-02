@@ -251,8 +251,8 @@ export function evaluateSpin(
     }
   }
 
-  // 5 or more coins trigger Oregon Lottery style Hold & Spin Cash Respins
-  const isHoldAndSpinTriggered = coinCount >= 5;
+  // 6 or more coins trigger Oregon Lottery style Hold & Spin Cash Respins
+  const isHoldAndSpinTriggered = coinCount >= 6;
 
   // 4. Determine Win Tier
   let winTier: WinTier = 'NONE';
