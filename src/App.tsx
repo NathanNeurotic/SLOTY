@@ -17,7 +17,10 @@ import { storage } from './utils/storage';
 import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
 import { VegasTicker } from './components/hud/VegasTicker';
-import { VegasAmbience } from './components/hud/VegasAmbience';
+import { SceneBackdrop } from './components/scenes/SceneBackdrop';
+import { VaultBlastDoors } from './components/scenes/VaultBlastDoors';
+import { CASINO_SCENES, type CasinoScene, type CasinoSceneId } from './components/scenes/SceneTypes';
+import { CashRainCanvas } from './fx/CashRainCanvas';
 import { FeverMeter } from './components/hud/FeverMeter';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
@@ -82,6 +85,30 @@ export const App: React.FC = () => {
     storage.getNumber('sloty_fever_charge', 35)
   );
   const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
+
+  // --- Active Scenic Environment State (Persisted) ---
+  const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() =>
+    (storage.getItem('sloty_scene') as CasinoSceneId) || 'VAULT'
+  );
+  const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
+  const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
+
+  useEffect(() => {
+    storage.setItem('sloty_scene', currentSceneId);
+  }, [currentSceneId]);
+
+  const handleSelectScene = useCallback(
+    (sceneId: CasinoSceneId) => {
+      if (sceneId === currentSceneId) return;
+      const target = CASINO_SCENES[sceneId];
+      setTransitioningScene(target);
+      setIsVaultDoorTransitionOpen(true);
+      setTimeout(() => {
+        setCurrentSceneId(sceneId);
+      }, 650);
+    },
+    [currentSceneId]
+  );
 
   // Initial 5 reels x 4 rows grid (Persisted)
   const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() =>
@@ -266,7 +293,9 @@ export const App: React.FC = () => {
               setFeverSpinsLeft(5);
               setFeverCharge(0);
               soundManager.playFeverSurge();
-              soundManager.speakAnnouncer("Hyper Fever Mode!");
+              soundManager.setOverdriveMusic(true);
+              soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
+              handleSelectScene('MINT');
               launchCoinFountain('jackpot');
             }, 800);
           }
@@ -277,13 +306,16 @@ export const App: React.FC = () => {
       // Trigger tiered celebrations & voice announcements
       if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN') {
         soundManager.playJackpotSiren();
-        soundManager.speakAnnouncer(winTier === 'EPIC_JACKPOT' ? "Epic Jackpot! Congratulations!" : "Mega Win!");
+        soundManager.playCashRegister();
+        soundManager.speakAnnouncer(winTier === 'EPIC_JACKPOT' ? "Epic Cash Jackpot! Congratulations!" : "Mega Cash Win!");
         setCelebration({ tier: winTier, amount: totalPayout });
       } else if (winTier === 'BIG_WIN') {
         soundManager.playCelebrationWhistle();
-        soundManager.speakAnnouncer("Big Win!");
+        soundManager.playCashRegister();
+        soundManager.speakAnnouncer("Big Cash Win!");
         setCelebration({ tier: winTier, amount: totalPayout });
       } else {
+        soundManager.playCashRegister();
         soundManager.playWinChime(winTier === 'REGULAR' ? 3 : 1);
         if (totalPayout >= totalBet * 2) {
           launchCoinFountain('big');
@@ -293,13 +325,15 @@ export const App: React.FC = () => {
 
     // Free Spins Triggered
     if (isFreeSpinsTriggered) {
-      soundManager.speakAnnouncer("Free Spins Bonus Round!");
+      soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
+      handleSelectScene('PENTHOUSE');
       setShowFreeSpinsModal(true);
     }
 
     // Hold & Spin Cash Respins Triggered
     if (isHoldAndSpinTriggered) {
-      soundManager.speakAnnouncer("Cash Link Hold and Spin!");
+      soundManager.speakAnnouncer("Fort Knox Cash Link Vault!");
+      handleSelectScene('HEIST');
       setHoldAndSpinInitialCoins(coinCount);
       setShowHoldAndSpinModal(true);
     }
@@ -324,9 +358,16 @@ export const App: React.FC = () => {
 
     // Handle Fever Spins Sequence
     if (feverSpinsLeft > 0) {
-      setFeverSpinsLeft((prev) => prev - 1);
+      setFeverSpinsLeft((prev) => {
+        const next = prev - 1;
+        if (next === 0) {
+          soundManager.setOverdriveMusic(false);
+          handleSelectScene('VAULT');
+        }
+        return next;
+      });
     }
-  }, [totalXp, freeSpinsRemaining, feverSpinsLeft, totalBet]);
+  }, [totalXp, freeSpinsRemaining, feverSpinsLeft, totalBet, handleSelectScene]);
 
   // Quick Stop Handler
   const handleQuickStop = useCallback(() => {
@@ -425,8 +466,22 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-casino-950 text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden">
-      {/* Dynamic Vegas Sky Searchlights & Stardust Particle Field */}
-      <VegasAmbience />
+      {/* 1. Dynamic Casino Panoramic Scene Backdrop */}
+      <SceneBackdrop sceneId={currentSceneId} />
+
+      {/* 2. Full-Screen 60 FPS Cascading Cash & Currency Rain Canvas */}
+      <CashRainCanvas
+        intensity={
+          celebration ? 'jackpot' : freeSpinsRemaining > 0 ? 'heavy' : winAmount > 0 ? 'light' : 'idle'
+        }
+      />
+
+      {/* 3. Motorized Armored Vault Blast Doors Full Slide Transitions */}
+      <VaultBlastDoors
+        isOpen={isVaultDoorTransitionOpen}
+        targetScene={transitioningScene}
+        onTransitionComplete={() => setIsVaultDoorTransitionOpen(false)}
+      />
 
       {/* Header Bar */}
       <HeaderBar
@@ -435,6 +490,8 @@ export const App: React.FC = () => {
         isMuted={isMuted}
         canClaimBonus={canClaimBonus}
         timeUntilBonus={timeUntilBonus}
+        currentSceneId={currentSceneId}
+        onSelectScene={handleSelectScene}
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
@@ -465,6 +522,7 @@ export const App: React.FC = () => {
           onSpin={executeSpin}
           canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
           isFeverMode={feverSpinsLeft > 0}
+          currentSceneId={currentSceneId}
         />
       </main>
 

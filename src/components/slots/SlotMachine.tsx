@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import type { SpinResult, SymbolGrid } from '../../engine/types';
+import type { CasinoSceneId } from '../scenes/SceneTypes';
 import { Reel } from './Reel';
 import { PaylineOverlay } from './PaylineOverlay';
 import { PaylineSideTabs } from './PaylineSideTabs';
 import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
+import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { soundManager } from '../../audio/soundManager';
-import { ChevronLeft, ChevronRight, Award } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 
 interface SlotMachineProps {
@@ -22,6 +24,7 @@ interface SlotMachineProps {
   onSpin?: () => void;
   canSpin?: boolean;
   isFeverMode?: boolean;
+  currentSceneId?: CasinoSceneId;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -37,11 +40,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onSpin,
   canSpin = true,
   isFeverMode = false,
+  currentSceneId = 'VAULT',
 }) => {
   // Track spinning state per reel [0..4]
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
+  const [isColossalSlideOpen, setIsColossalSlideOpen] = useState(false);
 
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
@@ -222,6 +227,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     }
   };
 
+  const handleToggleColossalSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    soundManager.playVaultSlide();
+    setIsColossalSlideOpen((prev) => !prev);
+  };
+
   return (
     <div
       onClick={handleStageClick}
@@ -270,7 +281,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             ))}
           </div>
 
-          {/* Oregon Lottery Style Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
+          {/* Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
           <div className="text-center flex-1 px-1 sm:px-3 overflow-hidden flex items-center justify-center">
             {freeSpinsRemaining > 0 ? (
               <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-pulse truncate whitespace-nowrap">
@@ -307,13 +318,28 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
             ) : (
               <span className="text-xs sm:text-sm font-black tracking-widest uppercase gold-gradient-text truncate whitespace-nowrap">
-                ★ {selectedLines} PAYLINES • DELUXE OREGON LOTTERY STYLE ★
+                ★ 24K GOLD &amp; CASH VAULT • 40 PAYLINES ★
               </span>
             )}
           </div>
 
+          {/* Right Header Controls: Colossal Scene Slide Toggle & Flashing Bulbs */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {[...Array(6)].map((_, i) => (
+            {/* Interactive Full Slot Slide Button */}
+            <button
+              onClick={handleToggleColossalSlide}
+              className={`flex items-center space-x-1 px-2 py-0.5 rounded-lg border text-[9px] font-black uppercase transition-all ${
+                isColossalSlideOpen
+                  ? 'bg-amber-400 text-black border-white shadow-[0_0_10px_#F59E0B]'
+                  : 'bg-casino-900/80 text-yellow-300 border-yellow-400/30 hover:border-yellow-400'
+              }`}
+              title="Toggle Full Slot Panoramic Scene Slide"
+            >
+              <Film className="w-3 h-3" />
+              <span className="hidden sm:inline">SCENE SLIDE</span>
+            </button>
+
+            {[...Array(3)].map((_, i) => (
               <div
                 key={i}
                 className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
@@ -325,7 +351,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 }`}
                 style={{
                   animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
-                  animationDelay: `${(5 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
+                  animationDelay: `${(3 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
                 }}
               />
             ))}
@@ -363,6 +389,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <FloatingWins activeWin={activeWin} />
             )}
 
+            {/* Full Slot Panoramic Scene Slide (Middle 3 Reels Merge) */}
+            {isColossalSlideOpen && !isAnyReelSpinning && (
+              <div className="absolute inset-x-16 sm:inset-x-24 inset-y-2 z-25">
+                <ColossalSceneSlide
+                  sceneId={currentSceneId}
+                  multiplier={freeSpinsRemaining > 0 ? 3 : isFeverMode ? 2 : 1}
+                  onClose={() => setIsColossalSlideOpen(false)}
+                />
+              </div>
+            )}
+
             {/* 5 Reels */}
             {[0, 1, 2, 3, 4].map((reelIdx) => (
               <Reel
@@ -397,16 +434,18 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         <div className="h-6 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0">
           <div className="flex items-center space-x-1.5 flex-shrink-0">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>PAYOUT RATE: 95.8% RTP</span>
+            <span className="font-mono text-emerald-400">95.8% RTP • CASH MULTIPLIERS</span>
           </div>
 
           <div className="text-gold-bright font-black text-xs truncate px-2 text-center flex-1">
             {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 ? (
-              <span className="animate-pulse">{spinResult.winningLines.length} WINNING LINE(S) PAID OUT!</span>
+              <span className="animate-pulse">{spinResult.winningLines.length} CASH PAYLINES HIT!</span>
             ) : null}
           </div>
 
-          <div className="tracking-wide flex-shrink-0 hidden sm:block">HOVER (1-40) FOR LINES</div>
+          <div className="tracking-wide flex-shrink-0 hidden sm:block text-amber-300">
+            SCENE: {currentSceneId}
+          </div>
         </div>
       </div>
     </div>

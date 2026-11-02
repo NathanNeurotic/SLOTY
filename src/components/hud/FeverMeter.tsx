@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Zap } from 'lucide-react';
+import { Flame, Coins } from 'lucide-react';
 
 interface FeverMeterProps {
   charge: number; // 0 to 100
@@ -12,7 +12,7 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
   return (
     <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1 select-none flex-shrink-0">
       <div
-        className={`relative rounded-xl px-1.5 py-1 border transition-colors duration-200 flex items-center justify-between overflow-hidden shadow-lg h-8 sm:h-9 flex-shrink-0 ${
+        className={`relative rounded-xl px-2 py-1 border transition-colors duration-200 flex items-center justify-between overflow-hidden shadow-lg h-8 sm:h-9 flex-shrink-0 ${
           isFeverActive
             ? 'bg-gradient-to-r from-red-950 via-purple-950 to-amber-950 border-yellow-300 shadow-[0_0_25px_rgba(234,179,8,0.8)] animate-pulse'
             : 'bg-casino-950/80 border-white/10'
@@ -28,17 +28,17 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
             {isFeverActive ? (
               <Flame className="w-3.5 h-3.5 fill-white text-white" />
             ) : (
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <Coins className="w-3.5 h-3.5 text-yellow-400" />
             )}
           </div>
           <span
-            className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${
+            className={`text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider ${
               isFeverActive ? 'text-yellow-300 animate-pulse' : 'text-slate-300'
             }`}
           >
             {isFeverActive
-              ? `🔥 HYPER FEVER: ${feverSpinsLeft} SPINS (2X MULTIPLIER) 🔥`
-              : 'LUCK OVERDRIVE'}
+              ? `🔥 24K GOLD OVERDRIVE: ${feverSpinsLeft} SPINS (2X CASH WINS) 🔥`
+              : 'GOLD VAULT OVERDRIVE'}
           </span>
         </div>
 
@@ -49,7 +49,7 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
             className={`h-full rounded-full transition-all duration-500 relative ${
               isFeverActive
                 ? 'bg-gradient-to-r from-yellow-400 via-rose-500 to-amber-400 animate-shimmer-sweep w-full'
-                : 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500'
+                : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-emerald-500'
             }`}
             style={{ width: isFeverActive ? '100%' : `${charge}%` }}
           >
@@ -70,7 +70,7 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
         <div className="flex-shrink-0 ml-2 z-10 text-right min-w-[45px]">
           <span
             className={`font-mono text-[9px] sm:text-[10px] font-black ${
-              isFeverActive ? 'text-yellow-300' : 'text-cyan-400'
+              isFeverActive ? 'text-yellow-300' : 'text-amber-400'
             }`}
           >
             {isFeverActive ? 'ACTIVE' : `${Math.floor(charge)}%`}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshCw, Trophy, Coins, X, FastForward, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Landmark, Coins, X, FastForward, CheckCircle2 } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 
 interface HoldAndSpinModalProps {
@@ -76,8 +76,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         col.map((cell) => {
           if (cell.isLocked) return cell;
 
-          // 20% chance of landing a new orb on empty position
-          if (Math.random() < 0.2) {
+          // 22% chance of landing a new orb on empty position
+          if (Math.random() < 0.22) {
             anyNewLocked = true;
             const isMini = Math.random() < 0.08;
             const isMinor = Math.random() < 0.03;
@@ -112,7 +112,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       setIsSpinning(false);
 
       if (anyNewLocked) {
-        soundManager.playCoinTally();
+        soundManager.playGoldBarClank();
+        soundManager.playCoinCascade(6);
         setRespinsLeft(3); // Reset to 3 respins!
       } else {
         const nextRespins = respinsLeft - 1;
@@ -121,7 +122,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
         if (nextRespins <= 0) {
           setIsFinished(true);
-          soundManager.playWinChime(15);
+          soundManager.playCashRegister();
+          soundManager.playJackpotFanfare();
         }
       }
     }, 450);
@@ -137,7 +139,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       currentGridState = currentGridState.map((col) =>
         col.map((cell) => {
           if (cell.isLocked) return cell;
-          if (Math.random() < 0.22) {
+          if (Math.random() < 0.25) {
             newHit = true;
             const multiplier = [2, 5, 10, 25][Math.floor(Math.random() * 4)];
             return {
@@ -159,10 +161,12 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
     setGrid(currentGridState);
     setRespinsLeft(0);
     setIsFinished(true);
+    soundManager.playCashRegister();
     soundManager.playJackpotFanfare();
   };
 
   const handleCollectAndExit = () => {
+    soundManager.playCashRegister();
     soundManager.playJackpotFanfare();
     onComplete(totalPot);
   };
@@ -173,13 +177,13 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         {/* Header Marquee with Close X Button */}
         <div className="w-full flex items-center justify-between pb-3 border-b border-yellow-500/30 mb-2">
           <div className="flex items-center space-x-2">
-            <Trophy className="w-6 h-6 text-yellow-400 animate-bounce flex-shrink-0" />
+            <Landmark className="w-6 h-6 text-yellow-400 animate-pulse flex-shrink-0" />
             <div>
               <h2 className="text-base sm:text-lg font-black gold-gradient-text uppercase tracking-wider">
-                Golden Cash Link Bonus
+                Fort Knox Cash Link Vault Bonus
               </h2>
               <span className="text-[10px] text-yellow-300/80 block">
-                Lock golden coins to build your win pot • Respins reset to 3 on new coin
+                Lock 24K Bullion Coins to collect cash credits • Respins reset to 3 on new coin
               </span>
             </div>
           </div>
@@ -204,7 +208,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             {/* Instant Exit X button */}
             <button
               onClick={handleCollectAndExit}
-              title="Collect current coins and exit bonus"
+              title="Collect current coins and return to slots"
               className="p-1.5 rounded-lg bg-casino-900 hover:bg-casino-800 border border-white/20 text-slate-300 hover:text-white"
             >
               <X className="w-5 h-5 text-yellow-300" />
@@ -236,8 +240,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                       ) : (
                         <Coins className="w-3.5 h-3.5 text-amber-950" />
                       )}
-                      <span className="text-xs sm:text-sm font-black leading-tight mt-0.5 text-amber-950">
-                        +{cell.value.toLocaleString()}
+                      <span className="text-xs sm:text-sm font-black leading-tight mt-0.5 text-amber-950 font-mono">
+                        +${cell.value.toLocaleString()}
                       </span>
                     </>
                   ) : (
@@ -252,14 +256,14 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         {/* Total Cash Pot summary */}
         <div className="flex items-center justify-between w-full px-3 py-2 bg-casino-900/80 rounded-xl border border-yellow-400/30 my-1.5">
           <div className="flex flex-col">
-            <span className="text-[9px] uppercase font-bold text-slate-400">Total Accumulated Win</span>
-            <span className="text-lg sm:text-xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]">
-              +{totalPot.toLocaleString()} COINS
+            <span className="text-[9px] uppercase font-bold text-slate-400">Total Accumulated Cash Win</span>
+            <span className="text-lg sm:text-xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)] font-mono">
+              +${totalPot.toLocaleString()}
             </span>
           </div>
 
           <div className="text-right">
-            <span className="text-[9px] uppercase font-bold text-slate-400 block">Locked Coins</span>
+            <span className="text-[9px] uppercase font-bold text-slate-400 block">Locked Bullion Coins</span>
             <span className="text-sm font-black text-neon-cyan">
               {lockedCellsCount} / 20
             </span>
@@ -274,7 +278,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
               className="w-full py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-black text-sm uppercase tracking-widest shadow-[0_0_25px_rgba(34,197,94,0.7)] animate-pulse hover:scale-[1.01] active:scale-95 flex items-center justify-center space-x-2"
             >
               <CheckCircle2 className="w-5 h-5" />
-              <span>COLLECT +{totalPot.toLocaleString()} COINS &amp; RETURN TO GAME</span>
+              <span>COLLECT +${totalPot.toLocaleString()} CASH &amp; RETURN TO SLOTS</span>
             </button>
           ) : (
             <>
@@ -307,7 +311,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
               <button
                 onClick={handleCollectAndExit}
                 className="py-3 px-3.5 rounded-2xl bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold text-xs uppercase transition-all"
-                title="Collect your coins and exit to main game right now"
+                title="Collect your cash and exit to slots right now"
               >
                 Collect &amp; Exit
               </button>

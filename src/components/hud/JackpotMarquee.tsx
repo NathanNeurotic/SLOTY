@@ -110,20 +110,20 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-2 select-none">
+    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-2 select-none flex-shrink-0">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2">
         {jackpotTiers.map((tier) => {
           const Icon = tier.icon;
           return (
             <div
               key={tier.name}
-              className={`relative bg-gradient-to-b ${tier.bg} border ${tier.border} rounded-xl px-1.5 sm:px-2 py-1 sm:py-1.5 flex items-center justify-between ${tier.glow} overflow-hidden`}
+              className={`relative bg-gradient-to-b ${tier.bg} border ${tier.border} rounded-xl px-1.5 sm:px-2 py-1 sm:py-1.5 flex items-center justify-between ${tier.glow} overflow-hidden h-11 sm:h-12 flex-shrink-0`}
             >
               {/* Animated top shimmer bar */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" />
 
               {/* Left tier badge & icon */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5">
+              <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
                 <div
                   className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg ${tier.badgeBg} flex items-center justify-center shadow-md flex-shrink-0`}
                 >
@@ -133,20 +133,20 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
                   <span className="text-[8px] sm:text-[9px] font-black tracking-widest text-slate-300 uppercase leading-none">
                     {tier.name}
                   </span>
-                  <span className="text-[6.5px] sm:text-[7px] font-bold text-slate-400 uppercase leading-none mt-0.5">
-                    PROGRESSIVE
+                  <span className="text-[6.5px] sm:text-[7px] font-bold text-amber-400 uppercase leading-none mt-0.5">
+                    CASH POT
                   </span>
                 </div>
               </div>
 
               {/* Live incrementing ticker amount */}
-              <div className="text-right">
+              <div className="text-right flex-shrink-0">
                 <div
                   className={`text-[11px] sm:text-sm md:text-base font-black ${tier.textColor} tracking-tight font-mono leading-none`}
                 >
                   ${Math.floor(tier.amount).toLocaleString()}
                 </div>
-                <div className="text-[7.5px] sm:text-[8px] font-bold text-amber-400/80 leading-none mt-0.5">
+                <div className="text-[7.5px] sm:text-[8px] font-bold text-amber-400/80 leading-none mt-0.5 font-mono">
                   .{(tier.amount % 1).toFixed(2).slice(2)}
                 </div>
               </div>

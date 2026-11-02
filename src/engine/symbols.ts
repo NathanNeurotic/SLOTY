@@ -3,7 +3,7 @@ import type { SlotSymbol, SymbolId } from './types';
 export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   WILD: {
     id: 'WILD',
-    name: 'Wild Eagle',
+    name: '24K Liquid Gold Crown',
     payouts: { 3: 70, 4: 350, 5: 1800 },
     weight: 4,
     color: '#FFD700',
@@ -11,7 +11,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   SCATTER: {
     id: 'SCATTER',
-    name: 'Bonus Vault',
+    name: 'Bank Vault Safe Door',
     payouts: { 3: 100, 4: 350, 5: 1400 },
     weight: 6,
     color: '#00F0FF',
@@ -19,7 +19,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   COIN: {
     id: 'COIN',
-    name: 'Cash Orb',
+    name: 'Minted Bullion Coin',
     payouts: { 3: 35, 4: 100, 5: 350 },
     weight: 8,
     color: '#F59E0B',
@@ -27,7 +27,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   DIAMOND: {
     id: 'DIAMOND',
-    name: 'Royal Diamond',
+    name: 'Diamond Cash Briefcase',
     payouts: { 3: 55, 4: 200, 5: 700 },
     weight: 8,
     color: '#38BDF8',
@@ -35,7 +35,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   SEVEN: {
     id: 'SEVEN',
-    name: 'Blazing 777',
+    name: 'Solid Gold 777 Ingot',
     payouts: { 3: 40, 4: 140, 5: 500 },
     weight: 10,
     color: '#EF4444',
@@ -43,7 +43,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   GOLDBAR: {
     id: 'GOLDBAR',
-    name: 'Gold Bullion',
+    name: '999.9 Gold Bullion Pyramid',
     payouts: { 3: 30, 4: 100, 5: 350 },
     weight: 12,
     color: '#FBBF24',
@@ -51,7 +51,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   BELL: {
     id: 'BELL',
-    name: 'Liberty Bell',
+    name: 'Overstuffed Cash Bag',
     payouts: { 3: 25, 4: 70, 5: 250 },
     weight: 14,
     color: '#EAB308',
@@ -59,7 +59,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   HORSESHOE: {
     id: 'HORSESHOE',
-    name: 'Lucky Horseshoe',
+    name: 'Banded Cash Brick',
     payouts: { 3: 18, 4: 55, 5: 180 },
     weight: 16,
     color: '#A855F7',
@@ -67,7 +67,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   MELON: {
     id: 'MELON',
-    name: 'Neon Melon',
+    name: 'Royal Gold Treasure Chest',
     payouts: { 3: 14, 4: 40, 5: 140 },
     weight: 18,
     color: '#22C55E',
@@ -75,7 +75,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   GRAPES: {
     id: 'GRAPES',
-    name: 'Oregon Grapes',
+    name: 'Gold Ingot Stack',
     payouts: { 3: 10, 4: 35, 5: 100 },
     weight: 20,
     color: '#9333EA',
@@ -83,7 +83,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   ACE: {
     id: 'ACE',
-    name: 'Golden Ace',
+    name: '24K Gold Ace',
     payouts: { 3: 8, 4: 25, 5: 80 },
     weight: 24,
     color: '#F59E0B',
@@ -91,7 +91,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   KING: {
     id: 'KING',
-    name: 'Royal King',
+    name: 'Gold King Scepter',
     payouts: { 3: 7, 4: 20, 5: 60 },
     weight: 26,
     color: '#EC4899',
@@ -99,7 +99,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   QUEEN: {
     id: 'QUEEN',
-    name: 'Queen High',
+    name: 'Gold Queen Tiara',
     payouts: { 3: 5, 4: 16, 5: 50 },
     weight: 28,
     color: '#8B5CF6',
@@ -107,7 +107,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   JACK: {
     id: 'JACK',
-    name: 'VLT Jack',
+    name: 'Gold Jack Crest',
     payouts: { 3: 4, 4: 12, 5: 40 },
     weight: 30,
     color: '#06B6D4',
@@ -115,7 +115,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   CHERRY: {
     id: 'CHERRY',
-    name: 'Twin Cherries',
+    name: 'Diamond Dollar Sign',
     payouts: { 3: 4, 4: 12, 5: 40 },
     weight: 25,
     color: '#F43F5E',
@@ -123,7 +123,7 @@ export const SYMBOLS: Record<SymbolId, SlotSymbol> = {
   },
   PLUM: {
     id: 'PLUM',
-    name: 'Velvet Plum',
+    name: 'Cash Currency Roll',
     payouts: { 3: 5, 4: 16, 5: 50 },
     weight: 22,
     color: '#C084FC',
