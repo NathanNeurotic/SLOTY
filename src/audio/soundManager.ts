@@ -536,86 +536,215 @@ class SoundManager {
     osc.stop(this.ctx.currentTime + 0.06);
   }
 
-  // Spin start
+  // --- Continuous Stimulating Oregon Lottery / Vegas Reel Spin Audio Loop ---
+  private spinRollTimerId: number | null = null;
+  private spinRollStep: number = 0;
+  private isSpinRolling: boolean = false;
+  private isAnticipationRolling: boolean = false;
+
+  // Spin start: punchy casino excitation chord + pneumatic hiss
   public playSpinStart() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
+    const now = this.ctx.currentTime;
+
+    // 1. Rising pneumatic air swoosh
     const osc = this.ctx.createOscillator();
-    const gain = this.createGainNode(0.2, 0.4, 0.01);
+    const gain = this.createGainNode(0.22, 0.5, 0.01);
     if (!gain) return;
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(120, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(360, this.ctx.currentTime + 0.18);
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(520, now + 0.2);
 
     osc.connect(gain);
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.2);
+    osc.start(now);
+    osc.stop(now + 0.22);
+
+    // 2. Punchy lever release clack
+    const clack = this.ctx.createOscillator();
+    const clackGain = this.ctx.createGain();
+    clackGain.gain.setValueAtTime(0.45 * this.sfxVolume, now);
+    clackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    clack.type = 'triangle';
+    clack.frequency.setValueAtTime(280, now);
+    clack.frequency.exponentialRampToValueAtTime(60, now + 0.07);
+
+    clack.connect(clackGain);
+    clackGain.connect(this.ctx.destination);
+    clack.start(now);
+    clack.stop(now + 0.09);
   }
 
-  // Reel stop
+  // Continuous stimulating Oregon Lottery spin arpeggio & mechanical ratchet ticker
+  public startSpinRollLoop(isFever: boolean = false) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    this.stopSpinRollLoop();
+    this.isSpinRolling = true;
+    this.isAnticipationRolling = false;
+    this.spinRollStep = 0;
+
+    // Classic Oregon Lottery VLT ascending arpeggio notes (bright pentatonic chime sequence)
+    const rollNotes = isFever
+      ? [587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51, 1567.98]
+      : [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51];
+
+    const stepIntervalMs = isFever ? 50 : 62; // ~16-20 ticks/chimes per second
+
+    const playRollTick = () => {
+      if (!this.isSpinRolling || !this.ctx || this.isMuted) return;
+
+      const now = this.ctx.currentTime;
+      const step = this.spinRollStep;
+
+      // 1. Mechanical Stepper Ratchet Click (Rapid physical wheel ticking)
+      const clickBuffer = this.ctx.createBuffer(1, Math.floor(this.ctx.sampleRate * 0.015), this.ctx.sampleRate);
+      const clickData = clickBuffer.getChannelData(0);
+      for (let i = 0; i < clickData.length; i++) {
+        clickData[i] = (Math.random() * 2 - 1) * Math.exp(-i / 60);
+      }
+      const clickSource = this.ctx.createBufferSource();
+      clickSource.buffer = clickBuffer;
+
+      const clickFilter = this.ctx.createBiquadFilter();
+      clickFilter.type = 'bandpass';
+      clickFilter.frequency.setValueAtTime(2600 + (step % 4) * 250, now);
+      clickFilter.Q.setValueAtTime(2.2, now);
+
+      const clickGain = this.ctx.createGain();
+      clickGain.gain.setValueAtTime(0.38 * this.sfxVolume, now);
+      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.018);
+
+      clickSource.connect(clickFilter);
+      clickFilter.connect(clickGain);
+      clickGain.connect(this.ctx.destination);
+      clickSource.start(now);
+
+      // 2. High-Energy Ascending Casino Marimba / Bell Chime Pulse
+      const pitch = this.isAnticipationRolling
+        ? 880 + (step % 8) * 140 // High suspense climbing ladder
+        : rollNotes[step % rollNotes.length];
+
+      const toneOsc = this.ctx.createOscillator();
+      const toneGain = this.ctx.createGain();
+      const toneVol = this.isAnticipationRolling ? 0.35 : 0.24;
+
+      toneGain.gain.setValueAtTime(toneVol * this.sfxVolume, now);
+      toneGain.gain.exponentialRampToValueAtTime(0.0001, now + (this.isAnticipationRolling ? 0.12 : 0.08));
+
+      toneOsc.type = this.isAnticipationRolling ? 'sawtooth' : 'triangle';
+      toneOsc.frequency.setValueAtTime(pitch, now);
+
+      toneOsc.connect(toneGain);
+      toneGain.connect(this.ctx.destination);
+      toneOsc.start(now);
+      toneOsc.stop(now + 0.09);
+
+      this.spinRollStep = (this.spinRollStep + 1) % 32;
+      this.spinRollTimerId = window.setTimeout(playRollTick, stepIntervalMs);
+    };
+
+    playRollTick();
+  }
+
+  // Accelerate and raise pitch when anticipation is triggered (reels 0 & 1 hit scatters)
+  public updateSpinRollAnticipation() {
+    this.isAnticipationRolling = true;
+  }
+
+  // Stop the spin roll loop when all reels settle
+  public stopSpinRollLoop() {
+    this.isSpinRolling = false;
+    this.isAnticipationRolling = false;
+    if (this.spinRollTimerId) {
+      clearTimeout(this.spinRollTimerId);
+      this.spinRollTimerId = null;
+    }
+  }
+
+  // Heavy tactile physical reel stop (bass punch + spring latch clack)
   public playReelStop(reelIndex: number = 0) {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
-    const baseFreq = 160 + reelIndex * 28;
+    const baseFreq = 140 + reelIndex * 35; // Ascending mechanical pitch from reel 0 to 4
     const now = this.ctx.currentTime;
 
-    const osc = this.ctx.createOscillator();
-    const gain = this.createGainNode(0.12, 0.5, 0.01);
-    if (!gain) return;
+    // 1. Heavy physical clunk impact
+    const punchOsc = this.ctx.createOscillator();
+    const punchGain = this.ctx.createGain();
+    punchGain.gain.setValueAtTime(0.70 * this.sfxVolume, now);
+    punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
 
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(baseFreq * 1.5, now);
-    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, now + 0.1);
+    punchOsc.type = 'triangle';
+    punchOsc.frequency.setValueAtTime(baseFreq * 1.8, now);
+    punchOsc.frequency.exponentialRampToValueAtTime(baseFreq * 0.4, now + 0.1);
 
+    punchOsc.connect(punchGain);
+    punchGain.connect(this.ctx.destination);
+    punchOsc.start(now);
+    punchOsc.stop(now + 0.13);
+
+    // 2. Sub-bass cabinet thump
     const subOsc = this.ctx.createOscillator();
     const subGain = this.ctx.createGain();
-    subGain.gain.setValueAtTime(0.6 * this.sfxVolume, now);
-    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+    subGain.gain.setValueAtTime(0.65 * this.sfxVolume, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
     subOsc.type = 'sine';
-    subOsc.frequency.setValueAtTime(80, now);
-    subOsc.frequency.exponentialRampToValueAtTime(30, now + 0.08);
+    subOsc.frequency.setValueAtTime(85, now);
+    subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.08);
 
-    osc.connect(gain);
     subOsc.connect(subGain);
     subGain.connect(this.ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.1);
 
-    osc.start();
-    subOsc.start();
-    osc.stop(now + 0.12);
-    subOsc.stop(now + 0.08);
+    // 3. Metallic latch lock click
+    const latchOsc = this.ctx.createOscillator();
+    const latchGain = this.ctx.createGain();
+    latchGain.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+    latchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+    latchOsc.type = 'square';
+    latchOsc.frequency.setValueAtTime(950 + reelIndex * 120, now);
+
+    latchOsc.connect(latchGain);
+    latchGain.connect(this.ctx.destination);
+    latchOsc.start(now);
+    latchOsc.stop(now + 0.05);
   }
 
-  // Scatter landing
+  // Radiant casino scatter bell fanfare with dual harmonic ring
   public playScatterLand(scatterIndex: number = 1) {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
     const now = this.ctx.currentTime;
-    const baseFreq = 587.33 * Math.pow(1.25, scatterIndex);
+    const basePitches = [523.25, 659.25, 783.99, 1046.5, 1318.51];
+    const pitch = basePitches[Math.min(basePitches.length - 1, Math.max(0, scatterIndex - 1))];
 
-    const osc = this.ctx.createOscillator();
-    const gain = this.createGainNode(0.4, 0.5, 0.01);
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
+    const gain = this.createGainNode(0.65, 0.65, 0.0001);
     if (!gain) return;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(baseFreq, now);
-    osc.frequency.setValueAtTime(baseFreq * 1.5, now + 0.08);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(pitch, now);
 
-    const harmOsc = this.ctx.createOscillator();
-    harmOsc.type = 'triangle';
-    harmOsc.frequency.setValueAtTime(baseFreq * 2.5, now);
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(pitch * 2, now);
 
-    osc.connect(gain);
-    harmOsc.connect(gain);
+    osc1.connect(gain);
+    osc2.connect(gain);
 
-    osc.start();
-    harmOsc.start();
-    osc.stop(now + 0.4);
-    harmOsc.stop(now + 0.4);
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.65);
+    osc2.stop(now + 0.65);
   }
 
   // Anticipation loop

@@ -64,6 +64,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     timersRef.current.forEach((t) => clearTimeout(t));
     timersRef.current = [];
 
+    soundManager.stopSpinRollLoop();
     setReelSpinning([false, false, false, false, false]);
     soundManager.playReelStop(4);
 
@@ -78,6 +79,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       setReelSpinning([true, true, true, true, true]);
       setActiveWinningLineIdx(null);
       setHoveredLineIndex(null);
+
+      // Start the continuous stimulating Oregon Lottery reel roll arpeggio & stepper ticker
+      soundManager.startSpinRollLoop(isFeverMode);
 
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
@@ -113,10 +117,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           // Final reel settled
           if (reelIdx === 4) {
+            soundManager.stopSpinRollLoop();
             if (onAllReelsStoppedRef.current) {
               onAllReelsStoppedRef.current();
             }
           } else if (anticipation && reelIdx >= 1) {
+            soundManager.updateSpinRollAnticipation();
             soundManager.playAnticipationHeartbeat();
           }
         }, delay);
@@ -124,15 +130,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         timersRef.current.push(timerId);
       });
     } else {
+      soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
       setReelSpinning([false, false, false, false, false]);
     }
 
     return () => {
+      soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
     };
-  }, [isSpinning, isTurbo, currentGrid]);
+  }, [isSpinning, isTurbo, currentGrid, isFeverMode]);
 
   // Cycle through winning lines when idle after a win
   useEffect(() => {
