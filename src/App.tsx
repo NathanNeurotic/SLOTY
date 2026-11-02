@@ -466,17 +466,18 @@ export const App: React.FC = () => {
       setShowHoldAndSpinModal(true);
     }
 
-    // Check VIP Level Up
+    // Check VIP Level Up (Paced at most 1 level up modal per spin)
     const currentProgression = calculateProgression(totalXp);
     if (currentProgression.level > prevLevelRef.current) {
-      const reward = getLevelUpReward(currentProgression.level);
+      const nextLevel = Math.min(currentProgression.level, prevLevelRef.current + 1);
+      const reward = getLevelUpReward(nextLevel);
       soundManager.speakAnnouncer("Level Up!");
       setLevelUpData({
-        newLevel: currentProgression.level,
+        newLevel: nextLevel,
         bonusCoins: reward,
         newMaxBet: currentProgression.maxBet,
       });
-      prevLevelRef.current = currentProgression.level;
+      prevLevelRef.current = nextLevel;
     }
 
     // Handle Free Spins Sequence
@@ -576,6 +577,15 @@ export const App: React.FC = () => {
   ]);
 
   // --- Keyboard Shortcuts ---
+  const levelUpDataRef = useRef(levelUpData);
+  levelUpDataRef.current = levelUpData;
+  const balanceRef = useRef(balance);
+  balanceRef.current = balance;
+  const totalBetRef = useRef(totalBet);
+  totalBetRef.current = totalBet;
+  const freeSpinsRemainingRef = useRef(freeSpinsRemaining);
+  freeSpinsRemainingRef.current = freeSpinsRemaining;
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Avoid hotkeys when typing in debug input
@@ -586,8 +596,9 @@ export const App: React.FC = () => {
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
         // Clear level-up modal if active
-        if (levelUpData !== null) {
-          setBalance((b) => b + levelUpData.bonusCoins);
+        if (levelUpDataRef.current !== null) {
+          const currentLevelUp = levelUpDataRef.current;
+          setBalance((b) => b + currentLevelUp.bonusCoins);
           setLevelUpData(null);
           soundManager.playButtonClick();
           return;
@@ -597,11 +608,11 @@ export const App: React.FC = () => {
         }
         if (isSpinning) {
           handleQuickStop();
-        } else if (freeSpinsRemaining > 0 || balance >= totalBet) {
+        } else if (freeSpinsRemainingRef.current > 0 || balanceRef.current >= totalBetRef.current) {
           executeSpin();
         } else {
           soundManager.playError();
-          if (balance < 1) {
+          if (balanceRef.current < 1) {
             setShowBonusWheelModal(true);
           }
         }

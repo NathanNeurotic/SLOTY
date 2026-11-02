@@ -6,14 +6,11 @@ export function getMaxBetForLevel(level: number): number {
 }
 
 // XP delta needed to advance from level to level + 1.
-// Directly anchors XP requirement to maxBet * spinsNeeded, so that no matter how high
-// the stakes get (from 500 up to 1,000,000 chips), advancing a level ALWAYS requires
-// 20-50 spins at early levels, and 60-120 spins at high levels.
+// Compounding +45% scaling per level ensures that leveling steadily paces apart
+// and requires progressively more spins, outpacing the max bet increases (which double every 2 levels = ~41.4% per level).
 export function getXpDeltaForLevel(level: number): number {
-  const currentMaxBet = getMaxBetForLevel(level);
-  // Pacing: starts at 18 spins at level 1, growing to 100+ spins at high levels
-  const spinsNeeded = Math.min(120, 18 + Math.floor(level * 4.2));
-  return currentMaxBet * spinsNeeded;
+  const base = 5000;
+  return Math.round(base * Math.pow(1.45, Math.max(0, level - 1)));
 }
 
 export function getXpRequiredForLevel(targetLevel: number): number {

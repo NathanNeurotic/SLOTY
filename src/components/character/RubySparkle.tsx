@@ -192,41 +192,51 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     }, 1200);
   };
 
-  // Compact Mobile / Tablet Top Bar Variant
+  // Compact Stage Banner for Header & Floor Mode
   if (variant === 'compact') {
     return (
       <div
         onClick={handleRubyClick}
-        className={`flex items-center space-x-2 px-2.5 py-1 rounded-full cursor-pointer select-none transition-all shadow-md ${
+        className={`relative w-full max-w-md mx-auto flex items-center justify-between px-3 py-1.5 rounded-2xl cursor-pointer select-none transition-all shadow-xl ${
           isTimber
-            ? 'bg-[#08180e]/90 border border-emerald-500/60'
-            : 'bg-casino-900/90 border border-rose-500/50'
-        } ${isTapped ? 'scale-105' : ''}`}
+            ? 'bg-gradient-to-r from-[#0a1f12] via-[#05140b] to-[#020b06] border-2 border-emerald-400/60 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
+            : 'bg-gradient-to-r from-rose-950/90 via-casino-950 to-amber-950/90 border-2 border-yellow-400/60 shadow-[0_0_20px_rgba(244,63,94,0.35)]'
+        } ${isTapped ? 'scale-105' : 'hover:scale-[1.02]'}`}
         title="Tap Ruby Sparkle for lucky advice & +50 bonus coins!"
       >
-        <div className={`relative w-6 h-6 rounded-full overflow-hidden border flex-shrink-0 ${
-          isTimber ? 'border-emerald-300' : 'border-rose-400'
-        }`}>
-          <img src={hostessImg} alt="Hostess Ruby" className="w-full h-full object-cover object-top" />
-        </div>
-        <div className="flex flex-col text-left overflow-hidden">
-          <div className="flex items-center space-x-1">
-            <span className={`text-[8.5px] font-black uppercase tracking-wider ${
-              isTimber ? 'text-emerald-300' : 'text-rose-300'
-            }`}>
-              {isTimber ? 'RANGER RUBY' : 'RUBY SPARKLE'}
-            </span>
-            <Sparkles className={`w-2.5 h-2.5 ${isTimber ? 'text-emerald-400' : 'text-yellow-300'}`} />
+        {/* Hostess Avatar / Bust */}
+        <div className="relative flex items-center space-x-2 flex-shrink-0">
+          <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-yellow-300 shadow-[0_0_12px_rgba(245,158,11,0.6)] flex-shrink-0">
+            <img
+              src={hostessImg}
+              alt="Ruby Sparkle"
+              className="w-full h-full object-cover object-top"
+            />
           </div>
-          <span className="text-[7.5px] text-slate-300 truncate font-semibold">
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-1">
+              <Sparkles className="w-3 h-3 text-yellow-300 animate-spin" />
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-yellow-300 font-sans">
+                {isTimber ? 'RANGER RUBY' : 'RUBY SPARKLE'}
+              </span>
+            </div>
+            <span className="text-[8px] font-semibold tracking-wider text-rose-300 uppercase">
+              {isTimber ? 'WOODLAND EXPEDITION GUIDE' : 'VIP CASINO HOSTESS'}
+            </span>
+          </div>
+        </div>
+
+        {/* Dynamic Speech Bubble */}
+        <div className="flex-1 mx-2 sm:mx-3 px-2.5 py-1 rounded-xl bg-black/60 border border-white/10 text-center overflow-hidden">
+          <span className="text-[9px] sm:text-[10.5px] font-bold text-slate-100 truncate block leading-tight font-sans">
             {tapBonusText || currentQuote}
           </span>
         </div>
-        <div className={`ml-auto flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-black text-white flex-shrink-0 ${
-          isTimber ? 'bg-emerald-600' : 'bg-rose-600'
-        }`}>
-          <Star className="w-2.5 h-2.5 fill-yellow-300 text-yellow-300" />
-          <span>+50</span>
+
+        {/* Interactive Tap Bonus Action Pill */}
+        <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full text-[9px] sm:text-[10px] font-black text-slate-950 bg-gradient-to-r from-yellow-300 via-amber-300 to-yellow-400 shadow-md flex-shrink-0 animate-pulse">
+          <Star className="w-3 h-3 fill-slate-950 text-slate-950" />
+          <span>+50 TIP</span>
         </div>
       </div>
     );

@@ -26,6 +26,8 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   const leftNeighbor = peers[0] || null;
   const rightNeighbor = peers[1] || null;
 
+  const isTimber = activeGameId === 'timber-critters';
+
   return (
     <div className="relative w-full flex flex-col items-center">
       {/* Floor Mode Control Header (Desktop / Tablet only) */}
@@ -55,36 +57,68 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         </button>
       </div>
 
-      {/* Main Floor Arena */}
-      <div className="w-full flex items-start justify-center gap-2 sm:gap-4 overflow-x-auto px-1 sm:px-2 py-1">
-        {/* Left Seat: Neighbor Terminal */}
-        {isFloorMode && leftNeighbor && (
-          <div className="hidden md:block transition-all duration-300">
-            <NeighborTerminal
-              peer={leftNeighbor}
-              seatNumber={1}
-              onTip={onTipNeighbor}
-              activeGameId={activeGameId}
-            />
+      {/* Main Floor Arena with Themed Casino Floor Foundation */}
+      <div className={`w-full max-w-7xl mx-auto rounded-3xl p-1 sm:p-3 relative transition-all duration-300 ${
+        isTimber
+          ? 'bg-gradient-to-b from-[#1b0e07]/80 via-[#2a1308]/90 to-[#0e0602] border-t-2 border-[#854d0e]/40 shadow-[0_25px_60px_rgba(0,0,0,0.95)]'
+          : 'bg-gradient-to-b from-[#2d0505]/80 via-[#180202]/90 to-[#050000] border-t-2 border-yellow-500/30 shadow-[0_25px_60px_rgba(0,0,0,0.9)]'
+      }`}>
+        {/* Physical Themed Floor Pattern Texture */}
+        {isTimber ? (
+          <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none opacity-40 bg-[repeating-linear-gradient(0deg,transparent,transparent_24px,#140904_24px,#140904_26px)] overflow-hidden">
+            {/* Scattered Autumn Leaves and Moss Patches on the boardwalk */}
+            <div className="absolute bottom-2 left-10 text-xs">🍂</div>
+            <div className="absolute bottom-5 left-36 text-xs">🍁</div>
+            <div className="absolute bottom-3 right-16 text-xs">🍂</div>
+            <div className="absolute bottom-6 right-48 text-xs">🍁</div>
+            <div className="absolute bottom-1 inset-x-0 h-1 bg-gradient-to-r from-emerald-800/40 via-emerald-600/30 to-emerald-800/40" />
+          </div>
+        ) : (
+          <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none opacity-30 overflow-hidden">
+            {/* Las Vegas Red Velvet Diamond Trellis Pattern */}
+            <svg viewBox="0 0 100 100" className="w-full h-full object-repeat opacity-40">
+              <defs>
+                <pattern id="carpetPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 0 10 L 10 0 L 20 10 L 10 20 Z" fill="none" stroke="#FBBF24" strokeWidth="0.5" />
+                  <circle cx="10" cy="10" r="1.5" fill="#EF4444" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#carpetPattern)" />
+            </svg>
+            <div className="absolute bottom-1 inset-x-0 h-1 bg-gradient-to-r from-amber-500/50 via-yellow-300/60 to-amber-500/50" />
           </div>
         )}
 
-        {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 max-w-4xl z-10">
-          {children}
+        <div className="relative z-10 w-full flex items-end justify-center gap-2 sm:gap-6 lg:gap-10 xl:gap-12 overflow-x-auto px-1 sm:px-2 py-1">
+          {/* Left Seat: Neighbor Terminal */}
+          {isFloorMode && leftNeighbor && (
+            <div className="hidden md:block transition-all duration-300 flex-shrink-0">
+              <NeighborTerminal
+                peer={leftNeighbor}
+                seatNumber={1}
+                onTip={onTipNeighbor}
+                activeGameId={activeGameId}
+              />
+            </div>
+          )}
+
+          {/* Center Seat: Primary Slot Machine */}
+          <div className="flex-1 max-w-4xl z-10">
+            {children}
+          </div>
+
+          {/* Right Seat: Neighbor Terminal */}
+          {isFloorMode && rightNeighbor && (
+            <div className="hidden md:block transition-all duration-300 flex-shrink-0">
+              <NeighborTerminal
+                peer={rightNeighbor}
+                seatNumber={3}
+                onTip={onTipNeighbor}
+                activeGameId={activeGameId}
+              />
+            </div>
+          )}
         </div>
-
-        {/* Right Seat: Neighbor Terminal */}
-        {isFloorMode && rightNeighbor && (
-          <div className="hidden md:block transition-all duration-300">
-            <NeighborTerminal
-              peer={rightNeighbor}
-              seatNumber={3}
-              onTip={onTipNeighbor}
-              activeGameId={activeGameId}
-            />
-          </div>
-        )}
       </div>
 
 

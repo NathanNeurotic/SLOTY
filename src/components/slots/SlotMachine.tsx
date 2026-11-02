@@ -308,23 +308,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
-      {/* Desktop Hostess Flank: Ruby Sparkle cleanly placed beside the cabinet (hidden in floor mode to prevent overlapping neighbor terminals) */}
-      <div className={`${isFloorMode ? 'hidden' : 'hidden 2xl:block'} absolute -left-64 top-8 z-20`}>
-        <CompanionLounge
-          position="desktop-flank"
-          isSpinning={isSpinning}
-          isAnticipating={isAnticipating}
-          isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
-          isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
-          isFeverMode={isFeverMode}
-          winAmount={spinResult?.totalPayout || 0}
-          onRewardCoins={onRewardCoins}
-          activeGameId={activeGameId}
-        />
-      </div>
+      {/* Solo Focus Mode: Full Standee beside cabinet */}
+      {!isFloorMode && (
+        <div className="hidden xl:block absolute -left-56 sm:-left-64 top-8 z-30">
+          <CompanionLounge
+            position="desktop-flank"
+            isSpinning={isSpinning}
+            isAnticipating={isAnticipating}
+            isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
+            isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
+            isFeverMode={isFeverMode}
+            winAmount={spinResult?.totalPayout || 0}
+            onRewardCoins={onRewardCoins}
+            activeGameId={activeGameId}
+          />
+        </div>
+      )}
 
-      {/* Responsive VIP Companion Lounge Bar (hidden on small phones to maximize reel height) */}
-      <div className="hidden md:flex 2xl:hidden justify-center mb-1 w-full px-1">
+      {/* Interactive VIP Companion Mascot Stage - Always visible on floor & solo views */}
+      <div className="w-full flex justify-center mb-2 px-1 z-30">
         <CompanionLounge
           position="mobile-bar"
           isSpinning={isSpinning}
@@ -338,112 +340,34 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       </div>
 
-      {/* 3D Interactive Vegas Slot Pull-Arm Lever (hidden in floor mode to prevent overlapping neighbor machine) */}
-      {!isFloorMode && (
-        <SlotLever
-          isSpinning={isSpinning}
-          disabled={!canSpin}
-          onPull={() => {
-            if (onSpin) onSpin();
-          }}
-        />
-      )}
-
-      {/* Asymmetric Left Flank: Redwood Tree Trunk with Perched Mountain Great Horned Owl */}
-      {isTimber && (
-        <div className="hidden xl:flex flex-col items-center absolute -left-20 top-2 bottom-6 w-20 pointer-events-none z-30 select-none">
-          {/* Perched Mountain Owl */}
-          <div className="relative -mt-8 flex flex-col items-center">
-            <svg viewBox="0 0 70 80" className="w-16 h-18 drop-shadow-xl overflow-visible">
-              {/* Tufted Ears & Head */}
-              <polygon points="18,18 24,2 32,16" fill="#78350F" stroke="#B45309" strokeWidth="1" />
-              <polygon points="52,18 46,2 38,16" fill="#78350F" stroke="#B45309" strokeWidth="1" />
-              {/* Owl Body & Wings */}
-              <ellipse cx="35" cy="46" rx="22" ry="26" fill="#451A03" stroke="#92400E" strokeWidth="1.5" />
-              <ellipse cx="35" cy="28" rx="19" ry="16" fill="#78350F" stroke="#B45309" strokeWidth="1.5" />
-              {/* Feather Breast Plumes */}
-              <ellipse cx="35" cy="50" rx="14" ry="18" fill="#D97706" opacity="0.85" />
-              <path d="M26 42 Q35 46 44 42" stroke="#78350F" strokeWidth="1.5" fill="none" />
-              <path d="M28 50 Q35 54 42 50" stroke="#78350F" strokeWidth="1.5" fill="none" />
-              <path d="M30 58 Q35 62 40 58" stroke="#78350F" strokeWidth="1.5" fill="none" />
-              {/* Luminous Amber Eyes */}
-              <circle cx="27" cy="27" r="7.5" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
-              <circle cx="43" cy="27" r="7.5" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
-              <circle cx="27" cy="27" r="4.5" fill="#000" className={isSpinning ? "animate-pulse" : ""} />
-              <circle cx="43" cy="27" r="4.5" fill="#000" className={isSpinning ? "animate-pulse" : ""} />
-              <circle cx="28.5" cy="25.5" r="1.5" fill="#FFF" />
-              <circle cx="44.5" cy="25.5" r="1.5" fill="#FFF" />
-              {/* Golden Curved Beak */}
-              <polygon points="32,31 38,31 35,39" fill="#F59E0B" stroke="#78350F" strokeWidth="1" />
-              {/* Talons perched on branch */}
-              <ellipse cx="28" cy="72" rx="4" ry="2.5" fill="#F59E0B" />
-              <ellipse cx="42" cy="72" rx="4" ry="2.5" fill="#F59E0B" />
-              {/* Wooden Perch Branch */}
-              <path d="M6 73 Q35 70 66 74" stroke="#78350F" strokeWidth="5" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          {/* Towering Redwood Trunk Column */}
-          <div className="w-12 flex-1 rounded-t-xl bg-gradient-to-r from-[#2a1308] via-[#451e0e] to-[#1c0c05] border-x border-[#5c2810] shadow-[inset_0_0_15px_rgba(0,0,0,0.85)] relative overflow-hidden">
-            {/* Bark Grooves */}
-            <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_6px,rgba(0,0,0,0.7)_6px,rgba(0,0,0,0.7)_10px)]" />
-            {/* Shelf Mushrooms on Trunk */}
-            <div className="absolute top-28 -right-2 w-7 h-3 rounded-full bg-gradient-to-b from-[#b45309] to-[#78350f] border-b border-black shadow-md transform rotate-6" />
-            <div className="absolute top-48 -left-2 w-8 h-3.5 rounded-full bg-gradient-to-b from-[#d97706] to-[#92400e] border-b border-black shadow-md transform -rotate-12" />
-            {/* Patches of Forest Moss */}
-            <div className="absolute top-36 left-1 w-4 h-8 rounded-full bg-emerald-700/60 blur-[1px]" />
-            <div className="absolute bottom-20 right-1 w-5 h-12 rounded-full bg-emerald-800/70 blur-[1px]" />
-          </div>
-        </div>
-      )}
-
-      {/* Asymmetric Right Flank: Forged Iron Gallows Arm with Hanging Miner's Lantern */}
-      {isTimber && (
-        <div className="hidden xl:flex flex-col items-center absolute -right-20 top-2 bottom-6 w-20 pointer-events-none z-30 select-none">
-          {/* Forged Wrought-Iron Gallows Bracket */}
-          <div className="relative w-16 h-8 flex items-end justify-center">
-            <div className="w-14 h-2.5 bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#0f172a] rounded-t-sm border border-slate-700 shadow-md" />
-            <div className="absolute top-2 right-2 w-2 h-6 border-r-2 border-t-2 border-slate-600 rounded-tr" />
-          </div>
-          {/* Iron Chain Links */}
-          <div className="flex flex-col items-center space-y-0.5 my-0.5">
-            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
-            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
-            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
-          </div>
-          {/* Hanging Iron Miner's Lantern */}
-          <div className="relative w-12 h-22 rounded-b-xl bg-gradient-to-b from-[#1e293b] via-[#0f172a] to-[#020617] border-2 border-[#475569] shadow-[0_0_25px_rgba(245,158,11,0.6)] p-1 flex flex-col items-center justify-between">
-            {/* Lantern Cap with Ring */}
-            <div className="w-10 h-2.5 bg-gradient-to-r from-[#334155] via-[#64748b] to-[#1e293b] rounded-t-md border-b border-black" />
-            {/* Glass Chamber with Glowing Flickering Fire */}
-            <div className="w-8 h-13 bg-amber-500/20 rounded border border-amber-400/40 relative overflow-hidden flex items-center justify-center shadow-[inset_0_0_12px_rgba(245,158,11,0.8)]">
-              {/* Animated Fire Flame */}
-              <div className="w-4 h-7 rounded-full bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 animate-pulse shadow-[0_0_15px_#F59E0B]" />
-              {/* Iron Cage Wire Bars */}
-              <div className="absolute inset-x-2 top-0 bottom-0 border-x border-slate-700/80 pointer-events-none" />
-            </div>
-            {/* Heavy Base */}
-            <div className="w-11 h-2.5 bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#0f172a] rounded-b-md border-t border-black" />
-          </div>
-          {/* Timber Base with Forest Pinecones */}
-          <div className="w-12 mt-auto flex flex-col items-center justify-end pb-2">
-            <div className="flex items-center space-x-1 text-sm">
-              <span>🪵</span>
-              <span>🌲</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 3D Interactive Mechanical Pull-Arm Slot Lever */}
+      <SlotLever
+        isSpinning={isSpinning}
+        disabled={!canSpin}
+        onPull={() => {
+          if (onSpin) onSpin();
+        }}
+      />
 
       {/* Handcrafted Rustic Log Pediment Crest for Timberland Critters */}
-      {isTimber && (
+      {isTimber ? (
         <div className="w-full flex justify-center -mb-2 relative z-20 pointer-events-none">
-          <div className="flex items-center space-x-2 px-5 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-2 border-x-2 border-[#b45309] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
+          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-2 border-x-2 border-[#b45309] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
             <span className="text-amber-400 text-sm animate-pulse">🌲</span>
             <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#fde047] uppercase font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               HANDCRAFTED TIMBER CABIN
             </span>
             <span className="text-amber-400 text-sm animate-pulse">🌲</span>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full flex justify-center -mb-2 relative z-20 pointer-events-none">
+          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-amber-700 via-yellow-500 to-amber-700 border-t-2 border-x-2 border-yellow-200 shadow-[0_-6px_20px_rgba(245,158,11,0.6)]">
+            <span className="text-yellow-100 text-sm animate-bounce">💰</span>
+            <span className="text-[10px] sm:text-xs font-black tracking-widest text-slate-950 uppercase font-sans drop-shadow-[0_1px_2px_rgba(255,255,255,0.5)]">
+              FORT KNOX 24K IMPERIAL VAULT
+            </span>
+            <span className="text-yellow-100 text-sm animate-bounce">💰</span>
           </div>
         </div>
       )}
@@ -456,6 +380,65 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             : 'neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >
+        {/* Asymmetrical Cabinet Corner Mounts (Cleanly inside frame boundaries, ZERO neighbor overlap) */}
+        {isTimber ? (
+          <>
+            {/* Top-Left: Mountain Owl perched on timber branch */}
+            <div className="absolute -top-7 left-2 pointer-events-none z-30 select-none">
+              <div className="w-12 h-12 relative flex items-center justify-center drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]">
+                <svg viewBox="0 0 72 72" className="w-full h-full overflow-visible">
+                  {/* Feather tufts & head */}
+                  <polygon points="18,12 28,24 14,26" fill="#78350F" />
+                  <polygon points="54,12 44,24 58,26" fill="#78350F" />
+                  <ellipse cx="36" cy="36" rx="22" ry="24" fill="#92400E" stroke="#542F0B" strokeWidth="2" />
+                  <ellipse cx="36" cy="40" rx="15" ry="16" fill="#FDE68A" />
+                  {/* Glowing Golden Eyes */}
+                  <circle cx="28" cy="30" r="8" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
+                  <circle cx="44" cy="30" r="8" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
+                  <circle cx="28" cy="30" r="4.5" fill="#000" className={isSpinning ? 'animate-pulse' : ''} />
+                  <circle cx="44" cy="30" r="4.5" fill="#000" className={isSpinning ? 'animate-pulse' : ''} />
+                  <circle cx="26" cy="28" r="1.5" fill="#FFF" />
+                  <circle cx="42" cy="28" r="1.5" fill="#FFF" />
+                  {/* Beak */}
+                  <polygon points="33,35 39,35 36,43" fill="#F59E0B" />
+                  {/* Wooden Branch */}
+                  <path d="M6 56 Q36 53 66 57" stroke="#542F0B" strokeWidth="4.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Top-Right: Forged Miner's Lantern with flickering fire flame */}
+            <div className="absolute -top-8 right-3 pointer-events-none z-30 select-none flex flex-col items-center">
+              <div className="w-6 h-2 bg-slate-800 rounded-t border border-slate-600" />
+              <div className="w-1 h-3 bg-slate-700 border-x border-slate-500" />
+              <div className="w-9 h-14 rounded-lg bg-gradient-to-b from-slate-900 via-slate-950 to-black border-2 border-amber-600/70 p-1 flex flex-col items-center justify-between shadow-[0_0_20px_rgba(245,158,11,0.7)]">
+                <div className="w-7 h-1.5 bg-amber-600/80 rounded-t" />
+                <div className="w-6 h-8 bg-amber-500/20 rounded border border-amber-400/40 relative overflow-hidden flex items-center justify-center">
+                  <div className="w-3 h-5 rounded-full bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 animate-pulse shadow-[0_0_12px_#F59E0B]" />
+                </div>
+                <div className="w-7 h-1.5 bg-amber-700 rounded-b" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Top-Left: Stamped 24K Gold Ingot */}
+            <div className="absolute -top-5 left-3 pointer-events-none z-30 select-none">
+              <div className="px-2.5 py-1 rounded bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-600 border border-yellow-100 shadow-[0_0_15px_rgba(245,158,11,0.8)] flex items-center space-x-1 rotate-[-3deg]">
+                <span className="text-[9px] font-black tracking-widest text-amber-950 font-mono">999.9 FINE GOLD</span>
+              </div>
+            </div>
+
+            {/* Top-Right: High-Security Vault Scanner */}
+            <div className="absolute -top-5 right-3 pointer-events-none z-30 select-none">
+              <div className="px-2.5 py-1 rounded bg-slate-950 border border-cyan-400/60 shadow-[0_0_15px_rgba(0,240,255,0.6)] flex items-center space-x-1.5 rotate-[3deg]">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="text-[9px] font-black tracking-widest text-cyan-300 font-mono">VAULT SECURE</span>
+              </div>
+            </div>
+          </>
+        )}
+
         <div
           className={`relative p-2 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
