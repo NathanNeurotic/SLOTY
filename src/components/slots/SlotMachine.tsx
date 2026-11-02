@@ -4,6 +4,7 @@ import { Reel } from './Reel';
 import { PaylineOverlay } from './PaylineOverlay';
 import { PaylineSideTabs } from './PaylineSideTabs';
 import { FloatingWins } from './FloatingWins';
+import { SlotLever } from './SlotLever';
 import { soundManager } from '../../audio/soundManager';
 import { ChevronLeft, ChevronRight, Award } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
@@ -18,6 +19,9 @@ interface SlotMachineProps {
   onAllReelsStopped: () => void;
   freeSpinsRemaining: number;
   onQuickStop?: () => void;
+  onSpin?: () => void;
+  canSpin?: boolean;
+  isFeverMode?: boolean;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -30,6 +34,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onAllReelsStopped,
   freeSpinsRemaining,
   onQuickStop,
+  onSpin,
+  canSpin = true,
+  isFeverMode = false,
 }) => {
   // Track spinning state per reel [0..4]
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
@@ -228,12 +235,23 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
+      {/* 3D Interactive Vegas Slot Pull-Arm Lever */}
+      <SlotLever
+        isSpinning={isSpinning}
+        disabled={!canSpin}
+        onPull={() => {
+          if (onSpin) onSpin();
+        }}
+      />
+
       {/* Outer Luxury Cabinet Frame */}
       <div
         className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-300 shadow-2xl ${
           isCabinetShaking ? 'animate-cabinet-shake' : ''
         } ${
-          freeSpinsRemaining > 0
+          isFeverMode
+            ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
+            : freeSpinsRemaining > 0
             ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
             : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
         }`}

@@ -17,6 +17,7 @@ import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
 import { VegasTicker } from './components/hud/VegasTicker';
 import { VegasAmbience } from './components/hud/VegasAmbience';
+import { FeverMeter } from './components/hud/FeverMeter';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
 import { launchCoinFountain } from './fx/celebrations';
@@ -108,6 +109,8 @@ export const App: React.FC = () => {
   const [winAmount, setWinAmount] = useState(0);
   const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
+  const [feverCharge, setFeverCharge] = useState(35);
+  const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
 
   // Initial 5 reels x 4 rows grid
   const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => [
@@ -205,13 +208,17 @@ export const App: React.FC = () => {
     // Reset one-time forced scenario
     if (forcedScenario) setForcedScenario(null);
 
-    // Free spins gives 3x multiplier
-    const multiplier = isFreeSpin ? 3 : 1;
+    // Free spins gives 3x multiplier, Fever Mode gives 2x
+    const multiplier = (isFreeSpin ? 3 : 1) * (feverSpinsLeft > 0 ? 2 : 1);
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier);
+
+    if (feverSpinsLeft === 0) {
+      setFeverCharge((c) => Math.min(100, c + 3));
+    }
 
     pendingResultRef.current = evaluated;
     setCurrentGrid(nextGrid);
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft]);
 
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
@@ -232,12 +239,30 @@ export const App: React.FC = () => {
         biggestWin: Math.max(s.biggestWin, totalPayout),
       }));
 
-      // Trigger tiered celebrations
+      if (feverSpinsLeft === 0) {
+        setFeverCharge((c) => {
+          const next = Math.min(100, c + 18);
+          if (next >= 100) {
+            setTimeout(() => {
+              setFeverSpinsLeft(5);
+              setFeverCharge(0);
+              soundManager.playFeverSurge();
+              soundManager.speakAnnouncer("Hyper Fever Mode!");
+              launchCoinFountain('jackpot');
+            }, 800);
+          }
+          return next >= 100 ? 100 : next;
+        });
+      }
+
+      // Trigger tiered celebrations & voice announcements
       if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN') {
         soundManager.playJackpotSiren();
+        soundManager.speakAnnouncer(winTier === 'EPIC_JACKPOT' ? "Epic Jackpot! Congratulations!" : "Mega Win!");
         setCelebration({ tier: winTier, amount: totalPayout });
       } else if (winTier === 'BIG_WIN') {
         soundManager.playCelebrationWhistle();
+        soundManager.speakAnnouncer("Big Win!");
         setCelebration({ tier: winTier, amount: totalPayout });
       } else {
         soundManager.playWinChime(winTier === 'REGULAR' ? 3 : 1);
@@ -249,11 +274,13 @@ export const App: React.FC = () => {
 
     // Free Spins Triggered
     if (isFreeSpinsTriggered) {
+      soundManager.speakAnnouncer("Free Spins Bonus Round!");
       setShowFreeSpinsModal(true);
     }
 
     // Hold & Spin Cash Respins Triggered
     if (isHoldAndSpinTriggered) {
+      soundManager.speakAnnouncer("Cash Link Hold and Spin!");
       setHoldAndSpinInitialCoins(coinCount);
       setShowHoldAndSpinModal(true);
     }
@@ -262,6 +289,7 @@ export const App: React.FC = () => {
     const currentProgression = calculateProgression(totalXp);
     if (currentProgression.level > prevLevelRef.current) {
       const reward = getLevelUpReward(currentProgression.level);
+      soundManager.speakAnnouncer("Level Up!");
       setLevelUpData({
         newLevel: currentProgression.level,
         bonusCoins: reward,
@@ -274,7 +302,12 @@ export const App: React.FC = () => {
     if (freeSpinsRemaining > 0) {
       setFreeSpinsRemaining((prev) => prev - 1);
     }
-  }, [totalXp, freeSpinsRemaining]);
+
+    // Handle Fever Spins Sequence
+    if (feverSpinsLeft > 0) {
+      setFeverSpinsLeft((prev) => prev - 1);
+    }
+  }, [totalXp, freeSpinsRemaining, feverSpinsLeft, totalBet]);
 
   // Quick Stop Handler
   const handleQuickStop = useCallback(() => {
@@ -397,6 +430,9 @@ export const App: React.FC = () => {
         {/* Live Casino LED Marquee Ticker */}
         <VegasTicker freeSpinsRemaining={freeSpinsRemaining} />
 
+        {/* Hyper Fever Overdrive Super Meter */}
+        <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} />
+
         <SlotMachine
           currentGrid={currentGrid}
           isSpinning={isSpinning}
@@ -407,6 +443,9 @@ export const App: React.FC = () => {
           onAllReelsStopped={handleAllReelsStopped}
           onQuickStop={handleQuickStop}
           freeSpinsRemaining={freeSpinsRemaining}
+          onSpin={executeSpin}
+          canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
+          isFeverMode={feverSpinsLeft > 0}
         />
 
         <ControlsBar

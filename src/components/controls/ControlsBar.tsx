@@ -52,7 +52,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
   const handleLinesStep = (direction: 'up' | 'down') => {
-    soundManager.playButtonClick();
+    soundManager.playChipClick();
     const curIdx = AVAILABLE_LINES.indexOf(selectedLines);
     if (direction === 'up' && curIdx < AVAILABLE_LINES.length - 1) {
       onLinesChange(AVAILABLE_LINES[curIdx + 1]);
@@ -62,7 +62,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   };
 
   const handleBetStep = (direction: 'up' | 'down') => {
-    soundManager.playButtonClick();
+    soundManager.playChipClick();
     let curIdx = BET_PER_LINE_STEPS.indexOf(betPerLine);
     if (curIdx === -1) {
       curIdx = BET_PER_LINE_STEPS.findIndex((s) => s >= betPerLine);
@@ -187,7 +187,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {/* Themed Max Bet Button */}
           <button
             onClick={() => {
-              soundManager.playButtonClick();
+              soundManager.playChipClick();
               onMaxBet();
             }}
             disabled={isSpinning || isFreeSpins || totalBet >= maxBet}

@@ -379,6 +379,109 @@ class SoundManager {
     osc.start();
     osc.stop(now + 0.8);
   }
+
+  // Mechanical ratcheting slot pull lever sound
+  public playLeverPull() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    // Ratcheting gear teeth
+    for (let i = 0; i < 4; i++) {
+      const startTime = this.ctx.currentTime + i * 0.04;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.22 * this.volume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.03);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(160 + i * 45, startTime);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.03);
+    }
+
+    // Heavy mechanical spring clunk
+    const clunkTime = this.ctx.currentTime + 0.17;
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subGain.gain.setValueAtTime(0.55 * this.volume, clunkTime);
+    subGain.gain.exponentialRampToValueAtTime(0.001, clunkTime + 0.16);
+    subOsc.type = 'triangle';
+    subOsc.frequency.setValueAtTime(120, clunkTime);
+    subOsc.frequency.exponentialRampToValueAtTime(30, clunkTime + 0.14);
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+    subOsc.start(clunkTime);
+    subOsc.stop(clunkTime + 0.16);
+  }
+
+  // Crisp ceramic casino chip click
+  public playChipClick() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.createGainNode(0.05, 0.35, 0.01);
+    if (!gain) return;
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1800, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+
+    osc.connect(gain);
+    osc.start();
+    osc.stop(now + 0.05);
+  }
+
+  // High-voltage FEVER SURGE synth arpeggio
+  public playFeverSurge() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const freqs = [330, 440, 554.37, 659.25, 880, 1108.73, 1318.51, 1760];
+    freqs.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const startTime = this.ctx.currentTime + idx * 0.05;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25 * this.volume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, startTime);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.2);
+    });
+  }
+
+  // Voice synthesizer casino pit boss announcement
+  public speakAnnouncer(phrase: string) {
+    if (this.isMuted) return;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(phrase);
+        utterance.rate = 1.15;
+        utterance.pitch = 1.05;
+        utterance.volume = this.volume;
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(
+          (v) =>
+            v.lang.startsWith('en') &&
+            (v.name.includes('Natural') ||
+              v.name.includes('Google') ||
+              v.name.includes('David') ||
+              v.name.includes('Mark'))
+        );
+        if (enVoice) utterance.voice = enVoice;
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        // Speech synthesis fallback
+      }
+    }
+  }
 }
 
 export const soundManager = new SoundManager();
