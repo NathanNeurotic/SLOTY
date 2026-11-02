@@ -99,9 +99,9 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   return (
     <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 mt-2 select-none flex flex-col space-y-2">
       {/* TIER 1: Bet Adjusters & Win Displays */}
-      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-2 sm:p-3 shadow-xl flex flex-wrap items-center justify-between gap-2">
+      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-2 sm:p-3 shadow-xl flex flex-wrap items-center justify-center sm:justify-between gap-2">
         {/* Left: Turbo, Lines, Bet/Line, Total, Max Bet */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 flex-wrap">
+        <div className="flex items-center justify-center space-x-1 sm:space-x-2 flex-wrap">
           {/* Turbo Toggle */}
           <button
             onClick={() => {
@@ -198,7 +198,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
         </div>
 
         {/* Right: Win Payout, Gamble 2X, and Auto-Spin */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2">
           {/* Animated Rolling Win Display */}
           <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
 
@@ -278,7 +278,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               ? 'Insufficient coins'
               : undefined
           }
-          className={`relative w-64 sm:w-80 h-13 sm:h-15 flex items-center justify-center rounded-2xl font-black tracking-widest text-base sm:text-xl uppercase text-white select-none transition-all ${
+          className={`relative w-full max-w-[280px] sm:max-w-xs md:w-80 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-xl uppercase text-white select-none transition-all touch-manipulation ${
             isSpinning
               ? 'vlt-stop-btn animate-pulse cursor-pointer'
               : !isFreeSpins && balance < totalBet

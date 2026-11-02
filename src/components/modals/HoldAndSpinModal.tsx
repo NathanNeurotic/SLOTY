@@ -169,7 +169,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
-      <div className="relative max-w-2xl w-full bg-gradient-to-b from-amber-950 via-casino-950 to-black border-2 border-yellow-400/80 shadow-[0_0_60px_rgba(245,158,11,0.6)] rounded-3xl p-4 sm:p-6 flex flex-col items-center">
+      <div className="relative max-w-2xl w-full max-h-[92vh] overflow-y-auto bg-gradient-to-b from-amber-950 via-casino-950 to-black border-2 border-yellow-400/80 shadow-[0_0_60px_rgba(245,158,11,0.6)] rounded-3xl p-3 sm:p-6 flex flex-col items-center">
         {/* Header Marquee with Close X Button */}
         <div className="w-full flex items-center justify-between pb-3 border-b border-yellow-500/30 mb-2">
           <div className="flex items-center space-x-2">

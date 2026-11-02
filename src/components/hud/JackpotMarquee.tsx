@@ -1,53 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { Crown, Gem, Zap, Sparkles } from 'lucide-react';
+import { storage } from '../../utils/storage';
 
 interface JackpotMarqueeProps {
   totalBet: number;
 }
 
 export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
-  // Live ticking progressive pots
-  const [grand, setGrand] = useState<number>(() => {
-    const saved = localStorage.getItem('sloty_jackpot_grand');
-    return saved ? parseFloat(saved) : 78420.5;
-  });
+  // Live ticking progressive pots (dual localStorage + cookie persistence)
+  const [grand, setGrand] = useState<number>(() =>
+    storage.getNumber('sloty_jackpot_grand', 78420.5)
+  );
 
-  const [major, setMajor] = useState<number>(() => {
-    const saved = localStorage.getItem('sloty_jackpot_major');
-    return saved ? parseFloat(saved) : 14250.25;
-  });
+  const [major, setMajor] = useState<number>(() =>
+    storage.getNumber('sloty_jackpot_major', 14250.25)
+  );
 
-  const [minor, setMinor] = useState<number>(() => {
-    const saved = localStorage.getItem('sloty_jackpot_minor');
-    return saved ? parseFloat(saved) : 1850.75;
-  });
+  const [minor, setMinor] = useState<number>(() =>
+    storage.getNumber('sloty_jackpot_minor', 1850.75)
+  );
 
-  const [mini, setMini] = useState<number>(() => {
-    const saved = localStorage.getItem('sloty_jackpot_mini');
-    return saved ? parseFloat(saved) : 340.1;
-  });
+  const [mini, setMini] = useState<number>(() =>
+    storage.getNumber('sloty_jackpot_mini', 340.1)
+  );
 
   // Slowly tick progressive jackpots up in real-time
   useEffect(() => {
     const interval = setInterval(() => {
       setGrand((prev) => {
         const next = prev + 0.12 + Math.random() * 0.08;
-        localStorage.setItem('sloty_jackpot_grand', next.toFixed(2));
+        storage.setItem('sloty_jackpot_grand', next.toFixed(2));
         return next;
       });
       setMajor((prev) => {
         const next = prev + 0.06 + Math.random() * 0.04;
-        localStorage.setItem('sloty_jackpot_major', next.toFixed(2));
+        storage.setItem('sloty_jackpot_major', next.toFixed(2));
         return next;
       });
       setMinor((prev) => {
         const next = prev + 0.03 + Math.random() * 0.02;
-        localStorage.setItem('sloty_jackpot_minor', next.toFixed(2));
+        storage.setItem('sloty_jackpot_minor', next.toFixed(2));
         return next;
       });
       setMini((prev) => {
         const next = prev + 0.01 + Math.random() * 0.01;
-        localStorage.setItem('sloty_jackpot_mini', next.toFixed(2));
+        storage.setItem('sloty_jackpot_mini', next.toFixed(2));
         return next;
       });
     }, 1200);
@@ -120,23 +117,23 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
           return (
             <div
               key={tier.name}
-              className={`relative bg-gradient-to-b ${tier.bg} border ${tier.border} rounded-xl px-2 py-1.5 flex items-center justify-between ${tier.glow} overflow-hidden`}
+              className={`relative bg-gradient-to-b ${tier.bg} border ${tier.border} rounded-xl px-1.5 sm:px-2 py-1 sm:py-1.5 flex items-center justify-between ${tier.glow} overflow-hidden`}
             >
               {/* Animated top shimmer bar */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" />
 
               {/* Left tier badge & icon */}
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1 sm:space-x-1.5">
                 <div
-                  className={`w-6 h-6 rounded-lg ${tier.badgeBg} flex items-center justify-center shadow-md flex-shrink-0`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg ${tier.badgeBg} flex items-center justify-center shadow-md flex-shrink-0`}
                 >
-                  <Icon className={`w-3.5 h-3.5 text-white`} />
+                  <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] font-black tracking-widest text-slate-300 uppercase leading-none">
+                  <span className="text-[8px] sm:text-[9px] font-black tracking-widest text-slate-300 uppercase leading-none">
                     {tier.name}
                   </span>
-                  <span className="text-[7px] font-bold text-slate-400 uppercase leading-none mt-0.5">
+                  <span className="text-[6.5px] sm:text-[7px] font-bold text-slate-400 uppercase leading-none mt-0.5">
                     PROGRESSIVE
                   </span>
                 </div>
@@ -145,11 +142,11 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
               {/* Live incrementing ticker amount */}
               <div className="text-right">
                 <div
-                  className={`text-xs sm:text-sm md:text-base font-black ${tier.textColor} tracking-tight font-mono leading-none`}
+                  className={`text-[11px] sm:text-sm md:text-base font-black ${tier.textColor} tracking-tight font-mono leading-none`}
                 >
                   ${Math.floor(tier.amount).toLocaleString()}
                 </div>
-                <div className="text-[8px] font-bold text-amber-400/80 leading-none mt-0.5">
+                <div className="text-[7.5px] sm:text-[8px] font-bold text-amber-400/80 leading-none mt-0.5">
                   .{(tier.amount % 1).toFixed(2).slice(2)}
                 </div>
               </div>

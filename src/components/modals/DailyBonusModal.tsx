@@ -66,8 +66,8 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md select-none">
-      <div className="relative max-w-md w-full bg-casino-950 border-2 border-gold-bright/60 shadow-[0_0_60px_rgba(245,158,11,0.5)] rounded-3xl p-6 text-center flex flex-col items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md select-none">
+      <div className="relative max-w-md w-full max-h-[92vh] overflow-y-auto bg-casino-950 border-2 border-gold-bright/60 shadow-[0_0_60px_rgba(245,158,11,0.5)] rounded-3xl p-4 sm:p-6 text-center flex flex-col items-center">
         {/* Close Button */}
         <button
           onClick={() => {

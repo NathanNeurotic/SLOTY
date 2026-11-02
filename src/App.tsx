@@ -13,6 +13,7 @@ import {
   generateRandomGrid,
 } from './engine/evaluator';
 import { soundManager } from './audio/soundManager';
+import { storage } from './utils/storage';
 import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
 import { VegasTicker } from './components/hud/VegasTicker';
@@ -33,93 +34,111 @@ import { DebugDrawer } from './components/debug/DebugDrawer';
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export const App: React.FC = () => {
-  // --- Persistent Storage State ---
-  const [balance, setBalance] = useState<number>(() => {
-    const saved = localStorage.getItem('slotz_balance');
-    return saved !== null ? parseInt(saved, 10) : 50000;
-  });
+  // --- Persistent Storage State (Dual LocalStorage + Cookie Mirroring) ---
+  const [balance, setBalance] = useState<number>(() =>
+    storage.getNumber('sloty_balance', 50000)
+  );
 
-  const [totalXp, setTotalXp] = useState<number>(() => {
-    const saved = localStorage.getItem('slotz_xp');
-    return saved !== null ? parseInt(saved, 10) : 0;
-  });
+  const [totalXp, setTotalXp] = useState<number>(() =>
+    storage.getNumber('sloty_xp', 0)
+  );
 
-  const [lastBonusClaimTime, setLastBonusClaimTime] = useState<number>(() => {
-    const saved = localStorage.getItem('slotz_bonus_time');
-    return saved !== null ? parseInt(saved, 10) : 0;
-  });
+  const [lastBonusClaimTime, setLastBonusClaimTime] = useState<number>(() =>
+    storage.getNumber('sloty_bonus_time', 0)
+  );
 
-  const [isMuted, setIsMuted] = useState<boolean>(() => {
-    const saved = localStorage.getItem('slotz_muted');
-    return saved === 'true';
-  });
+  const [isMuted, setIsMuted] = useState<boolean>(() =>
+    storage.getBoolean('sloty_muted', false)
+  );
 
-  const [stats, setStats] = useState<GameStats>(() => {
-    const saved = localStorage.getItem('slotz_stats');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return {
+  const [stats, setStats] = useState<GameStats>(() =>
+    storage.getJSON<GameStats>('sloty_stats', {
       totalSpins: 0,
       totalWagered: 0,
       totalWon: 0,
       biggestWin: 0,
       freeSpinsPlayed: 0,
       holdAndSpinsPlayed: 0,
-    };
-  });
+    })
+  );
 
-  // Save to local storage on change
+  // --- Active Game & Bet State (Persisted) ---
+  const [selectedLines, setSelectedLines] = useState<number>(() =>
+    storage.getNumber('sloty_lines', 40)
+  );
+  const [betPerLine, setBetPerLine] = useState<number>(() =>
+    storage.getNumber('sloty_bet_per_line', 5)
+  );
+  const totalBet = selectedLines * betPerLine;
+
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [isTurbo, setIsTurbo] = useState<boolean>(() =>
+    storage.getBoolean('sloty_turbo', false)
+  );
+  const [winAmount, setWinAmount] = useState(0);
+  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
+  const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
+  const [feverCharge, setFeverCharge] = useState<number>(() =>
+    storage.getNumber('sloty_fever_charge', 35)
+  );
+  const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
+
+  // Initial 5 reels x 4 rows grid (Persisted)
+  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() =>
+    storage.getJSON<SymbolGrid>('sloty_grid', [
+      ['SEVEN', 'DIAMOND', 'BELL', 'JACK'],
+      ['WILD', 'SEVEN', 'MELON', 'QUEEN'],
+      ['DIAMOND', 'GOLDBAR', 'GRAPES', 'KING'],
+      ['HORSESHOE', 'BELL', 'COIN', 'ACE'],
+      ['MELON', 'SEVEN', 'HORSESHOE', 'WILD'],
+    ])
+  );
+
+  // Save to dual localStorage + cookies on change
   useEffect(() => {
-    localStorage.setItem('slotz_balance', balance.toString());
+    storage.setItem('sloty_balance', balance.toString());
   }, [balance]);
 
   useEffect(() => {
-    localStorage.setItem('slotz_xp', totalXp.toString());
+    storage.setItem('sloty_xp', totalXp.toString());
   }, [totalXp]);
 
   useEffect(() => {
-    localStorage.setItem('slotz_bonus_time', lastBonusClaimTime.toString());
+    storage.setItem('sloty_bonus_time', lastBonusClaimTime.toString());
   }, [lastBonusClaimTime]);
 
   useEffect(() => {
-    localStorage.setItem('slotz_muted', isMuted.toString());
+    storage.setItem('sloty_muted', isMuted.toString());
     soundManager.setMuted(isMuted);
   }, [isMuted]);
 
   useEffect(() => {
-    localStorage.setItem('slotz_stats', JSON.stringify(stats));
+    storage.setJSON('sloty_stats', stats);
   }, [stats]);
+
+  useEffect(() => {
+    storage.setItem('sloty_lines', selectedLines.toString());
+  }, [selectedLines]);
+
+  useEffect(() => {
+    storage.setItem('sloty_bet_per_line', betPerLine.toString());
+  }, [betPerLine]);
+
+  useEffect(() => {
+    storage.setItem('sloty_turbo', isTurbo.toString());
+  }, [isTurbo]);
+
+  useEffect(() => {
+    storage.setItem('sloty_fever_charge', feverCharge.toString());
+  }, [feverCharge]);
+
+  useEffect(() => {
+    storage.setJSON('sloty_grid', currentGrid);
+  }, [currentGrid]);
 
   // --- Derived Progression State ---
   const progression = calculateProgression(totalXp);
   const prevLevelRef = useRef<number>(progression.level);
-
-  // --- Active Game & Bet State ---
-  const [selectedLines, setSelectedLines] = useState<number>(40);
-  const [betPerLine, setBetPerLine] = useState<number>(5);
-  const totalBet = selectedLines * betPerLine;
-
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [isTurbo, setIsTurbo] = useState(false);
-  const [winAmount, setWinAmount] = useState(0);
-  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
-  const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
-  const [feverCharge, setFeverCharge] = useState(35);
-  const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
-
-  // Initial 5 reels x 4 rows grid
-  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => [
-    ['SEVEN', 'DIAMOND', 'BELL', 'JACK'],
-    ['WILD', 'SEVEN', 'MELON', 'QUEEN'],
-    ['DIAMOND', 'GOLDBAR', 'GRAPES', 'KING'],
-    ['HORSESHOE', 'BELL', 'COIN', 'ACE'],
-    ['MELON', 'SEVEN', 'HORSESHOE', 'WILD'],
-  ]);
 
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
