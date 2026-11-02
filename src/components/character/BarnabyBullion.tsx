@@ -12,6 +12,7 @@ interface BarnabyBullionProps {
   isFeverMode?: boolean;
   winAmount?: number;
   onRewardCoins?: (amount: number) => void;
+  variant?: 'full' | 'compact';
 }
 
 const IDLE_QUOTES = [
@@ -66,6 +67,7 @@ export const BarnabyBullion: React.FC<BarnabyBullionProps> = ({
   isFeverMode = false,
   winAmount = 0,
   onRewardCoins,
+  variant = 'full',
 }) => {
   const [currentQuote, setCurrentQuote] = useState(IDLE_QUOTES[0]);
   const [isTapped, setIsTapped] = useState(false);
@@ -159,6 +161,47 @@ export const BarnabyBullion: React.FC<BarnabyBullionProps> = ({
       setTapBonusText(null);
     }, 1800);
   };
+
+  if (variant === 'compact') {
+    return (
+      <div
+        onClick={handleMascotClick}
+        className={`relative flex items-center justify-between w-full max-w-sm px-2.5 py-1 rounded-full border transition-all cursor-pointer shadow-md select-none ${
+          mascotState === 'fever'
+            ? 'bg-gradient-to-r from-red-950 via-amber-900 to-red-950 border-yellow-300 text-yellow-200 animate-pulse'
+            : mascotState === 'anticipation'
+            ? 'bg-cyan-950 border-neon-cyan text-cyan-200 shadow-[0_0_12px_rgba(0,240,255,0.7)] animate-bounce'
+            : mascotState === 'win' || mascotState === 'bigwin'
+            ? 'bg-amber-950 border-yellow-400 text-yellow-300 shadow-[0_0_10px_rgba(251,191,36,0.8)]'
+            : 'bg-casino-900/95 border-yellow-500/40 text-amber-200'
+        } ${isTapped ? 'scale-105' : 'hover:scale-[1.02]'}`}
+        title="Tap Barnaby for +25 bonus coins!"
+      >
+        {/* Left: Mini Avatar */}
+        <div className="flex items-center space-x-1.5 flex-shrink-0">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 border border-yellow-100 flex items-center justify-center shadow-sm overflow-hidden text-xs">
+            🎩
+          </div>
+          <span className="text-[8.5px] font-black uppercase tracking-wider text-gold-bright">
+            BARNABY:
+          </span>
+        </div>
+
+        {/* Center: Live Quote Banner */}
+        <div className="flex-1 px-1.5 overflow-hidden text-center">
+          <span className="text-[9.5px] font-bold tracking-tight truncate block">
+            {tapBonusText || currentQuote}
+          </span>
+        </div>
+
+        {/* Right: Interactive Tip Button */}
+        <div className="flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full bg-amber-400/25 border border-yellow-400/50 text-[8.5px] font-black text-yellow-300 flex-shrink-0">
+          <span>🪙</span>
+          <span>+25</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

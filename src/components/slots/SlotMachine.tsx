@@ -267,11 +267,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
+          variant="full"
         />
       </div>
 
-      {/* Mobile / Tablet Inline Animated Mascot Bar */}
-      <div className="xl:hidden flex justify-center mb-1">
+      {/* Mobile / Tablet Compact Interactive High-Roller Chip */}
+      <div className="xl:hidden flex justify-center mb-1 w-full px-2">
         <BarnabyBullion
           isSpinning={isSpinning}
           isAnticipating={isAnticipating}
@@ -280,6 +281,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
+          variant="compact"
         />
       </div>
 
