@@ -97,11 +97,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const isFreeSpins = freeSpinsRemaining > 0;
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 mt-2 select-none flex flex-col space-y-2">
-      {/* TIER 1: Bet Adjusters & Win Displays */}
-      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-2 sm:p-3 shadow-xl flex flex-wrap items-center justify-center sm:justify-between gap-2">
+    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 py-1.5 select-none flex flex-col space-y-1.5 flex-shrink-0">
+      {/* TIER 1: Bet Adjusters & Win Displays - Rigid Geometry, Zero Reflow */}
+      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-1.5 sm:p-2 shadow-xl flex flex-col sm:flex-row items-center sm:justify-between gap-1.5 sm:gap-2 flex-shrink-0">
         {/* Left: Turbo, Lines, Bet/Line, Total, Max Bet */}
-        <div className="flex items-center justify-center space-x-1 sm:space-x-2 flex-wrap">
+        <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 flex-shrink-0 h-9 sm:h-10">
           {/* Turbo Toggle */}
           <button
             onClick={() => {
@@ -110,7 +110,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             }}
             disabled={isSpinning}
             title={isTurbo ? 'Turbo Mode: FAST' : 'Turbo Mode: NORMAL'}
-            className={`p-2 rounded-xl border transition-all ${
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center flex-shrink-0 transition-all ${
               isTurbo
                 ? 'bg-gradient-to-b from-amber-500/30 to-amber-950/60 border-amber-400 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.6)]'
                 : 'vlt-btn-stepper text-slate-400 hover:text-white'
@@ -120,13 +120,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           </button>
 
           {/* Lines & Bet Display Box */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-gradient-to-b from-casino-950 to-casino-900 px-2 sm:px-2.5 py-1 rounded-xl border border-white/15 shadow-inner">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 bg-gradient-to-b from-casino-950 to-casino-900 px-1.5 sm:px-2 py-0.5 rounded-xl border border-white/15 shadow-inner h-9 sm:h-10 flex-shrink-0">
             {/* Active Lines selector with - / + buttons */}
-            <div className="flex flex-col items-center pr-1.5 border-r border-white/10">
-              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-slate-400">
+            <div className="flex flex-col items-center pr-1 sm:pr-1.5 border-r border-white/10">
+              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-slate-400 leading-none">
                 Lines
               </span>
-              <div className="flex items-center space-x-1 mt-0.5">
+              <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
                 <button
                   onClick={() => handleLinesStep('down')}
                   disabled={isSpinning || isFreeSpins || selectedLines <= 1}
@@ -134,7 +134,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 >
                   <Minus className="w-3 h-3 text-cyan-300" />
                 </button>
-                <span className="text-xs sm:text-sm font-black text-neon-cyan min-w-[22px] text-center drop-shadow-[0_0_6px_rgba(0,240,255,0.7)]">
+                <span className="text-xs sm:text-sm font-black text-neon-cyan min-w-[20px] text-center drop-shadow-[0_0_6px_rgba(0,240,255,0.7)] font-mono">
                   {selectedLines}
                 </span>
                 <button
@@ -148,11 +148,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             </div>
 
             {/* Bet Per Line with - / + buttons */}
-            <div className="flex flex-col items-center px-1">
-              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-slate-400">
+            <div className="flex flex-col items-center px-0.5 sm:px-1">
+              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-slate-400 leading-none">
                 Bet/Line
               </span>
-              <div className="flex items-center space-x-1 mt-0.5">
+              <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
                 <button
                   onClick={() => handleBetStep('down')}
                   disabled={isSpinning || isFreeSpins || betPerLine <= 1}
@@ -160,7 +160,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 >
                   <Minus className="w-3 h-3 text-amber-300" />
                 </button>
-                <span className="text-xs sm:text-sm font-black text-white min-w-[28px] text-center">
+                <span className="text-xs sm:text-sm font-black text-white min-w-[26px] text-center font-mono">
                   {betPerLine.toLocaleString()}
                 </span>
                 <button
@@ -174,11 +174,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             </div>
 
             {/* Total Bet Calculation */}
-            <div className="flex flex-col items-center pl-1.5 border-l border-white/10 min-w-[60px] sm:min-w-[75px]">
-              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-gold-bright">
+            <div className="flex flex-col items-center pl-1 sm:pl-1.5 border-l border-white/10 min-w-[55px] sm:min-w-[65px]">
+              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-gold-bright leading-none">
                 Total Bet
               </span>
-              <span className="text-xs sm:text-base font-black text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">
+              <span className="text-xs sm:text-sm font-black text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)] font-mono leading-none mt-1">
                 {totalBet.toLocaleString()}
               </span>
             </div>
@@ -191,14 +191,14 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               onMaxBet();
             }}
             disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
-            className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl vlt-maxbet-btn font-black text-[9px] sm:text-xs uppercase tracking-wider text-amber-950 disabled:opacity-40"
+            className="px-2 sm:px-2.5 h-9 sm:h-10 rounded-xl vlt-maxbet-btn font-black text-[9px] sm:text-[10px] uppercase tracking-wider text-amber-950 disabled:opacity-40 flex items-center justify-center flex-shrink-0"
           >
             MAX BET
           </button>
         </div>
 
         {/* Right: Win Payout, Gamble 2X, and Auto-Spin */}
-        <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 flex-shrink-0">
+        <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 flex-shrink-0 h-9 sm:h-10">
           {/* Animated Rolling Win Display */}
           <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
 
@@ -212,9 +212,9 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 }
               }}
               disabled={winAmount <= 0 || isSpinning || isFreeSpins}
-              className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl font-black text-[9px] sm:text-[10px] uppercase transition-all duration-200 flex-shrink-0 ${
+              className={`flex items-center justify-center space-x-1 w-20 sm:w-24 h-9 sm:h-10 rounded-xl font-black text-[9px] sm:text-[10px] uppercase transition-all duration-200 flex-shrink-0 ${
                 winAmount > 0 && !isSpinning && !isFreeSpins
-                  ? 'vlt-gamble-btn text-white animate-bounce-soft cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.7)]'
+                  ? 'vlt-gamble-btn text-white animate-pulse cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.7)]'
                   : 'bg-casino-950/40 border border-white/5 text-slate-600 opacity-40 cursor-not-allowed'
               }`}
               title={
@@ -230,11 +230,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           )}
 
           {/* Auto Spin Button & Popover */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             {isAutoSpinning ? (
               <button
                 onClick={onAutoSpinStop}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.5)]"
+                className="flex items-center justify-center space-x-1 px-2.5 h-9 sm:h-10 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.5)]"
               >
                 <StopCircle className="w-4 h-4" />
                 <span>Stop ({autoSpinsRemaining})</span>
@@ -246,7 +246,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   setShowAutoMenu(!showAutoMenu);
                 }}
                 disabled={isSpinning || isFreeSpins}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl vlt-btn-stepper text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
+                className="flex items-center justify-center space-x-1 px-2.5 h-9 sm:h-10 rounded-xl vlt-btn-stepper text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
               >
                 <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Auto</span>
@@ -312,7 +312,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             </span>
           ) : isFreeSpins ? (
             <span className="flex items-center space-x-2">
-              <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-bounce" />
+              <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-pulse" />
               <span>FREE SPIN</span>
             </span>
           ) : (

@@ -52,9 +52,8 @@ export default {
           '100%': { transform: 'translateY(-50%)' },
         },
         bounceSoft: {
-          '0%': { transform: 'translateY(-16px)' },
-          '60%': { transform: 'translateY(4px)' },
-          '100%': { transform: 'translateY(0)' },
+          '0%': { opacity: '0.8', filter: 'brightness(1.2)' },
+          '100%': { opacity: '1', filter: 'brightness(1)' },
         },
         glowPulse: {
           '0%': { filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.4))' },

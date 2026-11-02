@@ -11,11 +11,11 @@ export const VegasTicker: React.FC<VegasTickerProps> = ({ freeSpinsRemaining }) 
     : `★ SLOTY DELUXE 777 ★ 40 ACTIVE PAYLINES ★ HIT 6 COINS FOR GOLDEN HOLD & SPIN RESPIN FEATURE ★ 3 SCATTERS AWARD 10 FREE SPINS AT 3X MULTIPLIER ★ RISK WINS IN RED/BLACK VIDEO POKER DOUBLE-UP ★ 95.8% RTP CERTIFIED ★ GOOD LUCK HIGH ROLLER! ★`;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1.5 select-none overflow-hidden">
-      <div className="relative bg-casino-950/90 border border-gold-bright/30 rounded-lg px-2 py-1 shadow-[inset_0_0_10px_rgba(245,158,11,0.2)] flex items-center overflow-hidden">
+    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1.5 select-none overflow-hidden flex-shrink-0">
+      <div className="relative bg-casino-950/90 border border-gold-bright/30 rounded-lg px-2 py-1 shadow-[inset_0_0_10px_rgba(245,158,11,0.2)] flex items-center overflow-hidden h-8 sm:h-9 flex-shrink-0">
         {/* Left Badge */}
         <div className="flex items-center space-x-1 pr-2 border-r border-white/10 flex-shrink-0 z-10 bg-casino-950">
-          <Trophy className="w-3.5 h-3.5 text-gold-bright animate-bounce" />
+          <Trophy className="w-3.5 h-3.5 text-gold-bright animate-pulse" />
           <span className="text-[9px] font-black tracking-widest text-gold-bright uppercase whitespace-nowrap">
             CASINO LIVE
           </span>

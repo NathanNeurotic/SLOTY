@@ -60,19 +60,19 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center bg-gradient-to-b from-casino-950 to-casino-900 px-3 py-1 rounded-xl border transition-all duration-300 min-w-[110px] sm:min-w-[130px] ${
+      className={`flex flex-col items-center justify-center bg-gradient-to-b from-casino-950 to-casino-900 px-2 sm:px-3 rounded-xl border transition-colors duration-200 w-28 sm:w-36 h-9 sm:h-10 flex-shrink-0 overflow-hidden ${
         targetAmount > 0
           ? 'border-gold-bright shadow-[0_0_15px_rgba(245,158,11,0.5),inset_0_0_12px_rgba(245,158,11,0.25)]'
           : 'border-white/10 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]'
       }`}
     >
-      <span className="text-[8px] sm:text-[9px] uppercase font-extrabold tracking-widest text-gold-bright">
+      <span className="text-[7.5px] sm:text-[8.5px] uppercase font-extrabold tracking-widest text-gold-bright leading-tight truncate">
         {isFreeSpins ? 'FREE SPIN WIN' : 'WIN PAYOUT'}
       </span>
       <span
-        className={`text-base sm:text-lg font-black transition-all ${
+        className={`text-sm sm:text-base font-black font-mono leading-tight truncate ${
           displayedAmount > 0
-            ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_10px_rgba(251,191,36,0.9)] scale-105'
+            ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]'
             : 'text-slate-500'
         }`}
       >

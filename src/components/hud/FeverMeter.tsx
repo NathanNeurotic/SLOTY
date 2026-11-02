@@ -10,9 +10,9 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
   const isFeverActive = feverSpinsLeft > 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1 select-none">
+    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1 select-none flex-shrink-0">
       <div
-        className={`relative rounded-xl p-1 sm:p-1.5 border transition-all duration-300 flex items-center justify-between overflow-hidden shadow-lg ${
+        className={`relative rounded-xl px-1.5 py-1 border transition-colors duration-200 flex items-center justify-between overflow-hidden shadow-lg h-8 sm:h-9 flex-shrink-0 ${
           isFeverActive
             ? 'bg-gradient-to-r from-red-950 via-purple-950 to-amber-950 border-yellow-300 shadow-[0_0_25px_rgba(234,179,8,0.8)] animate-pulse'
             : 'bg-casino-950/80 border-white/10'
@@ -22,7 +22,7 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({ charge, feverSpinsLeft }
         <div className="flex items-center space-x-1.5 flex-shrink-0 z-10 mr-2">
           <div
             className={`w-5 h-5 rounded-md flex items-center justify-center ${
-              isFeverActive ? 'bg-amber-500 animate-bounce' : 'bg-casino-800'
+              isFeverActive ? 'bg-amber-500 animate-pulse' : 'bg-casino-800'
             }`}
           >
             {isFeverActive ? (

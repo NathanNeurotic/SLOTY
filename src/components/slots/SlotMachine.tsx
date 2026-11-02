@@ -42,7 +42,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
-  const [isCabinetShaking, setIsCabinetShaking] = useState(false);
 
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
@@ -62,8 +61,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
     setReelSpinning([false, false, false, false, false]);
     soundManager.playReelStop(4);
-    setIsCabinetShaking(true);
-    setTimeout(() => setIsCabinetShaking(false), 280);
 
     if (onAllReelsStoppedRef.current) {
       onAllReelsStoppedRef.current();
@@ -111,8 +108,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           // Final reel settled
           if (reelIdx === 4) {
-            setIsCabinetShaking(true);
-            setTimeout(() => setIsCabinetShaking(false), 280);
             if (onAllReelsStoppedRef.current) {
               onAllReelsStoppedRef.current();
             }
@@ -247,8 +242,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       {/* Outer Luxury Cabinet Frame */}
       <div
         className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-300 shadow-2xl ${
-          isCabinetShaking ? 'animate-cabinet-shake' : ''
-        } ${
           isFeverMode
             ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
             : freeSpinsRemaining > 0
@@ -280,7 +273,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           {/* Oregon Lottery Style Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
           <div className="text-center flex-1 px-1 sm:px-3 overflow-hidden flex items-center justify-center">
             {freeSpinsRemaining > 0 ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-bounce truncate whitespace-nowrap">
+              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-pulse truncate whitespace-nowrap">
                 🔥 FREE SPINS ACTIVE: {freeSpinsRemaining} REMAINING (3X WINS) 🔥
               </span>
             ) : isAnyReelSpinning ? (
@@ -292,7 +285,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 PAYLINE {hoveredLineIndex + 1} PATH PREVIEW
               </span>
             ) : activeWin ? (
-              <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 truncate whitespace-nowrap animate-bounce-soft">
+              <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 truncate whitespace-nowrap animate-pulse">
                 <button
                   onClick={handlePrevWinningLine}
                   className="p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"

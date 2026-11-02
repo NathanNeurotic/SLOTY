@@ -75,7 +75,7 @@ export const SlotLever: React.FC<SlotLeverProps> = ({ isSpinning, disabled, onPu
 
       {/* "PULL" Flashing Sign */}
       {!isSpinning && !disabled && (
-        <div className="mt-2 -ml-2 px-1.5 py-0.5 rounded bg-red-600/80 border border-red-400 text-white font-black text-[9px] tracking-widest uppercase shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-bounce-soft">
+        <div className="mt-2 -ml-2 px-1.5 py-0.5 rounded bg-red-600/80 border border-red-400 text-white font-black text-[9px] tracking-widest uppercase shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse">
           PULL
         </div>
       )}

@@ -441,8 +441,8 @@ export const App: React.FC = () => {
         onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
       />
 
-      {/* Main Gaming Stage */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full">
+      {/* Main Gaming Stage with bottom padding to accommodate fixed controls dock */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full pb-44 sm:pb-40">
         {/* 4-Tier Vegas & Oregon Lottery Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} />
 
@@ -468,8 +468,8 @@ export const App: React.FC = () => {
         />
       </main>
 
-      {/* Rock-Solid Fixed Bottom Controls Dock - Guaranteed Zero Shift */}
-      <div className="sticky bottom-0 z-40 w-full bg-casino-950/95 backdrop-blur-md border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.85)] pb-safe">
+      {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-casino-950/95 backdrop-blur-md border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.85)] pb-safe">
         <ControlsBar
           balance={balance}
           selectedLines={selectedLines}
@@ -494,12 +494,12 @@ export const App: React.FC = () => {
           onAutoSpinStop={() => setAutoSpinsRemaining(0)}
           onOpenGamble={() => setShowGambleModal(true)}
         />
-      </div>
 
-      {/* Footer info banner */}
-      <footer className="relative z-10 py-1.5 border-t border-white/5 text-center text-[10px] text-slate-500 bg-casino-950/80">
-        PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
-      </footer>
+        {/* Integrated Footer info banner */}
+        <footer className="py-1 border-t border-white/5 text-center text-[9px] sm:text-[10px] text-slate-500 bg-casino-950/90 flex-shrink-0">
+          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
+        </footer>
+      </div>
 
       {/* --- Modals & Overlays --- */}
 
