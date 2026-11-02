@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-casino-950 text-slate-100 select-none overflow-x-hidden antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(12, 15, 24, 0.9);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.8);
+}
+
+/* Metallic gold gradients */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF9D2 0%, #F59E0B 40%, #FFEBA3 60%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #FFE885 0%, #F59E0B 45%, #D97706 80%, #78350F 100%);
+}
+
+.gold-border-gradient {
+  border-image: linear-gradient(135deg, #FFE885, #F59E0B, #78350F) 1;
+}
+
+.cyan-gradient-text {
+  background: linear-gradient(135deg, #E0FFFF 0%, #00F0FF 50%, #0284C7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.magenta-gradient-text {
+  background: linear-gradient(135deg, #FFE4F3 0%, #FF007F 50%, #9D174D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Shiny Bevel Button */
+.gold-btn {
+  background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 40%, #D97706 80%, #B45309 100%);
+  box-shadow: 0 4px 0 #78350F, 0 8px 15px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.1s ease;
+}
+.gold-btn:hover {
+  filter: brightness(1.1);
+}
+.gold-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #78350F, 0 3px 8px rgba(0, 0, 0, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+.spin-btn-active {
+  background: radial-gradient(circle at 50% 30%, #4ADE80 0%, #16A34A 55%, #15803D 85%, #14532D 100%);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.6), 0 6px 0 #14532D, inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+.spin-btn-active:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4), 0 2px 0 #14532D;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(18, 23, 36, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
