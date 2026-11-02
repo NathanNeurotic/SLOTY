@@ -36,10 +36,10 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           </div>
           <div>
             <div className="text-sm sm:text-base font-black tracking-wider leading-none gold-gradient-text uppercase">
-              Slotz Deluxe
+              SLOTY DELUXE
             </div>
             <div className="text-[9px] sm:text-[10px] text-neon-cyan font-bold tracking-widest leading-none mt-0.5">
-              VEGAS CASINO 777
+              OREGON LOTTERY VLT 777
             </div>
           </div>
         </div>

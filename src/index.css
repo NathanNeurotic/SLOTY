@@ -81,3 +81,39 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* --- GPU-Accelerated Vegas Slot Reel Spin & Settle Animations --- */
+@keyframes reelBlurRoll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+.animate-reel-rolling {
+  animation: reelBlurRoll 0.18s linear infinite;
+  will-change: transform;
+}
+
+@keyframes reelElasticDrop {
+  0% {
+    transform: translate3d(0, -80px, 0);
+  }
+  65% {
+    transform: translate3d(0, 10px, 0);
+  }
+  85% {
+    transform: translate3d(0, -4px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-reel-settle {
+  animation: reelElasticDrop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+  will-change: transform;
+}
+

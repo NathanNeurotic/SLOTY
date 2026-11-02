@@ -21,6 +21,8 @@ import { FreeSpinsModal } from './components/modals/FreeSpinsModal';
 import { DailyBonusModal } from './components/modals/DailyBonusModal';
 import { PaytableModal } from './components/modals/PaytableModal';
 import { LevelUpModal } from './components/modals/LevelUpModal';
+import { GambleModal } from './components/modals/GambleModal';
+import { HoldAndSpinModal } from './components/modals/HoldAndSpinModal';
 import { DebugDrawer } from './components/debug/DebugDrawer';
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
@@ -62,6 +64,7 @@ export const App: React.FC = () => {
       totalWon: 0,
       biggestWin: 0,
       freeSpinsPlayed: 0,
+      holdAndSpinsPlayed: 0,
     };
   });
 
@@ -91,29 +94,36 @@ export const App: React.FC = () => {
   const progression = calculateProgression(totalXp);
   const prevLevelRef = useRef<number>(progression.level);
 
-  // --- Active Game State ---
-  const [currentBet, setCurrentBet] = useState(100);
+  // --- Active Game & Bet State ---
+  const [selectedLines, setSelectedLines] = useState<number>(40);
+  const [betPerLine, setBetPerLine] = useState<number>(5);
+  const totalBet = selectedLines * betPerLine;
+
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState(false);
   const [winAmount, setWinAmount] = useState(0);
   const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
 
-  // Initial standard grid
+  // Initial 5 reels x 4 rows grid
   const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => [
-    ['SEVEN', 'CHERRY', 'PLUM'],
-    ['BELL', 'WILD', 'MELON'],
-    ['DIAMOND', 'SEVEN', 'BELL'],
-    ['HORSESHOE', 'PLUM', 'CHERRY'],
-    ['MELON', 'BELL', 'HORSESHOE'],
+    ['SEVEN', 'DIAMOND', 'BELL', 'JACK'],
+    ['WILD', 'SEVEN', 'MELON', 'QUEEN'],
+    ['DIAMOND', 'GOLDBAR', 'GRAPES', 'KING'],
+    ['HORSESHOE', 'BELL', 'COIN', 'ACE'],
+    ['MELON', 'SEVEN', 'HORSESHOE', 'WILD'],
   ]);
 
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
+  const pendingResultRef = useRef<SpinResult | null>(null);
 
   // --- Modals State ---
   const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
   const [showFreeSpinsModal, setShowFreeSpinsModal] = useState(false);
+  const [showHoldAndSpinModal, setShowHoldAndSpinModal] = useState(false);
+  const [holdAndSpinInitialCoins, setHoldAndSpinInitialCoins] = useState(6);
+  const [showGambleModal, setShowGambleModal] = useState(false);
   const [showBonusWheelModal, setShowBonusWheelModal] = useState(false);
   const [showPaytableModal, setShowPaytableModal] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{
@@ -154,7 +164,7 @@ export const App: React.FC = () => {
     const isFreeSpin = freeSpinsRemaining > 0;
 
     // Balance check
-    if (!isFreeSpin && balance < currentBet) {
+    if (!isFreeSpin && balance < totalBet) {
       soundManager.playButtonClick();
       setAutoSpinsRemaining(0);
       alert('Out of coins! Open the Lucky Bonus Wheel or use the Debug menu to add credits.');
@@ -163,12 +173,12 @@ export const App: React.FC = () => {
 
     // Deduct wager and add XP
     if (!isFreeSpin) {
-      setBalance((b) => b - currentBet);
-      setTotalXp((xp) => xp + currentBet);
+      setBalance((b) => b - totalBet);
+      setTotalXp((xp) => xp + totalBet);
       setStats((s) => ({
         ...s,
         totalSpins: s.totalSpins + 1,
-        totalWagered: s.totalWagered + currentBet,
+        totalWagered: s.totalWagered + totalBet,
       }));
     } else {
       setStats((s) => ({
@@ -181,6 +191,7 @@ export const App: React.FC = () => {
     soundManager.playSpinStart();
     setIsSpinning(true);
     setWinAmount(0);
+    setSpinResult(null); // Keep results hidden while reels are spinning
 
     // Generate grid: check forced scenario first, then random
     const nextGrid = forcedScenario
@@ -192,20 +203,22 @@ export const App: React.FC = () => {
 
     // Free spins gives 3x multiplier
     const multiplier = isFreeSpin ? 3 : 1;
-    const evaluated = evaluateSpin(nextGrid, currentBet, 20, multiplier);
+    const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier);
 
+    pendingResultRef.current = evaluated;
     setCurrentGrid(nextGrid);
-    setSpinResult(evaluated);
-  }, [balance, currentBet, freeSpinsRemaining, forcedScenario]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario]);
 
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
     setIsSpinning(false);
-    if (!spinResult) return;
+    const result = pendingResultRef.current;
+    if (!result) return;
 
-    const { totalPayout, winTier, isFreeSpinsTriggered } = spinResult;
+    setSpinResult(result);
+    const { totalPayout, winTier, isFreeSpinsTriggered, isHoldAndSpinTriggered, coinCount } = result;
 
-    // Credit win amount
+    // Reliably credit win amount to player's balance!
     if (totalPayout > 0) {
       setBalance((b) => b + totalPayout);
       setWinAmount(totalPayout);
@@ -228,6 +241,12 @@ export const App: React.FC = () => {
       setShowFreeSpinsModal(true);
     }
 
+    // Hold & Spin Cash Respins Triggered
+    if (isHoldAndSpinTriggered) {
+      setHoldAndSpinInitialCoins(coinCount);
+      setShowHoldAndSpinModal(true);
+    }
+
     // Check VIP Level Up
     const currentProgression = calculateProgression(totalXp);
     if (currentProgression.level > prevLevelRef.current) {
@@ -244,7 +263,7 @@ export const App: React.FC = () => {
     if (freeSpinsRemaining > 0) {
       setFreeSpinsRemaining((prev) => prev - 1);
     }
-  }, [spinResult, totalXp, freeSpinsRemaining]);
+  }, [totalXp, freeSpinsRemaining]);
 
   // Quick Stop Handler
   const handleQuickStop = useCallback(() => {
@@ -252,9 +271,24 @@ export const App: React.FC = () => {
     handleAllReelsStopped();
   }, [isSpinning, handleAllReelsStopped]);
 
+  // Max Bet Handler
+  const handleMaxBet = useCallback(() => {
+    setSelectedLines(40);
+    // Find highest bet per line that stays <= maxBet
+    const allowableBetPerLine = Math.max(1, Math.floor(progression.maxBet / 40));
+    setBetPerLine(allowableBetPerLine);
+  }, [progression.maxBet]);
+
   // Handle continuous Auto-Spins and Free-Spins cadence
   useEffect(() => {
-    if (isSpinning || celebration !== null || showFreeSpinsModal || levelUpData !== null) {
+    if (
+      isSpinning ||
+      celebration !== null ||
+      showFreeSpinsModal ||
+      showHoldAndSpinModal ||
+      showGambleModal ||
+      levelUpData !== null
+    ) {
       return;
     }
 
@@ -262,7 +296,7 @@ export const App: React.FC = () => {
     if (freeSpinsRemaining > 0) {
       const timer = setTimeout(() => {
         executeSpin();
-      }, isTurbo ? 600 : 1200);
+      }, isTurbo ? 500 : 1100);
       return () => clearTimeout(timer);
     }
 
@@ -271,7 +305,7 @@ export const App: React.FC = () => {
       const timer = setTimeout(() => {
         setAutoSpinsRemaining((prev) => prev - 1);
         executeSpin();
-      }, isTurbo ? 600 : 1200);
+      }, isTurbo ? 500 : 1100);
       return () => clearTimeout(timer);
     }
   }, [
@@ -280,6 +314,8 @@ export const App: React.FC = () => {
     autoSpinsRemaining,
     celebration,
     showFreeSpinsModal,
+    showHoldAndSpinModal,
+    showGambleModal,
     levelUpData,
     executeSpin,
     isTurbo,
@@ -295,7 +331,9 @@ export const App: React.FC = () => {
 
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
-        if (celebration !== null || showFreeSpinsModal) return;
+        if (celebration !== null || showFreeSpinsModal || showHoldAndSpinModal || showGambleModal) {
+          return;
+        }
         if (isSpinning) {
           handleQuickStop();
         } else {
@@ -312,7 +350,15 @@ export const App: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSpinning, celebration, showFreeSpinsModal, executeSpin]);
+  }, [
+    isSpinning,
+    celebration,
+    showFreeSpinsModal,
+    showHoldAndSpinModal,
+    showGambleModal,
+    executeSpin,
+    handleQuickStop,
+  ]);
 
   return (
     <div className="min-h-screen bg-casino-950 text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden">
@@ -337,12 +383,14 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-2 sm:py-6 w-full">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-1 sm:py-4 w-full">
         <SlotMachine
           currentGrid={currentGrid}
           isSpinning={isSpinning}
           spinResult={spinResult}
           isTurbo={isTurbo}
+          selectedLines={selectedLines}
+          onSelectLines={(lines) => setSelectedLines(lines)}
           onAllReelsStopped={handleAllReelsStopped}
           onQuickStop={handleQuickStop}
           freeSpinsRemaining={freeSpinsRemaining}
@@ -350,7 +398,9 @@ export const App: React.FC = () => {
 
         <ControlsBar
           balance={balance}
-          currentBet={currentBet}
+          selectedLines={selectedLines}
+          betPerLine={betPerLine}
+          totalBet={totalBet}
           maxBet={progression.maxBet}
           winAmount={winAmount}
           isSpinning={isSpinning}
@@ -359,19 +409,22 @@ export const App: React.FC = () => {
           freeSpinsRemaining={freeSpinsRemaining}
           onSpin={executeSpin}
           onQuickStop={handleQuickStop}
-          onBetChange={(newBet) => setCurrentBet(newBet)}
+          onLinesChange={(lines) => setSelectedLines(lines)}
+          onBetPerLineChange={(bet) => setBetPerLine(bet)}
+          onMaxBet={handleMaxBet}
           onTurboToggle={() => setIsTurbo((prev) => !prev)}
           onAutoSpinStart={(count) => {
             setAutoSpinsRemaining(count);
             executeSpin();
           }}
           onAutoSpinStop={() => setAutoSpinsRemaining(0)}
+          onOpenGamble={() => setShowGambleModal(true)}
         />
       </main>
 
       {/* Footer info banner */}
-      <footer className="relative z-10 py-2 border-t border-white/5 text-center text-[10px] text-slate-500 bg-casino-950/80">
-        PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS & RIG REELS
+      <footer className="relative z-10 py-1.5 border-t border-white/5 text-center text-[10px] text-slate-500 bg-casino-950/80">
+        PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
       </footer>
 
       {/* --- Modals & Overlays --- */}
@@ -382,6 +435,44 @@ export const App: React.FC = () => {
           winTier={celebration.tier}
           winAmount={celebration.amount}
           onDismiss={() => setCelebration(null)}
+        />
+      )}
+
+      {/* Oregon Lottery Video Poker Double-Up Gamble Modal */}
+      {showGambleModal && (
+        <GambleModal
+          initialPot={winAmount}
+          onCollect={(doubledPot) => {
+            const addedDifference = doubledPot - winAmount;
+            setBalance((b) => b + addedDifference);
+            setWinAmount(doubledPot);
+            setShowGambleModal(false);
+          }}
+          onLose={() => {
+            setBalance((b) => b - winAmount);
+            setWinAmount(0);
+            setShowGambleModal(false);
+          }}
+          onClose={() => setShowGambleModal(false)}
+        />
+      )}
+
+      {/* Cash Link Hold & Spin Modal */}
+      {showHoldAndSpinModal && (
+        <HoldAndSpinModal
+          totalBet={totalBet}
+          initialCoinCount={holdAndSpinInitialCoins}
+          onComplete={(bonusWon) => {
+            setBalance((b) => b + bonusWon);
+            setWinAmount(bonusWon);
+            setStats((s) => ({
+              ...s,
+              totalWon: s.totalWon + bonusWon,
+              biggestWin: Math.max(s.biggestWin, bonusWon),
+              holdAndSpinsPlayed: s.holdAndSpinsPlayed + 1,
+            }));
+            setShowHoldAndSpinModal(false);
+          }}
         />
       )}
 
@@ -440,14 +531,13 @@ export const App: React.FC = () => {
         onSetBalance={(amount) => setBalance(amount)}
         onAddXp={(amount) => setTotalXp((xp) => xp + amount)}
         onSetLevel={(level) => {
-          // Calculate cumulative XP needed for level
           const xpNeeded = Math.floor(1000 * Math.pow(level - 1, 1.4));
           setTotalXp(xpNeeded);
         }}
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
         onInjectCustomGrid={(grid) => {
           setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, currentBet, 20, freeSpinsRemaining > 0 ? 3 : 1);
+          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? 3 : 1);
           setSpinResult(evaluated);
         }}
         onResetStats={() =>
@@ -457,6 +547,7 @@ export const App: React.FC = () => {
             totalWon: 0,
             biggestWin: 0,
             freeSpinsPlayed: 0,
+            holdAndSpinsPlayed: 0,
           })
         }
       />

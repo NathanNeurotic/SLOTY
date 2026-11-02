@@ -1,16 +1,55 @@
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { SymbolId } from '../../engine/types';
 import { SymbolRenderer } from './SymbolRenderer';
-import { SYMBOL_LIST } from '../../engine/symbols';
 
 interface ReelProps {
   reelIndex: number;
-  symbols: SymbolId[]; // 3 symbols [top, middle, bottom]
+  symbols: SymbolId[]; // 4 landing symbols [row 0, row 1, row 2, row 3]
   isSpinning: boolean;
   isAnticipating?: boolean;
   winningRows?: Set<number>;
   scatterRows?: Set<number>;
+  onStop?: (reelIndex: number) => void;
 }
+
+// 8 distinct symbols doubled to form a seamless 16-symbol infinite roll strip
+const ROLLING_STRIP_A: SymbolId[] = [
+  'WILD',
+  'SEVEN',
+  'DIAMOND',
+  'BELL',
+  'GOLDBAR',
+  'MELON',
+  'GRAPES',
+  'ACE',
+  'WILD',
+  'SEVEN',
+  'DIAMOND',
+  'BELL',
+  'GOLDBAR',
+  'MELON',
+  'GRAPES',
+  'ACE',
+];
+
+const ROLLING_STRIP_B: SymbolId[] = [
+  'SEVEN',
+  'HORSESHOE',
+  'COIN',
+  'DIAMOND',
+  'BELL',
+  'KING',
+  'QUEEN',
+  'JACK',
+  'SEVEN',
+  'HORSESHOE',
+  'COIN',
+  'DIAMOND',
+  'BELL',
+  'KING',
+  'QUEEN',
+  'JACK',
+];
 
 export const Reel: React.FC<ReelProps> = ({
   reelIndex,
@@ -19,40 +58,42 @@ export const Reel: React.FC<ReelProps> = ({
   isAnticipating = false,
   winningRows = new Set(),
   scatterRows = new Set(),
+  onStop,
 }) => {
-  // Store the symbols that were on the reel right before spinning started
-  const lastRestingSymbolsRef = useRef<SymbolId[]>(symbols);
+  const [hasSettled, setHasSettled] = useState(false);
+  const wasSpinningRef = useRef(isSpinning);
+  const onStopRef = useRef(onStop);
 
   useEffect(() => {
-    if (!isSpinning) {
-      lastRestingSymbolsRef.current = symbols;
-    }
-  }, [isSpinning, symbols]);
+    onStopRef.current = onStop;
+  });
 
-  // Generate a unique, randomized strip for this specific reel
-  // Begins with the symbols that were already showing to prevent any visual "reset" flash!
-  const reelStrip = useMemo(() => {
-    const resting = lastRestingSymbolsRef.current;
-    // Shuffle symbol pool specifically with reelIndex offset for unique visual pattern
-    const allIds = SYMBOL_LIST.map((s) => s.id);
-    const shuffled: SymbolId[] = [];
-    for (let i = 0; i < 14; i++) {
-      const idx = (i * 3 + reelIndex * 5 + Math.floor(Math.random() * 4)) % allIds.length;
-      shuffled.push(allIds[idx]);
-    }
-    // Strip starts with previous symbols, then random whizzing symbols, then repeats
-    return [...resting, ...shuffled, ...resting, ...shuffled];
-  }, [reelIndex, isSpinning]);
+  // Stagger slightly different filler strips across adjacent reels
+  const rollingStrip = reelIndex % 2 === 0 ? ROLLING_STRIP_A : ROLLING_STRIP_B;
 
-  // Unique spin speed per reel to create realistic physical wheel desynchronization
-  const spinSpeeds = ['0.24s', '0.21s', '0.27s', '0.22s', '0.25s'];
-  const animDuration = spinSpeeds[reelIndex % spinSpeeds.length];
+  useEffect(() => {
+    if (isSpinning) {
+      setHasSettled(false);
+      wasSpinningRef.current = true;
+    } else if (wasSpinningRef.current) {
+      // Transition from spinning to settled
+      wasSpinningRef.current = false;
+      setHasSettled(true);
+      if (onStopRef.current) {
+        onStopRef.current(reelIndex);
+      }
+      const t = setTimeout(() => {
+        setHasSettled(false);
+      }, 350);
+      return () => clearTimeout(t);
+    }
+  }, [isSpinning, reelIndex]);
 
   return (
     <div
-      className={`relative flex-1 h-[270px] sm:h-[330px] md:h-[390px] overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
+      className={`relative flex-1 h-[320px] sm:h-[400px] md:h-[480px] overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
         isAnticipating
-          ? 'border-neon-cyan shadow-[0_0_25px_rgba(0,240,255,0.7)] z-10 scale-[1.02]'
+          ? 'border-neon-cyan shadow-[0_0_25px_rgba(0,240,255,0.8)] z-10 scale-[1.02]'
           : 'border-white/10'
       }`}
     >
@@ -61,37 +102,47 @@ export const Reel: React.FC<ReelProps> = ({
         <div className="absolute inset-0 border-2 border-neon-cyan animate-pulse pointer-events-none z-30" />
       )}
 
-      {/* Reel content */}
-      {isSpinning ? (
+      {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
+      {isSpinning && (
         <div
-          className="w-full flex flex-col animate-reel-spin blur-[1px] will-change-transform"
-          style={{ animationDuration: animDuration }}
+          className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[0.6px]"
+          style={{
+            animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
+          }}
         >
-          {reelStrip.map((sym, idx) => (
+          {rollingStrip.map((sym, idx) => (
             <div
               key={idx}
-              className="h-[90px] sm:h-[110px] md:h-[130px] w-full flex items-center justify-center p-2 flex-shrink-0"
+              className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-80"
             >
               <SymbolRenderer id={sym} />
             </div>
           ))}
         </div>
-      ) : (
-        <div className="h-full w-full flex flex-col justify-around py-1 animate-bounce-soft">
+      )}
+
+      {/* 2. Resting / Settling 4-Row Landing Grid */}
+      {!isSpinning && (
+        <div
+          className={`w-full h-full flex flex-col justify-between ${
+            hasSettled ? 'animate-reel-settle' : ''
+          }`}
+        >
           {symbols.map((sym, rowIdx) => {
             const isWinning = winningRows.has(rowIdx);
             const isScatterHighlight = scatterRows.has(rowIdx);
+
             return (
               <div
                 key={rowIdx}
-                className={`relative h-[86px] sm:h-[106px] md:h-[126px] w-full flex items-center justify-center rounded-lg transition-all duration-200 ${
+                className={`h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 transition-opacity duration-200 ${
                   isWinning
-                    ? 'bg-gold-500/20 ring-2 ring-gold-bright shadow-[0_0_20px_rgba(251,191,36,0.5)] z-10 scale-105'
+                    ? 'bg-gold-500/20 ring-2 ring-gold-bright shadow-[0_0_20px_rgba(251,191,36,0.6)] z-10 scale-105'
                     : isScatterHighlight
-                    ? 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.5)] z-10 scale-105'
+                    ? 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.6)] z-10 scale-105'
                     : winningRows.size > 0
-                    ? 'opacity-40' // Dim non-winning symbols like Oregon Lottery terminals
-                    : 'hover:bg-white/[0.02]'
+                    ? 'opacity-35' // Dim non-winning symbols
+                    : ''
                 }`}
               >
                 <SymbolRenderer
@@ -105,8 +156,8 @@ export const Reel: React.FC<ReelProps> = ({
         </div>
       )}
 
-      {/* 3D Cylindrical shadow overlay */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/55 via-transparent to-black/55 z-20" />
+      {/* 3D Cylindrical shadow overlays */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/60 z-20" />
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] z-20" />
     </div>
   );

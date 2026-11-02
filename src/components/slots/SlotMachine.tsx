@@ -12,6 +12,8 @@ interface SlotMachineProps {
   isSpinning: boolean;
   spinResult: SpinResult | null;
   isTurbo: boolean;
+  selectedLines: number;
+  onSelectLines?: (linesCount: number) => void;
   onAllReelsStopped: () => void;
   freeSpinsRemaining: number;
   onQuickStop?: () => void;
@@ -22,6 +24,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   isSpinning,
   spinResult,
   isTurbo,
+  selectedLines,
+  onSelectLines,
   onAllReelsStopped,
   freeSpinsRemaining,
   onQuickStop,
@@ -34,6 +38,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
 
+  // Keep a ref to onAllReelsStopped to prevent recreation of effect timers
+  const onAllReelsStoppedRef = useRef(onAllReelsStopped);
+  useEffect(() => {
+    onAllReelsStoppedRef.current = onAllReelsStopped;
+  });
+
+  const isAnyReelSpinning = isSpinning || reelSpinning.some(Boolean);
+
   // Function to perform immediate quick-stop
   const triggerQuickStop = useCallback(() => {
     timersRef.current.forEach((t) => clearTimeout(t));
@@ -42,8 +54,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     setReelSpinning([false, false, false, false, false]);
     soundManager.playReelStop(4);
 
-    onAllReelsStopped();
-  }, [onAllReelsStopped]);
+    if (onAllReelsStoppedRef.current) {
+      onAllReelsStoppedRef.current();
+    }
+  }, []);
 
   // Handle spin start and staggered stopping schedule
   useEffect(() => {
@@ -60,12 +74,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       const hasScatter1 = currentGrid[1]?.includes('SCATTER');
       const anticipation = hasScatter0 && hasScatter1;
 
-      // Realistic casino spin durations: ~2.3s total for watchable, dramatic roll
+      // Realistic casino spin durations: ~2s total for watchable, dramatic roll
       const baseDelays = isTurbo
-        ? [120, 240, 360, 480, 600]
+        ? [180, 320, 460, 600, 750]
         : anticipation
-        ? [900, 1250, 2100, 2600, 3100] // Extended suspense build-up
-        : [900, 1250, 1600, 1950, 2300];
+        ? [800, 1150, 2000, 2550, 3100] // Extended suspense build-up
+        : [800, 1150, 1450, 1750, 2050];
 
       baseDelays.forEach((delay, reelIdx) => {
         const timerId = window.setTimeout(() => {
@@ -86,7 +100,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           // Final reel settled
           if (reelIdx === 4) {
-            onAllReelsStopped();
+            if (onAllReelsStoppedRef.current) {
+              onAllReelsStoppedRef.current();
+            }
           }
         }, delay);
 
@@ -101,13 +117,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     return () => {
       timersRef.current.forEach((t) => clearTimeout(t));
     };
-  }, [isSpinning, isTurbo, currentGrid, onAllReelsStopped]);
+  }, [isSpinning, isTurbo, currentGrid]);
 
   // Cycle through winning lines when idle after a win
   useEffect(() => {
-    const isAnyReelSpinning = reelSpinning.some(Boolean);
-    if (!isSpinning && !isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0) {
-      // Start with first winning line
+    if (!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0) {
       if (activeWinningLineIdx === null) {
         setActiveWinningLineIdx(spinResult.winningLines[0].lineIndex);
       }
@@ -123,7 +137,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     } else {
       setActiveWinningLineIdx(null);
     }
-  }, [isSpinning, reelSpinning, spinResult, activeWinningLineIdx]);
+  }, [isAnyReelSpinning, spinResult, activeWinningLineIdx]);
 
   // Manual navigation of winning lines
   const handleNextWinningLine = (e: React.MouseEvent) => {
@@ -144,17 +158,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   // Winning line details for Oregon Lottery style banner
   const activeWin = useMemo(() => {
-    if (!spinResult || activeWinningLineIdx === null) return null;
+    if (isAnyReelSpinning || !spinResult || activeWinningLineIdx === null) return null;
     return spinResult.winningLines.find((w) => w.lineIndex === activeWinningLineIdx) || null;
-  }, [spinResult, activeWinningLineIdx]);
+  }, [isAnyReelSpinning, spinResult, activeWinningLineIdx]);
 
   // Winning coordinates for symbol highlight
   const winningCoordsMap = useMemo(() => {
     const map = new Map<number, Set<number>>();
     for (let r = 0; r < 5; r++) map.set(r, new Set<number>());
 
-    const isAnyReelSpinning = reelSpinning.some(Boolean);
-    if (spinResult && !isSpinning && !isAnyReelSpinning) {
+    if (spinResult && !isAnyReelSpinning) {
       const linesToConsider =
         activeWinningLineIdx !== null
           ? spinResult.winningLines.filter((w) => w.lineIndex === activeWinningLineIdx)
@@ -167,21 +180,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       });
     }
     return map;
-  }, [spinResult, isSpinning, reelSpinning, activeWinningLineIdx]);
+  }, [spinResult, isAnyReelSpinning, activeWinningLineIdx]);
 
   // Compute scatter coordinates
   const scatterCoordsMap = useMemo(() => {
     const map = new Map<number, Set<number>>();
     for (let r = 0; r < 5; r++) map.set(r, new Set<number>());
 
-    const isAnyReelSpinning = reelSpinning.some(Boolean);
-    if (spinResult && !isSpinning && !isAnyReelSpinning && spinResult.scatterCoords.length >= 2) {
+    if (spinResult && !isAnyReelSpinning && spinResult.scatterCoords.length >= 2) {
       spinResult.scatterCoords.forEach(([reel, row]) => {
         map.get(reel)?.add(row);
       });
     }
     return map;
-  }, [spinResult, isSpinning, reelSpinning]);
+  }, [spinResult, isAnyReelSpinning]);
 
   // Anticipation status for reels 2, 3, 4
   const hasScatter0 = !reelSpinning[0] && currentGrid[0]?.includes('SCATTER');
@@ -208,16 +220,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     >
       {/* Outer Luxury Cabinet Frame */}
       <div
-        className={`relative p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl transition-all duration-500 shadow-2xl ${
+        className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-500 shadow-2xl ${
           freeSpinsRemaining > 0
             ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
             : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
         }`}
       >
-        {/* Flashing Marquee Bulbs Header */}
-        <div className="flex items-center justify-between pb-2.5 px-2 border-b border-white/10 mb-2.5">
-          <div className="flex items-center space-x-1.5 sm:space-x-2">
-            {[...Array(6)].map((_, i) => (
+        {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
+        <div className="flex items-center justify-between h-10 sm:h-12 px-2 border-b border-white/10 mb-2 overflow-hidden flex-shrink-0">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
                 className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-gold-bright shadow-[0_0_8px_#F59E0B] animate-pulse"
@@ -226,78 +238,80 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             ))}
           </div>
 
-          {/* Oregon Lottery Style Active Marquee Win / Info Header */}
-          <div className="text-center flex-1 px-2">
+          {/* Oregon Lottery Style Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
+          <div className="text-center flex-1 px-1 sm:px-3 overflow-hidden flex items-center justify-center">
             {freeSpinsRemaining > 0 ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-bounce">
+              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-bounce truncate whitespace-nowrap">
                 🔥 FREE SPINS ACTIVE: {freeSpinsRemaining} REMAINING (3X WINS) 🔥
               </span>
-            ) : isSpinning ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-amber-300 animate-pulse">
+            ) : isAnyReelSpinning ? (
+              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-amber-300 animate-pulse truncate whitespace-nowrap">
                 ⚡ REELS SPINNING • CLICK TO QUICK STOP ⚡
               </span>
             ) : hoveredLineIndex !== null ? (
-              <span className="text-xs sm:text-sm font-black tracking-wider uppercase text-neon-cyan">
+              <span className="text-xs sm:text-sm font-black tracking-wider uppercase text-neon-cyan truncate whitespace-nowrap">
                 PAYLINE {hoveredLineIndex + 1} PATH PREVIEW
               </span>
             ) : activeWin ? (
-              <div className="flex items-center justify-center space-x-2 animate-bounce-soft">
+              <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 truncate whitespace-nowrap animate-bounce-soft">
                 <button
                   onClick={handlePrevWinningLine}
-                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white"
+                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white flex-shrink-0"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
-                <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light">
-                  <Award className="w-4 h-4 inline mr-1 text-gold-bright" />
-                  LINE {activeWin.lineIndex + 1}: {activeWin.count}x {SYMBOLS[activeWin.symbolId]?.name.toUpperCase()} PAYS +{activeWin.payout.toLocaleString()} COINS!
+                <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light truncate">
+                  <Award className="w-4 h-4 inline mr-1 text-gold-bright flex-shrink-0" />
+                  LINE {activeWin.lineIndex + 1}: {activeWin.count}x {SYMBOLS[activeWin.symbolId]?.name.toUpperCase()} (+{activeWin.payout.toLocaleString()} COINS)
                 </span>
                 <button
                   onClick={handleNextWinningLine}
-                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white"
+                  className="p-1 rounded bg-casino-800 hover:bg-casino-700 text-white flex-shrink-0"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase gold-gradient-text">
-                ★ 20 FIXED PAYLINES • DELUXE OREGON LOTTERY STYLE ★
+              <span className="text-xs sm:text-sm font-black tracking-widest uppercase gold-gradient-text truncate whitespace-nowrap">
+                ★ {selectedLines} PAYLINES • DELUXE OREGON LOTTERY STYLE ★
               </span>
             )}
           </div>
 
-          <div className="flex items-center space-x-1.5 sm:space-x-2">
-            {[...Array(6)].map((_, i) => (
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
                 className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-neon-cyan shadow-[0_0_8px_#00F0FF] animate-pulse"
-                style={{ animationDelay: `${(5 - i) * 150}ms` }}
+                style={{ animationDelay: `${(4 - i) * 150}ms` }}
               />
             ))}
           </div>
         </div>
 
         {/* Central Playing Stage Flanked by Oregon Lottery Numbered Tabs */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 w-full">
-          {/* Left Flank: Lines 1 to 10 */}
+        <div className="flex items-center space-x-1 sm:space-x-2 w-full">
+          {/* Left Flank: Lines 1 to 20 */}
           <PaylineSideTabs
             side="left"
-            winningLines={spinResult?.winningLines || []}
-            activeLineIndex={activeWinningLineIdx}
+            selectedLines={selectedLines}
+            winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
+            activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
             hoveredLineIndex={hoveredLineIndex}
             onHoverLine={(idx) => setHoveredLineIndex(idx)}
             onClickLine={(idx) => {
               setActiveWinningLineIdx(idx);
               soundManager.playButtonClick();
             }}
+            onSelectLines={onSelectLines}
           />
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
-          <div className="relative flex-1 flex space-x-1 sm:space-x-2 bg-casino-950/95 p-1.5 sm:p-2.5 rounded-xl border border-white/10 shadow-inner overflow-hidden">
-            {/* SVG Payline Glow Overlay */}
+          <div className="relative flex-1 flex space-x-1 sm:space-x-1.5 bg-casino-950/95 p-1 sm:p-2 rounded-xl border border-white/10 shadow-inner overflow-hidden h-[320px] sm:h-[400px] md:h-[480px]">
+            {/* SVG Payline Glow Overlay: strictly hidden while reels are spinning */}
             <PaylineOverlay
-              winningLines={spinResult?.winningLines || []}
-              activeLineIndex={activeWinningLineIdx}
+              winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
+              activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
               previewLineIndex={hoveredLineIndex}
             />
 
@@ -315,34 +329,36 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             ))}
           </div>
 
-          {/* Right Flank: Lines 11 to 20 */}
+          {/* Right Flank: Lines 21 to 40 */}
           <PaylineSideTabs
             side="right"
-            winningLines={spinResult?.winningLines || []}
-            activeLineIndex={activeWinningLineIdx}
+            selectedLines={selectedLines}
+            winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
+            activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
             hoveredLineIndex={hoveredLineIndex}
             onHoverLine={(idx) => setHoveredLineIndex(idx)}
             onClickLine={(idx) => {
               setActiveWinningLineIdx(idx);
               soundManager.playButtonClick();
             }}
+            onSelectLines={onSelectLines}
           />
         </div>
 
         {/* Cabinet Bottom Status Bar */}
-        <div className="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 font-semibold px-2">
+        <div className="mt-2 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2">
           <div className="flex items-center space-x-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span>PAYOUT RATE: 95.8% RTP</span>
           </div>
 
-          {spinResult && !isSpinning && spinResult.winningLines.length > 0 && (
+          {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 && (
             <div className="text-gold-bright font-black animate-pulse text-xs">
               {spinResult.winningLines.length} WINNING LINE(S) PAID OUT!
             </div>
           )}
 
-          <div className="tracking-wide">HOVER SIDE NUMBERS (1-20) TO VIEW LINES</div>
+          <div className="tracking-wide">HOVER NUMBERS (1-40) TO VIEW PAYLINES</div>
         </div>
       </div>
     </div>

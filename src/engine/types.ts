@@ -1,13 +1,20 @@
 export type SymbolId =
   | 'WILD'
   | 'SCATTER'
+  | 'COIN'
   | 'DIAMOND'
   | 'SEVEN'
+  | 'GOLDBAR'
   | 'BELL'
   | 'HORSESHOE'
   | 'MELON'
-  | 'PLUM'
-  | 'CHERRY';
+  | 'GRAPES'
+  | 'ACE'
+  | 'KING'
+  | 'QUEEN'
+  | 'JACK'
+  | 'CHERRY'
+  | 'PLUM';
 
 export type SymbolTier = 'special' | 'high' | 'mid' | 'low';
 
@@ -20,9 +27,9 @@ export interface SlotSymbol {
   tier: SymbolTier;
 }
 
-export type Payline = number[]; // 5 elements corresponding to row index (0, 1, 2) on each reel
+export type Payline = number[]; // 5 elements corresponding to row index (0..3) on each of the 5 reels
 
-export type SymbolGrid = SymbolId[][]; // grid[reelIndex][rowIndex], 5 reels x 3 rows
+export type SymbolGrid = SymbolId[][]; // 5 reels x 4 rows: grid[reelIdx][rowIdx]
 
 export interface WinningLine {
   lineIndex: number;
@@ -33,6 +40,13 @@ export interface WinningLine {
   payout: number;
 }
 
+export interface CashCoin {
+  reel: number;
+  row: number;
+  value: number;
+  jackpot?: 'MINI' | 'MINOR' | 'MAJOR' | 'GRAND';
+}
+
 export type WinTier = 'NONE' | 'REGULAR' | 'BIG_WIN' | 'MEGA_WIN' | 'EPIC_JACKPOT';
 
 export interface SpinResult {
@@ -40,8 +54,11 @@ export interface SpinResult {
   winningLines: WinningLine[];
   scatterCount: number;
   scatterCoords: [number, number][];
+  coinCount: number;
+  coinCoords: [number, number][];
   totalPayout: number;
   isFreeSpinsTriggered: boolean;
+  isHoldAndSpinTriggered: boolean;
   winTier: WinTier;
 }
 
@@ -51,6 +68,7 @@ export interface GameStats {
   totalWon: number;
   biggestWin: number;
   freeSpinsPlayed: number;
+  holdAndSpinsPlayed: number;
 }
 
 export type DebugScenario =
@@ -59,6 +77,7 @@ export type DebugScenario =
   | 'FIVE_DIAMONDS'
   | 'FIVE_SEVENS'
   | 'FREE_SPINS'
+  | 'HOLD_AND_SPIN'
   | 'NEAR_MISS'
   | 'BIG_WIN'
   | 'NO_WIN';

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle } from 'lucide-react';
+import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 
 interface ControlsBarProps {
   balance: number;
-  currentBet: number;
+  selectedLines: number;
+  betPerLine: number;
+  totalBet: number;
   maxBet: number;
   winAmount: number;
   isSpinning: boolean;
@@ -13,17 +15,23 @@ interface ControlsBarProps {
   freeSpinsRemaining: number;
   onSpin: () => void;
   onQuickStop?: () => void;
-  onBetChange: (newBet: number) => void;
+  onLinesChange: (lines: number) => void;
+  onBetPerLineChange: (betPerLine: number) => void;
+  onMaxBet: () => void;
   onTurboToggle: () => void;
   onAutoSpinStart: (count: number) => void;
   onAutoSpinStop: () => void;
+  onOpenGamble?: () => void;
 }
 
-const BET_STEPS = [20, 40, 60, 100, 200, 400, 1000, 2000, 5000, 10000, 20000, 50000];
+const AVAILABLE_LINES = [1, 5, 10, 20, 30, 40];
+const BET_PER_LINE_STEPS = [1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000];
 
 export const ControlsBar: React.FC<ControlsBarProps> = ({
   balance,
-  currentBet,
+  selectedLines,
+  betPerLine,
+  totalBet,
   maxBet,
   winAmount,
   isSpinning,
@@ -32,35 +40,42 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   freeSpinsRemaining,
   onSpin,
   onQuickStop,
-  onBetChange,
+  onLinesChange,
+  onBetPerLineChange,
+  onMaxBet,
   onTurboToggle,
   onAutoSpinStart,
   onAutoSpinStop,
+  onOpenGamble,
 }) => {
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
-  const handleBetStep = (direction: 'up' | 'down') => {
+  const handleLinesStep = (direction: 'up' | 'down') => {
     soundManager.playButtonClick();
-    const availableSteps = BET_STEPS.filter((step) => step <= maxBet);
-    let currentIndex = availableSteps.indexOf(currentBet);
-    if (currentIndex === -1) {
-      // Find nearest
-      currentIndex = availableSteps.findIndex((step) => step >= currentBet);
-      if (currentIndex === -1) currentIndex = availableSteps.length - 1;
-    }
-
-    if (direction === 'up' && currentIndex < availableSteps.length - 1) {
-      onBetChange(availableSteps[currentIndex + 1]);
-    } else if (direction === 'down' && currentIndex > 0) {
-      onBetChange(availableSteps[currentIndex - 1]);
+    const curIdx = AVAILABLE_LINES.indexOf(selectedLines);
+    if (direction === 'up' && curIdx < AVAILABLE_LINES.length - 1) {
+      onLinesChange(AVAILABLE_LINES[curIdx + 1]);
+    } else if (direction === 'down' && curIdx > 0) {
+      onLinesChange(AVAILABLE_LINES[curIdx - 1]);
     }
   };
 
-  const handleMaxBet = () => {
+  const handleBetStep = (direction: 'up' | 'down') => {
     soundManager.playButtonClick();
-    const availableSteps = BET_STEPS.filter((step) => step <= maxBet);
-    const maxAvailable = availableSteps[availableSteps.length - 1] || maxBet;
-    onBetChange(maxAvailable);
+    let curIdx = BET_PER_LINE_STEPS.indexOf(betPerLine);
+    if (curIdx === -1) {
+      curIdx = BET_PER_LINE_STEPS.findIndex((s) => s >= betPerLine);
+      if (curIdx === -1) curIdx = BET_PER_LINE_STEPS.length - 1;
+    }
+
+    if (direction === 'up' && curIdx < BET_PER_LINE_STEPS.length - 1) {
+      const nextStep = BET_PER_LINE_STEPS[curIdx + 1];
+      if (nextStep * selectedLines <= maxBet) {
+        onBetPerLineChange(nextStep);
+      }
+    } else if (direction === 'down' && curIdx > 0) {
+      onBetPerLineChange(BET_PER_LINE_STEPS[curIdx - 1]);
+    }
   };
 
   const handleTriggerSpin = () => {
@@ -81,10 +96,10 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const isFreeSpins = freeSpinsRemaining > 0;
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-2 sm:px-4 mt-3 select-none">
-      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-3 sm:p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-3">
-        {/* Left Side: Bet Adjuster */}
-        <div className="flex items-center justify-between w-full md:w-auto space-x-2 sm:space-x-3">
+    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 mt-2 select-none">
+      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-2.5 sm:p-3.5 shadow-xl flex flex-col md:flex-row items-center justify-between gap-2.5">
+        {/* Left Side: Lines & Bet Adjuster */}
+        <div className="flex items-center justify-between w-full md:w-auto space-x-1.5 sm:space-x-2">
           {/* Turbo Toggle */}
           <button
             onClick={() => {
@@ -93,98 +108,133 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             }}
             disabled={isSpinning}
             title={isTurbo ? 'Turbo mode ON' : 'Turbo mode OFF'}
-            className={`p-2.5 rounded-xl border transition-all ${
+            className={`p-2 sm:p-2.5 rounded-xl border transition-all ${
               isTurbo
                 ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
                 : 'bg-casino-800 border-white/10 text-slate-400 hover:text-white'
             }`}
           >
-            <Zap className={`w-5 h-5 ${isTurbo ? 'fill-amber-400 animate-pulse' : ''}`} />
+            <Zap className={`w-4 h-4 sm:w-5 sm:h-5 ${isTurbo ? 'fill-amber-400 animate-pulse' : ''}`} />
           </button>
 
           {/* Lines & Bet Display Box (Oregon Lottery VLT Style) */}
-          <div className="flex items-center space-x-2 bg-casino-950 px-3 py-1.5 rounded-xl border border-white/10">
-            {/* Active Lines badge */}
-            <div className="flex flex-col items-center pr-2 border-r border-white/10">
-              <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-casino-950 px-2 sm:px-3 py-1.5 rounded-xl border border-white/10">
+            {/* Active Lines selector with - / + buttons */}
+            <div className="flex flex-col items-center pr-1.5 border-r border-white/10">
+              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-slate-400">
                 Lines
               </span>
-              <span className="text-sm font-black text-neon-cyan">
-                20
-              </span>
+              <div className="flex items-center space-x-1 mt-0.5">
+                <button
+                  onClick={() => handleLinesStep('down')}
+                  disabled={isSpinning || isFreeSpins || selectedLines <= 1}
+                  className="w-5 h-5 rounded bg-casino-800 hover:bg-casino-700 disabled:opacity-30 flex items-center justify-center text-slate-200"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+                <span className="text-xs sm:text-sm font-black text-neon-cyan min-w-[22px] text-center">
+                  {selectedLines}
+                </span>
+                <button
+                  onClick={() => handleLinesStep('up')}
+                  disabled={isSpinning || isFreeSpins || selectedLines >= 40}
+                  className="w-5 h-5 rounded bg-casino-800 hover:bg-casino-700 disabled:opacity-30 flex items-center justify-center text-slate-200"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
             </div>
 
             {/* Bet Per Line with - / + buttons */}
             <div className="flex flex-col items-center px-1">
-              <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
+              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-slate-400">
                 Bet/Line
               </span>
-              <div className="flex items-center space-x-1.5 mt-0.5">
+              <div className="flex items-center space-x-1 mt-0.5">
                 <button
                   onClick={() => handleBetStep('down')}
-                  disabled={isSpinning || isFreeSpins || currentBet <= 20}
-                  className="w-6 h-6 rounded-md bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
+                  disabled={isSpinning || isFreeSpins || betPerLine <= 1}
+                  className="w-5 h-5 rounded bg-casino-800 hover:bg-casino-700 disabled:opacity-30 flex items-center justify-center text-slate-200"
                 >
-                  <Minus className="w-3.5 h-3.5" />
+                  <Minus className="w-3 h-3" />
                 </button>
-                <span className="text-sm font-black text-white min-w-[32px] text-center">
-                  {Math.max(1, Math.floor(currentBet / 20)).toLocaleString()}
+                <span className="text-xs sm:text-sm font-black text-white min-w-[32px] text-center">
+                  {betPerLine.toLocaleString()}
                 </span>
                 <button
                   onClick={() => handleBetStep('up')}
-                  disabled={isSpinning || isFreeSpins || currentBet >= maxBet}
-                  className="w-6 h-6 rounded-md bg-casino-800 hover:bg-casino-700 disabled:opacity-40 flex items-center justify-center text-slate-200"
+                  disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxBet}
+                  className="w-5 h-5 rounded bg-casino-800 hover:bg-casino-700 disabled:opacity-30 flex items-center justify-center text-slate-200"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3 h-3" />
                 </button>
               </div>
             </div>
 
             {/* Total Bet Calculation */}
-            <div className="flex flex-col items-center pl-2 border-l border-white/10 min-w-[70px]">
-              <span className="text-[9px] uppercase font-bold tracking-wider text-gold-bright">
+            <div className="flex flex-col items-center pl-1.5 border-l border-white/10 min-w-[65px] sm:min-w-[80px]">
+              <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-gold-bright">
                 Total Bet
               </span>
-              <span className="text-base font-black text-amber-300">
-                {currentBet.toLocaleString()}
+              <span className="text-xs sm:text-base font-black text-amber-300">
+                {totalBet.toLocaleString()}
               </span>
             </div>
           </div>
 
           {/* Max Bet Button */}
           <button
-            onClick={handleMaxBet}
-            disabled={isSpinning || isFreeSpins || currentBet >= maxBet}
-            className="px-3 py-2.5 rounded-xl bg-casino-800 hover:bg-casino-700 border border-white/10 font-bold text-xs uppercase tracking-wider text-amber-400 disabled:opacity-40 transition-colors"
+            onClick={() => {
+              soundManager.playButtonClick();
+              onMaxBet();
+            }}
+            disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
+            className="px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-casino-800 hover:bg-casino-700 border border-white/10 font-bold text-[10px] sm:text-xs uppercase tracking-wider text-amber-400 disabled:opacity-40 transition-colors"
           >
             Max Bet
           </button>
         </div>
 
-        {/* Center: Latest Win Display */}
-        <div className="flex flex-col items-center justify-center bg-casino-950/80 px-4 py-2 rounded-xl border border-gold-bright/30 min-w-[160px] sm:min-w-[200px] shadow-inner">
-          <span className="text-[10px] uppercase font-extrabold tracking-widest text-gold-bright">
-            {isFreeSpins ? 'FREE SPIN WIN' : 'WIN PAYOUT'}
-          </span>
-          <span
-            className={`text-xl sm:text-2xl font-black ${
-              winAmount > 0
-                ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]'
-                : 'text-slate-500'
-            }`}
-          >
-            {winAmount > 0 ? `+${winAmount.toLocaleString()}` : '0'}
-          </span>
+        {/* Center: Latest Win Display & Oregon Lottery Gamble Double-Up Button */}
+        <div className="flex items-center space-x-2">
+          <div className="flex flex-col items-center justify-center bg-casino-950/80 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-gold-bright/30 min-w-[130px] sm:min-w-[160px] shadow-inner">
+            <span className="text-[9px] sm:text-[10px] uppercase font-extrabold tracking-widest text-gold-bright">
+              {isFreeSpins ? 'FREE SPIN WIN' : 'WIN PAYOUT'}
+            </span>
+            <span
+              className={`text-lg sm:text-xl font-black ${
+                winAmount > 0
+                  ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]'
+                  : 'text-slate-500'
+              }`}
+            >
+              {winAmount > 0 ? `+${winAmount.toLocaleString()}` : '0'}
+            </span>
+          </div>
+
+          {/* Oregon Lottery Video Poker Style Double-Up Gamble Button */}
+          {winAmount > 0 && !isSpinning && !isFreeSpins && onOpenGamble && (
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onOpenGamble();
+              }}
+              className="flex flex-col items-center justify-center px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 border border-yellow-300 text-white font-black text-[10px] uppercase shadow-[0_0_12px_rgba(239,68,68,0.7)] animate-bounce-soft hover:scale-105 active:scale-95"
+            >
+              <Dices className="w-4 h-4 text-yellow-300 mb-0.5" />
+              <span>GAMBLE 2X</span>
+            </button>
+          )}
         </div>
 
         {/* Right Side: Auto-Spin & Main Spin Trigger */}
-        <div className="flex items-center space-x-2 sm:space-x-3 w-full md:w-auto justify-end">
+        <div className="flex items-center space-x-2 sm:space-x-2.5 w-full md:w-auto justify-end">
           {/* Auto Spin Button & Popover */}
           <div className="relative">
             {isAutoSpinning ? (
               <button
                 onClick={onAutoSpinStop}
-                className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse"
               >
                 <StopCircle className="w-4 h-4" />
                 <span>Stop ({autoSpinsRemaining})</span>
@@ -196,7 +246,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   setShowAutoMenu(!showAutoMenu);
                 }}
                 disabled={isSpinning || isFreeSpins}
-                className="flex items-center space-x-1 px-3 py-2.5 rounded-xl bg-casino-800 hover:bg-casino-700 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-casino-800 hover:bg-casino-700 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Auto</span>
@@ -229,18 +279,18 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {/* The Big Glowing Spin / Quick Stop Button */}
           <button
             onClick={handleTriggerSpin}
-            disabled={!isSpinning && !isFreeSpins && balance < currentBet}
+            disabled={!isSpinning && !isFreeSpins && balance < totalBet}
             title={
               isSpinning
                 ? 'Quick Stop (Space / Click)'
-                : !isFreeSpins && balance < currentBet
+                : !isFreeSpins && balance < totalBet
                 ? 'Insufficient coins'
                 : undefined
             }
-            className={`relative flex items-center justify-center px-7 sm:px-9 py-3 sm:py-3.5 rounded-2xl font-black tracking-widest text-base sm:text-lg uppercase text-white transition-all transform select-none ${
+            className={`relative flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-2xl font-black tracking-widest text-sm sm:text-base uppercase text-white transition-all transform select-none ${
               isSpinning
                 ? 'bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 shadow-[0_0_25px_rgba(239,68,68,0.8)] animate-pulse hover:scale-[1.03] active:scale-95 cursor-pointer'
-                : !isFreeSpins && balance < currentBet
+                : !isFreeSpins && balance < totalBet
                 ? 'bg-slate-800 opacity-50 cursor-not-allowed text-slate-500'
                 : isFreeSpins
                 ? 'bg-gradient-to-r from-amber-500 to-red-600 shadow-[0_0_25px_rgba(239,68,68,0.7)] animate-pulse'

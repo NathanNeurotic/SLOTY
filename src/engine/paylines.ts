@@ -1,47 +1,66 @@
 import type { Payline } from './types';
 
 export const PAYLINES: Payline[] = [
-  [1, 1, 1, 1, 1], // 1: Middle horizontal
-  [0, 0, 0, 0, 0], // 2: Top horizontal
-  [2, 2, 2, 2, 2], // 3: Bottom horizontal
-  [0, 1, 2, 1, 0], // 4: V-shape
-  [2, 1, 0, 1, 2], // 5: Inverted V-shape
-  [0, 0, 1, 2, 2], // 6: Descending diagonal step
-  [2, 2, 1, 0, 0], // 7: Ascending diagonal step
-  [1, 0, 0, 0, 1], // 8: Upper shallow cup
-  [1, 2, 2, 2, 1], // 9: Lower shallow dome
-  [0, 1, 0, 1, 0], // 10: Top zigzag
-  [2, 1, 2, 1, 2], // 11: Bottom zigzag
-  [1, 0, 1, 0, 1], // 12: Upper wave
-  [1, 2, 1, 2, 1], // 13: Lower wave
-  [0, 1, 1, 1, 0], // 14: High arch
-  [2, 1, 1, 1, 2], // 15: Low arch
-  [0, 0, 1, 0, 0], // 16: Center dip from top
-  [2, 2, 1, 2, 2], // 17: Center peak from bottom
-  [1, 1, 0, 1, 1], // 18: Upper bump
-  [1, 1, 2, 1, 1], // 19: Lower dip
-  [0, 2, 0, 2, 0], // 20: Full zigzag
+  // 1-4: Horizontals
+  [1, 1, 1, 1, 1], // 1: Upper-middle row
+  [2, 2, 2, 2, 2], // 2: Lower-middle row
+  [0, 0, 0, 0, 0], // 3: Top row
+  [3, 3, 3, 3, 3], // 4: Bottom row
+
+  // 5-10: V-shapes & Inverted V-shapes
+  [0, 1, 2, 1, 0], // 5
+  [3, 2, 1, 2, 3], // 6
+  [1, 2, 3, 2, 1], // 7
+  [2, 1, 0, 1, 2], // 8
+  [0, 1, 3, 1, 0], // 9
+  [3, 2, 0, 2, 3], // 10
+
+  // 11-18: Zigzags & Waves
+  [0, 2, 0, 2, 0], // 11
+  [3, 1, 3, 1, 3], // 12
+  [1, 3, 1, 3, 1], // 13
+  [2, 0, 2, 0, 2], // 14
+  [0, 0, 2, 0, 0], // 15
+  [3, 3, 1, 3, 3], // 16
+  [1, 1, 3, 1, 1], // 17
+  [2, 2, 0, 2, 2], // 18
+
+  // 19-24: Arches & Steps
+  [0, 1, 1, 1, 0], // 19
+  [3, 2, 2, 2, 3], // 20
+  [0, 1, 2, 3, 3], // 21
+  [3, 2, 1, 0, 0], // 22
+  [0, 0, 1, 2, 3], // 23
+  [3, 3, 2, 1, 0], // 24
+
+  // 25-32: Extended diagonals & curves
+  [1, 2, 3, 3, 3], // 25
+  [2, 1, 0, 0, 0], // 26
+  [0, 2, 3, 2, 0], // 27
+  [3, 1, 0, 1, 3], // 28
+  [1, 0, 2, 0, 1], // 29
+  [2, 3, 1, 3, 2], // 30
+  [0, 3, 0, 3, 0], // 31
+  [3, 0, 3, 0, 3], // 32
+
+  // 33-40: Deep valleys & crests
+  [1, 0, 1, 2, 3], // 33
+  [2, 3, 2, 1, 0], // 34
+  [0, 2, 1, 2, 0], // 35
+  [3, 1, 2, 1, 3], // 36
+  [1, 2, 1, 0, 1], // 37
+  [2, 1, 2, 3, 2], // 38
+  [0, 1, 0, 1, 2], // 39
+  [3, 2, 3, 2, 1], // 40
 ];
 
 export const PAYLINE_COLORS = [
-  '#FF007F', // Neon Magenta
-  '#00F0FF', // Neon Cyan
-  '#FFD700', // Gold
-  '#10B981', // Emerald
-  '#A855F7', // Purple
-  '#F97316', // Orange
-  '#EC4899', // Pink
-  '#3B82F6', // Blue
-  '#84CC16', // Lime
-  '#EAB308', // Yellow
-  '#06B6D4', // Teal
-  '#8B5CF6', // Violet
-  '#F43F5E', // Rose
-  '#14B8A6', // Cyan-Green
-  '#6366F1', // Indigo
-  '#D946EF', // Fuchsia
-  '#22C55E', // Green
-  '#FB923C', // Light Orange
-  '#38BDF8', // Sky Blue
-  '#E11D48', // Crimson
+  '#FF007F', '#00F0FF', '#FFD700', '#10B981', '#A855F7',
+  '#F97316', '#EC4899', '#3B82F6', '#84CC16', '#EAB308',
+  '#06B6D4', '#8B5CF6', '#F43F5E', '#14B8A6', '#6366F1',
+  '#D946EF', '#22C55E', '#FB923C', '#38BDF8', '#E11D48',
+  '#F472B6', '#34D399', '#FBBF24', '#818CF8', '#FB7185',
+  '#4ADE80', '#A78BFA', '#F87171', '#38BDF8', '#FACC15',
+  '#2DD4BF', '#C084FC', '#FB923C', '#60A5FA', '#E879F9',
+  '#4ADE80', '#F43F5E', '#06B6D4', '#F59E0B', '#A855F7'
 ];
