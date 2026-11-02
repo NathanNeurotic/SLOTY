@@ -2,6 +2,27 @@ import type { SymbolId, Payline, SlotSymbol } from '../engine/types';
 
 export type GameId = 'vault-24k' | 'timber-critters';
 
+export interface GameTheme {
+  primaryColor: string;
+  accentColor: string;
+  cabinetBorder: string;
+  cabinetBg: string;
+  marqueeTitle: string;
+  freeSpinsTitle: string;
+  bonusTitle: string;
+  reserveTitle: string;
+  grandTitle: string;
+  majorTitle: string;
+  minorTitle: string;
+  miniTitle: string;
+  tickerBadge: string;
+  tickerText: string;
+  tickerFreeSpinsText: string;
+  feverTitle: string;
+  feverSubtitle: string;
+  spinButtonLabel: string;
+}
+
 export interface GameDefinition {
   id: GameId;
   name: string;
@@ -15,13 +36,5 @@ export interface GameDefinition {
   paylines: Payline[];
   symbols: Record<string, SlotSymbol>;
   reelStrips: SymbolId[][];
-  theme: {
-    primaryColor: string;
-    accentColor: string;
-    cabinetBorder: string;
-    cabinetBg: string;
-    marqueeTitle: string;
-    freeSpinsTitle: string;
-    bonusTitle: string;
-  };
+  theme: GameTheme;
 }

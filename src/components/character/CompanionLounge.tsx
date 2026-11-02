@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RubySparkle } from './RubySparkle';
 import { storage } from '../../utils/storage';
 import { Eye, EyeOff } from 'lucide-react';
+import type { GameId } from '../../games/types';
 
 interface CompanionLoungeProps {
   isSpinning: boolean;
@@ -12,6 +13,7 @@ interface CompanionLoungeProps {
   winAmount?: number;
   onRewardCoins?: (amount: number) => void;
   position: 'desktop-flank' | 'mobile-bar';
+  activeGameId?: GameId;
 }
 
 export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
@@ -23,6 +25,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
   winAmount = 0,
   onRewardCoins,
   position,
+  activeGameId = 'vault-24k',
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     return storage.getBoolean('sloty_hostess_visible', true);
@@ -51,6 +54,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
           winAmount={winAmount}
           onRewardCoins={onRewardCoins}
           variant="full"
+          activeGameId={activeGameId}
         />
       </div>
     );
@@ -71,6 +75,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
               winAmount={winAmount}
               onRewardCoins={onRewardCoins}
               variant="compact"
+              activeGameId={activeGameId}
             />
           </div>
           <button

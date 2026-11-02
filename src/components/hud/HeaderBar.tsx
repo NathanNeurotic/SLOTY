@@ -90,24 +90,48 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     soundManager.testAudio();
   };
 
+  const isTimber = activeGameId === 'timber-critters';
+
   return (
-    <header className="w-full bg-gradient-to-b from-casino-900 via-casino-950 to-black border-b-2 border-amber-500/70 px-2 sm:px-5 py-2 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.85)]">
+    <header className={`w-full border-b-2 px-2 sm:px-5 py-2 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.85)] transition-colors duration-300 ${
+      isTimber
+        ? 'bg-gradient-to-b from-[#1a110a] via-[#091b10] to-[#040d07] border-emerald-500/70'
+        : 'bg-gradient-to-b from-casino-900 via-casino-950 to-black border-amber-500/70'
+    }`}>
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 flex-wrap">
         {/* Left: Brand Logo & Title */}
-        <SlotyLogo />
+        <SlotyLogo activeGameId={activeGameId} />
 
         {/* Center-Left: Coin Balance & VIP Level Progression */}
         <div className="flex items-center space-x-1.5 sm:space-x-3">
-          {/* Digital Bank Vault Cash Reserve Dispenser */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-gradient-to-b from-black via-slate-950 to-black border-2 border-amber-400/80 px-2.5 sm:px-3.5 py-1 rounded-xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.9),0_0_15px_rgba(245,158,11,0.3)]">
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-casino-950 shadow-md flex-shrink-0 border border-yellow-200">
-              <Coins className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
+          {/* Digital Bank Vault / Forest Reserve Cash Dispenser */}
+          <div className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3.5 py-1 rounded-xl shadow-md border-2 ${
+            isTimber
+              ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+              : 'bg-gradient-to-b from-black via-slate-950 to-black border-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+          }`}>
+            <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center shadow-md flex-shrink-0 border ${
+              isTimber
+                ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
+                : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950'
+            }`}>
+              {isTimber ? (
+                <span className="text-xs">🌰</span>
+              ) : (
+                <Coins className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
+              )}
             </div>
             <div className="flex flex-col">
-              <span className="text-[7px] sm:text-[8px] uppercase font-black text-amber-400 tracking-wider leading-none">
-                24K VAULT RESERVE
+              <span className={`text-[7px] sm:text-[8px] uppercase font-black tracking-wider leading-none ${
+                isTimber ? 'text-emerald-400' : 'text-amber-400'
+              }`}>
+                {isTimber ? '🌰 FOREST RESERVE' : '24K VAULT RESERVE'}
               </span>
-              <span className="text-xs sm:text-base font-black text-yellow-300 leading-tight font-mono drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]">
+              <span className={`text-xs sm:text-base font-black leading-tight font-mono ${
+                isTimber
+                  ? 'text-emerald-200 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]'
+                  : 'text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]'
+              }`}>
                 ${balance.toLocaleString()}
               </span>
             </div>

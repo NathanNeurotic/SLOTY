@@ -91,6 +91,7 @@ export const App: React.FC = () => {
       if (gameId === activeGameId) return;
       const target = getGame(gameId);
       setActiveGameId(gameId);
+      soundManager.setGameTheme(gameId);
       storage.setItem('sloty_active_game', gameId);
       setSelectedLines(target.defaultLines);
       storage.setItem('sloty_lines', target.defaultLines.toString());
@@ -99,10 +100,18 @@ export const App: React.FC = () => {
       storage.setJSON('sloty_grid', newGrid);
       setSpinResult(null);
       setWinAmount(0);
-      soundManager.playCashRegister();
+      if (gameId === 'timber-critters') {
+        soundManager.playOwlHoot(1);
+      } else {
+        soundManager.playCashRegister();
+      }
     },
     [activeGameId]
   );
+
+  useEffect(() => {
+    soundManager.setGameTheme(activeGameId);
+  }, [activeGameId]);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
@@ -582,13 +591,18 @@ export const App: React.FC = () => {
     handleQuickStop,
   ]);
 
-  return (
-    <div className="min-h-screen bg-casino-950 text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden">
-      {/* 1. Dynamic Casino Panoramic Scene Backdrop */}
-      <SceneBackdrop sceneId={currentSceneId} />
+  const isTimber = activeGameId === 'timber-critters';
 
-      {/* 2. Full-Screen 60 FPS Cascading Cash & Currency Rain Canvas */}
+  return (
+    <div className={`min-h-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden transition-colors duration-300 ${
+      isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
+    }`}>
+      {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
+      <SceneBackdrop sceneId={currentSceneId} activeGameId={activeGameId} />
+
+      {/* 2. Full-Screen 60 FPS Cascading Cash & Currency / Autumn Leaf Rain Canvas */}
       <CashRainCanvas
+        activeGameId={activeGameId}
         intensity={
           celebration ? 'jackpot' : freeSpinsRemaining > 0 ? 'heavy' : winAmount > 0 ? 'light' : 'idle'
         }
@@ -625,13 +639,13 @@ export const App: React.FC = () => {
       {/* Main Gaming Stage with responsive padding */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full pb-32 sm:pb-36">
         {/* 4-Tier Deluxe Progressive Jackpots */}
-        <JackpotMarquee totalBet={totalBet} />
+        <JackpotMarquee totalBet={totalBet} activeGameId={activeGameId} />
 
         {/* Live Casino LED Marquee Ticker */}
-        <VegasTicker freeSpinsRemaining={freeSpinsRemaining} />
+        <VegasTicker freeSpinsRemaining={freeSpinsRemaining} activeGameId={activeGameId} />
 
         {/* Hyper Fever Overdrive Super Meter */}
-        <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} />
+        <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} activeGameId={activeGameId} />
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         <CasinoFloorBank
@@ -672,7 +686,11 @@ export const App: React.FC = () => {
       </main>
 
       {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-casino-950 border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.95)] pb-safe">
+      <div className={`fixed bottom-0 left-0 right-0 z-40 border-t pb-safe transition-colors duration-300 ${
+        isTimber
+          ? 'bg-gradient-to-t from-stone-950 via-[#18110B] to-[#251A10] border-emerald-600/70 shadow-[0_-8px_30px_rgba(6,40,24,0.95)]'
+          : 'bg-casino-950 border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.95)]'
+      }`}>
         <ControlsBar
           balance={balance}
           selectedLines={selectedLines}
@@ -698,10 +716,15 @@ export const App: React.FC = () => {
           onOpenGamble={() => setShowGambleModal(true)}
           availableLines={activeGameDef.availableLines}
           maxLines={activeGameDef.defaultLines}
+          activeGameId={activeGameId}
         />
 
         {/* Integrated Footer info banner (desktop only) */}
-        <footer className="hidden sm:block py-1 border-t border-white/5 text-center text-[9px] sm:text-[10px] text-slate-500 bg-casino-950/90 flex-shrink-0">
+        <footer className={`hidden sm:block py-1 border-t text-center text-[9px] sm:text-[10px] flex-shrink-0 ${
+          isTimber
+            ? 'bg-[#0e0a07]/95 border-emerald-900/40 text-emerald-500/80'
+            : 'bg-casino-950/90 border-white/5 text-slate-500'
+        }`}>
           PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
         </footer>
       </div>

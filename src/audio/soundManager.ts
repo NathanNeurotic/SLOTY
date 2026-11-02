@@ -14,6 +14,7 @@ class SoundManager {
   private musicTempo: number = 116; // BPM for Vegas VIP Lounge Funk
   private isOverdriveMusic: boolean = false;
   private ratchetBuffer: AudioBuffer | null = null;
+  private activeGameTheme: 'vault-24k' | 'timber-critters' = 'vault-24k';
 
   constructor() {
     this.isMuted = storage.getBoolean('sloty_muted', false);
@@ -698,8 +699,120 @@ class SoundManager {
     }
   }
 
+  public setGameTheme(theme: 'vault-24k' | 'timber-critters') {
+    this.activeGameTheme = theme;
+  }
+
+  public getGameTheme(): 'vault-24k' | 'timber-critters' {
+    return this.activeGameTheme;
+  }
+
+  // Resonant wooden block strike for Timberland reels
+  public playTimberStop(reelIndex: number = 0) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const basePitch = 180 + reelIndex * 40;
+    const now = this.ctx.currentTime;
+
+    // Resonant wooden block strike
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.75 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(basePitch * 1.5, now);
+    osc.frequency.exponentialRampToValueAtTime(basePitch * 0.7, now + 0.09);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.12);
+
+    // Woody hollow knock (low thump)
+    const thump = this.ctx.createOscillator();
+    const thumpGain = this.ctx.createGain();
+    thumpGain.gain.setValueAtTime(0.5 * this.sfxVolume, now);
+    thumpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    thump.type = 'sine';
+    thump.frequency.setValueAtTime(95 + reelIndex * 15, now);
+    thump.frequency.exponentialRampToValueAtTime(40, now + 0.07);
+
+    thump.connect(thumpGain);
+    thumpGain.connect(this.ctx.destination);
+    thump.start(now);
+    thump.stop(now + 0.09);
+  }
+
+  // Mystical two-tone owl call for Timberland scatters
+  public playOwlHoot(scatterIndex: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    // Tone 1: Soft "hoo"
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    gain1.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(440 + scatterIndex * 40, now);
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.19);
+
+    // Tone 2: Rising mystical "HOOO"
+    const t2 = now + 0.14;
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    gain2.gain.setValueAtTime(0.45 * this.sfxVolume, t2);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.45);
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(587.33 + scatterIndex * 50, t2);
+    osc2.frequency.exponentialRampToValueAtTime(520 + scatterIndex * 40, t2 + 0.4);
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    osc2.start(t2);
+    osc2.stop(t2 + 0.46);
+  }
+
+  // Upbeat plucked bluegrass / acoustic folk arpeggio for Timberland wins
+  public playForestWin(multiplier: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const notes = [392.0, 493.88, 587.33, 783.99, 987.77, 1174.66]; // G4, B4, D5, G5, B5, D6
+    const count = multiplier >= 20 ? 6 : multiplier >= 5 ? 4 : 3;
+
+    notes.slice(0, count).forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const startTime = this.ctx.currentTime + idx * 0.075;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      gain.gain.setValueAtTime(0.4 * this.sfxVolume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.28);
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, startTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.99, startTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.3);
+    });
+  }
+
   // Heavy tactile physical reel stop (bass punch + spring latch clack)
   public playReelStop(reelIndex: number = 0) {
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playTimberStop(reelIndex);
+      return;
+    }
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
@@ -752,6 +865,10 @@ class SoundManager {
 
   // Radiant casino scatter bell fanfare with dual harmonic ring
   public playScatterLand(scatterIndex: number = 1) {
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playOwlHoot(scatterIndex);
+      return;
+    }
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
@@ -939,6 +1056,10 @@ class SoundManager {
 
   // Win chime arpeggio
   public playWinChime(multiplier: number = 1) {
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playForestWin(multiplier);
+      return;
+    }
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 

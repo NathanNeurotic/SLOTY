@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices } from 'lucide-react';
+import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices, Trees } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { RollingWinDisplay } from './RollingWinDisplay';
+import type { GameId } from '../../games/types';
 
 interface ControlsBarProps {
   balance: number;
@@ -25,6 +26,7 @@ interface ControlsBarProps {
   onOpenGamble?: () => void;
   availableLines?: number[];
   maxLines?: number;
+  activeGameId?: GameId;
 }
 
 const DEFAULT_LINES = [1, 5, 10, 20, 30, 40];
@@ -52,7 +54,9 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   onOpenGamble,
   availableLines = DEFAULT_LINES,
   maxLines = 40,
+  activeGameId = 'vault-24k',
 }) => {
+  const isTimber = activeGameId === 'timber-critters';
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
   const handleLinesStep = (direction: 'up' | 'down') => {
@@ -124,10 +128,16 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           </button>
 
           {/* Lines & Bet Display Box */}
-          <div className="flex items-center space-x-1 sm:space-x-1.5 bg-gradient-to-b from-casino-950 to-casino-900 px-1.5 sm:px-2 py-0.5 rounded-xl border border-white/15 shadow-inner h-9 sm:h-10 flex-shrink-0">
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2 py-0.5 rounded-xl border shadow-inner h-9 sm:h-10 flex-shrink-0 ${
+            isTimber
+              ? 'bg-gradient-to-b from-[#142318] to-[#0a140e] border-emerald-600/50'
+              : 'bg-gradient-to-b from-casino-950 to-casino-900 border-white/15'
+          }`}>
             {/* Active Lines selector with - / + buttons */}
             <div className="flex flex-col items-center pr-1 sm:pr-1.5 border-r border-white/10">
-              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-slate-400 leading-none">
+              <span className={`text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider leading-none ${
+                isTimber ? 'text-emerald-400' : 'text-slate-400'
+              }`}>
                 Lines
               </span>
               <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
@@ -136,9 +146,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   disabled={isSpinning || isFreeSpins || selectedLines <= 1}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Minus className="w-3 h-3 text-cyan-300" />
+                  <Minus className={`w-3 h-3 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
                 </button>
-                <span className="text-xs sm:text-sm font-black text-neon-cyan min-w-[20px] text-center drop-shadow-[0_0_6px_rgba(0,240,255,0.7)] font-mono">
+                <span className={`text-xs sm:text-sm font-black min-w-[20px] text-center font-mono ${
+                  isTimber
+                    ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                    : 'text-neon-cyan drop-shadow-[0_0_6px_rgba(0,240,255,0.7)]'
+                }`}>
                   {selectedLines}
                 </span>
                 <button
@@ -146,14 +160,16 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   disabled={isSpinning || isFreeSpins || selectedLines >= maxLines}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Plus className="w-3 h-3 text-cyan-300" />
+                  <Plus className={`w-3 h-3 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
                 </button>
               </div>
             </div>
 
             {/* Bet Per Line with - / + buttons */}
             <div className="flex flex-col items-center px-0.5 sm:px-1">
-              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-slate-400 leading-none">
+              <span className={`text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider leading-none ${
+                isTimber ? 'text-emerald-400' : 'text-slate-400'
+              }`}>
                 Bet/Line
               </span>
               <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
@@ -162,7 +178,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   disabled={isSpinning || isFreeSpins || betPerLine <= 1}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Minus className="w-3 h-3 text-amber-300" />
+                  <Minus className={`w-3 h-3 ${isTimber ? 'text-amber-300' : 'text-amber-300'}`} />
                 </button>
                 <span className="text-xs sm:text-sm font-black text-white min-w-[26px] text-center font-mono">
                   {betPerLine.toLocaleString()}
@@ -172,17 +188,23 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxBet}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Plus className="w-3 h-3 text-amber-300" />
+                  <Plus className={`w-3 h-3 ${isTimber ? 'text-amber-300' : 'text-amber-300'}`} />
                 </button>
               </div>
             </div>
 
             {/* Total Bet Calculation */}
             <div className="flex flex-col items-center pl-1 sm:pl-1.5 border-l border-white/10 min-w-[55px] sm:min-w-[65px]">
-              <span className="text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider text-gold-bright leading-none">
+              <span className={`text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider leading-none ${
+                isTimber ? 'text-emerald-400' : 'text-gold-bright'
+              }`}>
                 Total Bet
               </span>
-              <span className="text-xs sm:text-sm font-black text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)] font-mono leading-none mt-1">
+              <span className={`text-xs sm:text-sm font-black font-mono leading-none mt-1 ${
+                isTimber
+                  ? 'text-emerald-200 drop-shadow-[0_0_8px_rgba(52,211,153,0.7)]'
+                  : 'text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
+              }`}>
                 {totalBet.toLocaleString()}
               </span>
             </div>
@@ -195,7 +217,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               onMaxBet();
             }}
             disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
-            className="px-2 sm:px-2.5 h-9 sm:h-10 rounded-xl vlt-maxbet-btn font-black text-[9px] sm:text-[10px] uppercase tracking-wider text-amber-950 disabled:opacity-40 flex items-center justify-center flex-shrink-0"
+            className={`px-2 sm:px-2.5 h-9 sm:h-10 rounded-xl font-black text-[9px] sm:text-[10px] uppercase tracking-wider disabled:opacity-40 flex items-center justify-center flex-shrink-0 shadow-md ${
+              isTimber
+                ? 'bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-amber-950 border border-yellow-200 shadow-[0_0_15px_rgba(245,158,11,0.6)]'
+                : 'vlt-maxbet-btn text-amber-950'
+            }`}
           >
             MAX BET
           </button>
@@ -296,18 +322,24 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           }
           className={`relative w-64 sm:w-80 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-xl uppercase text-white select-none transition-all touch-manipulation ${
             isSpinning
-              ? 'vlt-stop-btn animate-pulse cursor-pointer'
+              ? isTimber
+                ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_20px_rgba(244,63,94,0.8)] animate-pulse cursor-pointer'
+                : 'vlt-stop-btn animate-pulse cursor-pointer'
               : !isFreeSpins && balance < totalBet
               ? 'bg-slate-800 opacity-40 cursor-not-allowed text-slate-500 border border-white/5'
               : isFreeSpins
-              ? 'vlt-spin-btn animate-pulse'
+              ? isTimber
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 border-2 border-yellow-300 shadow-[0_0_25px_rgba(16,185,129,0.9)] animate-pulse'
+                : 'vlt-spin-btn animate-pulse'
+              : isTimber
+              ? 'bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-700 border-2 border-emerald-300 shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:brightness-110 active:scale-95'
               : 'vlt-spin-btn'
           }`}
         >
           {isSpinning ? (
             <span className="flex items-center space-x-2 text-white">
               <StopCircle className="w-6 h-6 fill-white text-rose-700" />
-              <span>STOP</span>
+              <span>{isTimber ? 'LEAF STOP' : 'STOP'}</span>
             </span>
           ) : isAutoSpinning ? (
             <span className="flex items-center space-x-2">
@@ -317,11 +349,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           ) : isFreeSpins ? (
             <span className="flex items-center space-x-2">
               <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-pulse" />
-              <span>FREE SPIN</span>
+              <span>{isTimber ? 'OWL FREE SPIN' : 'FREE SPIN'}</span>
             </span>
           ) : (
             <span className="flex items-center space-x-2">
-              <span>SPIN</span>
+              {isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
+              <span>{isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
+              {isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
             </span>
           )}
         </button>

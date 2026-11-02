@@ -278,6 +278,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
+          activeGameId={activeGameId}
         />
       </div>
 
@@ -292,6 +293,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
+          activeGameId={activeGameId}
         />
       </div>
 
@@ -306,11 +308,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       )}
 
-      {/* Outer Luxury Cabinet Frame with Chasing Perimeter Border */}
+      {/* Outer Luxury Cabinet Frame with Handcrafted Theming */}
       <div
         className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
           isTimber
-            ? 'border-2 border-emerald-500/80 shadow-[0_0_35px_rgba(16,185,129,0.5)]'
+            ? 'border-4 border-[#522e18] bg-gradient-to-b from-[#2e180e] via-[#1a0d07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_20px_50px_rgba(0,0,0,0.95)]'
             : 'neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >
@@ -319,27 +321,32 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
-              ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
+              ? isTimber
+                ? 'bg-gradient-to-b from-emerald-950 via-teal-950 to-amber-950 border-2 border-emerald-300 shadow-[0_0_60px_rgba(52,211,153,0.7)]'
+                : 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
               : freeSpinsRemaining > 0
-              ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
+              ? isTimber
+                ? 'bg-gradient-to-b from-emerald-900 via-stone-900 to-[#120a05] shadow-[0_0_50px_rgba(16,185,129,0.6)] border-2 border-emerald-400'
+                : 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
               : isTimber
-              ? 'bg-gradient-to-b from-stone-900 via-emerald-950 to-stone-950 shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-emerald-500/40'
+              ? 'bg-gradient-to-b from-[#182a1d] via-[#0d1810] to-[#050a06] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-emerald-700/50'
               : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
           }`}
         >
-          {/* 4 Ornate 24K Gold Corner Brackets */}
+          {/* 4 Ornate Corner Brackets */}
           <div className="absolute top-1.5 left-1.5 w-5 h-5 border-t-2 border-l-2 border-yellow-300 rounded-tl pointer-events-none z-30 flex items-start justify-start p-0.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
           <div className="absolute top-1.5 right-1.5 w-5 h-5 border-t-2 border-r-2 border-yellow-300 rounded-tr pointer-events-none z-30 flex items-start justify-end p-0.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
           <div className="absolute bottom-1.5 left-1.5 w-5 h-5 border-b-2 border-l-2 border-yellow-300 rounded-bl pointer-events-none z-30 flex items-end justify-start p-0.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
           <div className="absolute bottom-1.5 right-1.5 w-5 h-5 border-b-2 border-r-2 border-yellow-300 rounded-br pointer-events-none z-30 flex items-end justify-end p-0.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+            <div className={`w-1.5 h-1.5 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_6px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
+
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
         <div className="flex items-center justify-between h-10 sm:h-12 px-2 border-b border-white/10 mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
@@ -347,7 +354,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div
                 key={i}
                 className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
-                  activeWin
+                  isTimber
+                    ? i % 2 === 0
+                      ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
+                      : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
+                    : activeWin
                     ? 'bg-amber-300 shadow-[0_0_12px_#FCD34D] animate-ping'
                     : isAnyReelSpinning
                     ? 'bg-gold-bright shadow-[0_0_10px_#F59E0B] animate-pulse'
@@ -364,16 +375,28 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           {/* Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
           <div className="text-center flex-1 px-1 sm:px-3 overflow-hidden flex items-center justify-center">
             {freeSpinsRemaining > 0 ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 animate-pulse truncate whitespace-nowrap">
-                🔥 FREE SPINS ACTIVE: {freeSpinsRemaining} REMAINING (3X WINS) 🔥
+              <span className={`text-xs sm:text-sm font-black tracking-widest uppercase animate-pulse truncate whitespace-nowrap ${
+                isTimber ? 'text-emerald-300' : 'text-yellow-300'
+              }`}>
+                {isTimber
+                  ? `🦉 MOONLIT FREE SPINS: ${freeSpinsRemaining} REMAINING (3X WINS) 🦉`
+                  : `🔥 FREE SPINS ACTIVE: ${freeSpinsRemaining} REMAINING (3X WINS) 🔥`}
               </span>
             ) : isAnticipating && isAnyReelSpinning ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-cyan-200 animate-pulse truncate whitespace-nowrap bg-cyan-950/80 px-2.5 py-0.5 rounded-full border border-neon-cyan shadow-[0_0_12px_rgba(0,240,255,0.8)]">
-                ⚡⚡ SUSPENSE LOCK! 2 VAULT DOORS • NEED 1 MORE! ⚡⚡
+              <span className={`text-xs sm:text-sm font-black tracking-widest uppercase animate-pulse truncate whitespace-nowrap px-2.5 py-0.5 rounded-full border ${
+                isTimber
+                  ? 'text-emerald-200 bg-emerald-950/80 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]'
+                  : 'text-cyan-200 bg-cyan-950/80 border-neon-cyan shadow-[0_0_12px_rgba(0,240,255,0.8)]'
+              }`}>
+                {isTimber
+                  ? '🍃 SUSPENSE LOCK! 2 OWLS • NEED 1 MORE! 🍃'
+                  : '⚡⚡ SUSPENSE LOCK! 2 VAULT DOORS • NEED 1 MORE! ⚡⚡'}
               </span>
             ) : isAnyReelSpinning ? (
-              <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-amber-300 animate-pulse truncate whitespace-nowrap">
-                ⚡ REELS SPINNING • CLICK TO QUICK STOP ⚡
+              <span className={`text-xs sm:text-sm font-black tracking-widest uppercase animate-pulse truncate whitespace-nowrap ${
+                isTimber ? 'text-emerald-300' : 'text-amber-300'
+              }`}>
+                {isTimber ? '🌲 CRITTERS TUMBLING • CLICK TO QUICK STOP 🌲' : '⚡ REELS SPINNING • CLICK TO QUICK STOP ⚡'}
               </span>
             ) : hoveredLineIndex !== null ? (
               <span className="text-xs sm:text-sm font-black tracking-wider uppercase text-neon-cyan truncate whitespace-nowrap">
@@ -461,7 +484,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           />
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
-          <div className="relative flex-1 flex space-x-1 sm:space-x-1.5 bg-casino-950/95 p-1 sm:p-2 rounded-xl border border-white/10 shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px]">
+          <div className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px] ${
+            isTimber
+              ? 'bg-[#040e07]/95 border-emerald-800/60 shadow-[inset_0_0_20px_rgba(0,0,0,0.9)]'
+              : 'bg-casino-950/95 border-white/10'
+          }`}>
             {/* SVG Payline Glow Overlay: strictly hidden while reels are spinning */}
             <PaylineOverlay
               winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
@@ -520,43 +547,51 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           />
         </div>
 
-        {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Stereo Subwoofers */}
+        {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Themed Speakers */}
         <div className="h-7 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0 border-t border-white/5 pt-1">
-          {/* Left Stereo Chrome Subwoofer */}
+          {/* Left Speaker */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
             <div
-              className={`w-4 h-4 rounded-full border border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black flex items-center justify-center shadow-[0_0_6px_rgba(245,158,11,0.6)] ${
-                isSpinning ? 'animate-subwoofer' : ''
-              }`}
-              title="Vegas Subwoofer Sound System"
+              className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
+                isTimber
+                  ? 'border-amber-600/70 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                  : 'border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.6)]'
+              } ${isSpinning ? 'animate-subwoofer' : ''}`}
+              title={isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
             >
-              <div className="w-2 h-2 rounded-full border border-cyan-400 bg-black flex items-center justify-center">
-                <div className="w-0.5 h-0.5 rounded-full bg-amber-400" />
+              <div className={`w-2 h-2 rounded-full border flex items-center justify-center ${
+                isTimber ? 'border-emerald-500 bg-stone-950' : 'border-cyan-400 bg-black'
+              }`}>
+                <div className={`w-0.5 h-0.5 rounded-full ${isTimber ? 'bg-emerald-400' : 'bg-amber-400'}`} />
               </div>
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-mono text-emerald-400 text-[10px]">95.8% RTP</span>
+            <span className="font-mono text-emerald-400 text-[10px]">{isTimber ? '96.2% RTP' : '95.8% RTP'}</span>
           </div>
 
-          <div className="text-gold-bright font-black text-xs truncate px-2 text-center flex-1">
+          <div className={`font-black text-xs truncate px-2 text-center flex-1 ${isTimber ? 'text-emerald-300' : 'text-gold-bright'}`}>
             {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 ? (
-              <span className="animate-pulse">{spinResult.winningLines.length} CASH PAYLINES HIT!</span>
+              <span className="animate-pulse">{spinResult.winningLines.length} {isTimber ? 'CRITTER WINS HIT!' : 'CASH PAYLINES HIT!'}</span>
             ) : null}
           </div>
 
-          {/* Right Stereo Chrome Subwoofer */}
+          {/* Right Speaker */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
-            <span className="tracking-wide text-amber-300 text-[10px] hidden sm:inline">
-              SCENE: {currentSceneId}
+            <span className={`text-[10px] hidden sm:inline tracking-wide ${isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
+              SCENE: {isTimber ? 'DEEP WOODS' : currentSceneId}
             </span>
             <div
-              className={`w-4 h-4 rounded-full border border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black flex items-center justify-center shadow-[0_0_6px_rgba(245,158,11,0.6)] ${
-                isSpinning ? 'animate-subwoofer' : ''
-              }`}
-              title="Vegas Subwoofer Sound System"
+              className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
+                isTimber
+                  ? 'border-amber-600/70 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                  : 'border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.6)]'
+              } ${isSpinning ? 'animate-subwoofer' : ''}`}
+              title={isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
             >
-              <div className="w-2 h-2 rounded-full border border-pink-400 bg-black flex items-center justify-center">
-                <div className="w-0.5 h-0.5 rounded-full bg-rose-400" />
+              <div className={`w-2 h-2 rounded-full border flex items-center justify-center ${
+                isTimber ? 'border-amber-500 bg-stone-950' : 'border-pink-400 bg-black'
+              }`}>
+                <div className={`w-0.5 h-0.5 rounded-full ${isTimber ? 'bg-amber-400' : 'bg-rose-400'}`} />
               </div>
             </div>
           </div>

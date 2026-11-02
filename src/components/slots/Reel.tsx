@@ -69,17 +69,33 @@ export const Reel: React.FC<ReelProps> = ({
 
   return (
     <div
-      className={`relative flex-1 h-full min-h-0 overflow-hidden rounded-xl bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950 border transition-all duration-300 ${
+      className={`relative flex-1 h-full min-h-0 overflow-hidden rounded-xl border transition-all duration-300 ${
+        isTimber
+          ? 'bg-gradient-to-b from-[#142419] via-[#0c1810] to-[#050e08]'
+          : 'bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950'
+      } ${
         isAnticipating
-          ? 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
+          ? isTimber
+            ? 'border-2 border-emerald-400 animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(52,211,153,0.9)]'
+            : 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
+          : isTimber
+          ? 'border-emerald-800/40'
           : 'border-white/10'
       }`}
     >
       {/* High-Voltage Electric Anticipation Tension Frame & Energy Corona */}
       {isAnticipating && (
-        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/20 via-yellow-400/10 to-cyan-500/20 pointer-events-none z-30 shadow-[inset_0_0_30px_rgba(0,240,255,0.7)] flex flex-col justify-between p-1">
-          <div className="w-full text-center text-[8px] font-black tracking-widest text-cyan-200 bg-cyan-950/80 rounded py-0.5 animate-pulse uppercase border border-cyan-400/50">
-            ⚡ SCATTER LOCK ⚡
+        <div className={`absolute inset-0 pointer-events-none z-30 flex flex-col justify-between p-1 ${
+          isTimber
+            ? 'bg-gradient-to-b from-emerald-500/20 via-amber-400/10 to-emerald-500/20 shadow-[inset_0_0_30px_rgba(52,211,153,0.7)]'
+            : 'bg-gradient-to-b from-cyan-500/20 via-yellow-400/10 to-cyan-500/20 shadow-[inset_0_0_30px_rgba(0,240,255,0.7)]'
+        }`}>
+          <div className={`w-full text-center text-[8px] font-black tracking-widest rounded py-0.5 animate-pulse uppercase border ${
+            isTimber
+              ? 'text-emerald-200 bg-emerald-950/80 border-emerald-400/50'
+              : 'text-cyan-200 bg-cyan-950/80 border-cyan-400/50'
+          }`}>
+            {isTimber ? '🍃 OWL SCATTER LOCK 🍃' : '⚡ SCATTER LOCK ⚡'}
           </div>
           <div className="w-full text-center text-[8px] font-black tracking-widest text-amber-300 bg-amber-950/80 rounded py-0.5 animate-ping uppercase border border-amber-400/50">
             ★ 1 MORE TO WIN ★
@@ -89,7 +105,11 @@ export const Reel: React.FC<ReelProps> = ({
 
       {/* Reel Stop Landing Impact Shockwave Flare */}
       {hasSettled && (
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gold-bright/80 via-amber-400/40 to-transparent pointer-events-none z-30 animate-landing-flare" />
+        <div className={`absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-30 animate-landing-flare ${
+          isTimber
+            ? 'bg-gradient-to-t from-emerald-400/80 via-amber-400/30 to-transparent'
+            : 'bg-gradient-to-t from-gold-bright/80 via-amber-400/40 to-transparent'
+        }`} />
       )}
 
       {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
@@ -128,9 +148,13 @@ export const Reel: React.FC<ReelProps> = ({
                 key={rowIdx}
                 className={`flex-1 min-h-0 w-full flex items-center justify-center p-0.5 sm:p-1 transition-all duration-200 ${
                   isWinning
-                    ? 'bg-gold-500/25 ring-2 ring-gold-bright shadow-[0_0_25px_rgba(251,191,36,0.85)] z-10 animate-win-symbol-juice'
+                    ? isTimber
+                      ? 'bg-emerald-500/30 ring-2 ring-emerald-300 shadow-[0_0_25px_rgba(52,211,153,0.85)] z-10 animate-win-symbol-juice'
+                      : 'bg-gold-500/25 ring-2 ring-gold-bright shadow-[0_0_25px_rgba(251,191,36,0.85)] z-10 animate-win-symbol-juice'
                     : isScatterHighlight
-                    ? 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.6)] z-10 scale-105'
+                    ? isTimber
+                      ? 'bg-emerald-400/25 ring-2 ring-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.7)] z-10 scale-105'
+                      : 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.6)] z-10 scale-105'
                     : winningRows.size > 0
                     ? 'opacity-35' // Dim non-winning symbols
                     : ''
