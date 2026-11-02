@@ -40,6 +40,7 @@ import { casinoRoomManager } from './multiplayer/casinoRoom';
 import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordTypes';
 import { CasinoFloorBank } from './components/multiplayer/CasinoFloorBank';
 import { LeaderboardModal } from './components/modals/LeaderboardModal';
+import { CompanionLounge } from './components/character/CompanionLounge';
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -707,6 +708,22 @@ export const App: React.FC = () => {
           }}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
           onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
+          companionNode={
+            <CompanionLounge
+              position="mobile-bar"
+              isSpinning={isSpinning}
+              isAnticipating={false}
+              isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
+              isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
+              isFeverMode={feverSpinsLeft > 0}
+              winAmount={spinResult?.totalPayout || 0}
+              onRewardCoins={(amount) => {
+                setBalance((b) => b + amount);
+                soundManager.playCoinTally();
+              }}
+              activeGameId={activeGameId}
+            />
+          }
         >
           <SlotMachine
             currentGrid={currentGrid}

@@ -219,6 +219,44 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
         </>
       )}
 
+      {/* ========================================================================= */}
+      {/* --- PHYSICAL CASINO & BOARDWALK GROUND FLOOR (Full Viewport Width) --- */}
+      {/* ========================================================================= */}
+      <div className="absolute inset-x-0 bottom-0 h-44 sm:h-56 pointer-events-none z-0 overflow-hidden">
+        {isTimber ? (
+          // Timberland Hand-Hewn Rustic Boardwalk Floor
+          <div className="w-full h-full bg-gradient-to-t from-[#0e0602] via-[#1b0d06] to-transparent relative border-t border-[#78350f]/30">
+            {/* Horizontal cedar plank seams */}
+            <div className="absolute inset-0 opacity-30 bg-[repeating-linear-gradient(0deg,transparent,transparent_22px,#0a0401_22px,#0a0401_24px)]" />
+            {/* Subtle wood grain texture */}
+            <div className="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(90deg,transparent,transparent_60px,#2e1408_60px,#2e1408_62px)]" />
+            {/* Scattered fallen autumn leaves on the boards */}
+            <div className="absolute bottom-10 left-[12%] text-sm select-none opacity-80 animate-float-sparkle">🍂</div>
+            <div className="absolute bottom-16 left-[28%] text-sm select-none opacity-80">🍁</div>
+            <div className="absolute bottom-12 right-[25%] text-sm select-none opacity-80 animate-float-sparkle">🍂</div>
+            <div className="absolute bottom-8 right-[10%] text-sm select-none opacity-80">🍁</div>
+            {/* Mossy baseline wash */}
+            <div className="absolute bottom-0 inset-x-0 h-3 bg-gradient-to-r from-emerald-950 via-emerald-800/40 to-emerald-950" />
+          </div>
+        ) : (
+          // 24K Vault Luxury Las Vegas Red Velvet Diamond Trellis Carpet
+          <div className="w-full h-full bg-gradient-to-t from-[#140202] via-[#240404] to-transparent relative border-t border-yellow-500/20">
+            {/* Velvet diamond lattice pattern */}
+            <svg viewBox="0 0 100 100" className="w-full h-full object-repeat opacity-25">
+              <defs>
+                <pattern id="carpetTrellis" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M 0 12 L 12 0 L 24 12 L 12 24 Z" fill="none" stroke="#FBBF24" strokeWidth="0.6" />
+                  <circle cx="12" cy="12" r="1.5" fill="#EF4444" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#carpetTrellis)" />
+            </svg>
+            {/* Warm casino floor ambient pools */}
+            <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-r from-amber-600/30 via-yellow-400/40 to-amber-600/30" />
+          </div>
+        )}
+      </div>
+
       {/* Lightweight Floating Stardust / Fireflies (Desktop only) */}
       <div className="hidden sm:block">
         {particles.map((p) => (

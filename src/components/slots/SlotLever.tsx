@@ -27,7 +27,7 @@ export const SlotLever: React.FC<SlotLeverProps> = ({ isSpinning, disabled, onPu
   return (
     <div
       onClick={handlePullLever}
-      className={`hidden lg:flex flex-col items-center absolute -right-14 top-1/4 select-none cursor-pointer group z-20 ${
+      className={`hidden xl:flex flex-col items-center absolute -right-16 sm:-right-20 top-1/4 select-none cursor-pointer group z-20 ${
         disabled && !isSpinning ? 'opacity-40 cursor-not-allowed' : ''
       }`}
       title={disabled ? 'Insufficient coins' : 'Pull the Vegas Slot Lever!'}
