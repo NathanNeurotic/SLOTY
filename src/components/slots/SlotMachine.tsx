@@ -257,10 +257,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
-      {/* Desktop Hostess Flank: Scarlet Cash on Left */}
-      <div className="hidden xl:block absolute -left-36 top-4 z-30">
+      {/* Desktop Hostess Flank: Ruby Sparkle cleanly placed beside the cabinet */}
+      <div className="hidden 2xl:block absolute -left-64 top-8 z-20">
         <CompanionLounge
-          position="desktop-left"
+          position="desktop-flank"
           isSpinning={isSpinning}
           isAnticipating={isAnticipating}
           isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
@@ -271,22 +271,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       </div>
 
-      {/* Desktop Bullion Baron Flank: Barnaby Bullion on Right */}
-      <div className="hidden xl:block absolute -right-36 top-4 z-30">
-        <CompanionLounge
-          position="desktop-right"
-          isSpinning={isSpinning}
-          isAnticipating={isAnticipating}
-          isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
-          isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
-          isFeverMode={isFeverMode}
-          winAmount={spinResult?.totalPayout || 0}
-          onRewardCoins={onRewardCoins}
-        />
-      </div>
-
-      {/* Mobile / Tablet Interactive VIP Companion Lounge Bar */}
-      <div className="xl:hidden flex justify-center mb-1.5 w-full px-1">
+      {/* Mobile / Compact Responsive VIP Companion Lounge Bar */}
+      <div className="2xl:hidden flex justify-center mb-1.5 w-full px-1">
         <CompanionLounge
           position="mobile-bar"
           isSpinning={isSpinning}
