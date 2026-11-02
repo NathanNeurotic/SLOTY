@@ -400,20 +400,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           />
         </div>
 
-        {/* Cabinet Bottom Status Bar */}
-        <div className="mt-2 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2">
-          <div className="flex items-center space-x-1.5">
+        {/* Cabinet Bottom Status Bar - Strictly Fixed Height */}
+        <div className="h-6 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0">
+          <div className="flex items-center space-x-1.5 flex-shrink-0">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span>PAYOUT RATE: 95.8% RTP</span>
           </div>
 
-          {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 && (
-            <div className="text-gold-bright font-black animate-pulse text-xs">
-              {spinResult.winningLines.length} WINNING LINE(S) PAID OUT!
-            </div>
-          )}
+          <div className="text-gold-bright font-black text-xs truncate px-2 text-center flex-1">
+            {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 ? (
+              <span className="animate-pulse">{spinResult.winningLines.length} WINNING LINE(S) PAID OUT!</span>
+            ) : null}
+          </div>
 
-          <div className="tracking-wide">HOVER NUMBERS (1-40) TO VIEW PAYLINES</div>
+          <div className="tracking-wide flex-shrink-0 hidden sm:block">HOVER (1-40) FOR LINES</div>
         </div>
       </div>
     </div>

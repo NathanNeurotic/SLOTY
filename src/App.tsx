@@ -442,7 +442,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center py-1 sm:py-3 w-full">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full">
         {/* 4-Tier Vegas & Oregon Lottery Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} />
 
@@ -466,7 +466,10 @@ export const App: React.FC = () => {
           canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
           isFeverMode={feverSpinsLeft > 0}
         />
+      </main>
 
+      {/* Rock-Solid Fixed Bottom Controls Dock - Guaranteed Zero Shift */}
+      <div className="sticky bottom-0 z-40 w-full bg-casino-950/95 backdrop-blur-md border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.85)] pb-safe">
         <ControlsBar
           balance={balance}
           selectedLines={selectedLines}
@@ -491,7 +494,7 @@ export const App: React.FC = () => {
           onAutoSpinStop={() => setAutoSpinsRemaining(0)}
           onOpenGamble={() => setShowGambleModal(true)}
         />
-      </main>
+      </div>
 
       {/* Footer info banner */}
       <footer className="relative z-10 py-1.5 border-t border-white/5 text-center text-[10px] text-slate-500 bg-casino-950/80">

@@ -198,22 +198,34 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
         </div>
 
         {/* Right: Win Payout, Gamble 2X, and Auto-Spin */}
-        <div className="flex items-center justify-center space-x-2">
+        <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 flex-shrink-0">
           {/* Animated Rolling Win Display */}
           <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
 
-          {/* Themed Oregon Lottery Video Poker Style Double-Up Gamble Button */}
-          {winAmount > 0 && !isSpinning && !isFreeSpins && onOpenGamble && (
+          {/* Themed Oregon Lottery Video Poker Style Double-Up Gamble Button (Always present to prevent layout shift) */}
+          {onOpenGamble && (
             <button
               onClick={() => {
-                soundManager.playButtonClick();
-                onOpenGamble();
+                if (winAmount > 0 && !isSpinning && !isFreeSpins) {
+                  soundManager.playButtonClick();
+                  onOpenGamble();
+                }
               }}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl vlt-gamble-btn text-white font-black text-[10px] uppercase animate-bounce-soft"
-              title="Risk your win to double it in Oregon Lottery Video Poker"
+              disabled={winAmount <= 0 || isSpinning || isFreeSpins}
+              className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl font-black text-[9px] sm:text-[10px] uppercase transition-all duration-200 flex-shrink-0 ${
+                winAmount > 0 && !isSpinning && !isFreeSpins
+                  ? 'vlt-gamble-btn text-white animate-bounce-soft cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.7)]'
+                  : 'bg-casino-950/40 border border-white/5 text-slate-600 opacity-40 cursor-not-allowed'
+              }`}
+              title={
+                winAmount > 0 && !isSpinning && !isFreeSpins
+                  ? 'Risk your win to double it in Oregon Lottery Video Poker'
+                  : 'Win credits on any spin to activate Gamble 2X'
+              }
             >
-              <Dices className="w-3.5 h-3.5 text-yellow-300" />
-              <span>GAMBLE 2X</span>
+              <Dices className={`w-3.5 h-3.5 ${winAmount > 0 ? 'text-yellow-300' : 'text-slate-600'}`} />
+              <span className="hidden xs:inline">GAMBLE</span>
+              <span>2X</span>
             </button>
           )}
 
@@ -266,8 +278,8 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
         </div>
       </div>
 
-      {/* TIER 2: Dedicated Centered Action Line for SPIN / STOP */}
-      <div className="w-full flex items-center justify-center pt-1 pb-1">
+      {/* TIER 2: Dedicated Centered Action Line for SPIN / STOP - STRICT FIXED HEIGHT & POSITION */}
+      <div className="w-full h-14 sm:h-16 flex items-center justify-center flex-shrink-0">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
@@ -278,7 +290,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               ? 'Insufficient coins'
               : undefined
           }
-          className={`relative w-full max-w-[280px] sm:max-w-xs md:w-80 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-xl uppercase text-white select-none transition-all touch-manipulation ${
+          className={`relative w-64 sm:w-80 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-xl uppercase text-white select-none transition-all touch-manipulation ${
             isSpinning
               ? 'vlt-stop-btn animate-pulse cursor-pointer'
               : !isFreeSpins && balance < totalBet
