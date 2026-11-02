@@ -836,6 +836,24 @@ class SoundManager {
     osc.stop(this.ctx.currentTime + 0.06);
   }
 
+  // Low error / invalid action buzzer
+  public playError() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.28 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(130, now);
+    osc.frequency.linearRampToValueAtTime(80, now + 0.14);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
+  }
+
   // --- Continuous Stimulating Deluxe VLT Reel Spin Audio Loop ---
   private spinRollTimerId: number | null = null;
   private spinRollStep: number = 0;

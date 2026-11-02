@@ -239,18 +239,29 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
         </div>
 
         {/* ========================================================================= */}
-        {/* 2. THREE UNIQUE SCULPTURAL THEMED PODS (MAJOR, MINOR, MINI)               */}
+        {/* 2. THREE SCULPTURAL THEMED PODS (ASYMMETRIC TIMBER TOTEMS / VAULT PODS)     */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-3 w-full mt-1.5 sm:mt-2 z-10">
-          {/* MAJOR */}
+        <div className={`w-full mt-1.5 sm:mt-2 z-10 ${
+          isTimber ? 'flex items-start justify-between gap-1.5 sm:gap-3' : 'grid grid-cols-3 gap-1.5 sm:gap-3'
+        }`}>
+          {/* MAJOR (TIMBER WOLF: Tilted -3deg hanging on iron chains) */}
           <div
             onClick={handleJackpotClick}
-            className="relative cursor-pointer group flex flex-col items-center"
+            className={`relative cursor-pointer group flex flex-col items-center flex-1 ${
+              isTimber ? 'transform -rotate-2 sm:-rotate-3 mt-1' : ''
+            }`}
             title={`${gameDef.theme.majorTitle} - Click for Audio`}
           >
+            {/* Hanging Iron Chain Links for Timberland */}
+            {isTimber && (
+              <div className="flex space-x-8 mb-0.5 pointer-events-none">
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+              </div>
+            )}
             <div
               className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
-                isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''
+                isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_6px_16px_rgba(0,0,0,0.95)]' : ''
               }`}
               style={
                 isTimber
@@ -320,12 +331,21 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
           </div>
 
-          {/* MINOR */}
+          {/* MINOR (CLEVER FOX: Suspended lower in center) */}
           <div
             onClick={handleJackpotClick}
-            className="relative cursor-pointer group flex flex-col items-center"
+            className={`relative cursor-pointer group flex flex-col items-center flex-1 ${
+              isTimber ? 'mt-3 sm:mt-4' : ''
+            }`}
             title={`${gameDef.theme.minorTitle} - Click for Audio`}
           >
+            {/* Hanging Iron Chain Links for Timberland */}
+            {isTimber && (
+              <div className="flex space-x-6 mb-0.5 pointer-events-none">
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+              </div>
+            )}
             <div
               className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
                 isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''
@@ -398,12 +418,21 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
           </div>
 
-          {/* MINI */}
+          {/* MINI (SQUIRREL: Tilted +2.5deg hanging higher on the right) */}
           <div
             onClick={handleJackpotClick}
-            className="relative cursor-pointer group flex flex-col items-center"
+            className={`relative cursor-pointer group flex flex-col items-center flex-1 ${
+              isTimber ? 'transform rotate-2 sm:rotate-3 -mt-1 sm:-mt-2' : ''
+            }`}
             title={`${gameDef.theme.miniTitle} - Click for Audio`}
           >
+            {/* Hanging Iron Chain Links for Timberland */}
+            {isTimber && (
+              <div className="flex space-x-8 mb-0.5 pointer-events-none">
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+                <div className="w-1.5 h-3 border border-slate-600 rounded-full bg-slate-800" />
+              </div>
+            )}
             <div
               className={`relative w-full overflow-hidden transition-transform duration-200 group-hover:scale-105 ${
                 isTimber ? 'rounded-2xl border-2 border-[#b45309] shadow-[0_4px_14px_rgba(0,0,0,0.9)]' : ''

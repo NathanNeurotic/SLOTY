@@ -349,6 +349,92 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       )}
 
+      {/* Asymmetric Left Flank: Redwood Tree Trunk with Perched Mountain Great Horned Owl */}
+      {isTimber && (
+        <div className="hidden xl:flex flex-col items-center absolute -left-20 top-2 bottom-6 w-20 pointer-events-none z-30 select-none">
+          {/* Perched Mountain Owl */}
+          <div className="relative -mt-8 flex flex-col items-center">
+            <svg viewBox="0 0 70 80" className="w-16 h-18 drop-shadow-xl overflow-visible">
+              {/* Tufted Ears & Head */}
+              <polygon points="18,18 24,2 32,16" fill="#78350F" stroke="#B45309" strokeWidth="1" />
+              <polygon points="52,18 46,2 38,16" fill="#78350F" stroke="#B45309" strokeWidth="1" />
+              {/* Owl Body & Wings */}
+              <ellipse cx="35" cy="46" rx="22" ry="26" fill="#451A03" stroke="#92400E" strokeWidth="1.5" />
+              <ellipse cx="35" cy="28" rx="19" ry="16" fill="#78350F" stroke="#B45309" strokeWidth="1.5" />
+              {/* Feather Breast Plumes */}
+              <ellipse cx="35" cy="50" rx="14" ry="18" fill="#D97706" opacity="0.85" />
+              <path d="M26 42 Q35 46 44 42" stroke="#78350F" strokeWidth="1.5" fill="none" />
+              <path d="M28 50 Q35 54 42 50" stroke="#78350F" strokeWidth="1.5" fill="none" />
+              <path d="M30 58 Q35 62 40 58" stroke="#78350F" strokeWidth="1.5" fill="none" />
+              {/* Luminous Amber Eyes */}
+              <circle cx="27" cy="27" r="7.5" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
+              <circle cx="43" cy="27" r="7.5" fill="#FEF08A" stroke="#78350F" strokeWidth="1.5" />
+              <circle cx="27" cy="27" r="4.5" fill="#000" className={isSpinning ? "animate-pulse" : ""} />
+              <circle cx="43" cy="27" r="4.5" fill="#000" className={isSpinning ? "animate-pulse" : ""} />
+              <circle cx="28.5" cy="25.5" r="1.5" fill="#FFF" />
+              <circle cx="44.5" cy="25.5" r="1.5" fill="#FFF" />
+              {/* Golden Curved Beak */}
+              <polygon points="32,31 38,31 35,39" fill="#F59E0B" stroke="#78350F" strokeWidth="1" />
+              {/* Talons perched on branch */}
+              <ellipse cx="28" cy="72" rx="4" ry="2.5" fill="#F59E0B" />
+              <ellipse cx="42" cy="72" rx="4" ry="2.5" fill="#F59E0B" />
+              {/* Wooden Perch Branch */}
+              <path d="M6 73 Q35 70 66 74" stroke="#78350F" strokeWidth="5" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* Towering Redwood Trunk Column */}
+          <div className="w-12 flex-1 rounded-t-xl bg-gradient-to-r from-[#2a1308] via-[#451e0e] to-[#1c0c05] border-x border-[#5c2810] shadow-[inset_0_0_15px_rgba(0,0,0,0.85)] relative overflow-hidden">
+            {/* Bark Grooves */}
+            <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_6px,rgba(0,0,0,0.7)_6px,rgba(0,0,0,0.7)_10px)]" />
+            {/* Shelf Mushrooms on Trunk */}
+            <div className="absolute top-28 -right-2 w-7 h-3 rounded-full bg-gradient-to-b from-[#b45309] to-[#78350f] border-b border-black shadow-md transform rotate-6" />
+            <div className="absolute top-48 -left-2 w-8 h-3.5 rounded-full bg-gradient-to-b from-[#d97706] to-[#92400e] border-b border-black shadow-md transform -rotate-12" />
+            {/* Patches of Forest Moss */}
+            <div className="absolute top-36 left-1 w-4 h-8 rounded-full bg-emerald-700/60 blur-[1px]" />
+            <div className="absolute bottom-20 right-1 w-5 h-12 rounded-full bg-emerald-800/70 blur-[1px]" />
+          </div>
+        </div>
+      )}
+
+      {/* Asymmetric Right Flank: Forged Iron Gallows Arm with Hanging Miner's Lantern */}
+      {isTimber && (
+        <div className="hidden xl:flex flex-col items-center absolute -right-20 top-2 bottom-6 w-20 pointer-events-none z-30 select-none">
+          {/* Forged Wrought-Iron Gallows Bracket */}
+          <div className="relative w-16 h-8 flex items-end justify-center">
+            <div className="w-14 h-2.5 bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#0f172a] rounded-t-sm border border-slate-700 shadow-md" />
+            <div className="absolute top-2 right-2 w-2 h-6 border-r-2 border-t-2 border-slate-600 rounded-tr" />
+          </div>
+          {/* Iron Chain Links */}
+          <div className="flex flex-col items-center space-y-0.5 my-0.5">
+            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
+            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
+            <div className="w-1.5 h-3 border border-slate-500 rounded-full bg-slate-800" />
+          </div>
+          {/* Hanging Iron Miner's Lantern */}
+          <div className="relative w-12 h-22 rounded-b-xl bg-gradient-to-b from-[#1e293b] via-[#0f172a] to-[#020617] border-2 border-[#475569] shadow-[0_0_25px_rgba(245,158,11,0.6)] p-1 flex flex-col items-center justify-between">
+            {/* Lantern Cap with Ring */}
+            <div className="w-10 h-2.5 bg-gradient-to-r from-[#334155] via-[#64748b] to-[#1e293b] rounded-t-md border-b border-black" />
+            {/* Glass Chamber with Glowing Flickering Fire */}
+            <div className="w-8 h-13 bg-amber-500/20 rounded border border-amber-400/40 relative overflow-hidden flex items-center justify-center shadow-[inset_0_0_12px_rgba(245,158,11,0.8)]">
+              {/* Animated Fire Flame */}
+              <div className="w-4 h-7 rounded-full bg-gradient-to-t from-orange-600 via-amber-400 to-yellow-100 animate-pulse shadow-[0_0_15px_#F59E0B]" />
+              {/* Iron Cage Wire Bars */}
+              <div className="absolute inset-x-2 top-0 bottom-0 border-x border-slate-700/80 pointer-events-none" />
+            </div>
+            {/* Heavy Base */}
+            <div className="w-11 h-2.5 bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#0f172a] rounded-b-md border-t border-black" />
+          </div>
+          {/* Timber Base with Forest Pinecones */}
+          <div className="w-12 mt-auto flex flex-col items-center justify-end pb-2">
+            <div className="flex items-center space-x-1 text-sm">
+              <span>🪵</span>
+              <span>🌲</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Handcrafted Rustic Log Pediment Crest for Timberland Critters */}
       {isTimber && (
         <div className="w-full flex justify-center -mb-2 relative z-20 pointer-events-none">
@@ -535,14 +621,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             }}
             onSelectLines={onSelectLines}
             totalLinesCount={totalLines}
+            isTimber={isTimber}
           />
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
-          <div className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px] ${
-            isTimber
-              ? 'bg-[#040e07]/95 border-emerald-800/60 shadow-[inset_0_0_20px_rgba(0,0,0,0.9)]'
-              : 'bg-casino-950/95 border-white/10'
-          }`}>
+          <div
+            className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px] ${
+              isTimber
+                ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_30px_rgba(0,0,0,0.95)]'
+                : 'bg-casino-950/95 border-white/10'
+            }`}
+            style={
+              isTimber
+                ? {
+                    backgroundImage:
+                      'repeating-linear-gradient(90deg, #180e07, #180e07 19.5%, #3d2010 19.5%, #0e0703 20%)',
+                  }
+                : undefined
+            }
+          >
             {/* SVG Payline Glow Overlay: strictly hidden while reels are spinning */}
             <PaylineOverlay
               winningLines={!isAnyReelSpinning ? (spinResult?.winningLines || []) : []}
@@ -598,6 +695,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             }}
             onSelectLines={onSelectLines}
             totalLinesCount={totalLines}
+            isTimber={isTimber}
           />
         </div>
 

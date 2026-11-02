@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { RefreshCw, Landmark, Coins, X, FastForward, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Landmark, Coins, X, FastForward, CheckCircle2, Trees } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
+import type { GameId } from '../../games/types';
 
 interface HoldAndSpinModalProps {
   totalBet: number;
   initialCoinCount: number;
   onComplete: (totalWon: number) => void;
+  activeGameId?: GameId;
 }
 
 interface OrbCell {
@@ -18,7 +20,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
   totalBet,
   initialCoinCount,
   onComplete,
+  activeGameId = 'vault-24k',
 }) => {
+  const isTimber = activeGameId === 'timber-critters';
   const [respinsLeft, setRespinsLeft] = useState(3);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -173,17 +177,31 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
-      <div className="relative max-w-2xl w-full max-h-[92vh] overflow-y-auto bg-gradient-to-b from-amber-950 via-casino-950 to-black border-2 border-yellow-400/80 shadow-[0_0_60px_rgba(245,158,11,0.6)] rounded-3xl p-3 sm:p-6 flex flex-col items-center">
+      <div className={`relative max-w-2xl w-full max-h-[92vh] overflow-y-auto rounded-3xl p-3 sm:p-6 flex flex-col items-center ${
+        isTimber
+          ? 'bg-gradient-to-b from-[#24130a] via-[#101e14] to-[#040c06] border-2 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.5)]'
+          : 'bg-gradient-to-b from-amber-950 via-casino-950 to-black border-2 border-yellow-400/80 shadow-[0_0_60px_rgba(245,158,11,0.6)]'
+      }`}>
         {/* Header Marquee with Close X Button */}
-        <div className="w-full flex items-center justify-between pb-3 border-b border-yellow-500/30 mb-2">
+        <div className={`w-full flex items-center justify-between pb-3 border-b mb-2 ${
+          isTimber ? 'border-emerald-600/40' : 'border-yellow-500/30'
+        }`}>
           <div className="flex items-center space-x-2">
-            <Landmark className="w-6 h-6 text-yellow-400 animate-pulse flex-shrink-0" />
+            {isTimber ? (
+              <Trees className="w-6 h-6 text-emerald-400 animate-pulse flex-shrink-0" />
+            ) : (
+              <Landmark className="w-6 h-6 text-yellow-400 animate-pulse flex-shrink-0" />
+            )}
             <div>
-              <h2 className="text-base sm:text-lg font-black gold-gradient-text uppercase tracking-wider">
-                Fort Knox Cash Link Vault Bonus
+              <h2 className={`text-base sm:text-lg font-black uppercase tracking-wider ${
+                isTimber ? 'text-emerald-300 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]' : 'gold-gradient-text'
+              }`}>
+                {isTimber ? 'Forest Harvest Acorn Respin Bonus' : 'Fort Knox Cash Link Vault Bonus'}
               </h2>
-              <span className="text-[10px] text-yellow-300/80 block">
-                Lock 24K Bullion Coins to collect cash credits • Respins reset to 3 on new coin
+              <span className={`text-[10px] block ${isTimber ? 'text-emerald-200/80' : 'text-yellow-300/80'}`}>
+                {isTimber
+                  ? 'Lock Golden Acorns to harvest forest bounty • Respins reset to 3 on new acorn'
+                  : 'Lock 24K Bullion Coins to collect cash credits • Respins reset to 3 on new coin'}
               </span>
             </div>
           </div>
@@ -237,6 +255,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                         <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-rose-950 bg-yellow-200 px-1 rounded shadow-sm">
                           {cell.jackpot}
                         </span>
+                      ) : isTimber ? (
+                        <span className="text-xs">🌰</span>
                       ) : (
                         <Coins className="w-3.5 h-3.5 text-amber-950" />
                       )}
@@ -263,7 +283,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
           </div>
 
           <div className="text-right">
-            <span className="text-[9px] uppercase font-bold text-slate-400 block">Locked Bullion Coins</span>
+            <span className="text-[9px] uppercase font-bold text-slate-400 block">
+              {isTimber ? 'Locked Golden Acorns' : 'Locked Bullion Coins'}
+            </span>
             <span className="text-sm font-black text-neon-cyan">
               {lockedCellsCount} / 20
             </span>

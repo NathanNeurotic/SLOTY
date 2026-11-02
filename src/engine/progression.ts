@@ -1,25 +1,32 @@
 import type { ProgressionState } from './types';
 
-// Base XP needed to advance from Level 1 to Level 2
-const BASE_LEVEL_XP = 2500;
-// Pacing multiplier: XP required per level grows geometrically by 42% each level.
-// This matches the exponential growth of maxBet (which doubles every 2 levels = sqrt(2) ≈ 1.4142),
-// ensuring that reaching the next level always requires 15-30 normal spins or 6-8 max-bet spins,
-// and completely prevents jumping multiple levels in a single spin.
-const LEVEL_GROWTH_RATE = 0.42;
+export function getMaxBetForLevel(level: number): number {
+  // Max bet scales every 2 levels, capped at 1,000,000
+  return Math.min(1000000, 500 * Math.pow(2, Math.floor((level - 1) / 2)));
+}
+
+// XP delta needed to advance from level to level + 1.
+// Directly anchors XP requirement to maxBet * spinsNeeded, so that no matter how high
+// the stakes get (from 500 up to 1,000,000 chips), advancing a level ALWAYS requires
+// 20-50 spins at early levels, and 60-120 spins at high levels.
+export function getXpDeltaForLevel(level: number): number {
+  const currentMaxBet = getMaxBetForLevel(level);
+  // Pacing: starts at 18 spins at level 1, growing to 100+ spins at high levels
+  const spinsNeeded = Math.min(120, 18 + Math.floor(level * 4.2));
+  return currentMaxBet * spinsNeeded;
+}
 
 export function getXpRequiredForLevel(targetLevel: number): number {
   if (targetLevel <= 1) return 0;
-  // Cumulative XP needed to reach targetLevel using geometric series sum:
-  // S_n = D_1 * ((1 + r)^n - 1) / r, where n = targetLevel - 1
-  const n = targetLevel - 1;
-  const cumulative = (BASE_LEVEL_XP * (Math.pow(1 + LEVEL_GROWTH_RATE, n) - 1)) / LEVEL_GROWTH_RATE;
-  return Math.floor(cumulative);
+  let cumulative = 0;
+  for (let l = 1; l < targetLevel; l++) {
+    cumulative += getXpDeltaForLevel(l);
+  }
+  return cumulative;
 }
 
 export function calculateProgression(totalXp: number): ProgressionState {
   let level = 1;
-  // Find current level based on cumulative XP thresholds
   while (totalXp >= getXpRequiredForLevel(level + 1)) {
     level++;
     if (level >= 300) break; // Hard safety clamp
@@ -30,9 +37,7 @@ export function calculateProgression(totalXp: number): ProgressionState {
   const xpNeededThisLevel = Math.max(1, xpForNextLevel - xpForCurrentLevel);
   const currentLevelProgress = Math.max(0, totalXp - xpForCurrentLevel);
   const progressPercent = Math.min(100, Math.floor((currentLevelProgress / xpNeededThisLevel) * 100));
-
-  // Max bet doubles every 2 levels, capped at 1,000,000
-  const maxBet = Math.min(1000000, 500 * Math.pow(2, Math.floor((level - 1) / 2)));
+  const maxBet = getMaxBetForLevel(level);
 
   return {
     level,
@@ -46,5 +51,5 @@ export function calculateProgression(totalXp: number): ProgressionState {
 
 export function getLevelUpReward(level: number): number {
   // Reward scales with level progression
-  return Math.min(500000, level * 3500);
+  return Math.min(1000000, level * 5000);
 }

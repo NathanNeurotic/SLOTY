@@ -332,10 +332,10 @@ export const App: React.FC = () => {
   const executeSpin = useCallback(() => {
     const isFreeSpin = freeSpinsRemaining > 0;
 
-    // Balance check with Stealth Safety Net: Player never runs out of credits
+    // Strict balance check: Never allow betting more than player has
     if (!isFreeSpin && balance < totalBet) {
-      const topUp = Math.max(1000, totalBet * 2);
-      triggerStealthBailout(topUp);
+      soundManager.playError();
+      return;
     }
 
     // Deduct wager and add XP
@@ -502,13 +502,36 @@ export const App: React.FC = () => {
     handleAllReelsStopped();
   }, [isSpinning, handleAllReelsStopped]);
 
-  // Max Bet Handler
+  // Max Bet Handler - capped by balance and progression maxBet
   const handleMaxBet = useCallback(() => {
-    setSelectedLines(40);
-    // Find highest bet per line that stays <= maxBet
-    const allowableBetPerLine = Math.max(1, Math.floor(progression.maxBet / 40));
-    setBetPerLine(allowableBetPerLine);
-  }, [progression.maxBet]);
+    const lines = activeGameDef.defaultLines;
+    setSelectedLines(lines);
+    const maxAffordable = Math.min(balance, progression.maxBet);
+    if (maxAffordable <= 0) {
+      setBetPerLine(1);
+      return;
+    }
+    const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
+    const bestStep = steps.find((s) => s * lines <= maxAffordable) || 1;
+    setBetPerLine(bestStep);
+  }, [balance, progression.maxBet, activeGameDef.defaultLines]);
+
+  // Ensure bet never exceeds balance when balance drops
+  useEffect(() => {
+    if (freeSpinsRemaining > 0 || isSpinning) return;
+    if (balance > 0 && totalBet > balance) {
+      const lines = selectedLines;
+      const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
+      const affordableStep = steps.find((s) => s * lines <= balance);
+      if (affordableStep) {
+        setBetPerLine(affordableStep);
+      } else {
+        const fittingLines = Math.max(1, Math.min(lines, Math.floor(balance)));
+        setSelectedLines(fittingLines);
+        setBetPerLine(1);
+      }
+    }
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, isSpinning]);
 
   // Handle continuous Auto-Spins and Free-Spins cadence
   useEffect(() => {
@@ -562,13 +585,25 @@ export const App: React.FC = () => {
 
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
+        // Clear level-up modal if active
+        if (levelUpData !== null) {
+          setBalance((b) => b + levelUpData.bonusCoins);
+          setLevelUpData(null);
+          soundManager.playButtonClick();
+          return;
+        }
         if (celebration !== null || showFreeSpinsModal || showHoldAndSpinModal || showGambleModal) {
           return;
         }
         if (isSpinning) {
           handleQuickStop();
-        } else {
+        } else if (freeSpinsRemaining > 0 || balance >= totalBet) {
           executeSpin();
+        } else {
+          soundManager.playError();
+          if (balance < 1) {
+            setShowBonusWheelModal(true);
+          }
         }
       } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
         setShowDebugDrawer((prev) => !prev);
@@ -765,6 +800,7 @@ export const App: React.FC = () => {
         <HoldAndSpinModal
           totalBet={totalBet}
           initialCoinCount={holdAndSpinInitialCoins}
+          activeGameId={activeGameId}
           onComplete={(bonusWon) => {
             setBalance((b) => b + bonusWon);
             setWinAmount(bonusWon);

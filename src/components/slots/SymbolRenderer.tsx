@@ -911,26 +911,26 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="58" cy="36" r="1.8" fill="#F59E0B" />
 
             {/* ULTRA-READABLE HIGH-CONTRAST RAISED CASH LINK PLAQUE */}
-            <g transform="translate(0, 5)">
+            <g transform="translate(0, 4)">
               {/* Plaque 3D Drop Shadow */}
-              <rect x="12" y="47" width="76" height="24" rx="7" fill="#000" opacity="0.75" />
+              <rect x="8" y="46" width="84" height="26" rx="8" fill="#000" opacity="0.85" />
               {/* Outer Radiant Gold Border */}
-              <rect x="10" y="45" width="80" height="24" rx="7" fill="url(#acornNutGold)" stroke="#FFF" strokeWidth="1.5" />
-              {/* Inner Obsidian Contrast Chamber */}
-              <rect x="12" y="47" width="76" height="20" rx="5" fill="url(#cashPlaqueGrad)" stroke="#F59E0B" strokeWidth="1" />
+              <rect x="7" y="44" width="86" height="26" rx="8" fill="#F59E0B" stroke="#FFF" strokeWidth="2" />
+              {/* Inner Pure Jet Black Chamber */}
+              <rect x="10" y="46" width="80" height="22" rx="6" fill="#000" stroke="#FDE047" strokeWidth="1.2" />
 
-              {/* Bold, Ultra-Legible Gold/White CASH Text */}
+              {/* Bold, Ultra-Legible Pure Gold CASH Text */}
               <text
                 x="50"
-                y="62.5"
+                y="63.5"
                 textAnchor="middle"
-                fill="#FEF08A"
-                stroke="#451A03"
-                strokeWidth="1.2"
-                fontSize="15"
+                fill="#FFFBEB"
+                stroke="#000"
+                strokeWidth="2.5"
+                fontSize="17"
                 fontWeight="900"
-                fontFamily="sans-serif"
-                letterSpacing="3.5"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                letterSpacing="4"
                 style={{ paintOrder: 'stroke fill' }}
               >
                 CASH

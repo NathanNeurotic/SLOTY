@@ -58,12 +58,16 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const [showAutoMenu, setShowAutoMenu] = useState(false);
+  const maxAllowedBet = Math.min(balance, maxBet);
 
   const handleLinesStep = (direction: 'up' | 'down') => {
     soundManager.playChipClick();
     const curIdx = availableLines.indexOf(selectedLines);
     if (direction === 'up' && curIdx < availableLines.length - 1) {
-      onLinesChange(availableLines[curIdx + 1]);
+      const nextLines = availableLines[curIdx + 1];
+      if (nextLines * betPerLine <= maxAllowedBet) {
+        onLinesChange(nextLines);
+      }
     } else if (direction === 'down' && curIdx > 0) {
       onLinesChange(availableLines[curIdx - 1]);
     }
@@ -79,7 +83,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 
     if (direction === 'up' && curIdx < BET_PER_LINE_STEPS.length - 1) {
       const nextStep = BET_PER_LINE_STEPS[curIdx + 1];
-      if (nextStep * selectedLines <= maxBet) {
+      if (nextStep * selectedLines <= maxAllowedBet) {
         onBetPerLineChange(nextStep);
       }
     } else if (direction === 'down' && curIdx > 0) {
@@ -155,7 +159,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             </span>
             <button
               onClick={() => handleBetStep('up')}
-              disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxBet}
+              disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxAllowedBet}
               className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
             >
               <Plus className="w-2.5 h-2.5 text-amber-300" />
@@ -268,6 +272,10 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
                 <span>FREE SPIN</span>
               </span>
+            ) : !isFreeSpins && balance < totalBet ? (
+              <span className="flex items-center space-x-1 text-amber-300 text-xs">
+                <span>NEED COINS</span>
+              </span>
             ) : (
               <span className="flex items-center space-x-1.5">
                 {isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
@@ -283,7 +291,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               soundManager.playChipClick();
               onMaxBet();
             }}
-            disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
+            disabled={isSpinning || isFreeSpins || totalBet >= maxAllowedBet}
             className={`px-2 h-10 rounded-xl font-black text-[9px] uppercase tracking-wider disabled:opacity-40 flex items-center justify-center flex-shrink-0 shadow-md ${
               isTimber
                 ? 'bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-amber-950 border border-yellow-200'
@@ -377,7 +385,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 </span>
                 <button
                   onClick={() => handleBetStep('up')}
-                  disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxBet}
+                  disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxAllowedBet}
                   className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
                   <Plus className={`w-3 h-3 ${isTimber ? 'text-amber-300' : 'text-amber-300'}`} />
@@ -408,7 +416,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               soundManager.playChipClick();
               onMaxBet();
             }}
-            disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
+            disabled={isSpinning || isFreeSpins || totalBet >= maxAllowedBet}
             className={`px-2 sm:px-2.5 h-9 sm:h-10 rounded-xl font-black text-[9px] sm:text-[10px] uppercase tracking-wider disabled:opacity-40 flex items-center justify-center flex-shrink-0 shadow-md ${
               isTimber
                 ? 'bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-amber-950 border border-yellow-200 shadow-[0_0_15px_rgba(245,158,11,0.6)]'
@@ -542,6 +550,10 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             <span className="flex items-center space-x-2">
               <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-pulse" />
               <span>{isTimber ? 'OWL FREE SPIN' : 'FREE SPIN'}</span>
+            </span>
+          ) : !isFreeSpins && balance < totalBet ? (
+            <span className="flex items-center space-x-2 text-amber-300">
+              <span>{isTimber ? '🪵 INSUFFICIENT COINS 🪵' : '⚡ INSUFFICIENT COINS ⚡'}</span>
             </span>
           ) : (
             <span className="flex items-center space-x-2">

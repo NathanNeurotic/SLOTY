@@ -32,6 +32,16 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
     soundManager.playLevelUp();
     launchCoinFountain('big');
 
+    // Space / Enter / Escape to instantly claim and clear level up modal
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleClaim();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+
     // Auto-claim countdown so the game never locks up or hangs
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -44,7 +54,10 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('keydown', handleKeyDown, { capture: true });
+    };
   }, []);
 
   return (
