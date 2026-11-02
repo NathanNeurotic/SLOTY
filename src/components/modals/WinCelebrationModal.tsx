@@ -18,6 +18,17 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   const [displayedAmount, setDisplayedAmount] = useState(0);
   const [isFinishedCounting, setIsFinishedCounting] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
+  const autoDismissTimerRef = useRef<number | null>(null);
+  const isDismissedRef = useRef(false);
+
+  const handleDismiss = () => {
+    if (isDismissedRef.current) return;
+    isDismissedRef.current = true;
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
+    soundManager.playButtonClick();
+    onDismiss();
+  };
 
   useEffect(() => {
     // Determine celebration intensity
@@ -32,7 +43,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       soundManager.playWinChime(winTier === 'MEGA_WIN' ? 25 : 10);
     }
 
-    const duration = 2400; // 2.4 seconds roll-up
+    const duration = 1800; // Snappy 1.8 seconds roll-up
     const startTime = performance.now();
     let lastTallySound = 0;
 
@@ -44,7 +55,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       const current = Math.floor(eased * winAmount);
       setDisplayedAmount(current);
 
-      if (now - lastTallySound > 75) {
+      if (now - lastTallySound > 85) {
         soundManager.playCoinTally();
         lastTallySound = now;
       }
@@ -54,6 +65,11 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       } else {
         setDisplayedAmount(winAmount);
         setIsFinishedCounting(true);
+
+        // Auto-dismiss after 2 seconds so Auto-Spin never hangs or freezes
+        autoDismissTimerRef.current = window.setTimeout(() => {
+          handleDismiss();
+        }, 2200);
       }
     };
 
@@ -62,6 +78,9 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (autoDismissTimerRef.current) {
+        clearTimeout(autoDismissTimerRef.current);
       }
     };
   }, [winTier, winAmount]);
@@ -72,9 +91,12 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       setDisplayedAmount(winAmount);
       setIsFinishedCounting(true);
       soundManager.playButtonClick();
+      // Auto dismiss after skip
+      autoDismissTimerRef.current = window.setTimeout(() => {
+        handleDismiss();
+      }, 1200);
     } else {
-      soundManager.playButtonClick();
-      onDismiss();
+      handleDismiss();
     }
   };
 
@@ -115,7 +137,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   return (
     <div
       onClick={handleSkipOrCollect}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md cursor-pointer select-none animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 cursor-pointer select-none animate-fadeIn"
     >
       <div
         className={`relative max-w-lg w-full bg-casino-950/95 border-2 ${tier.borderColor} ${tier.glow} rounded-3xl p-6 sm:p-10 text-center flex flex-col items-center transform transition-transform hover:scale-[1.01]`}

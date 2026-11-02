@@ -12,43 +12,27 @@ interface ReelProps {
   onStop?: (reelIndex: number) => void;
 }
 
-// 8 distinct symbols doubled to form a seamless 16-symbol infinite roll strip
+// 4 distinct symbols doubled to form a lean, high-framerate 8-symbol infinite roll strip
 const ROLLING_STRIP_A: SymbolId[] = [
   'WILD',
   'SEVEN',
   'DIAMOND',
   'BELL',
-  'GOLDBAR',
-  'MELON',
-  'GRAPES',
-  'ACE',
   'WILD',
   'SEVEN',
   'DIAMOND',
   'BELL',
-  'GOLDBAR',
-  'MELON',
-  'GRAPES',
-  'ACE',
 ];
 
 const ROLLING_STRIP_B: SymbolId[] = [
   'SEVEN',
-  'HORSESHOE',
   'COIN',
-  'DIAMOND',
-  'BELL',
   'KING',
-  'QUEEN',
-  'JACK',
+  'ACE',
   'SEVEN',
-  'HORSESHOE',
   'COIN',
-  'DIAMOND',
-  'BELL',
   'KING',
-  'QUEEN',
-  'JACK',
+  'ACE',
 ];
 
 export const Reel: React.FC<ReelProps> = ({
@@ -116,25 +100,21 @@ export const Reel: React.FC<ReelProps> = ({
 
       {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
       {isSpinning && (
-        <>
-          {/* Vertical Speed Streak Overlays */}
-          <div className="absolute inset-0 pointer-events-none z-10 bg-[repeating-linear-gradient(to_bottom,transparent_0px,transparent_10px,rgba(255,255,255,0.06)_11px,rgba(255,255,255,0.06)_12px)] opacity-60" />
-          <div
-            className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[0.6px]"
-            style={{
-              animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
-            }}
-          >
-            {rollingStrip.map((sym, idx) => (
-              <div
-                key={idx}
-                className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-80"
-              >
-                <SymbolRenderer id={sym} />
-              </div>
-            ))}
-          </div>
-        </>
+        <div
+          className="w-full flex flex-col animate-reel-rolling will-change-transform"
+          style={{
+            animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
+          }}
+        >
+          {rollingStrip.map((sym, idx) => (
+            <div
+              key={idx}
+              className="h-[80px] sm:h-[100px] md:h-[120px] w-full flex items-center justify-center p-1 sm:p-2 flex-shrink-0 opacity-85"
+            >
+              <SymbolRenderer id={sym} />
+            </div>
+          ))}
+        </div>
       )}
 
       {/* 2. Resting / Settling 4-Row Landing Grid */}

@@ -1061,9 +1061,132 @@ class SoundManager {
     });
   }
 
+  // Flirty lucky kiss pop and sparkling harp chime for Scarlet Cash
+  public playKissChime() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+
+    // 1. Kiss "mwah" pop
+    const popOsc = this.ctx.createOscillator();
+    const popGain = this.ctx.createGain();
+    popGain.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+    popGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+    popOsc.type = 'sine';
+    popOsc.frequency.setValueAtTime(650, now);
+    popOsc.frequency.exponentialRampToValueAtTime(280, now + 0.05);
+    popOsc.connect(popGain);
+    popGain.connect(this.ctx.destination);
+    popOsc.start(now);
+    popOsc.stop(now + 0.07);
+
+    // 2. Ascending celestial sparkle chimes
+    const chimeFreqs = [1760, 2217.46, 2637.02, 3520]; // A6, C#7, E7, A7
+    chimeFreqs.forEach((f, idx) => {
+      if (!this.ctx) return;
+      const t = now + 0.04 + idx * 0.06;
+      const chimeOsc = this.ctx.createOscillator();
+      const chimeGain = this.ctx.createGain();
+      chimeGain.gain.setValueAtTime(0.3 * this.sfxVolume, t);
+      chimeGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      chimeOsc.type = 'sine';
+      chimeOsc.frequency.setValueAtTime(f, t);
+      chimeOsc.connect(chimeGain);
+      chimeGain.connect(this.ctx.destination);
+      chimeOsc.start(t);
+      chimeOsc.stop(t + 0.42);
+    });
+  }
+
+  // Celebratory champagne bottle cork pop and fizzy bubbly effervescence
+  public playChampagnePop() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+
+    // Cork "THUMP"
+    const corkOsc = this.ctx.createOscillator();
+    const corkGain = this.ctx.createGain();
+    corkGain.gain.setValueAtTime(0.6 * this.sfxVolume, now);
+    corkGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    corkOsc.type = 'triangle';
+    corkOsc.frequency.setValueAtTime(320, now);
+    corkOsc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+    corkOsc.connect(corkGain);
+    corkGain.connect(this.ctx.destination);
+    corkOsc.start(now);
+    corkOsc.stop(now + 0.1);
+
+    // Fizzy bubbles
+    for (let i = 0; i < 8; i++) {
+      const bubbleTime = now + 0.08 + i * 0.035;
+      const bubbleOsc = this.ctx.createOscillator();
+      const bubbleGain = this.ctx.createGain();
+      bubbleGain.gain.setValueAtTime(0.18 * this.sfxVolume, bubbleTime);
+      bubbleGain.gain.exponentialRampToValueAtTime(0.001, bubbleTime + 0.05);
+      bubbleOsc.type = 'sine';
+      bubbleOsc.frequency.setValueAtTime(2400 + Math.random() * 2000, bubbleTime);
+      bubbleOsc.connect(bubbleGain);
+      bubbleGain.connect(this.ctx.destination);
+      bubbleOsc.start(bubbleTime);
+      bubbleOsc.stop(bubbleTime + 0.06);
+    }
+  }
+
+  // Deep subwoofer 48Hz punch for reel impacts
+  public playSubwooferPulse() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subGain.gain.setValueAtTime(0.45 * this.sfxVolume, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(75, now);
+    subOsc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.2);
+  }
+
   // Voice synthesizer casino announcement
   public speakAnnouncement(phrase: string) {
     this.speakAnnouncer(phrase);
+  }
+
+  // Seductive casino hostess voice synthesizer
+  public speakHostess(phrase: string) {
+    if (this.isMuted) return;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(phrase);
+        utterance.rate = 1.08;
+        utterance.pitch = 1.35;
+        utterance.volume = this.sfxVolume;
+        const voices = window.speechSynthesis.getVoices();
+        const femaleVoice = voices.find(
+          (v) =>
+            v.lang.startsWith('en') &&
+            (v.name.includes('Zira') ||
+              v.name.includes('Samantha') ||
+              v.name.includes('Victoria') ||
+              v.name.includes('Jenny') ||
+              v.name.includes('Female') ||
+              v.name.includes('Google US English') ||
+              v.name.includes('Microsoft'))
+        );
+        if (femaleVoice) utterance.voice = femaleVoice;
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        // Speech synthesis fallback
+      }
+    }
   }
 
   public speakAnnouncer(phrase: string) {

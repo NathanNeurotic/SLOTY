@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Trophy, Coins, Sparkles } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
@@ -8,6 +8,7 @@ interface LevelUpModalProps {
   bonusCoins: number;
   newMaxBet: number;
   onClaim: () => void;
+  autoSpinsRemaining?: number;
 }
 
 export const LevelUpModal: React.FC<LevelUpModalProps> = ({
@@ -15,15 +16,46 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
   bonusCoins,
   newMaxBet,
   onClaim,
+  autoSpinsRemaining = 0,
 }) => {
+  const [countdown, setCountdown] = useState(autoSpinsRemaining > 0 ? 3 : 5);
+  const claimedRef = useRef(false);
+
+  const handleClaim = () => {
+    if (claimedRef.current) return;
+    claimedRef.current = true;
+    soundManager.playButtonClick();
+    onClaim();
+  };
+
   useEffect(() => {
     soundManager.playLevelUp();
     launchCoinFountain('big');
+
+    // Auto-claim countdown so the game never locks up or hangs
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleClaim();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md select-none">
-      <div className="relative max-w-sm w-full bg-casino-950 border-2 border-purple-500 shadow-[0_0_60px_rgba(168,85,247,0.7)] rounded-3xl p-6 text-center flex flex-col items-center">
+    <div
+      onClick={handleClaim}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 select-none cursor-pointer animate-fadeIn"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-w-sm w-full bg-casino-950 border-2 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.7)] rounded-3xl p-6 text-center flex flex-col items-center"
+      >
         {/* Level Up Trophy */}
         <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-[0_0_25px_rgba(168,85,247,0.8)] mb-3 animate-bounce">
           <Trophy className="w-9 h-9 text-yellow-300" />
@@ -63,14 +95,15 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
         </div>
 
         <button
-          onClick={() => {
-            soundManager.playButtonClick();
-            onClaim();
-          }}
+          onClick={handleClaim}
           className="gold-btn w-full py-3 rounded-2xl font-black text-sm uppercase tracking-wider text-casino-950 hover:scale-105 active:scale-95 transition-transform"
         >
-          CLAIM & CONTINUE
+          CLAIM &amp; CONTINUE {countdown > 0 && `(${countdown}s)`}
         </button>
+
+        <p className="text-[10px] text-slate-500 mt-2">
+          Tap anywhere to claim instantly
+        </p>
       </div>
     </div>
   );

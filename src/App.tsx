@@ -660,7 +660,7 @@ export const App: React.FC = () => {
       </main>
 
       {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-casino-950/95 backdrop-blur-md border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.85)] pb-safe">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-casino-950 border-t border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.95)] pb-safe">
         <ControlsBar
           balance={balance}
           selectedLines={selectedLines}
@@ -777,6 +777,7 @@ export const App: React.FC = () => {
           newLevel={levelUpData.newLevel}
           bonusCoins={levelUpData.bonusCoins}
           newMaxBet={levelUpData.newMaxBet}
+          autoSpinsRemaining={autoSpinsRemaining}
           onClaim={() => {
             setBalance((b) => b + levelUpData.bonusCoins);
             setLevelUpData(null);

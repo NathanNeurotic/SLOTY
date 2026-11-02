@@ -8,7 +8,7 @@ import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { soundManager } from '../../audio/soundManager';
-import { BarnabyBullion } from '../character/BarnabyBullion';
+import { CompanionLounge } from '../character/CompanionLounge';
 import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 
@@ -257,9 +257,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
-      {/* Desktop Luxury Companion: Barnaby Bullion Mascot perched proudly flanking the machine */}
-      <div className="hidden xl:block absolute -right-36 top-4 z-30">
-        <BarnabyBullion
+      {/* Desktop Hostess Flank: Scarlet Cash on Left */}
+      <div className="hidden xl:block absolute -left-36 top-4 z-30">
+        <CompanionLounge
+          position="desktop-left"
           isSpinning={isSpinning}
           isAnticipating={isAnticipating}
           isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
@@ -267,13 +268,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
-          variant="full"
         />
       </div>
 
-      {/* Mobile / Tablet Compact Interactive High-Roller Chip */}
-      <div className="xl:hidden flex justify-center mb-1 w-full px-2">
-        <BarnabyBullion
+      {/* Desktop Bullion Baron Flank: Barnaby Bullion on Right */}
+      <div className="hidden xl:block absolute -right-36 top-4 z-30">
+        <CompanionLounge
+          position="desktop-right"
           isSpinning={isSpinning}
           isAnticipating={isAnticipating}
           isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
@@ -281,7 +282,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           isFeverMode={isFeverMode}
           winAmount={spinResult?.totalPayout || 0}
           onRewardCoins={onRewardCoins}
-          variant="compact"
+        />
+      </div>
+
+      {/* Mobile / Tablet Interactive VIP Companion Lounge Bar */}
+      <div className="xl:hidden flex justify-center mb-1.5 w-full px-1">
+        <CompanionLounge
+          position="mobile-bar"
+          isSpinning={isSpinning}
+          isAnticipating={isAnticipating}
+          isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
+          isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
+          isFeverMode={isFeverMode}
+          winAmount={spinResult?.totalPayout || 0}
+          onRewardCoins={onRewardCoins}
         />
       </div>
 
@@ -294,18 +308,32 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         }}
       />
 
-      {/* Outer Luxury Cabinet Frame */}
-      <div
-        className={`relative p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl transition-all duration-300 shadow-2xl ${
-          isCabinetSlamming ? 'animate-cabinet-slam' : ''
-        } ${
-          isFeverMode
-            ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
-            : freeSpinsRemaining > 0
-            ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
-            : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
-        }`}
-      >
+      {/* Outer Luxury Cabinet Frame with Chasing Neon Perimeter Border */}
+      <div className="relative p-[3px] rounded-2xl sm:rounded-3xl neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]">
+        <div
+          className={`relative p-2 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
+            isCabinetSlamming ? 'animate-cabinet-slam' : ''
+          } ${
+            isFeverMode
+              ? 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
+              : freeSpinsRemaining > 0
+              ? 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
+              : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
+          }`}
+        >
+          {/* 4 Ornate 24K Gold Corner Brackets */}
+          <div className="absolute top-1.5 left-1.5 w-5 h-5 border-t-2 border-l-2 border-yellow-300 rounded-tl pointer-events-none z-30 flex items-start justify-start p-0.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+          </div>
+          <div className="absolute top-1.5 right-1.5 w-5 h-5 border-t-2 border-r-2 border-yellow-300 rounded-tr pointer-events-none z-30 flex items-start justify-end p-0.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+          </div>
+          <div className="absolute bottom-1.5 left-1.5 w-5 h-5 border-b-2 border-l-2 border-yellow-300 rounded-bl pointer-events-none z-30 flex items-end justify-start p-0.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+          </div>
+          <div className="absolute bottom-1.5 right-1.5 w-5 h-5 border-b-2 border-r-2 border-yellow-300 rounded-br pointer-events-none z-30 flex items-end justify-end p-0.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-yellow-200 shadow-[0_0_6px_#FEF08A]" />
+          </div>
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
         <div className="flex items-center justify-between h-10 sm:h-12 px-2 border-b border-white/10 mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
@@ -480,11 +508,22 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           />
         </div>
 
-        {/* Cabinet Bottom Status Bar - Strictly Fixed Height */}
-        <div className="h-6 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0">
+        {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Stereo Subwoofers */}
+        <div className="h-7 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0 border-t border-white/5 pt-1">
+          {/* Left Stereo Chrome Subwoofer */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-mono text-emerald-400">95.8% RTP • CASH MULTIPLIERS</span>
+            <div
+              className={`w-4 h-4 rounded-full border border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black flex items-center justify-center shadow-[0_0_6px_rgba(245,158,11,0.6)] ${
+                isSpinning ? 'animate-subwoofer' : ''
+              }`}
+              title="Vegas Subwoofer Sound System"
+            >
+              <div className="w-2 h-2 rounded-full border border-cyan-400 bg-black flex items-center justify-center">
+                <div className="w-0.5 h-0.5 rounded-full bg-amber-400" />
+              </div>
+            </div>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="font-mono text-emerald-400 text-[10px]">95.8% RTP</span>
           </div>
 
           <div className="text-gold-bright font-black text-xs truncate px-2 text-center flex-1">
@@ -493,11 +532,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             ) : null}
           </div>
 
-          <div className="tracking-wide flex-shrink-0 hidden sm:block text-amber-300">
-            SCENE: {currentSceneId}
+          {/* Right Stereo Chrome Subwoofer */}
+          <div className="flex items-center space-x-1.5 flex-shrink-0">
+            <span className="tracking-wide text-amber-300 text-[10px] hidden sm:inline">
+              SCENE: {currentSceneId}
+            </span>
+            <div
+              className={`w-4 h-4 rounded-full border border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black flex items-center justify-center shadow-[0_0_6px_rgba(245,158,11,0.6)] ${
+                isSpinning ? 'animate-subwoofer' : ''
+              }`}
+              title="Vegas Subwoofer Sound System"
+            >
+              <div className="w-2 h-2 rounded-full border border-pink-400 bg-black flex items-center justify-center">
+                <div className="w-0.5 h-0.5 rounded-full bg-rose-400" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

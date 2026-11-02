@@ -22,16 +22,6 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
     storage.getNumber('sloty_jackpot_mini', 368.64)
   );
 
-  // Chasing light bulb phase
-  const [bulbPhase, setBulbPhase] = useState(0);
-
-  useEffect(() => {
-    const bulbInterval = setInterval(() => {
-      setBulbPhase((prev) => (prev + 1) % 6);
-    }, 200);
-    return () => clearInterval(bulbInterval);
-  }, []);
-
   // Tick progressives in real-time
   useEffect(() => {
     const interval = setInterval(() => {
@@ -105,16 +95,13 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
               {/* Metallic Light Sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer-sweep pointer-events-none" />
 
-              {/* Left Chasing Jewel Bulbs */}
+              {/* Left Chasing Jewel Bulbs with Pure CSS Animation */}
               <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
                 {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className={`w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full transition-all duration-200 ${
-                      (i + bulbPhase) % 3 === 0
-                        ? 'bg-yellow-300 shadow-[0_0_10px_#FCD34D]'
-                        : 'bg-red-900 border border-red-950'
-                    }`}
+                    className="w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FCD34D] animate-pulse"
+                    style={{ animationDuration: '600ms', animationDelay: `${i * 150}ms` }}
                   />
                 ))}
               </div>
@@ -130,16 +117,13 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({ totalBet }) => {
                 </span>
               </div>
 
-              {/* Right Chasing Jewel Bulbs */}
+              {/* Right Chasing Jewel Bulbs with Pure CSS Animation */}
               <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
                 {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className={`w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full transition-all duration-200 ${
-                      (i + bulbPhase + 1) % 3 === 0
-                        ? 'bg-yellow-300 shadow-[0_0_10px_#FCD34D]'
-                        : 'bg-red-900 border border-red-950'
-                    }`}
+                    className="w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FCD34D] animate-pulse"
+                    style={{ animationDuration: '600ms', animationDelay: `${(3 - i) * 150}ms` }}
                   />
                 ))}
               </div>

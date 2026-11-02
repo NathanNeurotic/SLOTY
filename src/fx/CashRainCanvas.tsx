@@ -16,8 +16,7 @@ interface BillParticle {
   vRot: number;
   flipAngle: number;
   vFlip: number;
-  type: 'bill' | 'coin' | 'symbol';
-  symbolGlyph?: string;
+  type: 'bill' | 'coin';
   color: string;
 }
 
@@ -30,7 +29,13 @@ export const CashRainCanvas: React.FC<CashRainCanvasProps> = ({
   const particlesRef = useRef<BillParticle[]>([]);
 
   useEffect(() => {
-    if (!enabled || intensity === 'idle') {
+    // Detect mobile / low-power devices
+    const isMobile =
+      typeof window !== 'undefined' &&
+      (window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches);
+
+    // On mobile, never run continuous light background rain to protect weak GPUs & batteries
+    if (!enabled || intensity === 'idle' || (isMobile && intensity === 'light')) {
       particlesRef.current = [];
       const canvas = canvasRef.current;
       if (canvas) {
@@ -52,41 +57,59 @@ export const CashRainCanvas: React.FC<CashRainCanvasProps> = ({
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Number of particles based on intensity
-    const maxParticles = intensity === 'jackpot' ? 90 : intensity === 'heavy' ? 45 : 20;
-    const glyphs = ['$', '€', '£', '¥', '₿', '777', '24K'];
+    // Lean particle counts tailored for buttery 60 FPS performance
+    const maxParticles = isMobile
+      ? intensity === 'jackpot'
+        ? 22
+        : 12
+      : intensity === 'jackpot'
+      ? 55
+      : intensity === 'heavy'
+      ? 30
+      : 15;
 
     // Seed particles
     particlesRef.current = Array.from({ length: maxParticles }).map(() => ({
       x: Math.random() * canvas.width,
       y: Math.random() * -canvas.height * 0.8,
-      width: 32 + Math.random() * 22,
-      height: 16 + Math.random() * 12,
-      vx: (Math.random() - 0.5) * 1.5,
-      vy: 2.2 + Math.random() * 3.5,
+      width: 28 + Math.random() * 16,
+      height: 14 + Math.random() * 8,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: 2.5 + Math.random() * 3.0,
       rotation: Math.random() * Math.PI * 2,
-      vRot: (Math.random() - 0.5) * 0.05,
+      vRot: (Math.random() - 0.5) * 0.04,
       flipAngle: Math.random() * Math.PI,
-      vFlip: 0.04 + Math.random() * 0.08,
-      type: Math.random() < 0.65 ? 'bill' : Math.random() < 0.85 ? 'coin' : 'symbol',
-      symbolGlyph: glyphs[Math.floor(Math.random() * glyphs.length)],
+      vFlip: 0.04 + Math.random() * 0.06,
+      type: Math.random() < 0.65 ? 'bill' : 'coin',
       color: Math.random() < 0.5 ? '#F59E0B' : '#22C55E',
     }));
 
-    const render = () => {
+    let lastTime = performance.now();
+
+    const render = (currentTime: number) => {
+      // Throttle rendering when tab is hidden or backgrounded
+      if (document.hidden) {
+        animFrameRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      const delta = Math.min(32, currentTime - lastTime);
+      lastTime = currentTime;
+      const speedFactor = delta / 16.6;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particlesRef.current.forEach((p) => {
-        p.x += p.vx + Math.sin(p.flipAngle) * 0.8;
-        p.y += p.vy;
-        p.rotation += p.vRot;
-        p.flipAngle += p.vFlip;
+        p.x += (p.vx + Math.sin(p.flipAngle) * 0.6) * speedFactor;
+        p.y += p.vy * speedFactor;
+        p.rotation += p.vRot * speedFactor;
+        p.flipAngle += p.vFlip * speedFactor;
 
         // Reset if offscreen
-        if (p.y > canvas.height + 40) {
-          p.y = -40;
+        if (p.y > canvas.height + 30) {
+          p.y = -30;
           p.x = Math.random() * canvas.width;
-          p.vy = 2.2 + Math.random() * 3.5;
+          p.vy = 2.5 + Math.random() * 3.0;
         }
 
         ctx.save();
@@ -94,65 +117,32 @@ export const CashRainCanvas: React.FC<CashRainCanvasProps> = ({
         ctx.rotate(p.rotation);
 
         const cosFlip = Math.cos(p.flipAngle);
-        ctx.scale(1, Math.abs(cosFlip) > 0.05 ? cosFlip : 0.05);
+        ctx.scale(1, Math.abs(cosFlip) > 0.08 ? cosFlip : 0.08);
 
         if (p.type === 'bill') {
-          // 3D Tumbling $100 Banknote
-          const isFront = cosFlip > 0;
-          ctx.fillStyle = isFront ? '#15803D' : '#14532D';
-          ctx.strokeStyle = '#86EFAC';
-          ctx.lineWidth = 1;
+          // Hardware-friendly $100 Banknote
+          ctx.fillStyle = cosFlip > 0 ? '#15803D' : '#14532D';
+          ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
 
-          // Bill Rectangle
-          ctx.beginPath();
-          ctx.roundRect(-p.width / 2, -p.height / 2, p.width, p.height, 2);
-          ctx.fill();
-          ctx.stroke();
-
-          // Inner Border & Blue Security Ribbon
+          // Blue ribbon strip
           ctx.fillStyle = '#0284C7';
-          ctx.fillRect(-p.width * 0.1, -p.height / 2, p.width * 0.18, p.height);
+          ctx.fillRect(-p.width * 0.1, -p.height / 2, p.width * 0.2, p.height);
 
-          // $100 text
-          ctx.fillStyle = '#DCFCE7';
-          ctx.font = 'bold 8px monospace';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('$100', 0, 0);
-        } else if (p.type === 'coin') {
-          // Spinning 3D Minted Gold Bullion Coin
-          const radius = p.height * 0.7;
+          // Subtle gold border
+          ctx.strokeStyle = '#86EFAC';
+          ctx.lineWidth = 0.8;
+          ctx.strokeRect(-p.width / 2, -p.height / 2, p.width, p.height);
+        } else {
+          // Hardware-friendly 3D Gold Bullion Coin
+          const radius = p.height * 0.65;
           ctx.fillStyle = '#F59E0B';
-          ctx.strokeStyle = '#FEF08A';
-          ctx.lineWidth = 1.5;
-
           ctx.beginPath();
           ctx.arc(0, 0, radius, 0, Math.PI * 2);
           ctx.fill();
-          ctx.stroke();
 
-          // Inner rim
-          ctx.beginPath();
-          ctx.arc(0, 0, radius * 0.7, 0, Math.PI * 2);
-          ctx.strokeStyle = '#78350F';
-          ctx.lineWidth = 0.8;
+          ctx.strokeStyle = '#FEF08A';
+          ctx.lineWidth = 1;
           ctx.stroke();
-
-          // Dollar glyph
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = 'bold 10px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('$', 0, 0);
-        } else {
-          // Glowing Neon Currency Symbol
-          ctx.fillStyle = p.color;
-          ctx.font = '900 14px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.shadowColor = p.color;
-          ctx.shadowBlur = 8;
-          ctx.fillText(p.symbolGlyph || '$', 0, 0);
         }
 
         ctx.restore();
@@ -165,16 +155,17 @@ export const CashRainCanvas: React.FC<CashRainCanvasProps> = ({
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
     };
   }, [intensity, enabled]);
-
-  if (!enabled || intensity === 'idle') return null;
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-30 select-none"
+      className="fixed inset-0 pointer-events-none z-20"
+      style={{ willChange: 'transform' }}
     />
   );
 };

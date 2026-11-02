@@ -484,7 +484,79 @@
   animation: coinBurstFly 0.9s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
 }
 
+/* --- Scarlet Cash Floating Heart Kisses --- */
+@keyframes heartFloatUp {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3) rotate(-15deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--hx, -15px), -30px) scale(1.2) rotate(8deg);
+  }
+  70% {
+    opacity: 0.9;
+    transform: translate(var(--hx2, 18px), -90px) scale(1) rotate(-10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--hx3, -5px), -150px) scale(0.6) rotate(15deg);
+  }
+}
 
+.animate-float-heart {
+  animation: heartFloatUp 2.2s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
 
+/* --- High-Energy Chasing Neon Border Lights --- */
+@keyframes neonBorderChase {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
 
+.neon-chase-border {
+  background: linear-gradient(90deg, #F59E0B, #EC4899, #00F0FF, #8B5CF6, #F59E0B);
+  background-size: 300% 300%;
+  animation: neonBorderChase 3s linear infinite;
+}
+
+/* --- Chrome Subwoofer Bass Pulse --- */
+@keyframes subwooferPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px rgba(236, 72, 153, 0.8));
+  }
+}
+
+.animate-subwoofer {
+  animation: subwooferPulse 0.55s ease-in-out infinite;
+}
+
+/* --- Sparkling Starburst Rotation --- */
+@keyframes sparkleGlitz {
+  0% {
+    transform: rotate(0deg) scale(0.85);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(0.85);
+    opacity: 0.6;
+  }
+}
+
+.animate-sparkle-glitz {
+  animation: sparkleGlitz 3.5s linear infinite;
+}
 

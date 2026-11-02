@@ -6,44 +6,36 @@ interface SceneBackdropProps {
 }
 
 export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId }) => {
-  // Pre-generate deterministic floating particles for the active scene
+  // Pre-generate 12 lightweight floating particles
   const particles = useMemo(() => {
-    return Array.from({ length: 28 }).map((_, i) => ({
+    return Array.from({ length: 12 }).map((_, i) => ({
       id: i,
-      left: `${(i * 3.7 + 5) % 96}%`,
-      top: `${(i * 6.3 + 10) % 90}%`,
-      size: 2 + (i % 3) * 1.5,
-      delay: `${(i * 0.25) % 3.5}s`,
-      duration: `${3.2 + (i % 4) * 0.7}s`,
+      left: `${(i * 8.3 + 7) % 94}%`,
+      top: `${(i * 7.7 + 12) % 88}%`,
+      size: 2 + (i % 2) * 1.5,
+      delay: `${(i * 0.4) % 3.0}s`,
+      duration: `${3.5 + (i % 3) * 0.8}s`,
       color:
         sceneId === 'VAULT'
-          ? i % 3 === 0
+          ? i % 2 === 0
             ? '#FDE047'
-            : i % 2 === 0
-            ? '#F59E0B'
             : '#10B981'
           : sceneId === 'PENTHOUSE'
-          ? i % 3 === 0
+          ? i % 2 === 0
             ? '#C084FC'
-            : i % 2 === 0
-            ? '#38BDF8'
-            : '#FBBF24'
+            : '#38BDF8'
           : sceneId === 'MINT'
-          ? i % 3 === 0
+          ? i % 2 === 0
             ? '#F87171'
-            : i % 2 === 0
-            ? '#FBBF24'
-            : '#FB923C'
-          : i % 3 === 0
-          ? '#00F0FF'
+            : '#FBBF24'
           : i % 2 === 0
-          ? '#EF4444'
-          : '#FBBF24',
+          ? '#00F0FF'
+          : '#EF4444',
     }));
   }, [sceneId]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none transition-all duration-700">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
       {/* --- SCENE 1: THE FORT KNOX GOLD VAULT --- */}
       {sceneId === 'VAULT' && (
         <>
@@ -60,9 +52,13 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId }) => {
           {/* Biometric Security Green Laser Sweep */}
           <div className="absolute top-1/4 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-40 shadow-[0_0_12px_#34D399] animate-pulse" />
 
-          {/* Heavy Vault Ambient Gold Glow */}
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[350px] bg-amber-500/12 rounded-full blur-[140px]" />
-          <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[300px] bg-emerald-600/10 rounded-full blur-[150px]" />
+          {/* Hardware-friendly Radial Ambient Glow (Zero-Cost Shader) */}
+          <div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[350px] pointer-events-none opacity-40"
+            style={{
+              background: 'radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%)',
+            }}
+          />
         </>
       )}
 
@@ -83,13 +79,13 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId }) => {
             <div className="w-28 h-48 bg-slate-900 border-t-2 border-purple-400/40 hidden sm:block" />
           </div>
 
-          {/* Sweeping Sky Searchlights */}
-          <div className="absolute -bottom-10 left-[18%] w-36 sm:w-56 h-[120vh] origin-bottom transform rotate-[-25deg] animate-spotlight-left opacity-30 bg-gradient-to-t from-purple-500/30 via-pink-500/15 to-transparent blur-2xl" />
-          <div className="absolute -bottom-10 right-[18%] w-36 sm:w-56 h-[120vh] origin-bottom transform rotate-[25deg] animate-spotlight-right opacity-30 bg-gradient-to-t from-amber-400/30 via-yellow-400/15 to-transparent blur-2xl" />
-
-          {/* Penthouse Ambient Neon Purple & Gold Glow */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-purple-700/15 rounded-full blur-[140px]" />
-          <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-amber-500/15 rounded-full blur-[150px]" />
+          {/* Hardware-friendly Radial Ambient Glow */}
+          <div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[380px] pointer-events-none opacity-45"
+            style={{
+              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(245, 158, 11, 0.12) 50%, transparent 70%)',
+            }}
+          />
         </>
       )}
 
@@ -100,15 +96,18 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId }) => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#1a0505] via-[#140807] to-[#0a0302]" />
 
           {/* Industrial Gear Wheels Silhouette in Background */}
-          <div className="absolute top-12 left-10 w-48 h-48 rounded-full border-4 border-dashed border-red-500/15 animate-spin opacity-40" style={{ animationDuration: '45s' }} />
-          <div className="absolute top-20 right-12 w-64 h-64 rounded-full border-4 border-dashed border-amber-500/15 animate-spin opacity-40" style={{ animationDuration: '60s', animationDirection: 'reverse' }} />
+          <div className="absolute top-12 left-10 w-44 h-44 rounded-full border-2 border-dashed border-red-500/15 animate-spin opacity-30 hidden sm:block" style={{ animationDuration: '45s' }} />
 
           {/* Molten Gold River Heat Reflection at Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-red-600/25 via-amber-600/15 to-transparent blur-xl" />
+          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-red-600/25 via-amber-600/15 to-transparent" />
 
-          {/* Fiery Crucible Center Ambience */}
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-red-600/15 rounded-full blur-[140px]" />
-          <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-amber-500/20 rounded-full blur-[150px]" />
+          {/* Hardware-friendly Radial Ambient Glow */}
+          <div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[350px] pointer-events-none opacity-40"
+            style={{
+              background: 'radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(245, 158, 11, 0.15) 50%, transparent 70%)',
+            }}
+          />
         </>
       )}
 
@@ -118,37 +117,39 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId }) => {
           {/* Crimson & Electric Cyan Midnight Heist */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#020b18] via-[#0f0408] to-[#040103]" />
 
-          {/* Sweeping Emergency Alarm Flashers */}
-          <div className="absolute -bottom-10 left-[10%] w-44 h-[120vh] origin-bottom transform rotate-[-20deg] animate-spotlight-left opacity-35 bg-gradient-to-t from-cyan-400/35 via-blue-500/15 to-transparent blur-2xl" />
-          <div className="absolute -bottom-10 right-[10%] w-44 h-[120vh] origin-bottom transform rotate-[20deg] animate-spotlight-right opacity-35 bg-gradient-to-t from-red-600/35 via-rose-500/15 to-transparent blur-2xl" />
-
           {/* Security Laser Crosshairs */}
           <div className="absolute top-1/3 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50 shadow-[0_0_10px_#00F0FF]" />
           <div className="absolute top-2/3 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50 shadow-[0_0_10px_#EF4444]" />
 
-          {/* Ambient Heist Glow */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-cyan-600/12 rounded-full blur-[140px]" />
-          <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-red-600/15 rounded-full blur-[150px]" />
+          {/* Hardware-friendly Radial Ambient Glow */}
+          <div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[350px] pointer-events-none opacity-40"
+            style={{
+              background: 'radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(239, 68, 68, 0.18) 50%, transparent 70%)',
+            }}
+          />
         </>
       )}
 
-      {/* Floating Stardust / Embers / Sparks */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="absolute rounded-full animate-float-sparkle"
-          style={{
-            left: p.left,
-            top: p.top,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            backgroundColor: p.color,
-            boxShadow: `0 0 10px ${p.color}`,
-            animationDelay: p.delay,
-            animationDuration: p.duration,
-          }}
-        />
-      ))}
+      {/* Lightweight Floating Stardust / Embers (Desktop only to guarantee mobile stays 60fps) */}
+      <div className="hidden sm:block">
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="absolute rounded-full animate-float-sparkle"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              backgroundColor: p.color,
+              boxShadow: `0 0 6px ${p.color}`,
+              animationDelay: p.delay,
+              animationDuration: p.duration,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };

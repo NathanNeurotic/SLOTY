@@ -84,7 +84,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   };
 
   return (
-    <header className="w-full bg-gradient-to-b from-casino-900 via-casino-950 to-black border-b-2 border-amber-500/70 px-2 sm:px-5 py-2 backdrop-blur-md sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.85)]">
+    <header className="w-full bg-gradient-to-b from-casino-900 via-casino-950 to-black border-b-2 border-amber-500/70 px-2 sm:px-5 py-2 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.85)]">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 flex-wrap">
         {/* Left: Brand Logo & Title */}
         <SlotyLogo />
