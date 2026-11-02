@@ -33,6 +33,11 @@ import { LevelUpModal } from './components/modals/LevelUpModal';
 import { GambleModal } from './components/modals/GambleModal';
 import { HoldAndSpinModal } from './components/modals/HoldAndSpinModal';
 import { DebugDrawer } from './components/debug/DebugDrawer';
+import { discordManager } from './multiplayer/discordSdk';
+import { casinoRoomManager } from './multiplayer/casinoRoom';
+import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordTypes';
+import { CasinoFloorBank } from './components/multiplayer/CasinoFloorBank';
+import { LeaderboardModal } from './components/modals/LeaderboardModal';
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -85,6 +90,61 @@ export const App: React.FC = () => {
     storage.getNumber('sloty_fever_charge', 35)
   );
   const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
+
+  // --- Discord Activity & Multiplayer State ---
+  const [discordProfile, setDiscordProfile] = useState<DiscordUserProfile | null>(null);
+  const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
+  const [isFloorMode, setIsFloorMode] = useState<boolean>(() => storage.getItem('sloty_floor_mode') === 'true');
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 167075));
+  const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
+  const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
+
+  // Initialize Discord Embedded App SDK & Room Connection
+  useEffect(() => {
+    discordManager.initialize().then((profile) => {
+      setDiscordProfile(profile);
+      casinoRoomManager.initialize(profile, balance);
+    });
+
+    const unsubPeers = casinoRoomManager.subscribePeers((peers) => {
+      setRoomPeers(peers);
+    });
+
+    const unsubTips = casinoRoomManager.subscribeTips((fromName, amount) => {
+      setBalance((b) => b + amount);
+      soundManager.playCoinTally();
+      setTipReceivedToast(`Tipped +${amount} coins by ${fromName}!`);
+      setTimeout(() => setTipReceivedToast(null), 4000);
+    });
+
+    return () => {
+      unsubPeers();
+      unsubTips();
+      casinoRoomManager.destroy();
+    };
+  }, []);
+
+  // Track Peak Bankroll Record
+  useEffect(() => {
+    if (balance > peakBalance) {
+      setPeakBalance(balance);
+      storage.setItem('sloty_peak_balance', balance.toString());
+    }
+  }, [balance, peakBalance]);
+
+  // Stealth $1,000 Safety Net: Secretly recharges player balance so play never stops
+  const triggerStealthBailout = useCallback((forcedAmount = 1000) => {
+    setBalance((prev) => {
+      const next = prev + forcedAmount;
+      storage.setItem('sloty_balance', next.toString());
+      return next;
+    });
+    soundManager.playCoinTally();
+    soundManager.playCelebrationWhistle();
+    setShowStealthBailoutToast(true);
+    setTimeout(() => setShowStealthBailoutToast(false), 5000);
+  }, []);
 
   // --- Active Scenic Environment State (Persisted) ---
   const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() =>
@@ -240,17 +300,15 @@ export const App: React.FC = () => {
   const executeSpin = useCallback(() => {
     const isFreeSpin = freeSpinsRemaining > 0;
 
-    // Balance check
+    // Balance check with Stealth Safety Net: Player never runs out of credits
     if (!isFreeSpin && balance < totalBet) {
-      soundManager.playButtonClick();
-      setAutoSpinsRemaining(0);
-      alert('Out of coins! Open the Lucky Bonus Wheel or use the Debug menu to add credits.');
-      return;
+      const topUp = Math.max(1000, totalBet * 2);
+      triggerStealthBailout(topUp);
     }
 
     // Deduct wager and add XP
     if (!isFreeSpin) {
-      setBalance((b) => b - totalBet);
+      setBalance((b) => Math.max(0, b - totalBet));
       setTotalXp((xp) => xp + totalBet);
       setStats((s) => ({
         ...s,
@@ -271,6 +329,7 @@ export const App: React.FC = () => {
     setIsSpinning(true);
     setWinAmount(0);
     setSpinResult(null); // Keep results hidden while reels are spinning
+    casinoRoomManager.broadcastSpinStart(totalBet);
 
     // Generate grid: check forced scenario first, then random
     const nextGrid = forcedScenario
@@ -298,6 +357,7 @@ export const App: React.FC = () => {
     const { totalPayout, winTier, isFreeSpinsTriggered, isHoldAndSpinTriggered, coinCount } = result;
 
     // Reliably credit win amount to player's balance!
+    const nextBalance = balance + totalPayout;
     if (totalPayout > 0) {
       setBalance((b) => b + totalPayout);
       setWinAmount(totalPayout);
@@ -325,6 +385,22 @@ export const App: React.FC = () => {
           launchCoinFountain('big');
         }
       }
+    }
+
+    // Broadcast live spin outcome to Discord channel & casino floor peers
+    casinoRoomManager.broadcastSpinResult(
+      currentGrid,
+      totalPayout,
+      nextBalance,
+      freeSpinsRemaining > 0,
+      result.winningLines.length
+    );
+
+    // Stealth Safety Net Check: If player dropped below minimum bet (40)
+    if (nextBalance < 40 && freeSpinsRemaining === 0 && feverSpinsLeft === 0) {
+      setTimeout(() => {
+        triggerStealthBailout(1000);
+      }, 1200);
     }
 
     // Fever charge progression: +1% on spin, +3% on regular win, +6% on big win (requires ~25-35 spins)
@@ -547,25 +623,40 @@ export const App: React.FC = () => {
         {/* Hyper Fever Overdrive Super Meter */}
         <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} />
 
-        <SlotMachine
-          currentGrid={currentGrid}
-          isSpinning={isSpinning}
-          spinResult={spinResult}
-          isTurbo={isTurbo}
-          selectedLines={selectedLines}
-          onSelectLines={(lines) => setSelectedLines(lines)}
-          onAllReelsStopped={handleAllReelsStopped}
-          onQuickStop={handleQuickStop}
-          freeSpinsRemaining={freeSpinsRemaining}
-          onSpin={executeSpin}
-          canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
-          isFeverMode={feverSpinsLeft > 0}
-          currentSceneId={currentSceneId}
-          onRewardCoins={(amount) => {
-            setBalance((b) => b + amount);
-            soundManager.playCoinTally();
+        {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
+        <CasinoFloorBank
+          peers={roomPeers}
+          isFloorMode={isFloorMode}
+          onToggleFloorMode={() => {
+            setIsFloorMode((prev) => {
+              const next = !prev;
+              storage.setItem('sloty_floor_mode', next.toString());
+              return next;
+            });
           }}
-        />
+          onOpenLeaderboard={() => setShowLeaderboardModal(true)}
+          onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
+        >
+          <SlotMachine
+            currentGrid={currentGrid}
+            isSpinning={isSpinning}
+            spinResult={spinResult}
+            isTurbo={isTurbo}
+            selectedLines={selectedLines}
+            onSelectLines={(lines) => setSelectedLines(lines)}
+            onAllReelsStopped={handleAllReelsStopped}
+            onQuickStop={handleQuickStop}
+            freeSpinsRemaining={freeSpinsRemaining}
+            onSpin={executeSpin}
+            canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
+            isFeverMode={feverSpinsLeft > 0}
+            currentSceneId={currentSceneId}
+            onRewardCoins={(amount) => {
+              setBalance((b) => b + amount);
+              soundManager.playCoinTally();
+            }}
+          />
+        </CasinoFloorBank>
       </main>
 
       {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}
@@ -725,6 +816,48 @@ export const App: React.FC = () => {
           })
         }
       />
+
+      {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
+      {showLeaderboardModal && (
+        <LeaderboardModal
+          userProfile={discordProfile}
+          currentBalance={balance}
+          peakBalance={peakBalance}
+          peers={roomPeers}
+          onClose={() => setShowLeaderboardModal(false)}
+        />
+      )}
+
+      {/* Stealth $1,000 Safety Net Whisper Notification */}
+      {showStealthBailoutToast && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 animate-bounce max-w-sm w-full px-3 pointer-events-none">
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 border-2 border-yellow-400 shadow-[0_0_30px_rgba(245,158,11,0.8)] flex items-center space-x-3 backdrop-blur-md">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 border border-yellow-200 flex items-center justify-center text-lg flex-shrink-0 shadow-md">
+              🎩
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[10px] font-black uppercase text-yellow-300 tracking-wider">
+                SECRET SAFETY NET ACTIVATED
+              </span>
+              <span className="text-[11px] text-slate-200 font-semibold leading-tight">
+                Psst... A secret benefactor slipped <strong className="text-emerald-400 font-bold">+$1,000</strong> into your coin hopper. Don't tell the pit boss!
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Neighbor Tip Received Toast */}
+      {tipReceivedToast && (
+        <div className="fixed top-28 left-1/2 -translate-x-1/2 z-50 animate-pulse max-w-xs w-full px-3 pointer-events-none">
+          <div className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 border border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.7)] flex items-center space-x-2.5 backdrop-blur-md">
+            <span className="text-lg">🪙</span>
+            <span className="text-xs font-black text-emerald-300 tracking-wide">
+              {tipReceivedToast}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
