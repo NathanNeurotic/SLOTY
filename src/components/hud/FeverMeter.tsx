@@ -79,7 +79,7 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({
         <div className={`flex-1 h-3 sm:h-3.5 bg-black/90 rounded-full border overflow-hidden relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.9)] mx-1.5 ${
           isTimber ? 'border-emerald-600/40' : 'border-amber-500/40'
         }`}>
-          {/* Animated Core */}
+          {/* Animated Fluid Core */}
           <div
             className={`h-full rounded-full transition-all duration-300 relative ${
               isFeverActive
@@ -87,24 +87,14 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({
                   ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 animate-shimmer-sweep w-full shadow-[0_0_15px_#10B981]'
                   : 'bg-gradient-to-r from-yellow-400 via-rose-500 to-amber-400 animate-shimmer-sweep w-full shadow-[0_0_15px_#F59E0B]'
                 : isTimber
-                ? 'bg-gradient-to-r from-emerald-700 via-teal-500 to-emerald-400'
-                : 'bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-500'
+                ? 'bg-gradient-to-r from-emerald-700 via-teal-500 to-emerald-400 shadow-[0_0_8px_#10B981]'
+                : 'bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-500 shadow-[0_0_8px_#F59E0B]'
             }`}
             style={{ width: isFeverActive ? '100%' : `${charge}%` }}
           >
-            {/* Plasma flow gloss */}
+            {/* Fluid surface gloss */}
             <div className="absolute inset-0 bg-white/25 animate-pulse" />
           </div>
-
-          {/* Sparking leading edge */}
-          {!isFeverActive && charge > 0 && (
-            <div
-              className={`absolute top-0 bottom-0 w-2.5 rounded-full filter blur-[0.5px] ${
-                isTimber ? 'bg-emerald-200 shadow-[0_0_10px_#A7F3D0]' : 'bg-white shadow-[0_0_10px_#FFF]'
-              }`}
-              style={{ left: `calc(${charge}% - 5px)` }}
-            />
-          )}
         </div>
 
         {/* Right Percentage / Status Readout */}

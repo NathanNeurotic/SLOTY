@@ -1060,19 +1060,67 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
     }
   };
 
+  const isTimberSymbol = [
+    'BEAR', 'OWL', 'ACORN', 'WOLF', 'FOX', 'RACCOON', 'SQUIRREL',
+    'PINECONE', 'BERRIES', 'MUSHROOM', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J'
+  ].includes(id);
+
+  const getWinningAnimationClass = () => {
+    if (!isWinning && !isScatterHighlight) return '';
+    switch (id) {
+      case 'BEAR':
+        return 'animate-bear-roar';
+      case 'OWL':
+        return 'animate-owl-blink-tilt';
+      case 'WOLF':
+        return 'animate-wolf-howl';
+      case 'FOX':
+        return 'animate-fox-wink';
+      case 'RACCOON':
+        return 'animate-raccoon-bandit';
+      case 'SQUIRREL':
+        return 'animate-squirrel-nibble';
+      case 'MUSHROOM':
+        return 'animate-mushroom-bounce';
+      case 'ACORN':
+        return 'animate-acorn-wobble';
+      case 'PINECONE':
+        return 'animate-pinecone-shake';
+      case 'BERRIES':
+        return 'animate-berries-juice';
+      case 'WOOD_A':
+      case 'WOOD_K':
+      case 'WOOD_Q':
+      case 'WOOD_J':
+        return 'animate-wood-royal';
+      default:
+        return 'animate-win-symbol-juice';
+    }
+  };
+
   return (
     <div
-      className={`relative w-full h-full flex items-center justify-center transition-all ${
-        isWinning ? 'animate-win-symbol-juice' : ''
-      } ${className}`}
+      className={`relative w-full h-full flex items-center justify-center transition-all ${getWinningAnimationClass()} ${className}`}
     >
-      {/* Radiant golden aura burst behind winning symbols */}
+      {/* Radiant aura burst behind winning symbols */}
       {isWinning && (
-        <div className="absolute inset-0 rounded-xl bg-gold-400/40 animate-pulse filter blur-md pointer-events-none z-0" />
+        <div
+          className={`absolute inset-0 rounded-xl pointer-events-none z-0 animate-pulse filter blur-sm ${
+            isTimberSymbol
+              ? 'bg-gradient-to-r from-emerald-400/40 via-amber-400/40 to-emerald-400/40 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
+              : 'bg-gold-400/40 shadow-[0_0_25px_rgba(251,191,36,0.9)]'
+          }`}
+        />
       )}
-      {/* Cyan aura behind scatter */}
+      {/* Cyan/Emerald aura behind scatter */}
       {isScatterHighlight && (
-        <div className="absolute inset-0 rounded-xl bg-cyan-400/40 animate-pulse filter blur-md pointer-events-none z-0" />
+        <div
+          className={`absolute inset-0 rounded-xl pointer-events-none z-0 animate-pulse filter blur-sm ${
+            id === 'OWL'
+              ? 'bg-emerald-400/45 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
+              : 'bg-cyan-400/40 shadow-[0_0_25px_rgba(0,240,255,0.8)]'
+          }`}
+        />
       )}
       <div className="relative z-10 w-full h-full flex items-center justify-center p-1">
         {getSymbolSvg()}

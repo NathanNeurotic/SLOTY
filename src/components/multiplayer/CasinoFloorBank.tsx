@@ -25,8 +25,8 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
 
   return (
     <div className="relative w-full flex flex-col items-center">
-      {/* Floor Mode Control Header */}
-      <div className="flex items-center justify-between w-full max-w-4xl px-2 sm:px-4 mb-1">
+      {/* Floor Mode Control Header (Desktop / Tablet only) */}
+      <div className="hidden sm:flex items-center justify-between w-full max-w-4xl px-2 sm:px-4 mb-1">
         {/* Floor Mode Switch Button */}
         <button
           onClick={onToggleFloorMode}
@@ -82,19 +82,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         )}
       </div>
 
-      {/* Mobile Neighbor Carousel Bar (Shown on small screens when Floor Mode is Active) */}
-      {isFloorMode && peers.length > 0 && (
-        <div className="md:hidden w-full flex items-center justify-center space-x-3 mt-2 px-2 overflow-x-auto pb-2">
-          {peers.slice(0, 2).map((peer, idx) => (
-            <NeighborTerminal
-              key={peer.id}
-              peer={peer}
-              seatNumber={idx === 0 ? 1 : 3}
-              onTip={onTipNeighbor}
-            />
-          ))}
-        </div>
-      )}
+
     </div>
   );
 };

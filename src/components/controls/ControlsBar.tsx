@@ -105,9 +105,201 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const isFreeSpins = freeSpinsRemaining > 0;
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 py-1.5 select-none flex flex-col space-y-1.5 flex-shrink-0">
+    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 py-1 sm:py-1.5 select-none flex flex-col space-y-1 sm:space-y-1.5 flex-shrink-0">
+      {/* ========================================================================= */}
+      {/* --- MOBILE COMPACT CONTROLS DECK (< 640px) - STRICT 82px HEIGHT --- */}
+      {/* ========================================================================= */}
+      <div className="sm:hidden flex flex-col space-y-1 w-full">
+        {/* Mobile Row 1: Quick Steppers, Win Readout, Gamble & Auto */}
+        <div className={`flex items-center justify-between px-1.5 py-1 rounded-xl border shadow-md h-9 ${
+          isTimber
+            ? 'bg-[#121c15]/95 border-emerald-600/40 text-emerald-200'
+            : 'bg-casino-900/95 border-white/10 text-slate-200'
+        }`}>
+          {/* Lines Stepper */}
+          <div className="flex items-center space-x-0.5">
+            <span className="text-[7.5px] font-bold uppercase text-slate-400">L:</span>
+            <button
+              onClick={() => handleLinesStep('down')}
+              disabled={isSpinning || isFreeSpins || selectedLines <= 1}
+              className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
+            >
+              <Minus className="w-2.5 h-2.5 text-cyan-300" />
+            </button>
+            <span className={`text-[11px] font-black font-mono min-w-[16px] text-center ${
+              isTimber ? 'text-emerald-300' : 'text-neon-cyan'
+            }`}>
+              {selectedLines}
+            </span>
+            <button
+              onClick={() => handleLinesStep('up')}
+              disabled={isSpinning || isFreeSpins || selectedLines >= maxLines}
+              className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
+            >
+              <Plus className="w-2.5 h-2.5 text-cyan-300" />
+            </button>
+          </div>
+
+          {/* Bet/Line Stepper */}
+          <div className="flex items-center space-x-0.5 pl-1 border-l border-white/10">
+            <span className="text-[7.5px] font-bold uppercase text-slate-400">B:</span>
+            <button
+              onClick={() => handleBetStep('down')}
+              disabled={isSpinning || isFreeSpins || betPerLine <= 1}
+              className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
+            >
+              <Minus className="w-2.5 h-2.5 text-amber-300" />
+            </button>
+            <span className="text-[11px] font-black font-mono text-white min-w-[20px] text-center">
+              {betPerLine}
+            </span>
+            <button
+              onClick={() => handleBetStep('up')}
+              disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxBet}
+              className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
+            >
+              <Plus className="w-2.5 h-2.5 text-amber-300" />
+            </button>
+          </div>
+
+          {/* Total Bet */}
+          <div className="flex flex-col items-center px-1 border-l border-white/10">
+            <span className="text-[7px] uppercase font-bold text-slate-400 leading-none">BET</span>
+            <span className={`text-[11px] font-black font-mono leading-none mt-0.5 ${
+              isTimber ? 'text-emerald-300' : 'text-amber-300'
+            }`}>
+              {totalBet}
+            </span>
+          </div>
+
+          {/* Win Display */}
+          <div className="flex items-center pl-1 border-l border-white/10">
+            <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
+          </div>
+
+          {/* Gamble 2X (shown when win > 0) */}
+          {onOpenGamble && winAmount > 0 && !isSpinning && !isFreeSpins && (
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onOpenGamble();
+              }}
+              className="px-2 h-7 rounded-lg vlt-gamble-btn text-[9px] font-black uppercase text-white animate-pulse"
+            >
+              2X
+            </button>
+          )}
+
+          {/* Auto Spin */}
+          <div className="relative">
+            {isAutoSpinning ? (
+              <button
+                onClick={onAutoSpinStop}
+                className="px-2 h-7 rounded-lg bg-rose-600/40 border border-rose-500 text-rose-300 font-bold text-[9px] uppercase animate-pulse"
+              >
+                STOP ({autoSpinsRemaining})
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  setShowAutoMenu(!showAutoMenu);
+                }}
+                disabled={isSpinning || isFreeSpins}
+                className="px-2 h-7 rounded-lg vlt-btn-stepper text-slate-300 font-bold text-[9px] uppercase tracking-wider disabled:opacity-40"
+              >
+                AUTO
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Row 2: Turbo, Full Spin Button, Max Bet */}
+        <div className="flex items-center space-x-1.5 w-full h-11">
+          {/* Turbo Toggle */}
+          <button
+            onClick={() => {
+              soundManager.playButtonClick();
+              onTurboToggle();
+            }}
+            disabled={isSpinning}
+            title={isTurbo ? 'Turbo Fast' : 'Normal Speed'}
+            className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 transition-all ${
+              isTurbo
+                ? 'bg-gradient-to-b from-amber-500/30 to-amber-950/60 border-amber-400 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.6)]'
+                : 'vlt-btn-stepper text-slate-400'
+            }`}
+          >
+            <Zap className={`w-4 h-4 ${isTurbo ? 'fill-amber-400 text-amber-300' : ''}`} />
+          </button>
+
+          {/* Centered Mobile Spin / Stop Button */}
+          <button
+            onClick={handleTriggerSpin}
+            disabled={!isSpinning && !isFreeSpins && balance < totalBet}
+            className={`flex-1 h-10 flex items-center justify-center rounded-xl font-black tracking-wider text-base uppercase text-white select-none transition-all touch-manipulation shadow-lg ${
+              isSpinning
+                ? isTimber
+                  ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_15px_rgba(244,63,94,0.8)] animate-pulse'
+                  : 'vlt-stop-btn animate-pulse'
+                : !isFreeSpins && balance < totalBet
+                ? 'bg-slate-800 opacity-40 text-slate-500 border border-white/5'
+                : isFreeSpins
+                ? isTimber
+                  ? 'bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 border-2 border-yellow-300 shadow-[0_0_20px_rgba(16,185,129,0.9)] animate-pulse'
+                  : 'vlt-spin-btn animate-pulse'
+                : isTimber
+                ? 'bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-700 border-2 border-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.8)] active:scale-95'
+                : 'vlt-spin-btn'
+            }`}
+          >
+            {isSpinning ? (
+              <span className="flex items-center space-x-1.5">
+                <StopCircle className="w-5 h-5 fill-white text-rose-700" />
+                <span>STOP</span>
+              </span>
+            ) : isAutoSpinning ? (
+              <span className="flex items-center space-x-1.5">
+                <StopCircle className="w-5 h-5" />
+                <span>STOP ({autoSpinsRemaining})</span>
+              </span>
+            ) : isFreeSpins ? (
+              <span className="flex items-center space-x-1.5">
+                <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
+                <span>FREE SPIN</span>
+              </span>
+            ) : (
+              <span className="flex items-center space-x-1.5">
+                {isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
+                <span>{isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
+                {isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
+              </span>
+            )}
+          </button>
+
+          {/* Max Bet Button */}
+          <button
+            onClick={() => {
+              soundManager.playChipClick();
+              onMaxBet();
+            }}
+            disabled={isSpinning || isFreeSpins || totalBet >= maxBet}
+            className={`px-2 h-10 rounded-xl font-black text-[9px] uppercase tracking-wider disabled:opacity-40 flex items-center justify-center flex-shrink-0 shadow-md ${
+              isTimber
+                ? 'bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-amber-950 border border-yellow-200'
+                : 'vlt-maxbet-btn text-amber-950'
+            }`}
+          >
+            MAX
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* --- DESKTOP CONTROLS DECK (>= 640px) --- */}
+      {/* ========================================================================= */}
       {/* TIER 1: Bet Adjusters & Win Displays - Rigid Geometry, Zero Reflow */}
-      <div className="bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-1.5 sm:p-2 shadow-xl flex flex-col sm:flex-row items-center sm:justify-between gap-1.5 sm:gap-2 flex-shrink-0">
+      <div className="hidden sm:flex bg-gradient-to-r from-casino-900 via-casino-850 to-casino-900 border border-white/10 rounded-2xl p-1.5 sm:p-2 shadow-xl items-center justify-between gap-2 flex-shrink-0">
         {/* Left: Turbo, Lines, Bet/Line, Total, Max Bet */}
         <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 flex-shrink-0 h-9 sm:h-10">
           {/* Turbo Toggle */}
@@ -308,8 +500,8 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
         </div>
       </div>
 
-      {/* TIER 2: Dedicated Centered Action Line for SPIN / STOP - STRICT FIXED HEIGHT & POSITION */}
-      <div className="w-full h-14 sm:h-16 flex items-center justify-center flex-shrink-0">
+      {/* TIER 2: Dedicated Centered Action Line for SPIN / STOP - (Desktop only >= 640px) */}
+      <div className="hidden sm:flex w-full h-14 sm:h-16 items-center justify-center flex-shrink-0">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}

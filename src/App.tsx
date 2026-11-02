@@ -637,7 +637,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage with responsive padding */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-1 sm:py-2 w-full pb-32 sm:pb-36">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-0.5 sm:py-2 w-full pb-24 sm:pb-36">
         {/* 4-Tier Deluxe Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} activeGameId={activeGameId} />
 

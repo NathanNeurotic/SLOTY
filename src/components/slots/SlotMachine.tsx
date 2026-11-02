@@ -160,27 +160,64 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     };
   }, [isSpinning, isTurbo, currentGrid, isFeverMode]);
 
+  // Audio reaction for active winning paylines with authentic critter voices
+  const playWinLineSound = useCallback((symId: string) => {
+    if (isTimber) {
+      switch (symId) {
+        case 'BEAR':
+          soundManager.playGrizzlyRoar();
+          break;
+        case 'WOLF':
+          soundManager.playWolfHowl();
+          break;
+        case 'FOX':
+          soundManager.playFoxYip();
+          break;
+        case 'OWL':
+          soundManager.playOwlHoot(2);
+          break;
+        case 'ACORN':
+          soundManager.playAcornChime();
+          break;
+        case 'SQUIRREL':
+          soundManager.playSquirrelChatter();
+          break;
+        default:
+          soundManager.playForestWin(1);
+          break;
+      }
+    } else {
+      soundManager.playLaserZap();
+    }
+  }, [isTimber]);
+
   // Cycle through winning lines when idle after a win
   useEffect(() => {
     if (!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0) {
       if (activeWinningLineIdx === null) {
-        setActiveWinningLineIdx(spinResult.winningLines[0].lineIndex);
-        soundManager.playLaserZap();
+        const firstLine = spinResult.winningLines[0];
+        setActiveWinningLineIdx(firstLine.lineIndex);
+        playWinLineSound(firstLine.symbolId);
       }
       const interval = setInterval(() => {
         setActiveWinningLineIdx((prev) => {
-          if (prev === null) return spinResult.winningLines[0]?.lineIndex ?? 0;
+          if (prev === null) {
+            const first = spinResult.winningLines[0];
+            playWinLineSound(first.symbolId);
+            return first.lineIndex;
+          }
           const currentIdx = spinResult.winningLines.findIndex((w) => w.lineIndex === prev);
           const nextIdx = (currentIdx + 1) % spinResult.winningLines.length;
-          soundManager.playLaserZap();
-          return spinResult.winningLines[nextIdx]?.lineIndex ?? 0;
+          const nextLine = spinResult.winningLines[nextIdx];
+          playWinLineSound(nextLine.symbolId);
+          return nextLine.lineIndex;
         });
       }, 1900);
       return () => clearInterval(interval);
     } else {
       setActiveWinningLineIdx(null);
     }
-  }, [isAnyReelSpinning, spinResult, activeWinningLineIdx]);
+  }, [isAnyReelSpinning, spinResult, activeWinningLineIdx, playWinLineSound]);
 
   // Manual navigation of winning lines
   const handleNextWinningLine = (e: React.MouseEvent) => {
@@ -188,7 +225,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     if (!spinResult || spinResult.winningLines.length === 0) return;
     const currentIdx = spinResult.winningLines.findIndex((w) => w.lineIndex === activeWinningLineIdx);
     const nextIdx = (currentIdx + 1) % spinResult.winningLines.length;
-    setActiveWinningLineIdx(spinResult.winningLines[nextIdx].lineIndex);
+    const nextLine = spinResult.winningLines[nextIdx];
+    setActiveWinningLineIdx(nextLine.lineIndex);
+    playWinLineSound(nextLine.symbolId);
   };
 
   const handlePrevWinningLine = (e: React.MouseEvent) => {
@@ -196,7 +235,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     if (!spinResult || spinResult.winningLines.length === 0) return;
     const currentIdx = spinResult.winningLines.findIndex((w) => w.lineIndex === activeWinningLineIdx);
     const prevIdx = (currentIdx - 1 + spinResult.winningLines.length) % spinResult.winningLines.length;
-    setActiveWinningLineIdx(spinResult.winningLines[prevIdx].lineIndex);
+    const prevLine = spinResult.winningLines[prevIdx];
+    setActiveWinningLineIdx(prevLine.lineIndex);
+    playWinLineSound(prevLine.symbolId);
   };
 
   // Winning line details for Deluxe Casino style banner

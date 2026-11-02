@@ -11,8 +11,13 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
   const isTimber = activeGameId === 'timber-critters';
 
   const handleClickLogo = () => {
-    soundManager.playCashRegister();
-    soundManager.speakAnnouncement(isTimber ? 'TIMBERLAND CRITTERS' : 'CASH VAULT TYCOON');
+    if (isTimber) {
+      soundManager.playOwlHoot(2);
+      soundManager.speakAnnouncement('TIMBERLAND CRITTERS');
+    } else {
+      soundManager.playCashRegister();
+      soundManager.speakAnnouncement('CASH VAULT TYCOON');
+    }
   };
 
   return (

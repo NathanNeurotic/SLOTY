@@ -72,7 +72,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   const handleJackpotClick = () => {
     soundManager.unlockAudio();
     if (isTimber) {
-      soundManager.playTimberStop(0);
+      soundManager.playGrizzlyRoar();
     } else {
       soundManager.playGoldBarClank();
     }

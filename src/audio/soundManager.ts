@@ -195,6 +195,10 @@ class SoundManager {
 
   private playMusicStep(step: number) {
     if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playWoodlandMusicStep(step);
+      return;
+    }
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
     const vol = this.musicVolume;
@@ -365,6 +369,148 @@ class SoundManager {
       bellGain.connect(this.ctx.destination);
       bellOsc.start(now);
       bellOsc.stop(now + 0.42);
+    }
+  }
+
+  // =========================================================================
+  // --- PROCEDURAL ACOUSTIC WOODLAND BLUEGRASS & FOLK SYNTHESIZER ---
+  // =========================================================================
+
+  private playWoodlandMusicStep(step: number) {
+    if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
+    const now = this.ctx.currentTime;
+    const isOverdrive = this.isOverdriveMusic;
+    const vol = this.musicVolume;
+
+    // 1. Organic Log Stomp / Acoustic Bass Drum (Steps 0, 8, 16, 24)
+    if (step % 8 === 0 || (isOverdrive && step % 4 === 0)) {
+      const kickOsc = this.ctx.createOscillator();
+      const kickGain = this.ctx.createGain();
+      kickGain.gain.setValueAtTime(0.48 * vol, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.15 : 0.20));
+
+      kickOsc.type = 'triangle';
+      kickOsc.frequency.setValueAtTime(90, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(32, now + 0.14);
+
+      kickOsc.connect(kickGain);
+      kickGain.connect(this.ctx.destination);
+      kickOsc.start(now);
+      kickOsc.stop(now + 0.22);
+    }
+
+    // 2. Resonant Carved Cedar Woodblock Knock (Steps 4, 12, 20, 28)
+    if (step % 8 === 4) {
+      const blockOsc = this.ctx.createOscillator();
+      const blockGain = this.ctx.createGain();
+      blockGain.gain.setValueAtTime(0.55 * vol, now);
+      blockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+      blockOsc.type = 'triangle';
+      blockOsc.frequency.setValueAtTime(680, now);
+      blockOsc.frequency.exponentialRampToValueAtTime(340, now + 0.07);
+
+      blockOsc.connect(blockGain);
+      blockGain.connect(this.ctx.destination);
+      blockOsc.start(now);
+      blockOsc.stop(now + 0.09);
+    }
+
+    // 3. Dried Seed Pod Shaker / Rustling Leaves (16th-note swing)
+    if (step % 2 === 1) {
+      const rustleOsc = this.ctx.createOscillator();
+      const rustleGain = this.ctx.createGain();
+      const isAccent = step % 4 === 1;
+      rustleGain.gain.setValueAtTime((isAccent ? 0.18 : 0.10) * vol, now);
+      rustleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      rustleOsc.type = 'square';
+      rustleOsc.frequency.setValueAtTime(7400 + (step % 3) * 400, now);
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(5500, now);
+
+      rustleOsc.connect(filter);
+      filter.connect(rustleGain);
+      rustleGain.connect(this.ctx.destination);
+      rustleOsc.start(now);
+      rustleOsc.stop(now + 0.06);
+    }
+
+    // 4. Plucked Acoustic Upright Double Bass (G-C-D-Em Country Bop)
+    const woodlandBass = [
+      98.0, 0, 98.0, 0, 146.83, 0, 146.83, 0,    // G2 -> D3
+      65.41, 0, 65.41, 0, 98.0, 0, 98.0, 0,       // C2 -> G2
+      73.42, 0, 73.42, 0, 110.0, 0, 110.0, 0,     // D2 -> A2
+      82.41, 0, 82.41, 0, 73.42, 0, 98.0, 0       // E2 -> D2 -> G2
+    ];
+
+    const bassPitch = woodlandBass[step];
+    if (bassPitch > 0) {
+      const bassOsc = this.ctx.createOscillator();
+      const bassGain = this.ctx.createGain();
+      bassGain.gain.setValueAtTime(0.42 * vol, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+
+      bassOsc.type = 'triangle';
+      bassOsc.frequency.setValueAtTime(bassPitch, now);
+
+      const bassFilter = this.ctx.createBiquadFilter();
+      bassFilter.type = 'lowpass';
+      bassFilter.frequency.setValueAtTime(450, now);
+      bassFilter.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+
+      bassOsc.connect(bassFilter);
+      bassFilter.connect(bassGain);
+      bassGain.connect(this.ctx.destination);
+      bassOsc.start(now);
+      bassOsc.stop(now + 0.25);
+    }
+
+    // 5. Plucked Bluegrass Banjo / Folk Dulcimer Arpeggios (16th-note Rolls)
+    const banjoNotes = [
+      392.0, 493.88, 587.33, 783.99, 587.33, 493.88, 392.0, 440.0,
+      523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 493.88, 392.0,
+      587.33, 739.99, 880.0, 739.99, 587.33, 493.88, 440.0, 392.0,
+      659.25, 783.99, 987.77, 783.99, 587.33, 493.88, 392.0, 440.0
+    ];
+
+    const banjoPitch = banjoNotes[step];
+    if (banjoPitch) {
+      const banjoOsc = this.ctx.createOscillator();
+      const banjoGain = this.ctx.createGain();
+      banjoGain.gain.setValueAtTime(0.24 * vol, now);
+      banjoGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+      banjoOsc.type = 'triangle';
+      banjoOsc.frequency.setValueAtTime(banjoPitch, now);
+
+      banjoOsc.connect(banjoGain);
+      banjoGain.connect(this.ctx.destination);
+      banjoOsc.start(now);
+      banjoOsc.stop(now + 0.18);
+    }
+
+    // 6. Whimsical Acoustic Forest Wooden Flute Melody (On bar downbeats)
+    if (step % 8 === 0) {
+      const fluteNotes = [783.99, 987.77, 880.0, 1174.66]; // G5, B5, A5, D6
+      const flutePitch = fluteNotes[(step / 8) % fluteNotes.length];
+
+      const fluteOsc = this.ctx.createOscillator();
+      const fluteGain = this.ctx.createGain();
+      fluteGain.gain.setValueAtTime(0.22 * vol, now);
+      fluteGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+      fluteOsc.type = 'sine';
+      fluteOsc.frequency.setValueAtTime(flutePitch, now);
+      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch * 1.02, now + 0.25);
+      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch, now + 0.5);
+
+      fluteOsc.connect(fluteGain);
+      fluteGain.connect(this.ctx.destination);
+      fluteOsc.start(now);
+      fluteOsc.stop(now + 0.58);
     }
   }
 
@@ -563,10 +709,15 @@ class SoundManager {
   private isSpinRolling: boolean = false;
   private isAnticipationRolling: boolean = false;
 
-  // Spin start: punchy casino excitation chord + pneumatic hiss
+  // Spin start: punchy casino excitation chord + pneumatic hiss, or crispy woodland twig snap
   public playSpinStart() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
+
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playTwigSnap();
+      return;
+    }
 
     const now = this.ctx.currentTime;
 
@@ -599,6 +750,63 @@ class SoundManager {
     clack.stop(now + 0.09);
   }
 
+  // Crisp woodland twig snap + branch whip for Timberland spin start
+  public playTwigSnap() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Crisp twig crack (high-passed noise snap)
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.05);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / 80);
+    }
+    const snapSrc = this.ctx.createBufferSource();
+    snapSrc.buffer = buffer;
+
+    const snapFilter = this.ctx.createBiquadFilter();
+    snapFilter.type = 'highpass';
+    snapFilter.frequency.setValueAtTime(2400, now);
+
+    const snapGain = this.ctx.createGain();
+    snapGain.gain.setValueAtTime(0.55 * this.sfxVolume, now);
+    snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+
+    snapSrc.connect(snapFilter);
+    snapFilter.connect(snapGain);
+    snapGain.connect(this.ctx.destination);
+    snapSrc.start(now);
+
+    // 2. Hollow birch branch whip
+    const whipOsc = this.ctx.createOscillator();
+    const whipGain = this.ctx.createGain();
+    whipGain.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+    whipGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    whipOsc.type = 'triangle';
+    whipOsc.frequency.setValueAtTime(580, now);
+    whipOsc.frequency.exponentialRampToValueAtTime(140, now + 0.11);
+    whipOsc.connect(whipGain);
+    whipGain.connect(this.ctx.destination);
+    whipOsc.start(now);
+    whipOsc.stop(now + 0.13);
+
+    // 3. Playful forest bird chirp
+    const chirpTime = now + 0.06;
+    const chirpOsc = this.ctx.createOscillator();
+    const chirpGain = this.ctx.createGain();
+    chirpGain.gain.setValueAtTime(0.25 * this.sfxVolume, chirpTime);
+    chirpGain.gain.exponentialRampToValueAtTime(0.001, chirpTime + 0.09);
+    chirpOsc.type = 'sine';
+    chirpOsc.frequency.setValueAtTime(1800, chirpTime);
+    chirpOsc.frequency.exponentialRampToValueAtTime(2600, chirpTime + 0.08);
+    chirpOsc.connect(chirpGain);
+    chirpGain.connect(this.ctx.destination);
+    chirpOsc.start(chirpTime);
+    chirpOsc.stop(chirpTime + 0.09);
+  }
+
   // Continuous stimulating Deluxe Casino spin arpeggio & mechanical ratchet ticker
   public startSpinRollLoop(isFever: boolean = false) {
     this.initContext();
@@ -609,12 +817,20 @@ class SoundManager {
     this.isAnticipationRolling = false;
     this.spinRollStep = 0;
 
+    const isTimber = this.activeGameTheme === 'timber-critters';
+
     // Classic VLT ascending arpeggio notes (bright pentatonic chime sequence)
-    const rollNotes = isFever
+    const vaultRollNotes = isFever
       ? [587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51, 1567.98]
       : [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51];
 
-    const stepIntervalMs = isFever ? 50 : 62; // ~16-20 ticks/chimes per second
+    // Timberland pentatonic G-major marimba / banjo notes
+    const timberRollNotes = isFever
+      ? [440.0, 493.88, 587.33, 659.25, 783.99, 880.0, 987.77, 1174.66]
+      : [392.0, 440.0, 493.88, 587.33, 659.25, 783.99, 880.0, 987.77];
+
+    const rollNotes = isTimber ? timberRollNotes : vaultRollNotes;
+    const stepIntervalMs = isFever ? 48 : 58;
 
     const playRollTick = () => {
       if (!this.isSpinRolling || !this.ctx || this.isMuted) return;
@@ -622,8 +838,32 @@ class SoundManager {
       const now = this.ctx.currentTime;
       const step = this.spinRollStep;
 
-      // 1. Mechanical Stepper Ratchet Click (Rapid physical wheel ticking - reusing preallocated buffer)
-      if (this.ratchetBuffer) {
+      // 1. Ticking percussion: Woodpecker/woodblock for Timberland, ratchet for Vault
+      if (isTimber) {
+        // Hollow Woodpecker Woodblock Knock
+        const woodTick = this.ctx.createOscillator();
+        const woodGain = this.ctx.createGain();
+        woodGain.gain.setValueAtTime(0.40 * this.sfxVolume, now);
+        woodGain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+
+        woodTick.type = 'triangle';
+        const tickPitch = (step % 2 === 0 ? 520 : 740) + (step % 4) * 40;
+        woodTick.frequency.setValueAtTime(tickPitch, now);
+        woodTick.frequency.exponentialRampToValueAtTime(tickPitch * 0.6, now + 0.02);
+
+        woodTick.connect(woodGain);
+        woodGain.connect(this.ctx.destination);
+        woodTick.start(now);
+        woodTick.stop(now + 0.025);
+
+        setTimeout(() => {
+          try {
+            woodTick.disconnect();
+            woodGain.disconnect();
+          } catch {}
+        }, 30);
+      } else if (this.ratchetBuffer) {
+        // Mechanical Stepper Ratchet Click
         const clickSource = this.ctx.createBufferSource();
         clickSource.buffer = this.ratchetBuffer;
 
@@ -650,19 +890,21 @@ class SoundManager {
         }, 25);
       }
 
-      // 2. High-Energy Ascending Casino Marimba / Bell Chime Pulse
+      // 2. Melodic Pitch Pulse: Marimba / Banjo for Timberland, Casino Synth for Vault
       const pitch = this.isAnticipationRolling
-        ? 880 + (step % 8) * 140 // High suspense climbing ladder
+        ? isTimber
+          ? 783.99 + (step % 8) * 110 // Suspenseful climbing owl whistle
+          : 880 + (step % 8) * 140   // High suspense climbing ladder
         : rollNotes[step % rollNotes.length];
 
       const toneOsc = this.ctx.createOscillator();
       const toneGain = this.ctx.createGain();
-      const toneVol = this.isAnticipationRolling ? 0.35 : 0.24;
+      const toneVol = this.isAnticipationRolling ? 0.35 : isTimber ? 0.28 : 0.24;
 
       toneGain.gain.setValueAtTime(toneVol * this.sfxVolume, now);
       toneGain.gain.exponentialRampToValueAtTime(0.0001, now + (this.isAnticipationRolling ? 0.12 : 0.08));
 
-      toneOsc.type = this.isAnticipationRolling ? 'sawtooth' : 'triangle';
+      toneOsc.type = isTimber ? 'triangle' : this.isAnticipationRolling ? 'sawtooth' : 'triangle';
       toneOsc.frequency.setValueAtTime(pitch, now);
 
       toneOsc.connect(toneGain);
@@ -805,6 +1047,199 @@ class SoundManager {
       osc.start(startTime);
       osc.stop(startTime + 0.3);
     });
+  }
+
+  // Deep, warm, playful Grizzly Bear roar for Wild wins
+  public playGrizzlyRoar() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Low guttural bear growl rumble (frequency-modulated sine/sawtooth)
+    const roarOsc = this.ctx.createOscillator();
+    const roarGain = this.ctx.createGain();
+    roarGain.gain.setValueAtTime(0.65 * this.sfxVolume, now);
+    roarGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+    roarOsc.type = 'sawtooth';
+    roarOsc.frequency.setValueAtTime(95, now);
+    roarOsc.frequency.linearRampToValueAtTime(135, now + 0.15);
+    roarOsc.frequency.exponentialRampToValueAtTime(45, now + 0.5);
+
+    const roarFilter = this.ctx.createBiquadFilter();
+    roarFilter.type = 'lowpass';
+    roarFilter.frequency.setValueAtTime(260, now);
+    roarFilter.frequency.linearRampToValueAtTime(420, now + 0.15);
+    roarFilter.frequency.exponentialRampToValueAtTime(120, now + 0.5);
+
+    roarOsc.connect(roarFilter);
+    roarFilter.connect(roarGain);
+    roarGain.connect(this.ctx.destination);
+    roarOsc.start(now);
+    roarOsc.stop(now + 0.55);
+
+    // 2. Heavy bear paw swipe swoosh
+    const swipeOsc = this.ctx.createOscillator();
+    const swipeGain = this.ctx.createGain();
+    swipeGain.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+    swipeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+    swipeOsc.type = 'triangle';
+    swipeOsc.frequency.setValueAtTime(180, now);
+    swipeOsc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+    swipeOsc.connect(swipeGain);
+    swipeGain.connect(this.ctx.destination);
+    swipeOsc.start(now);
+    swipeOsc.stop(now + 0.22);
+  }
+
+  // Soaring melodic Timber Wolf howl ("A-WOOOOO!")
+  public playWolfHowl() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    const howlOsc = this.ctx.createOscillator();
+    const howlGain = this.ctx.createGain();
+    howlGain.gain.setValueAtTime(0.45 * this.sfxVolume, now);
+    howlGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+    howlOsc.type = 'sine';
+    // Gentle upward howl scoop: D4 (293Hz) -> A4 (440Hz) -> D5 (587Hz)
+    howlOsc.frequency.setValueAtTime(293.66, now);
+    howlOsc.frequency.exponentialRampToValueAtTime(440.0, now + 0.25);
+    howlOsc.frequency.linearRampToValueAtTime(587.33, now + 0.55);
+    howlOsc.frequency.exponentialRampToValueAtTime(520.0, now + 0.8);
+
+    howlOsc.connect(howlGain);
+    howlGain.connect(this.ctx.destination);
+    howlOsc.start(now);
+    howlOsc.stop(now + 0.85);
+  }
+
+  // Playful, cheeky Clever Fox double-yip ("Yip-Yip!")
+  public playFoxYip() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    [0, 0.12].forEach((offset, idx) => {
+      if (!this.ctx) return;
+      const t = now + offset;
+      const yipOsc = this.ctx.createOscillator();
+      const yipGain = this.ctx.createGain();
+      yipGain.gain.setValueAtTime(0.35 * this.sfxVolume, t);
+      yipGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+
+      yipOsc.type = 'triangle';
+      const startPitch = idx === 0 ? 820 : 1050;
+      yipOsc.frequency.setValueAtTime(startPitch, t);
+      yipOsc.frequency.exponentialRampToValueAtTime(startPitch * 1.5, t + 0.08);
+
+      yipOsc.connect(yipGain);
+      yipGain.connect(this.ctx.destination);
+      yipOsc.start(t);
+      yipOsc.stop(t + 0.09);
+    });
+  }
+
+  // Bouncing Golden Acorn chime with sparkling magic stars
+  public playAcornChime() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Woody hollow acorn bounce
+    const tapOsc = this.ctx.createOscillator();
+    const tapGain = this.ctx.createGain();
+    tapGain.gain.setValueAtTime(0.6 * this.sfxVolume, now);
+    tapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+    tapOsc.type = 'triangle';
+    tapOsc.frequency.setValueAtTime(480, now);
+    tapOsc.frequency.exponentialRampToValueAtTime(240, now + 0.06);
+    tapOsc.connect(tapGain);
+    tapGain.connect(this.ctx.destination);
+    tapOsc.start(now);
+    tapOsc.stop(now + 0.07);
+
+    // 2. Sparkling crystalline twinkle chime
+    [1046.5, 1318.51, 1567.98].forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const t = now + 0.04 + idx * 0.045;
+      const chimeOsc = this.ctx.createOscillator();
+      const chimeGain = this.ctx.createGain();
+      chimeGain.gain.setValueAtTime(0.3 * this.sfxVolume, t);
+      chimeGain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      chimeOsc.type = 'sine';
+      chimeOsc.frequency.setValueAtTime(freq, t);
+      chimeOsc.connect(chimeGain);
+      chimeGain.connect(this.ctx.destination);
+      chimeOsc.start(t);
+      chimeOsc.stop(t + 0.26);
+    });
+  }
+
+  // Fast bushy squirrel nut chatter
+  public playSquirrelChatter() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    for (let i = 0; i < 4; i++) {
+      const t = now + i * 0.035;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.28 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1200 + (i % 2) * 300, t);
+      osc.frequency.exponentialRampToValueAtTime(600, t + 0.02);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.03);
+    }
+  }
+
+  // Full celebratory bluegrass breakdown fanfare for Timberland jackpots
+  public playWoodlandFanfare() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    // Upbeat G major hoedown chord progression: G -> C -> D7 -> G
+    const chords = [
+      [392.0, 493.88, 587.33], // G Major
+      [523.25, 659.25, 783.99], // C Major
+      [587.33, 739.99, 880.0, 1046.5], // D7
+      [783.99, 987.77, 1174.66, 1567.98], // High G Major triumphant
+    ];
+
+    chords.forEach((chord, chordIdx) => {
+      if (!this.ctx) return;
+      const startTime = this.ctx.currentTime + chordIdx * 0.24;
+      chord.forEach((freq) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        const duration = chordIdx === chords.length - 1 ? 1.4 : 0.28;
+        gain.gain.setValueAtTime(0.32 * this.sfxVolume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      });
+    });
+
+    // Celebratory owl call finale
+    setTimeout(() => {
+      this.playOwlHoot(3);
+    }, 900);
   }
 
   // Heavy tactile physical reel stop (bass punch + spring latch clack)
@@ -1088,6 +1523,10 @@ class SoundManager {
 
   // Jackpot fanfare chord progression
   public playJackpotFanfare() {
+    if (this.activeGameTheme === 'timber-critters') {
+      this.playWoodlandFanfare();
+      return;
+    }
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
