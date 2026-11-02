@@ -12,6 +12,7 @@ interface ControlsBarProps {
   autoSpinsRemaining: number;
   freeSpinsRemaining: number;
   onSpin: () => void;
+  onQuickStop?: () => void;
   onBetChange: (newBet: number) => void;
   onTurboToggle: () => void;
   onAutoSpinStart: (count: number) => void;
@@ -30,6 +31,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   autoSpinsRemaining,
   freeSpinsRemaining,
   onSpin,
+  onQuickStop,
   onBetChange,
   onTurboToggle,
   onAutoSpinStart,
@@ -66,7 +68,12 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       onAutoSpinStop();
       return;
     }
-    if (isSpinning) return;
+    if (isSpinning) {
+      if (onQuickStop) {
+        onQuickStop();
+      }
+      return;
+    }
     onSpin();
   };
 
@@ -196,14 +203,20 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             )}
           </div>
 
-          {/* The Big Glowing Spin Button */}
+          {/* The Big Glowing Spin / Quick Stop Button */}
           <button
             onClick={handleTriggerSpin}
-            disabled={(isSpinning && !isAutoSpinning) || (!isFreeSpins && balance < currentBet)}
-            title={!isFreeSpins && balance < currentBet ? 'Insufficient coins' : undefined}
+            disabled={!isSpinning && !isFreeSpins && balance < currentBet}
+            title={
+              isSpinning
+                ? 'Quick Stop (Space / Click)'
+                : !isFreeSpins && balance < currentBet
+                ? 'Insufficient coins'
+                : undefined
+            }
             className={`relative flex items-center justify-center px-7 sm:px-9 py-3 sm:py-3.5 rounded-2xl font-black tracking-widest text-base sm:text-lg uppercase text-white transition-all transform select-none ${
               isSpinning
-                ? 'bg-slate-700 opacity-70 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 shadow-[0_0_25px_rgba(239,68,68,0.8)] animate-pulse hover:scale-[1.03] active:scale-95 cursor-pointer'
                 : !isFreeSpins && balance < currentBet
                 ? 'bg-slate-800 opacity-50 cursor-not-allowed text-slate-500'
                 : isFreeSpins
@@ -212,7 +225,10 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             }`}
           >
             {isSpinning ? (
-              <RefreshCw className="w-6 h-6 animate-spin text-slate-300" />
+              <span className="flex items-center space-x-1.5 text-white">
+                <StopCircle className="w-5 h-5 fill-white text-rose-600" />
+                <span>STOP</span>
+              </span>
             ) : isAutoSpinning ? (
               <span className="flex items-center space-x-1.5">
                 <StopCircle className="w-5 h-5" />

@@ -246,6 +246,12 @@ export const App: React.FC = () => {
     }
   }, [spinResult, totalXp, freeSpinsRemaining]);
 
+  // Quick Stop Handler
+  const handleQuickStop = useCallback(() => {
+    if (!isSpinning) return;
+    handleAllReelsStopped();
+  }, [isSpinning, handleAllReelsStopped]);
+
   // Handle continuous Auto-Spins and Free-Spins cadence
   useEffect(() => {
     if (isSpinning || celebration !== null || showFreeSpinsModal || levelUpData !== null) {
@@ -289,7 +295,10 @@ export const App: React.FC = () => {
 
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
-        if (!isSpinning && celebration === null && !showFreeSpinsModal) {
+        if (celebration !== null || showFreeSpinsModal) return;
+        if (isSpinning) {
+          handleQuickStop();
+        } else {
           executeSpin();
         }
       } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
@@ -335,6 +344,7 @@ export const App: React.FC = () => {
           spinResult={spinResult}
           isTurbo={isTurbo}
           onAllReelsStopped={handleAllReelsStopped}
+          onQuickStop={handleQuickStop}
           freeSpinsRemaining={freeSpinsRemaining}
         />
 
@@ -348,6 +358,7 @@ export const App: React.FC = () => {
           autoSpinsRemaining={autoSpinsRemaining}
           freeSpinsRemaining={freeSpinsRemaining}
           onSpin={executeSpin}
+          onQuickStop={handleQuickStop}
           onBetChange={(newBet) => setCurrentBet(newBet)}
           onTurboToggle={() => setIsTurbo((prev) => !prev)}
           onAutoSpinStart={(count) => {
@@ -360,7 +371,7 @@ export const App: React.FC = () => {
 
       {/* Footer info banner */}
       <footer className="relative z-10 py-2 border-t border-white/5 text-center text-[10px] text-slate-500 bg-casino-950/80">
-        PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS & RIG REELS
+        PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS & RIG REELS
       </footer>
 
       {/* --- Modals & Overlays --- */}

@@ -42,12 +42,17 @@ export default {
       animation: {
         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'marquee': 'marquee 2s linear infinite',
-        'bounce-soft': 'bounceSoft 0.4s ease-out forwards',
+        'bounce-soft': 'bounceSoft 0.35s ease-out forwards',
         'glow-pulse': 'glowPulse 2s ease-in-out infinite alternate',
+        'reel-spin': 'reelSpin 0.35s linear infinite',
       },
       keyframes: {
+        reelSpin: {
+          '0%': { transform: 'translateY(0%)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
         bounceSoft: {
-          '0%': { transform: 'translateY(-12px)' },
+          '0%': { transform: 'translateY(-16px)' },
           '60%': { transform: 'translateY(4px)' },
           '100%': { transform: 'translateY(0)' },
         },
