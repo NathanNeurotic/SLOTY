@@ -998,6 +998,7 @@ export const App: React.FC = () => {
       {showGambleModal && (
         <GambleModal
           initialPot={winAmount}
+          activeGameId={activeGameId}
           onCollect={(doubledPot) => {
             const addedDifference = doubledPot - winAmount;
             setBalance((b) => b + addedDifference);

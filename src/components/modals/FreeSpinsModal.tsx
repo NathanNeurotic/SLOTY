@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Flame, Sparkles, Trees, Moon } from 'lucide-react';
+import { Flame, Sparkles, Trees, Moon, Gamepad2, Zap } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
 import type { GameId } from '../../games/types';
@@ -18,9 +18,12 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
 
   useEffect(() => {
-    if (isTimber) {
+    if (isPixel) {
+      soundManager.playArcadeVictoryFanfare();
+    } else if (isTimber) {
       soundManager.playWoodlandFanfare();
       soundManager.playOwlHoot(3);
     } else {
@@ -39,7 +42,7 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [onStart, isTimber]);
+  }, [onStart, isTimber, isPixel]);
 
   // =========================================================================
   // --- VERSION A: TIMBERLAND CRITTERS (MOONLIT FOREST HARVEST) ---
@@ -96,7 +99,61 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
   }
 
   // =========================================================================
-  // --- VERSION B: 24K VAULT (MOLTEN VAULT OVERDRIVE) ---
+  // --- VERSION B: PIXEL ARCADE (1989 BOSS RUSH MECHA DRAGON BATTLE) ---
+  // =========================================================================
+  if (isPixel) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
+        <div className="relative max-w-md w-full bg-gradient-to-b from-[#240638] via-[#100326] to-[#05010e] border-4 border-pink-500 shadow-[0_0_80px_rgba(236,72,153,0.8),inset_0_0_40px_rgba(0,0,0,0.95)] rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center">
+          {/* Top 8-Bit Cartridge / Boss Icon */}
+          <div className="w-18 h-18 rounded-full bg-gradient-to-tr from-purple-600 via-pink-500 to-cyan-400 flex items-center justify-center shadow-[0_0_40px_rgba(236,72,153,0.9)] mb-4 animate-bounce">
+            <span className="text-4xl">🐉</span>
+          </div>
+
+          <div className="flex items-center space-x-1.5 text-pink-400 text-xs font-mono font-black uppercase tracking-widest mb-1">
+            <Zap className="w-4 h-4 text-cyan-300 animate-pulse" />
+            <span>BOSS BATTLE ENCOUNTER</span>
+            <Gamepad2 className="w-4 h-4 text-pink-400 animate-pulse" />
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-cyan-300 to-yellow-300 tracking-wide uppercase mb-2 drop-shadow-[0_2px_10px_rgba(236,72,153,0.9)] font-mono">
+            BOSS RUSH UNLOCKED!
+          </h1>
+
+          <p className="text-cyan-100 text-xs sm:text-sm mb-6 leading-relaxed font-mono">
+            Mecha Dragon descends upon the 6x5 Mega-Grid! All 50 lines pay <span className="text-yellow-300 font-black">3X MULTIPLIERS</span> with locking power-ups and laser wilds!
+          </p>
+
+          {/* Feature stats in arcade neon display */}
+          <div className="grid grid-cols-2 gap-3 w-full mb-6 font-mono">
+            <div className="bg-black/80 border-2 border-pink-500/70 p-3 rounded-2xl flex flex-col items-center shadow-inner">
+              <span className="text-[10px] text-pink-400 font-black uppercase tracking-wider">Free Spins</span>
+              <span className="text-3xl font-black text-white">{freeSpinsAwarded}</span>
+            </div>
+            <div className="bg-black/80 border-2 border-cyan-400/70 p-3 rounded-2xl flex flex-col items-center shadow-inner">
+              <span className="text-[10px] text-cyan-400 font-black uppercase tracking-wider">Arcade Boost</span>
+              <span className="text-3xl font-black text-cyan-300">{multiplier}X</span>
+            </div>
+          </div>
+
+          {/* Start button */}
+          <button
+            onClick={() => {
+              soundManager.playButtonClick();
+              onStart();
+            }}
+            className="w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 hover:from-pink-500 hover:to-cyan-400 border-2 border-pink-300 shadow-[0_0_35px_rgba(236,72,153,0.9)] hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2 font-mono"
+          >
+            <span>INSERT COIN / START BATTLE</span>
+            <span className="px-2 py-0.5 rounded bg-black/40 text-[11px] font-mono tracking-tight font-bold">SPACE</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // --- VERSION C: 24K VAULT (MOLTEN VAULT OVERDRIVE) ---
   // =========================================================================
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">

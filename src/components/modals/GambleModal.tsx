@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Trophy } from 'lucide-react';
+import { X, Sparkles, Trophy, Trees, Gamepad2, Zap } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
+import type { GameId } from '../../games/types';
 
 interface GambleModalProps {
   initialPot: number;
   onCollect: (amount: number) => void;
   onLose: () => void;
   onClose?: () => void;
+  activeGameId?: GameId;
 }
 
 type CardSuit = 'HEARTS' | 'DIAMONDS' | 'SPADES' | 'CLUBS';
@@ -17,7 +19,11 @@ export const GambleModal: React.FC<GambleModalProps> = ({
   onCollect,
   onLose,
   onClose,
+  activeGameId = 'vault-24k',
 }) => {
+  const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
+
   const [currentPot, setCurrentPot] = useState(initialPot);
   const [history, setHistory] = useState<{ color: CardColor; suit: CardSuit; rank: string }[]>([]);
   const [isFlipping, setIsFlipping] = useState(false);
@@ -99,18 +105,34 @@ export const GambleModal: React.FC<GambleModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
-      <div className="relative max-w-md w-full max-h-[92vh] overflow-y-auto bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-gold-bright/60 shadow-[0_0_50px_rgba(251,191,36,0.5)] rounded-3xl p-4 sm:p-7 flex flex-col items-center">
+      <div className={`relative max-w-md w-full max-h-[92vh] overflow-y-auto ${
+        isPixel
+          ? 'bg-gradient-to-b from-[#1b052e] via-[#0d0218] to-black border-2 border-pink-500 shadow-[0_0_60px_rgba(236,72,153,0.6)] font-mono'
+          : isTimber
+          ? 'bg-gradient-to-b from-[#241308] via-[#120a05] to-[#040804] border-2 border-[#b45309] shadow-[0_0_50px_rgba(180,83,9,0.5)]'
+          : 'bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-gold-bright/60 shadow-[0_0_50px_rgba(251,191,36,0.5)]'
+      } rounded-3xl p-4 sm:p-7 flex flex-col items-center`}>
         {/* Header */}
         <div className="w-full flex items-center justify-between pb-3 border-b border-white/10 mb-4">
           <div className="flex items-center space-x-2">
-            <Trophy className="w-5 h-5 text-gold-bright animate-bounce" />
-            <span className="text-base sm:text-lg font-black gold-gradient-text uppercase tracking-wider">
-              Casino Video Poker Double-Up
+            {isPixel ? (
+              <Gamepad2 className="w-5 h-5 text-pink-400 animate-bounce" />
+            ) : isTimber ? (
+              <Trees className="w-5 h-5 text-emerald-400 animate-bounce" />
+            ) : (
+              <Trophy className="w-5 h-5 text-gold-bright animate-bounce" />
+            )}
+            <span className={`text-base sm:text-lg font-black uppercase tracking-wider ${
+              isPixel ? 'text-pink-300 drop-shadow-[0_0_8px_#EC4899] font-mono' : isTimber ? 'text-amber-300 drop-shadow' : 'gold-gradient-text'
+            }`}>
+              {isPixel ? '1989 Cyber Token Double-Up' : isTimber ? 'Wild Forest Berry Double-Up' : 'Casino Video Poker Double-Up'}
             </span>
           </div>
           <button
             onClick={onClose || handleCollect}
-            className="p-1.5 rounded-lg bg-casino-800 hover:bg-casino-700 text-slate-300"
+            className={`p-1.5 rounded-lg text-slate-300 ${
+              isPixel ? 'bg-purple-950 hover:bg-pink-900' : isTimber ? 'bg-[#1a0e06] hover:bg-[#2e180a]' : 'bg-casino-800 hover:bg-casino-700'
+            }`}
           >
             <X className="w-4 h-4" />
           </button>
@@ -121,11 +143,13 @@ export const GambleModal: React.FC<GambleModalProps> = ({
           <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">
             Current Win Pot
           </span>
-          <span className="text-2xl sm:text-3xl font-black text-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]">
-            {currentPot.toLocaleString()} COINS
+          <span className={`text-2xl sm:text-3xl font-black ${
+            isPixel ? 'text-cyan-300 drop-shadow-[0_0_12px_#06B6D4]' : 'text-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]'
+          }`}>
+            {currentPot.toLocaleString()} {isPixel ? 'PTS' : 'COINS'}
           </span>
           <span className="text-[11px] text-emerald-400 font-bold mt-0.5">
-            Double to: {(currentPot * 2).toLocaleString()} COINS
+            Double to: {(currentPot * 2).toLocaleString()} {isPixel ? 'PTS' : 'COINS'}
           </span>
         </div>
 
@@ -137,16 +161,36 @@ export const GambleModal: React.FC<GambleModalProps> = ({
                 ? 'rotate-y-90 scale-95 opacity-50 bg-slate-900 border-white/20'
                 : revealedCard
                 ? revealedCard.color === 'RED'
-                  ? 'bg-gradient-to-b from-white to-rose-50 border-rose-600 text-rose-600 shadow-[0_0_30px_rgba(225,29,72,0.6)]'
+                  ? isPixel
+                    ? 'bg-gradient-to-b from-[#24061a] to-rose-950 border-pink-500 text-pink-300 shadow-[0_0_30px_rgba(236,72,153,0.8)] font-mono'
+                    : isTimber
+                    ? 'bg-gradient-to-b from-[#2d120a] to-[#1a0804] border-red-500 text-amber-200 shadow-[0_0_30px_rgba(239,68,68,0.7)]'
+                    : 'bg-gradient-to-b from-white to-rose-50 border-rose-600 text-rose-600 shadow-[0_0_30px_rgba(225,29,72,0.6)]'
+                  : isPixel
+                  ? 'bg-gradient-to-b from-[#081a2e] to-blue-950 border-cyan-400 text-cyan-300 shadow-[0_0_30px_rgba(6,182,212,0.8)] font-mono'
+                  : isTimber
+                  ? 'bg-gradient-to-b from-[#14121a] to-[#0a0810] border-purple-500 text-purple-200 shadow-[0_0_30px_rgba(168,85,247,0.7)]'
                   : 'bg-gradient-to-b from-white to-slate-100 border-slate-900 text-slate-900 shadow-[0_0_30px_rgba(15,23,42,0.8)]'
+                : isPixel
+                ? 'bg-gradient-to-br from-purple-900 via-indigo-950 to-black border-pink-400 shadow-[0_0_25px_rgba(236,72,153,0.5)]'
+                : isTimber
+                ? 'bg-gradient-to-br from-[#2e1708] via-[#1a0c04] to-black border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.5)]'
                 : 'bg-gradient-to-br from-indigo-900 via-blue-950 to-casino-950 border-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.5)]'
             }`}
           >
             {!revealedCard && !isFlipping && (
               <div className="flex flex-col items-center space-y-2">
-                <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
-                <span className="text-xs font-black tracking-widest text-yellow-300 uppercase">
-                  RED OR BLACK?
+                {isPixel ? (
+                  <Zap className="w-8 h-8 text-pink-400 animate-pulse" />
+                ) : isTimber ? (
+                  <span className="text-3xl animate-bounce">🍓</span>
+                ) : (
+                  <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
+                )}
+                <span className={`text-xs font-black tracking-widest uppercase ${
+                  isPixel ? 'text-pink-300' : isTimber ? 'text-amber-300' : 'text-yellow-300'
+                }`}>
+                  {isPixel ? 'RED OR BLUE?' : isTimber ? 'CRIMSON OR BLACKBERRY?' : 'RED OR BLACK?'}
                 </span>
                 <span className="text-[9px] text-slate-400">GUESS TO DOUBLE</span>
               </div>
@@ -206,7 +250,11 @@ export const GambleModal: React.FC<GambleModalProps> = ({
           )}
           {gambleStatus === 'CHOOSING' && (
             <span className="text-xs text-slate-400 font-bold">
-              PICK A COLOR TO RISK &amp; DOUBLE YOUR WIN
+              {isPixel
+                ? 'CHOOSE RED LASER OR BLUE PLASMA TO DOUBLE'
+                : isTimber
+                ? 'PICK CRIMSON SALMONBERRY OR RIPE BLACKBERRY'
+                : 'PICK A COLOR TO RISK & DOUBLE YOUR WIN'}
             </span>
           )}
         </div>
@@ -217,16 +265,28 @@ export const GambleModal: React.FC<GambleModalProps> = ({
             <button
               onClick={() => handlePickColor('RED')}
               disabled={isFlipping}
-              className="flex-1 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 border border-white/20 text-white font-black text-sm uppercase tracking-wider shadow-lg hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              className={`flex-1 py-3 sm:py-3.5 rounded-xl border text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all ${
+                isPixel
+                  ? 'bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 border-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.7)]'
+                  : isTimber
+                  ? 'bg-gradient-to-r from-red-700 via-rose-600 to-amber-700 border-amber-500/50'
+                  : 'bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 border-white/20'
+              }`}
             >
-              RED ♥ ♦
+              {isPixel ? '🔴 RED LASER' : isTimber ? '🍓 SALMONBERRY' : 'RED ♥ ♦'}
             </button>
             <button
               onClick={() => handlePickColor('BLACK')}
               disabled={isFlipping}
-              className="flex-1 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-black hover:from-slate-800 hover:to-slate-950 border border-white/30 text-white font-black text-sm uppercase tracking-wider shadow-lg hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              className={`flex-1 py-3 sm:py-3.5 rounded-xl border text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all ${
+                isPixel
+                  ? 'bg-gradient-to-r from-cyan-600 via-blue-700 to-indigo-800 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.7)]'
+                  : isTimber
+                  ? 'bg-gradient-to-r from-purple-900 via-slate-900 to-stone-950 border-purple-400/50'
+                  : 'bg-gradient-to-r from-slate-900 to-black hover:from-slate-800 hover:to-slate-950 border-white/30'
+              }`}
             >
-              BLACK ♠ ♣
+              {isPixel ? '🔵 BLUE PLASMA' : isTimber ? '🫐 BLACKBERRY' : 'BLACK ♠ ♣'}
             </button>
           </div>
         )}
@@ -236,9 +296,15 @@ export const GambleModal: React.FC<GambleModalProps> = ({
           <button
             onClick={handleCollect}
             disabled={isFlipping}
-            className="w-full mt-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 border border-white/20 text-black font-black text-xs uppercase tracking-widest shadow-md hover:scale-[1.01] active:scale-95"
+            className={`w-full mt-3 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-md hover:scale-[1.01] active:scale-95 transition-transform ${
+              isPixel
+                ? 'bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 text-white shadow-[0_0_20px_rgba(236,72,153,0.7)] font-mono'
+                : isTimber
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white border border-emerald-300'
+                : 'bg-emerald-600 hover:bg-emerald-500 border border-white/20 text-black'
+            }`}
           >
-            TAKE WIN ({currentPot.toLocaleString()} COINS)
+            TAKE WIN ({currentPot.toLocaleString()} {isPixel ? 'PTS' : 'COINS'})
           </button>
         )}
 
@@ -250,7 +316,9 @@ export const GambleModal: React.FC<GambleModalProps> = ({
               <span
                 key={i}
                 className={`text-xs font-black ${
-                  h.color === 'RED' ? 'text-rose-400' : 'text-slate-300'
+                  h.color === 'RED'
+                    ? isPixel ? 'text-pink-400' : 'text-rose-400'
+                    : isPixel ? 'text-cyan-300' : 'text-slate-300'
                 }`}
               >
                 {h.rank}

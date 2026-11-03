@@ -1079,4 +1079,72 @@
   will-change: transform, opacity;
 }
 
+/* --- Dynamic Specular Shimmer Beam & Lens Gleam for Symbols --- */
+@keyframes symbolGleam {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.65;
+  }
+  35% {
+    transform: translateX(150%) skewX(-25deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(150%) skewX(-25deg);
+    opacity: 0;
+  }
+}
+.animate-symbol-gleam {
+  animation: symbolGleam 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes microSparkle1 {
+  0%, 100% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  18% {
+    transform: scale(1.15) rotate(45deg);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95));
+  }
+  28% {
+    transform: scale(0) rotate(90deg);
+    opacity: 0;
+  }
+}
+.animate-micro-sparkle-1 {
+  animation: microSparkle1 3.6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes microSparkle2 {
+  0%, 100% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  62% {
+    transform: scale(1.1) rotate(-45deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 5px rgba(253, 224, 71, 0.9));
+  }
+  72% {
+    transform: scale(0) rotate(-90deg);
+    opacity: 0;
+  }
+}
+.animate-micro-sparkle-2 {
+  animation: microSparkle2 3.6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+
 

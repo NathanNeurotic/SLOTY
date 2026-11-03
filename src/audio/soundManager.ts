@@ -2058,8 +2058,55 @@ class SoundManager {
     });
   }
 
+  // 1980s Japanese Arcade Stage Clear & Boss Defeated Victory Fanfare
+  public playArcadeVictoryFanfare() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const arpeggioNotes = [261.63, 329.63, 392.0, 523.25, 659.25, 783.99, 1046.5];
+    const now = this.ctx.currentTime;
+    arpeggioNotes.forEach((note, idx) => {
+      if (!this.ctx) return;
+      const startTime = now + idx * 0.07;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.32 * this.sfxVolume, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.14);
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(note, startTime);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + 0.16);
+    });
+
+    const chordTime = now + arpeggioNotes.length * 0.07;
+    const victoryChord = [523.25, 659.25, 783.99, 987.77, 1046.5];
+    victoryChord.forEach((note) => {
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.24 * this.sfxVolume, chordTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, chordTime + 1.2);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note, chordTime);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(chordTime);
+      osc.stop(chordTime + 1.25);
+    });
+  }
+
   // Jackpot fanfare chord progression
   public playJackpotFanfare() {
+    if (this.activeGameTheme === 'pixel-arcade') {
+      this.playArcadeVictoryFanfare();
+      return;
+    }
     if (this.activeGameTheme === 'timber-critters') {
       this.playWoodlandFanfare();
       return;

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import type { WinTier } from '../../engine/types';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
-import { Coins, Sparkles, Trees } from 'lucide-react';
+import { Coins, Sparkles, Trees, Gamepad2, Zap } from 'lucide-react';
 import type { GameId } from '../../games/types';
 
 interface WinCelebrationModalProps {
@@ -19,6 +19,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
   const [displayedAmount, setDisplayedAmount] = useState(0);
   const [isFinishedCounting, setIsFinishedCounting] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
@@ -42,14 +43,18 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
     launchCoinFountain(intensity);
 
     if (winTier === 'EPIC_JACKPOT') {
-      if (isTimber) {
+      if (isPixel) {
+        soundManager.playArcadeVictoryFanfare();
+      } else if (isTimber) {
         soundManager.playWoodlandFanfare();
         soundManager.playGrizzlyRoar();
       } else {
         soundManager.playJackpotFanfare();
       }
     } else {
-      if (isTimber) {
+      if (isPixel) {
+        soundManager.playArcadeVictoryFanfare();
+      } else if (isTimber) {
         soundManager.playForestWin(winTier === 'MEGA_WIN' ? 25 : 10);
       } else {
         soundManager.playWinChime(winTier === 'MEGA_WIN' ? 25 : 10);
@@ -107,7 +112,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       }
       window.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
-  }, [winTier, winAmount, isTimber]);
+  }, [winTier, winAmount, isTimber, isPixel]);
 
   const handleSkipOrCollect = () => {
     if (!isFinishedCounting) {
@@ -124,7 +129,43 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   };
 
   const getTierDetails = () => {
-    if (isTimber) {
+    if (isPixel) {
+      switch (winTier) {
+        case 'EPIC_JACKPOT':
+          return {
+            title: '👾 1989 CYBER MEGA-BOSS DEFEATED! 👾',
+            subtitle: 'ALL-TIME HIGH SCORE GRAND JACKPOT!',
+            gradient: 'from-pink-400 via-cyan-300 to-yellow-300',
+            borderColor: 'border-pink-500',
+            textColor: 'text-pink-300',
+            glow: 'shadow-[0_0_90px_rgba(236,72,153,0.95),inset_0_0_40px_rgba(0,0,0,0.98)]',
+            bg: 'bg-gradient-to-b from-[#25083a] via-[#100326] to-[#04010a]',
+            buttonClass: 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 text-white border-2 border-pink-300 shadow-[0_0_30px_rgba(236,72,153,0.9)] font-mono',
+          };
+        case 'MEGA_WIN':
+          return {
+            title: '🕹️ STAGE 1 CLEAR MEGA BONUS! 🕹️',
+            subtitle: 'CRITICAL COMBO CHAIN UNLOCKED!',
+            gradient: 'from-cyan-300 via-pink-300 to-purple-300',
+            borderColor: 'border-cyan-400',
+            textColor: 'text-cyan-300',
+            glow: 'shadow-[0_0_75px_rgba(6,182,212,0.85),inset_0_0_35px_rgba(0,0,0,0.95)]',
+            bg: 'bg-gradient-to-b from-[#180a33] via-[#0b041a] to-[#03010a]',
+            buttonClass: 'bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white border-2 border-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.8)] font-mono',
+          };
+        default:
+          return {
+            title: '⭐ 1UP SUPER RETRO WIN! ⭐',
+            subtitle: 'PAC-COIN MULTIPLIER PAYOUT!',
+            gradient: 'from-yellow-300 via-pink-400 to-cyan-300',
+            borderColor: 'border-purple-500',
+            textColor: 'text-yellow-300',
+            glow: 'shadow-[0_0_55px_rgba(168,85,247,0.75)]',
+            bg: 'bg-gradient-to-b from-[#150626] via-[#090214] to-[#03010a]',
+            buttonClass: 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border border-pink-400 font-mono',
+          };
+      }
+    } else if (isTimber) {
       switch (winTier) {
         case 'EPIC_JACKPOT':
           return {
@@ -211,11 +252,23 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       >
         {/* Top Decorative Sparkles */}
         <div className="flex items-center space-x-2 text-gold-bright mb-2 animate-bounce">
-          {isTimber ? <Trees className="w-5 h-5 text-emerald-400" /> : <Sparkles className="w-5 h-5 text-yellow-300" />}
+          {isPixel ? (
+            <Gamepad2 className="w-5 h-5 text-cyan-300" />
+          ) : isTimber ? (
+            <Trees className="w-5 h-5 text-emerald-400" />
+          ) : (
+            <Sparkles className="w-5 h-5 text-yellow-300" />
+          )}
           <span className="text-xs font-black uppercase tracking-widest text-slate-200 drop-shadow">
             {tier.subtitle}
           </span>
-          {isTimber ? <Trees className="w-5 h-5 text-emerald-400" /> : <Sparkles className="w-5 h-5 text-yellow-300" />}
+          {isPixel ? (
+            <Zap className="w-5 h-5 text-pink-400" />
+          ) : isTimber ? (
+            <Trees className="w-5 h-5 text-emerald-400" />
+          ) : (
+            <Sparkles className="w-5 h-5 text-yellow-300" />
+          )}
         </div>
 
         {/* Big Banner Title */}
@@ -226,8 +279,16 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
         </h1>
 
         {/* Animated Win Ticker */}
-        <div className={`flex items-center justify-center space-x-3 my-4 ${isTimber ? 'bg-[#0f0904] border-2 border-emerald-600/50' : 'bg-casino-900/90 border border-white/10'} px-6 py-4 rounded-2xl w-full shadow-inner`}>
-          <Coins className={`w-8 h-8 ${isTimber ? 'text-emerald-400 fill-emerald-500' : 'text-gold-bright fill-gold'} animate-spin`} />
+        <div className={`flex items-center justify-center space-x-3 my-4 ${
+          isPixel
+            ? 'bg-[#0f041e] border-2 border-pink-500/60 shadow-[0_0_20px_rgba(236,72,153,0.4)]'
+            : isTimber
+            ? 'bg-[#0f0904] border-2 border-emerald-600/50'
+            : 'bg-casino-900/90 border border-white/10'
+        } px-6 py-4 rounded-2xl w-full shadow-inner`}>
+          <Coins className={`w-8 h-8 ${
+            isPixel ? 'text-cyan-300 fill-cyan-400' : isTimber ? 'text-emerald-400 fill-emerald-500' : 'text-gold-bright fill-gold'
+          } animate-spin`} />
           <span className="text-4xl sm:text-5xl font-black text-white tracking-wide font-mono">
             +{displayedAmount.toLocaleString()}
           </span>
