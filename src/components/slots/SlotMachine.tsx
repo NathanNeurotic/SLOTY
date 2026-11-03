@@ -836,7 +836,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           {/* Right Speaker + Scene */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 pr-1.5 sm:pr-2.5">
             <span className={`text-[10px] font-mono font-bold hidden sm:inline tracking-wide ${isPs2 ? 'text-cyan-300' : isPixel ? 'text-pink-300' : isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
-              {isPs2 ? 'BIOS: 128-BIT EMOTION ENGINE' : isPixel ? 'STAGE: 1989 CYBERSPACE' : isTimber ? 'SCENE: DEEP WOODS' : `SCENE: ${currentSceneId}`}
+              {isPs2 ? 'BIOS: 128-BIT EE [v2.4.1]' : isPixel ? 'STAGE: 1989 CYBERSPACE [v2.4.1]' : isTimber ? 'SCENE: DEEP WOODS [v2.4.1]' : `SCENE: ${currentSceneId} [v2.4.1]`}
             </span>
             <div
               className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
