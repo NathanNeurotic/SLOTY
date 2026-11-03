@@ -592,6 +592,8 @@ export const App: React.FC = () => {
   // --- Keyboard Shortcuts & Zero-Mouse Navigation ---
   const levelUpDataRef = useRef(levelUpData);
   levelUpDataRef.current = levelUpData;
+  const showFreeSpinsModalRef = useRef(showFreeSpinsModal);
+  showFreeSpinsModalRef.current = showFreeSpinsModal;
   const balanceRef = useRef(balance);
   balanceRef.current = balance;
   const totalBetRef = useRef(totalBet);
@@ -628,7 +630,13 @@ export const App: React.FC = () => {
           soundManager.playButtonClick();
           return;
         }
-        if (celebration !== null || showFreeSpinsModal || showHoldAndSpinModal || showGambleModal) {
+        // Start free spins if modal is active
+        if (showFreeSpinsModalRef.current) {
+          setShowFreeSpinsModal(false);
+          soundManager.playButtonClick();
+          return;
+        }
+        if (celebration !== null || showHoldAndSpinModal || showGambleModal) {
           return;
         }
         if (isSpinning) {
@@ -768,58 +776,83 @@ export const App: React.FC = () => {
         <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} activeGameId={activeGameId} />
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
-        <CasinoFloorBank
-          peers={roomPeers}
-          isFloorMode={isFloorMode}
-          activeGameId={activeGameId}
-          onToggleFloorMode={() => {
-            setIsFloorMode((prev) => {
-              const next = !prev;
-              storage.setItem('sloty_floor_mode', next.toString());
-              return next;
-            });
-          }}
-          onOpenLeaderboard={() => setShowLeaderboardModal(true)}
-          onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
-          companionNode={
-            <CompanionLounge
-              position="mobile-bar"
-              isSpinning={isSpinning}
-              isAnticipating={false}
-              isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
-              isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
-              isFeverMode={feverSpinsLeft > 0}
-              winAmount={spinResult?.totalPayout || 0}
-              onRewardCoins={(amount) => {
-                setBalance((b) => b + amount);
-                soundManager.playCoinTally();
-              }}
+        {(() => {
+          const scatterSym = activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER';
+          const hasScatter0 = currentGrid[0]?.includes(scatterSym);
+          const hasScatter1 = currentGrid[1]?.includes(scatterSym);
+          const isAnticipating = isSpinning && !!hasScatter0 && !!hasScatter1;
+
+          return (
+            <CasinoFloorBank
+              peers={roomPeers}
+              isFloorMode={isFloorMode}
               activeGameId={activeGameId}
-            />
-          }
-        >
-          <SlotMachine
-            currentGrid={currentGrid}
-            isSpinning={isSpinning}
-            spinResult={spinResult}
-            isTurbo={isTurbo}
-            selectedLines={selectedLines}
-            onSelectLines={(lines) => setSelectedLines(lines)}
-            onAllReelsStopped={handleAllReelsStopped}
-            onQuickStop={handleQuickStop}
-            freeSpinsRemaining={freeSpinsRemaining}
-            onSpin={executeSpin}
-            canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
-            isFeverMode={feverSpinsLeft > 0}
-            currentSceneId={currentSceneId}
-            onRewardCoins={(amount) => {
-              setBalance((b) => b + amount);
-              soundManager.playCoinTally();
-            }}
-            activeGameId={activeGameId}
-            isFloorMode={isFloorMode}
-          />
-        </CasinoFloorBank>
+              onToggleFloorMode={() => {
+                setIsFloorMode((prev) => {
+                  const next = !prev;
+                  storage.setItem('sloty_floor_mode', next.toString());
+                  return next;
+                });
+              }}
+              onOpenLeaderboard={() => setShowLeaderboardModal(true)}
+              onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
+              flankCompanion={
+                <CompanionLounge
+                  position="desktop-flank"
+                  isSpinning={isSpinning}
+                  isAnticipating={isAnticipating}
+                  isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
+                  isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
+                  isFeverMode={feverSpinsLeft > 0}
+                  winAmount={spinResult?.totalPayout || 0}
+                  onRewardCoins={(amount) => {
+                    setBalance((b) => b + amount);
+                    soundManager.playCoinTally();
+                  }}
+                  activeGameId={activeGameId}
+                />
+              }
+              companionNode={
+                <CompanionLounge
+                  position="mobile-bar"
+                  isSpinning={isSpinning}
+                  isAnticipating={isAnticipating}
+                  isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
+                  isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
+                  isFeverMode={feverSpinsLeft > 0}
+                  winAmount={spinResult?.totalPayout || 0}
+                  onRewardCoins={(amount) => {
+                    setBalance((b) => b + amount);
+                    soundManager.playCoinTally();
+                  }}
+                  activeGameId={activeGameId}
+                />
+              }
+            >
+              <SlotMachine
+                currentGrid={currentGrid}
+                isSpinning={isSpinning}
+                spinResult={spinResult}
+                isTurbo={isTurbo}
+                selectedLines={selectedLines}
+                onSelectLines={(lines) => setSelectedLines(lines)}
+                onAllReelsStopped={handleAllReelsStopped}
+                onQuickStop={handleQuickStop}
+                freeSpinsRemaining={freeSpinsRemaining}
+                onSpin={executeSpin}
+                canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
+                isFeverMode={feverSpinsLeft > 0}
+                currentSceneId={currentSceneId}
+                onRewardCoins={(amount) => {
+                  setBalance((b) => b + amount);
+                  soundManager.playCoinTally();
+                }}
+                activeGameId={activeGameId}
+                isFloorMode={isFloorMode}
+              />
+            </CasinoFloorBank>
+          );
+        })()}
       </main>
 
       {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}

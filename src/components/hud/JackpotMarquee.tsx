@@ -136,7 +136,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
           title={`${gameDef.theme.grandTitle} - Click for Audio`}
         >
           {isTimber ? (
-            /* --- TIMBERLAND: Handcrafted Mountain Lodge Log Cabin Gable --- */
+            /* --- TIMBERLAND: Handcrafted Mountain Lodge Log Cabin Gable with Art Glass --- */
             <div className="relative pt-2">
               {/* Warm Forest Fireplace / Lantern Glow */}
               <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-96 h-16 rounded-full bg-gradient-to-t from-amber-600/30 via-emerald-600/20 to-transparent filter blur-xl pointer-events-none" />
@@ -152,8 +152,51 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                   <span className="text-xs">🌰</span>
                 </div>
 
-                {/* Log Cabin Interior Chamber */}
-                <div className="relative bg-gradient-to-b from-[#120703] via-[#08140c] to-[#040805] rounded-t-[26px] rounded-b-lg px-4 sm:px-6 pt-3 sm:pt-4 pb-2 border-2 border-[#b45309]/50 flex items-center justify-between overflow-hidden">
+                {/* Backlit Illustrated Woodland Art Glass Marquee */}
+                <div className="relative w-full h-14 sm:h-16 rounded-t-[26px] bg-gradient-to-r from-[#0d2818] via-[#051a0e] to-[#0d2818] border-b-2 border-[#78350f] flex items-center justify-between px-3 sm:px-6 overflow-hidden">
+                  {/* Glowing Moon & Forest Trees in Background */}
+                  <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-400 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute top-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-yellow-200/20 blur-md pointer-events-none" />
+
+                  {/* Left Critters: Grizzly Gus & Owl */}
+                  <div className="flex items-center space-x-2 z-10">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#3b1d0c] border-2 border-amber-400/80 shadow-[0_0_10px_rgba(245,158,11,0.6)] flex items-center justify-center text-xl sm:text-2xl animate-bounce">
+                      🐻
+                    </div>
+                    <div className="hidden xs:flex flex-col text-left">
+                      <span className="text-[10px] font-black text-amber-300 leading-tight">GRIZZLY GUS</span>
+                      <span className="text-[8px] font-bold text-emerald-400/80">LODGE MASCOT</span>
+                    </div>
+                  </div>
+
+                  {/* Center Thematic Title Art */}
+                  <div className="flex flex-col items-center z-10 text-center">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-xs sm:text-sm">🦉</span>
+                      <span className="text-xs sm:text-sm md:text-base font-black tracking-wider uppercase bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
+                        TIMBERLAND CRITTERS
+                      </span>
+                      <span className="text-xs sm:text-sm">🐿️</span>
+                    </div>
+                    <span className="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-emerald-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      ★ FOREST HARVEST VIDEO LOTTERY ★
+                    </span>
+                  </div>
+
+                  {/* Right Critters: Clever Fox & Squirrel */}
+                  <div className="flex items-center space-x-2 z-10">
+                    <div className="hidden xs:flex flex-col text-right">
+                      <span className="text-[10px] font-black text-amber-300 leading-tight">MYSTIC OWLS</span>
+                      <span className="text-[8px] font-bold text-teal-300/80">FREE SPINS</span>
+                    </div>
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#182a1d] border-2 border-emerald-400/80 shadow-[0_0_10px_rgba(52,211,153,0.6)] flex items-center justify-center text-xl sm:text-2xl animate-pulse">
+                      🦊
+                    </div>
+                  </div>
+                </div>
+
+                {/* Log Cabin Interior Chamber: Digital Jackpots */}
+                <div className="relative bg-gradient-to-b from-[#120703] via-[#08140c] to-[#040805] rounded-b-lg px-4 sm:px-6 pt-2 pb-2 border-t-2 border-[#b45309]/50 flex items-center justify-between overflow-hidden">
                   {/* Left Rustic Lantern Sconce */}
                   <div className="flex items-center space-x-1.5 z-10 flex-shrink-0">
                     <div className="w-6 h-7 rounded-md bg-[#2e180e] border border-amber-500/70 shadow-[0_0_12px_rgba(245,158,11,0.8)] flex items-center justify-center relative overflow-hidden">
@@ -197,7 +240,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               </div>
             </div>
           ) : (
-            /* --- 24K VAULT: Fort Knox Armored Bank Vault Marquee --- */
+            /* --- 24K VAULT: Fort Knox Armored Bank Vault Marquee with Art Glass --- */
             <div className="relative pt-2">
               {/* Radial Golden Sunburst Glow */}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-80 h-16 rounded-full bg-gradient-to-t from-yellow-500/30 to-transparent filter blur-lg pointer-events-none" />
@@ -213,8 +256,50 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                   <Sparkles className="w-3.5 h-3.5 text-amber-950" />
                 </div>
 
-                {/* Armored Bank Vault Digital Glass Chamber */}
-                <div className="relative rounded-t-[34px] rounded-b-lg px-4 sm:px-6 pt-3 sm:pt-4 pb-2 bg-gradient-to-b from-red-950/95 via-black to-slate-950 border border-yellow-300/40 flex items-center justify-between overflow-hidden">
+                {/* Backlit Illustrated Fort Knox Bullion Glass Marquee */}
+                <div className="relative w-full h-14 sm:h-16 rounded-t-[34px] bg-gradient-to-r from-amber-950 via-black to-amber-950 border-b-2 border-yellow-400/40 flex items-center justify-between px-3 sm:px-6 overflow-hidden">
+                  {/* Laser Security Grid Rays */}
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/25 via-transparent to-transparent pointer-events-none" />
+
+                  {/* Left Bullion Ingot Stacks */}
+                  <div className="flex items-center space-x-2 z-10">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 border-2 border-yellow-100 shadow-[0_0_12px_rgba(245,158,11,0.8)] flex items-center justify-center text-lg sm:text-xl animate-pulse">
+                      💰
+                    </div>
+                    <div className="hidden xs:flex flex-col text-left">
+                      <span className="text-[10px] font-black text-yellow-300 leading-tight">.999 FINE GOLD</span>
+                      <span className="text-[8px] font-bold text-amber-400/80">FORT KNOX LINK</span>
+                    </div>
+                  </div>
+
+                  {/* Center High-Roller Title Art */}
+                  <div className="flex flex-col items-center z-10 text-center">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-xs sm:text-sm">💎</span>
+                      <span className="text-xs sm:text-sm md:text-base font-black tracking-wider uppercase bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-100 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
+                        24K GOLD &amp; CASH VAULT
+                      </span>
+                      <span className="text-xs sm:text-sm">💎</span>
+                    </div>
+                    <span className="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-yellow-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      ★ 40 PAYLINES • HIGH ROLLER EDITION ★
+                    </span>
+                  </div>
+
+                  {/* Right Diamond / Vault Dial */}
+                  <div className="flex items-center space-x-2 z-10">
+                    <div className="hidden xs:flex flex-col text-right">
+                      <span className="text-[10px] font-black text-cyan-300 leading-tight">CASH VAULT</span>
+                      <span className="text-[8px] font-bold text-cyan-400/80">HOLD &amp; SPIN</span>
+                    </div>
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-cyan-600 to-teal-400 border-2 border-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.8)] flex items-center justify-center text-lg sm:text-xl animate-pulse">
+                      🔒
+                    </div>
+                  </div>
+                </div>
+
+                {/* Armored Bank Vault Digital Glass Chamber: Jackpots */}
+                <div className="relative rounded-b-lg px-4 sm:px-6 pt-2 pb-2 bg-gradient-to-b from-red-950/95 via-black to-slate-950 border-t border-yellow-300/40 flex items-center justify-between overflow-hidden">
                   {/* Metallic Shimmer Sweep */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer-sweep pointer-events-none" />
 

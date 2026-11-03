@@ -13,6 +13,7 @@ interface CasinoFloorBankProps {
   children: React.ReactNode; // Center stage slot machine
   activeGameId?: GameId;
   companionNode?: React.ReactNode;
+  flankCompanion?: React.ReactNode;
 }
 
 export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
@@ -24,6 +25,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   children,
   activeGameId = 'vault-24k',
   companionNode,
+  flankCompanion,
 }) => {
   const leftNeighbor = peers[0] || null;
   const rightNeighbor = peers[1] || null;
@@ -31,7 +33,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   return (
     <div className="relative w-full flex flex-col items-center">
       {/* Floor Mode Control Header with Integrated Live Mascot Chip */}
-      <div className="hidden sm:flex items-center justify-between w-full max-w-4xl px-2 sm:px-4 mb-2 z-20">
+      <div className="hidden sm:flex items-center justify-between w-full max-w-5xl xl:max-w-6xl px-2 sm:px-4 mb-2 z-20">
         {/* Floor Mode Switch Button */}
         <button
           onClick={onToggleFloorMode}
@@ -64,10 +66,10 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         </button>
       </div>
 
-      {/* Main Floor Arena (Clean ground alignment, ZERO awkward wrapper box) */}
-      <div className="w-full flex items-end justify-center gap-2 sm:gap-6 lg:gap-8 px-1 sm:px-2 py-1">
-        {/* Left Seat: Neighbor Terminal */}
-        {isFloorMode && leftNeighbor && (
+      {/* Main Floor Arena */}
+      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 lg:gap-6 px-1 sm:px-2 py-1">
+        {/* Left Flank: Neighbor Terminal (in Floor Mode) OR Full Mascot Standee */}
+        {isFloorMode && leftNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
             <NeighborTerminal
               peer={leftNeighbor}
@@ -76,14 +78,18 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
               activeGameId={activeGameId}
             />
           </div>
-        )}
+        ) : flankCompanion ? (
+          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20">
+            {flankCompanion}
+          </div>
+        ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 max-w-4xl z-10">
+        <div className="flex-1 max-w-5xl xl:max-w-6xl z-10">
           {children}
         </div>
 
-        {/* Right Seat: Neighbor Terminal */}
+        {/* Right Flank: Neighbor Terminal */}
         {isFloorMode && rightNeighbor && (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
             <NeighborTerminal

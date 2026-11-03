@@ -8,7 +8,6 @@ import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { soundManager } from '../../audio/soundManager';
-import { CompanionLounge } from '../character/CompanionLounge';
 import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 import type { GameId } from '../../games/types';
@@ -47,7 +46,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   canSpin = true,
   isFeverMode = false,
   currentSceneId = 'VAULT',
-  onRewardCoins,
+  onRewardCoins: _onRewardCoins,
   activeGameId = 'vault-24k',
   isFloorMode = false,
 }) => {
@@ -102,9 +101,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
 
-      // Check if reels 0 and 1 hit scatters for suspense excitement
-      const hasScatter0 = currentGrid[0]?.includes('SCATTER');
-      const hasScatter1 = currentGrid[1]?.includes('SCATTER');
+      // Check if reels hit scatters for suspense anticipation excitement
+      const scatterSym = isTimber ? 'OWL' : 'SCATTER';
+      const hasScatter0 = currentGrid[0]?.includes(scatterSym);
+      const hasScatter1 = currentGrid[1]?.includes(scatterSym);
       const anticipation = hasScatter0 && hasScatter1;
 
       // Realistic casino spin durations: ~2s total for watchable, dramatic roll
@@ -118,10 +118,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         const timerId = window.setTimeout(() => {
           soundManager.playReelStop(reelIdx);
 
-          if (currentGrid[reelIdx]?.includes('SCATTER')) {
+          if (currentGrid[reelIdx]?.includes(scatterSym)) {
             const scattersCount = currentGrid
               .slice(0, reelIdx + 1)
-              .filter((col) => col.includes('SCATTER')).length;
+              .filter((col) => col.includes(scatterSym)).length;
             soundManager.playScatterLand(scattersCount);
           }
 
@@ -240,6 +240,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     playWinLineSound(prevLine.symbolId);
   };
 
+  // Screen-slam tactile impact when big hit or scatter lock lands
+  useEffect(() => {
+    if (!isAnyReelSpinning && spinResult) {
+      if (spinResult.totalPayout >= 500 || spinResult.scatterCoords.length >= 3) {
+        setIsCabinetSlamming(true);
+        const t = setTimeout(() => setIsCabinetSlamming(false), 450);
+        return () => clearTimeout(t);
+      }
+    }
+  }, [isAnyReelSpinning, spinResult]);
+
   // Winning line details for Deluxe Casino style banner
   const activeWin = useMemo(() => {
     if (isAnyReelSpinning || !spinResult || activeWinningLineIdx === null) return null;
@@ -280,8 +291,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   }, [spinResult, isAnyReelSpinning]);
 
   // Anticipation status for reels 2, 3, 4
-  const hasScatter0 = !reelSpinning[0] && currentGrid[0]?.includes('SCATTER');
-  const hasScatter1 = !reelSpinning[1] && currentGrid[1]?.includes('SCATTER');
+  const scatterSym = isTimber ? 'OWL' : 'SCATTER';
+  const hasScatter0 = !reelSpinning[0] && currentGrid[0]?.includes(scatterSym);
+  const hasScatter1 = !reelSpinning[1] && currentGrid[1]?.includes(scatterSym);
   const isAnticipating = hasScatter0 && hasScatter1;
 
   const handleStageClick = () => {
@@ -303,28 +315,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   return (
     <div
       onClick={handleStageClick}
-      className={`relative w-full max-w-4xl mx-auto px-1 sm:px-3 select-none ${
+      className={`relative w-full max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 select-none ${
         isSpinning ? 'cursor-pointer' : ''
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
     >
-      {/* Solo Focus Mode: Full Standee beside cabinet */}
-      {!isFloorMode && (
-        <div className="hidden xl:block absolute -left-56 sm:-left-64 top-8 z-30">
-          <CompanionLounge
-            position="desktop-flank"
-            isSpinning={isSpinning}
-            isAnticipating={isAnticipating}
-            isWinning={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout > 0}
-            isBigWin={!isAnyReelSpinning && !!spinResult && spinResult.totalPayout >= 500}
-            isFeverMode={isFeverMode}
-            winAmount={spinResult?.totalPayout || 0}
-            onRewardCoins={onRewardCoins}
-            activeGameId={activeGameId}
-          />
-        </div>
-      )}
-
       {/* 3D Interactive Mechanical Pull-Arm Slot Lever (Solo Mode only, well clear of cabinet) */}
       {!isFloorMode && (
         <SlotLever
@@ -523,8 +518,37 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
         </div>
 
-        {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs */}
-        <div className="flex items-center space-x-1 sm:space-x-2 w-full">
+        {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 w-full">
+          {/* Left Themed Cabinet Pilaster */}
+          {isTimber ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
+              <div className="flex flex-col space-y-5">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-950 border border-amber-600/60 shadow-md flex items-center justify-center">
+                    <div className="w-1 h-1 rounded-full bg-amber-400/80 shadow-[0_0_6px_#f59e0b]" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
+            </div>
+          ) : (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-slate-900 via-amber-900 to-black border-y-2 border-l-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+              </div>
+              <div className="flex flex-col space-y-5">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-3 h-1.5 rounded-xs bg-gradient-to-r from-yellow-300 to-amber-500 border border-yellow-100 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+              </div>
+            </div>
+          )}
+
           {/* Left Flank */}
           <PaylineSideTabs
             side="left"
@@ -544,9 +568,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
           <div
-            className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[210px] xs:h-[240px] sm:h-[340px] md:h-[420px] ${
+            className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[250px] xs:h-[290px] sm:h-[390px] md:h-[470px] lg:h-[530px] ${
               isTimber
-                ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_30px_rgba(0,0,0,0.95)]'
+                ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : 'bg-casino-950/95 border-white/10'
             }`}
             style={
@@ -569,7 +593,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
             {/* Floating Win Badges on Active Winning Paylines */}
             {!isAnyReelSpinning && activeWin && (
-              <FloatingWins activeWin={activeWin} />
+              <FloatingWins activeWin={activeWin} isTimber={isTimber} />
             )}
 
             {/* Full Slot Panoramic Scene Slide (Middle 3 Reels Merge) */}
@@ -591,6 +615,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 symbols={currentGrid[reelIdx]}
                 isSpinning={reelSpinning[reelIdx]}
                 isAnticipating={isAnticipating && reelIdx >= 2 && reelSpinning[reelIdx]}
+                isDimmed={isAnticipating && isAnyReelSpinning && !reelSpinning[reelIdx]}
                 winningRows={winningCoordsMap.get(reelIdx)}
                 scatterRows={scatterCoordsMap.get(reelIdx)}
                 rowCount={rowCount}
@@ -615,6 +640,35 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             totalLinesCount={totalLines}
             isTimber={isTimber}
           />
+
+          {/* Right Themed Cabinet Pilaster */}
+          {isTimber ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-r-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
+              <div className="flex flex-col space-y-5">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-950 border border-amber-600/60 shadow-md flex items-center justify-center">
+                    <div className="w-1 h-1 rounded-full bg-amber-400/80 shadow-[0_0_6px_#f59e0b]" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
+            </div>
+          ) : (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-black via-amber-900 to-slate-900 border-y-2 border-r-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+              </div>
+              <div className="flex flex-col space-y-5">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-3 h-1.5 rounded-xs bg-gradient-to-r from-yellow-300 to-amber-500 border border-yellow-100 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Themed Speakers */}

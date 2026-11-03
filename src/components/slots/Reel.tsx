@@ -7,6 +7,7 @@ interface ReelProps {
   symbols: SymbolId[]; // landing symbols [row 0, row 1, ...]
   isSpinning: boolean;
   isAnticipating?: boolean;
+  isDimmed?: boolean;
   winningRows?: Set<number>;
   scatterRows?: Set<number>;
   onStop?: (reelIndex: number) => void;
@@ -27,6 +28,7 @@ export const Reel: React.FC<ReelProps> = ({
   symbols,
   isSpinning,
   isAnticipating = false,
+  isDimmed = false,
   winningRows = new Set(),
   scatterRows = new Set(),
   onStop,
@@ -70,6 +72,8 @@ export const Reel: React.FC<ReelProps> = ({
   return (
     <div
       className={`relative flex-1 h-full min-h-0 overflow-hidden rounded-xl border transition-all duration-300 ${
+        isDimmed ? 'opacity-40 brightness-75 scale-[0.98]' : ''
+      } ${
         isTimber
           ? 'bg-gradient-to-b from-[#142419] via-[#0c1810] to-[#050e08]'
           : 'bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950'
