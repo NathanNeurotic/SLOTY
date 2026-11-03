@@ -171,24 +171,35 @@ export const Reel: React.FC<ReelProps> = ({
         }`} />
       )}
 
-      {/* 1. Fast GPU-Accelerated Rolling Strip (Seamless 200% height loop with motion blur) */}
+      {/* 1. Matrix-Preserving Fast Rolling Slots (Strictly maintains exact rowCount during spin) */}
       {isSpinning && (
-        <div
-          className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[1.5px] brightness-105"
-          style={{
-            height: '200%',
-            animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
-          }}
-        >
-          {rollingStrip.map((sym, idx) => (
-            <div
-              key={idx}
-              className="w-full flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0 opacity-85"
-              style={{ height: `${100 / rollingStrip.length}%` }}
-            >
-              <SymbolRenderer id={sym} reelIndex={reelIndex} rowIndex={idx} />
-            </div>
-          ))}
+        <div className="w-full h-full flex flex-col will-change-transform">
+          {Array.from({ length: activeRowCount }, (_, rowIdx) => {
+            const symA = rollingStrip[(rowIdx * 2 + (reelIndex % 2)) % rollingStrip.length];
+            const symB = rollingStrip[(rowIdx * 2 + 1 + (reelIndex % 2)) % rollingStrip.length];
+            return (
+              <div
+                key={rowIdx}
+                className="w-full relative overflow-hidden flex-shrink-0 min-h-0 flex items-center justify-center p-0.5 sm:p-1"
+                style={{ height: `${100 / activeRowCount}%` }}
+              >
+                <div
+                  className="w-full flex flex-col animate-slot-spin filter blur-[1.2px] brightness-105 will-change-transform"
+                  style={{
+                    height: '200%',
+                    animationDuration: isAnticipating ? '0.35s' : `${0.16 + ((reelIndex + rowIdx) % 3) * 0.02}s`,
+                  }}
+                >
+                  <div className="w-full h-1/2 flex items-center justify-center flex-shrink-0 opacity-85">
+                    <SymbolRenderer id={symA} reelIndex={reelIndex} rowIndex={rowIdx} />
+                  </div>
+                  <div className="w-full h-1/2 flex items-center justify-center flex-shrink-0 opacity-85">
+                    <SymbolRenderer id={symB} reelIndex={reelIndex} rowIndex={rowIdx} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

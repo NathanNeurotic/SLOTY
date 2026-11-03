@@ -95,13 +95,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <rect x="17" y="77" width="66" height="16" rx="3" fill="#1C1408" stroke="#FEF08A" strokeWidth="0.8" />
               <text
                 x="50"
-                y="89.5"
+                y="89"
                 textAnchor="middle"
                 fill="#FBBF24"
                 fontWeight="900"
-                fontSize="13"
+                fontSize="11"
                 fontFamily="sans-serif"
-                letterSpacing="2.5"
+                letterSpacing="1.5"
                 className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
               >
                 WILD
@@ -179,13 +179,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <rect x="12" y="75" width="76" height="19" rx="4" fill="url(#vaultSteelRing)" opacity="0.4" />
               <text
                 x="50"
-                y="88.5"
+                y="87.5"
                 textAnchor="middle"
                 fill="#00F0FF"
                 fontWeight="900"
-                fontSize="12.5"
+                fontSize="10"
                 fontFamily="sans-serif"
-                letterSpacing="2.5"
+                letterSpacing="1.2"
                 className="drop-shadow-[0_0_8px_rgba(0,240,255,0.9)]"
               >
                 SCATTER
@@ -254,15 +254,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <rect x="14" y="70" width="72" height="17" rx="4" fill="url(#coinPlaqueBg)" stroke="#F59E0B" strokeWidth="0.8" />
               <text
                 x="50"
-                y="82.5"
+                y="82"
                 textAnchor="middle"
                 fill="#FEF08A"
                 stroke="#451A03"
                 strokeWidth="0.8"
                 fontWeight="900"
-                fontSize="12"
+                fontSize="10"
                 fontFamily="sans-serif"
-                letterSpacing="2.5"
+                letterSpacing="1.2"
                 style={{ paintOrder: 'stroke fill' }}
               >
                 BONUS
@@ -406,19 +406,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="44,34 45.5,37 48.5,37 46,38.5 47,41.5 44,39.5 41,41.5 42,38.5 39.5,37 42.5,37" fill="#FEF08A" />
 
             {/* Base Horizontal 24K Gold Cartouche Plaque (Text strictly contained inside frame) */}
-            <rect x="16" y="74" width="68" height="20" rx="5" fill="#1C1408" stroke="#F59E0B" strokeWidth="2" />
-            <rect x="18" y="76" width="64" height="16" rx="3.5" fill="#2E180E" stroke="#FEF08A" strokeWidth="0.8" />
+            <rect x="12" y="73" width="76" height="20" rx="5" fill="#1C1408" stroke="#F59E0B" strokeWidth="2" />
+            <rect x="14" y="75" width="72" height="16" rx="3.5" fill="#2E180E" stroke="#FEF08A" strokeWidth="0.8" />
             <text
               x="50"
-              y="88"
+              y="86.5"
               textAnchor="middle"
               fill="#FDE047"
               stroke="#451A03"
-              strokeWidth="0.6"
+              strokeWidth="0.5"
               fontWeight="900"
-              fontSize="9.5"
+              fontSize="7.5"
               fontFamily="sans-serif"
-              letterSpacing="1.8"
+              letterSpacing="1"
               style={{ paintOrder: 'stroke fill' }}
             >
               24K GOLD
@@ -1001,15 +1001,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="14" y="74" width="72" height="18" rx="5" fill="#172554" stroke="#93C5FD" strokeWidth="0.8" />
             <text
               x="50"
-              y="87"
+              y="86.5"
               textAnchor="middle"
               fill="#93C5FD"
               stroke="#0F172A"
               strokeWidth="0.8"
-              fontSize="11"
+              fontSize="9.5"
               fontWeight="900"
               fontFamily="sans-serif"
-              letterSpacing="2"
+              letterSpacing="1"
               style={{ paintOrder: 'stroke fill' }}
             >
               SCATTER
@@ -1088,15 +1088,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               {/* Bold, Ultra-Legible Pure Gold CASH Text */}
               <text
                 x="50"
-                y="63.5"
+                y="62.5"
                 textAnchor="middle"
                 fill="#FFFBEB"
                 stroke="#000"
-                strokeWidth="2.5"
-                fontSize="17"
+                strokeWidth="2"
+                fontSize="13"
                 fontWeight="900"
                 fontFamily="system-ui, -apple-system, sans-serif"
-                letterSpacing="4"
+                letterSpacing="2"
                 style={{ paintOrder: 'stroke fill' }}
               >
                 CASH
@@ -1518,7 +1518,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <path d="M16 76 H84 V90 H16 Z" fill="#FF007F" />
             <path d="M18 78 H82 V88 H18 Z" fill="#2E0854" />
             {/* Stepped 8-bit text: W I L D */}
-            <text x="50" y="86.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="10.5" fontFamily="'Courier New', monospace" letterSpacing="3">
+            <text x="50" y="86.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="9.5" fontFamily="'Courier New', monospace" letterSpacing="1.5">
               WILD
             </text>
           </svg>

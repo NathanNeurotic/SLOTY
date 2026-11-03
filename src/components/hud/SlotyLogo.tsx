@@ -151,19 +151,19 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
             </span>
           </div>
         ) : (
-          <div className="flex items-center space-x-1.5 leading-none">
-            <span className="text-sm sm:text-lg font-black tracking-wider uppercase gold-gradient-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 leading-none shrink-0">
+            <span className="text-sm sm:text-base xl:text-lg font-black tracking-wider uppercase gold-gradient-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] whitespace-nowrap">
               24K GOLD
             </span>
-            <span className="inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8.5px] sm:text-[9.5px] px-2 py-0.5 rounded font-black tracking-widest uppercase bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border border-yellow-200 shadow-[0_0_10px_rgba(245,158,11,0.8)]">
+            <span className="inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8px] sm:text-[9px] px-1.5 sm:px-2 py-0.5 rounded font-black tracking-wider uppercase bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border border-yellow-200 shadow-[0_0_10px_rgba(245,158,11,0.8)]">
               CASH VAULT 👑
             </span>
-            <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300 fill-yellow-300" />
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin text-yellow-300 fill-yellow-300 shrink-0" />
           </div>
         )}
 
         <div
-          className={`hidden xl:flex items-center space-x-1 text-[8px] sm:text-[9px] font-black tracking-widest leading-none mt-1 ${
+          className={`hidden xl:flex items-center space-x-1 text-[8px] sm:text-[9px] font-black tracking-widest leading-none mt-1 truncate max-w-full overflow-hidden ${
             isPs2
               ? 'text-cyan-300 drop-shadow-[0_0_6px_rgba(0,111,205,0.7)] font-mono'
               : isTimber

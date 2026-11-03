@@ -58,8 +58,8 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
                   'polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))',
               }}
             >
-              <span className="text-xs">{g.icon}</span>
-              <span className="leading-none">{g.shortName}</span>
+              <span className="text-xs shrink-0">{g.icon}</span>
+              <span className="leading-none whitespace-nowrap truncate">{g.shortName}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse ml-0.5 shadow-[0_0_6px_#00F0FF]" />
               )}
@@ -101,8 +101,8 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
                   'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 0 100%)',
               }}
             >
-              <span className="text-xs">{g.icon}</span>
-              <span className="leading-none">{g.shortName}</span>
+              <span className="text-xs shrink-0">{g.icon}</span>
+              <span className="leading-none whitespace-nowrap truncate">{g.shortName}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 bg-cyan-300 animate-ping ml-0.5" />
               )}
@@ -144,8 +144,8 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
                   'polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%, 5% 50%)',
               }}
             >
-              <span className="text-xs">{g.icon}</span>
-              <span className="leading-none tracking-wide">{g.shortName}</span>
+              <span className="text-xs shrink-0">{g.icon}</span>
+              <span className="leading-none tracking-wide whitespace-nowrap truncate">{g.shortName}</span>
             </button>
           );
         })}
@@ -183,8 +183,8 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
                 'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
             }}
           >
-            <span className="text-xs">{g.icon}</span>
-            <span className="leading-none tracking-wide">{g.shortName}</span>
+            <span className="text-xs shrink-0">{g.icon}</span>
+            <span className="leading-none tracking-wide whitespace-nowrap truncate">{g.shortName}</span>
           </button>
         );
       })}
