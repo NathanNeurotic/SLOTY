@@ -53,6 +53,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 }) => {
   const [isMusicOn, setIsMusicOn] = useState(() => soundManager.isMusicPlaying());
   const [showAudioPopover, setShowAudioPopover] = useState(false);
+  const [showMobileToolsDrawer, setShowMobileToolsDrawer] = useState(false);
   const [sfxVol, setSfxVol] = useState(() => Math.round(soundManager.getSFXVolume() * 100));
   const [musicVol, setMusicVol] = useState(() => Math.round(soundManager.getMusicVolume() * 100));
 
@@ -93,72 +94,58 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   const isTimber = activeGameId === 'timber-critters';
 
   return (
-    <header className={`w-full px-2 sm:px-5 py-2 sticky top-0 z-30 select-none shadow-[0_6px_30px_rgba(0,0,0,0.95)] transition-colors duration-300 ${
+    <header className={`w-full px-2 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
       isTimber
-        ? 'bg-gradient-to-r from-[#241308] via-[#140c06] to-[#241308] border-b-4 border-[#78350f]'
-        : 'bg-gradient-to-r from-black via-[#1a1205] to-black border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
+        ? 'bg-gradient-to-r from-[#241308] via-[#140c06] to-[#241308] border-b-2 sm:border-b-4 border-[#78350f]'
+        : 'bg-gradient-to-r from-black via-[#1a1205] to-black border-b-2 sm:border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
     }`}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 flex-wrap">
-        {/* Left: Brand Logo & Title */}
-        <SlotyLogo activeGameId={activeGameId} />
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-3 w-full h-9 sm:h-11">
+        {/* Left: Brand Logo & Coin Balance */}
+        <div className="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
+          <SlotyLogo activeGameId={activeGameId} />
 
-        {/* Center-Left: Coin Balance & VIP Level Progression */}
-        <div className="flex items-center space-x-1.5 sm:space-x-3">
           {/* Digital Bank Vault / Forest Reserve Cash Dispenser */}
-          <div className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3.5 py-1 rounded-xl shadow-md border-2 ${
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-xl shadow-md border ${
             isTimber
-              ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-              : 'bg-gradient-to-b from-black via-slate-950 to-black border-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+              ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+              : 'bg-gradient-to-b from-black via-slate-950 to-black border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
           }`}>
-            <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center shadow-md flex-shrink-0 border ${
+            <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center shadow-md flex-shrink-0 border ${
               isTimber
                 ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
                 : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950'
             }`}>
               {isTimber ? (
-                <span className="text-xs">🌰</span>
+                <span className="text-[10px]">🌰</span>
               ) : (
-                <Coins className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
+                <Coins className="w-3 h-3 fill-amber-950 text-amber-950" />
               )}
             </div>
             <div className="flex flex-col">
-              <span className={`text-[7px] sm:text-[8px] uppercase font-black tracking-wider leading-none ${
+              <span className={`text-[6px] sm:text-[7.5px] uppercase font-black tracking-wider leading-none ${
                 isTimber ? 'text-emerald-400' : 'text-amber-400'
               }`}>
-                {isTimber ? '🌰 FOREST RESERVE' : '24K VAULT RESERVE'}
+                {isTimber ? 'RESERVE' : 'VAULT'}
               </span>
-              <span className={`text-xs sm:text-base font-black leading-tight font-mono ${
+              <span className={`text-[11px] sm:text-sm font-black leading-tight font-mono ${
                 isTimber
-                  ? 'text-emerald-200 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]'
-                  : 'text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]'
+                  ? 'text-emerald-200 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                  : 'text-yellow-300 drop-shadow-[0_0_6px_rgba(253,224,71,0.8)]'
               }`}>
                 ${balance.toLocaleString()}
               </span>
             </div>
           </div>
 
-          {/* VIP High Roller Onyx Medallion */}
-          <div className="hidden md:flex items-center space-x-2 bg-gradient-to-b from-slate-900 to-black border-2 border-purple-500/60 px-2.5 py-1 rounded-xl shadow-[0_0_12px_rgba(168,85,247,0.3)]">
-            <div className="w-5 h-5 rounded-lg bg-purple-600/40 border border-purple-400 flex items-center justify-center text-purple-300 flex-shrink-0">
-              <Trophy className="w-3 h-3 text-yellow-300" />
-            </div>
-            <div className="flex flex-col min-w-[80px]">
-              <div className="flex items-center justify-between text-[8px] font-black">
-                <span className="text-purple-300">VIP LV.{progression.level}</span>
-                <span className="text-amber-300 font-mono">{progression.progressPercent}%</span>
-              </div>
-              <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden mt-0.5 border border-purple-400/20">
-                <div
-                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400 h-full rounded-full transition-all duration-300"
-                  style={{ width: `${progression.progressPercent}%` }}
-                />
-              </div>
-            </div>
+          {/* VIP Level (Tablet/Desktop only) */}
+          <div className="hidden lg:flex items-center space-x-1.5 bg-gradient-to-b from-slate-900 to-black border border-purple-500/60 px-2 py-0.5 rounded-xl shadow-md">
+            <Trophy className="w-3 h-3 text-yellow-300" />
+            <span className="text-[8px] font-black text-purple-300">VIP LV.{progression.level}</span>
           </div>
         </div>
 
         {/* Center: Multi-Game Machine Switcher (24K Gold Vault vs Timberland Critters) */}
-        <div className="flex items-center">
+        <div className="flex items-center flex-shrink-0">
           <GameSelector
             activeGameId={activeGameId}
             onSelectGame={onSelectGame}
@@ -166,106 +153,104 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           />
         </div>
 
-        {/* Right: Actions, Music & Audio Controls, Bonus Wheel & Help */}
-        <div className="flex items-center space-x-1 sm:space-x-1.5 relative">
+        {/* Right: Actions & Tools */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 relative">
           {/* Daily Bonus Wheel Button */}
           <button
             onClick={() => {
               soundManager.playButtonClick();
               onOpenBonusWheel();
             }}
-            className={`relative flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border text-[10px] sm:text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-1 rounded-xl border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
               canClaimBonus
-                ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 border-yellow-300 text-white shadow-[0_0_20px_rgba(236,72,153,0.8)] animate-pulse'
+                ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 border-yellow-300 text-white shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-pulse'
                 : 'vlt-btn-stepper text-amber-300 hover:text-white'
             }`}
+            title="Claim Daily Bonus Wheel"
           >
             <Gift className={`w-3.5 h-3.5 ${canClaimBonus ? 'animate-bounce text-yellow-300' : 'text-amber-400'}`} />
-            <span className="hidden sm:inline font-mono font-black">
+            <span className="hidden md:inline font-mono font-black">
               {canClaimBonus ? 'FREE BONUS' : timeUntilBonus}
             </span>
           </button>
 
-          {/* Background Lounge Music Toggle with Live Equalizer Visualizer */}
+          {/* Background Lounge Music Toggle */}
           <button
             onClick={handleToggleMusic}
-            title={isMusicOn ? 'Mute Casino Lounge Music' : 'Start Vegas VIP Lounge Music'}
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border-2 transition-all flex-shrink-0 ${
+            title={isMusicOn ? 'Mute Music' : 'Start Music'}
+            className={`p-1 sm:px-2 sm:py-1 rounded-xl border transition-all flex-shrink-0 ${
               isMusicOn
-                ? 'bg-gradient-to-b from-emerald-600/40 via-emerald-950 to-black border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+                ? 'bg-emerald-950/80 border-emerald-400 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.5)]'
                 : 'vlt-btn-stepper text-slate-400 hover:text-white border-white/20'
             }`}
           >
             <Music className={`w-3.5 h-3.5 ${isMusicOn ? 'text-emerald-300' : 'text-slate-400'}`} />
-            <span className="hidden xs:inline text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
-              {isMusicOn ? 'MUSIC ON' : 'MUSIC'}
-            </span>
-
-            {/* Dancing EQ bars when music is playing */}
-            {isMusicOn ? (
-              <div className="flex items-end space-x-0.5 h-3 ml-0.5">
-                <div className="w-0.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms] h-full" />
-                <div className="w-0.5 bg-emerald-300 rounded-full animate-bounce [animation-delay:150ms] h-2" />
-                <div className="w-0.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:75ms] h-2.5" />
-              </div>
-            ) : (
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-600 ml-0.5" />
-            )}
           </button>
 
-          {/* Master Audio Mute Toggle */}
+          {/* Mobile Tools Drawer Launcher (< 640px) */}
           <button
             onClick={() => {
               soundManager.playButtonClick();
-              onToggleMute();
+              setShowMobileToolsDrawer(true);
             }}
-            title={isMuted ? 'Unmute All Sounds' : 'Mute All Sounds'}
-            className={`p-1.5 sm:p-2 rounded-xl border-2 transition-all flex-shrink-0 ${
-              isMuted
-                ? 'bg-rose-950/60 border-rose-500/80 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
-                : 'vlt-btn-stepper text-slate-300 hover:text-white border-white/20'
-            }`}
+            className="sm:hidden p-1.5 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            title="Open Tools & Settings"
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            <Sliders className="w-3.5 h-3.5 text-yellow-300" />
           </button>
 
-          {/* Audio Controls Popover Button (Sliders) */}
-          <button
-            onClick={() => {
-              soundManager.playButtonClick();
-              setShowAudioPopover(!showAudioPopover);
-            }}
-            title="Audio & Sound Mixer"
-            className="p-1.5 sm:p-2 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
-          >
-            <Sliders className="w-4 h-4 text-yellow-300" />
-          </button>
+          {/* Desktop-only individual utility buttons (>= 640px) */}
+          <div className="hidden sm:flex items-center space-x-1.5">
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onToggleMute();
+              }}
+              title={isMuted ? 'Unmute' : 'Mute'}
+              className={`p-1.5 rounded-xl border transition-all flex-shrink-0 ${
+                isMuted
+                  ? 'bg-rose-950/60 border-rose-500/80 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
+                  : 'vlt-btn-stepper text-slate-300 hover:text-white border-white/20'
+              }`}
+            >
+              {isMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
+            </button>
 
-          {/* Paytable & Rules Button */}
-          <button
-            onClick={() => {
-              soundManager.playButtonClick();
-              onOpenPaytable();
-            }}
-            title="Paytable & Rules"
-            className="p-1.5 sm:p-2 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
-          >
-            <HelpCircle className="w-4 h-4 text-cyan-300" />
-          </button>
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                setShowAudioPopover(!showAudioPopover);
+              }}
+              title="Audio Mixer"
+              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+            >
+              <Sliders className="w-3.5 h-3.5 text-yellow-300" />
+            </button>
 
-          {/* Debug Drawer Toggle Button */}
-          <button
-            onClick={() => {
-              soundManager.playButtonClick();
-              onToggleDebug();
-            }}
-            title="Developer Rig Suite"
-            className="p-1.5 sm:p-2 rounded-xl vlt-btn-stepper text-slate-400 hover:text-amber-400 transition-colors border-white/20"
-          >
-            <Terminal className="w-4 h-4 text-slate-400 hover:text-amber-300" />
-          </button>
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onOpenPaytable();
+              }}
+              title="Paytable & Rules"
+              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-cyan-300" />
+            </button>
 
-          {/* Audio Mixer Popover Drawer */}
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onToggleDebug();
+              }}
+              title="Developer Rig Suite"
+              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-amber-400 transition-colors border-white/20"
+            >
+              <Terminal className="w-3.5 h-3.5 text-slate-400 hover:text-amber-300" />
+            </button>
+          </div>
+
+          {/* Desktop Audio Mixer Popover Drawer */}
           {showAudioPopover && (
             <div className="absolute right-0 top-full mt-2 w-72 bg-gradient-to-b from-slate-900 to-black border-2 border-yellow-400 rounded-2xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.95)] z-50 animate-fadeIn text-slate-200">
               <div className="flex items-center justify-between pb-2 border-b border-white/10 mb-3">
@@ -327,7 +312,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 />
               </div>
 
-              {/* Interactive Sound Test Buttons */}
+              {/* Individual Sound FX */}
               <div className="pt-2 border-t border-white/10">
                 <div className="text-[9px] font-bold uppercase text-slate-400 mb-1.5">
                   Individual Sound FX:
@@ -363,6 +348,99 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           )}
         </div>
       </div>
+
+      {/* Mobile Tools & Settings Drawer Modal */}
+      {showMobileToolsDrawer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm select-none animate-fadeIn">
+          <div className="relative w-full max-w-sm bg-gradient-to-b from-slate-900 via-casino-950 to-black border-2 border-amber-400 rounded-3xl p-5 shadow-2xl flex flex-col space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <span className="text-sm font-black uppercase text-amber-300 tracking-wider">
+                Game Settings &amp; Tools
+              </span>
+              <button
+                onClick={() => setShowMobileToolsDrawer(false)}
+                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  onToggleMute();
+                }}
+                className={`py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center space-x-1.5 ${
+                  isMuted ? 'bg-rose-950 border-rose-500 text-rose-300' : 'bg-casino-900 border-white/20 text-white'
+                }`}
+              >
+                {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+                <span>{isMuted ? 'Unmute Audio' : 'Mute Audio'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  setShowMobileToolsDrawer(false);
+                  onOpenPaytable();
+                }}
+                className="py-2 px-3 rounded-xl bg-casino-900 border border-cyan-400/50 text-cyan-200 font-bold text-xs flex items-center justify-center space-x-1.5"
+              >
+                <HelpCircle className="w-4 h-4 text-cyan-300" />
+                <span>Paytable &amp; Rules</span>
+              </button>
+            </div>
+
+            {/* Volume Sliders */}
+            <div className="flex flex-col space-y-3 bg-black/50 p-3 rounded-2xl border border-white/10">
+              <div>
+                <div className="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
+                  <span>VIP Lounge Music</span>
+                  <span className="font-mono text-emerald-400">{musicVol}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={musicVol}
+                  onChange={handleMusicChange}
+                  className="w-full accent-emerald-400 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
+                  <span>Sound Effects</span>
+                  <span className="font-mono text-amber-400">{sfxVol}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={sfxVol}
+                  onChange={handleSfxChange}
+                  className="w-full accent-amber-400 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* Developer Drawer Launcher */}
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                setShowMobileToolsDrawer(false);
+                onToggleDebug();
+              }}
+              className="w-full py-2 bg-slate-900 hover:bg-slate-800 border border-white/15 rounded-xl font-bold text-xs text-slate-300 flex items-center justify-center space-x-1.5"
+            >
+              <Terminal className="w-4 h-4 text-amber-300" />
+              <span>Open Developer Rig</span>
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

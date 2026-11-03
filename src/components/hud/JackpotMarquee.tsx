@@ -101,9 +101,47 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   // =========================================================================
   if (isTimber) {
     return (
-      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
-        {/* Mountain Cabin A-Frame Shingle Roof Pediment */}
-        <div className="relative pt-3">
+      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
+        {/* Mobile Compact Top Box (< 640px) */}
+        <div className="sm:hidden w-full px-0.5 py-0.5">
+          <div
+            onClick={handleJackpotClick}
+            className="w-full h-10 px-2 rounded-xl bg-gradient-to-r from-[#241308] via-[#120703] to-[#241308] border-2 border-[#a16207] shadow-md flex items-center justify-between cursor-pointer"
+          >
+            {/* Left: Mascot Icon + Label */}
+            <div className="flex items-center space-x-1 flex-shrink-0">
+              <span className="text-base">🐻</span>
+              <span className="text-[8.5px] font-black uppercase text-amber-300 tracking-wider">
+                GRAND
+              </span>
+            </div>
+
+            {/* Center: Live Grand Jackpot */}
+            <div className="flex items-baseline font-mono px-1">
+              <span className="text-xs font-black text-amber-400 mr-0.5">$</span>
+              <span className="text-base font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_8px_rgba(52,211,153,0.9)]">
+                {Math.floor(grand).toLocaleString()}
+              </span>
+              <span className="text-[9px] font-bold text-emerald-400">
+                .{(grand % 1).toFixed(2).slice(2)}
+              </span>
+            </div>
+
+            {/* Right: Sub-jackpot summary & Sap meter */}
+            <div className="flex items-center space-x-1.5 flex-shrink-0">
+              <span className="text-[8px] font-mono font-bold text-teal-300">
+                🐺${Math.round(major / 1000)}k
+              </span>
+              <div className="px-1.5 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-500/50 text-[7.5px] font-mono font-bold text-emerald-300 flex items-center space-x-0.5">
+                <span>SAP</span>
+                <span className="text-white font-black">{feverCharge}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop / Tablet Mountain Cabin A-Frame Shingle Roof Pediment (>= 640px) */}
+        <div className="hidden sm:block relative pt-3">
           {/* Ambient Warm Hearth Glow */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-3/4 h-20 rounded-full bg-gradient-to-t from-amber-600/35 via-emerald-600/20 to-transparent filter blur-xl pointer-events-none" />
 
@@ -280,9 +318,47 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   // --- VERSION B: 24K VAULT (FORT KNOX HIGH-ROLLER GOLD BULLION TOP BOX) ---
   // =========================================================================
   return (
-    <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
-      {/* Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment */}
-      <div className="relative pt-3">
+    <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
+      {/* Mobile Compact Top Box (< 640px) */}
+      <div className="sm:hidden w-full px-0.5 py-0.5">
+        <div
+          onClick={handleJackpotClick}
+          className="w-full h-10 px-2 rounded-xl bg-gradient-to-r from-amber-950 via-slate-950 to-amber-950 border-2 border-yellow-400/80 shadow-md flex items-center justify-between cursor-pointer"
+        >
+          {/* Left: Mascot Icon + Label */}
+          <div className="flex items-center space-x-1 flex-shrink-0">
+            <span className="text-base">👑</span>
+            <span className="text-[8.5px] font-black uppercase text-yellow-300 tracking-wider">
+              GRAND
+            </span>
+          </div>
+
+          {/* Center: Live Grand Jackpot */}
+          <div className="flex items-baseline font-mono px-1">
+            <span className="text-xs font-black text-amber-400 mr-0.5">$</span>
+            <span className="text-base font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.9)]">
+              {Math.floor(grand).toLocaleString()}
+            </span>
+            <span className="text-[9px] font-bold text-amber-400">
+              .{(grand % 1).toFixed(2).slice(2)}
+            </span>
+          </div>
+
+          {/* Right: Sub-jackpot summary & PSI meter */}
+          <div className="flex items-center space-x-1.5 flex-shrink-0">
+            <span className="text-[8px] font-mono font-bold text-purple-300">
+              💎${Math.round(major / 1000)}k
+            </span>
+            <div className="px-1.5 py-0.5 rounded-full bg-slate-950 border border-amber-500/50 text-[7.5px] font-mono font-bold text-amber-300 flex items-center space-x-0.5">
+              <span>PSI</span>
+              <span className="text-white font-black">{feverCharge}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop / Tablet Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment (>= 640px) */}
+      <div className="hidden sm:block relative pt-3">
         {/* Radial Sunburst Gold Glow */}
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-3/4 h-20 rounded-full bg-gradient-to-t from-yellow-500/35 via-amber-500/20 to-transparent filter blur-xl pointer-events-none" />
 

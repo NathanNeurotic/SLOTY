@@ -35,7 +35,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             onClick={() => handleSelect(g.id)}
             disabled={disabled}
             title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-xs font-black transition-all ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-3.5 py-0.5 sm:py-1.5 rounded-xl text-xs font-black transition-all ${
               isActive
                 ? isTimber
                   ? 'bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-900 text-white border-2 border-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.7)] scale-[1.02]'

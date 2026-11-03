@@ -341,7 +341,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         }`}
       >
         <div
-          className={`relative p-2 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
+          className={`relative p-1 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
@@ -380,7 +380,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
 
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
-        <div className="flex items-center justify-between h-10 sm:h-12 px-2 border-b border-white/10 mb-2 overflow-hidden flex-shrink-0">
+        <div className="flex items-center justify-between h-8 sm:h-11 px-1.5 sm:px-2 border-b border-white/10 mb-1 sm:mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
             {[...Array(6)].map((_, i) => (
               <div
@@ -547,7 +547,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(260px,48vh,560px)] sm:h-[clamp(300px,52vh,620px)] md:h-[clamp(340px,55vh,680px)] xl:h-[clamp(380px,58vh,720px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(230px,46vh,420px)] sm:h-[clamp(300px,52vh,620px)] md:h-[clamp(340px,55vh,680px)] xl:h-[clamp(380px,58vh,720px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : 'bg-casino-950/95 border-white/10'
@@ -651,7 +651,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         </div>
 
         {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Themed Speakers */}
-        <div className="h-7 overflow-hidden flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-semibold px-2 mt-2 truncate whitespace-nowrap flex-shrink-0 border-t border-white/5 pt-1">
+        <div className="h-5 sm:h-7 overflow-hidden flex items-center justify-between text-[9px] sm:text-[11px] text-slate-400 font-semibold px-1.5 sm:px-2 mt-0.5 sm:mt-2 truncate whitespace-nowrap flex-shrink-0 border-t border-white/5 pt-0.5 sm:pt-1">
           {/* Left Speaker */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
             <div

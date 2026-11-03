@@ -758,7 +758,7 @@ export const App: React.FC = () => {
   const isTimber = activeGameId === 'timber-critters';
 
   return (
-    <div className={`h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-start selection:bg-gold selection:text-black relative overflow-hidden transition-colors duration-300 ${
+    <div className={`fixed inset-0 h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black overflow-hidden select-none transition-colors duration-300 ${
       isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
     }`}>
       {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
@@ -801,7 +801,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
-      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start sm:justify-center gap-1 sm:gap-1.5 w-full px-1 sm:px-2 py-0.5 overflow-y-auto sm:overflow-hidden">
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-center gap-0.5 sm:gap-1.5 w-full px-1 sm:px-2 py-0.5 overflow-hidden">
         {/* Dynamic Architectural Physical Top Box (Fort Knox Vault vs Cedar Cabin Gable) */}
         <JackpotMarquee
           totalBet={totalBet}
