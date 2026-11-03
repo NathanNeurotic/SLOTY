@@ -915,8 +915,8 @@ export const App: React.FC = () => {
           activeGameId={activeGameId}
         />
 
-        {/* Integrated Footer info banner (desktop only) */}
-        <footer className={`hidden sm:block py-1 border-t text-center text-[9px] sm:text-[10px] flex-shrink-0 ${
+        {/* Integrated Footer info banner (desktop only) with clean clearance */}
+        <footer className={`hidden sm:block py-1.5 sm:py-2 border-t text-center text-[9px] sm:text-[10px] flex-shrink-0 ${
           isTimber
             ? 'bg-[#0e0a07]/95 border-emerald-900/40 text-emerald-500/80'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
@@ -933,6 +933,7 @@ export const App: React.FC = () => {
           winTier={celebration.tier}
           winAmount={celebration.amount}
           onDismiss={() => setCelebration(null)}
+          activeGameId={activeGameId}
         />
       )}
 
@@ -981,6 +982,7 @@ export const App: React.FC = () => {
           freeSpinsAwarded={10}
           multiplier={3}
           onStart={handleStartFreeSpins}
+          activeGameId={activeGameId}
         />
       )}
 

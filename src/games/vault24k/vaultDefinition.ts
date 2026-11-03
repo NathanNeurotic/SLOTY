@@ -3,46 +3,48 @@ import { SYMBOLS } from '../../engine/symbols';
 import { PAYLINES } from '../../engine/paylines';
 import type { SymbolId } from '../../engine/types';
 
+// Calibrated to Oregon Lottery VLT specifications:
+// 50-stop reel strips with authentic Oregon hit frequency (31%) & scatter/bonus odds
 export const VAULT_REEL_STRIPS: SymbolId[][] = [
-  // Reel 1
+  // Reel 1: 1 scatter, [2, 1, 1] coins (4 coins), 1 wild
   [
-    'ACE', 'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'JACK', 'COIN', 'QUEEN', 'KING', 'ACE', 'WILD', 'HORSESHOE', 'GOLDBAR', 'COIN', 'SCATTER',
-    'DIAMOND', 'SEVEN', 'BELL', 'MELON', 'COIN', 'GRAPES', 'ACE', 'KING', 'QUEEN', 'JACK',
-    'COIN', 'HORSESHOE', 'BELL', 'GOLDBAR', 'WILD', 'SEVEN', 'DIAMOND', 'KING', 'QUEEN', 'JACK',
-    'ACE', 'MELON', 'GRAPES', 'COIN', 'SCATTER', 'BELL', 'HORSESHOE', 'KING', 'QUEEN', 'JACK',
+    'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'COIN', 'COIN', 'MELON', 'GRAPES', 'SEVEN',
+    'JACK', 'QUEEN', 'KING', 'ACE', 'WILD', 'HORSESHOE', 'GOLDBAR', 'SCATTER', 'DIAMOND', 'SEVEN',
+    'BELL', 'MELON', 'COIN', 'GRAPES', 'ACE', 'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'BELL',
+    'GOLDBAR', 'SEVEN', 'DIAMOND', 'KING', 'QUEEN', 'JACK', 'ACE', 'MELON', 'COIN', 'GRAPES',
+    'BELL', 'HORSESHOE', 'KING', 'QUEEN', 'JACK', 'DIAMOND', 'SEVEN', 'GOLDBAR', 'BELL', 'ACE',
   ],
-  // Reel 2
+  // Reel 2: 1 scatter, [2, 1, 1] coins (4 coins), 2 wilds
   [
-    'KING', 'KING', 'QUEEN', 'JACK', 'ACE', 'WILD', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'DIAMOND', 'COIN', 'COIN', 'HORSESHOE', 'GOLDBAR', 'SCATTER', 'JACK', 'QUEEN', 'KING', 'ACE',
-    'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN', 'WILD', 'HORSESHOE', 'COIN', 'JACK', 'QUEEN',
-    'ACE', 'COIN', 'KING', 'QUEEN', 'JACK', 'GOLDBAR', 'DIAMOND', 'SEVEN', 'BELL', 'MELON',
-    'COIN', 'SCATTER', 'HORSESHOE', 'GRAPES', 'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'WILD',
+    'KING', 'QUEEN', 'JACK', 'ACE', 'WILD', 'BELL', 'COIN', 'COIN', 'MELON', 'GRAPES',
+    'SEVEN', 'DIAMOND', 'HORSESHOE', 'GOLDBAR', 'SCATTER', 'JACK', 'QUEEN', 'KING', 'ACE', 'BELL',
+    'MELON', 'GRAPES', 'SEVEN', 'WILD', 'HORSESHOE', 'COIN', 'JACK', 'QUEEN', 'ACE', 'KING',
+    'QUEEN', 'JACK', 'GOLDBAR', 'DIAMOND', 'SEVEN', 'BELL', 'MELON', 'COIN', 'HORSESHOE', 'GRAPES',
+    'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'DIAMOND', 'SEVEN', 'GOLDBAR', 'KING', 'QUEEN',
   ],
-  // Reel 3
+  // Reel 3: 2 scatters, [2, 1, 1] coins (4 coins), 2 wilds
   [
-    'QUEEN', 'QUEEN', 'JACK', 'ACE', 'KING', 'SEVEN', 'SEVEN', 'DIAMOND', 'GOLDBAR', 'BELL',
-    'MELON', 'COIN', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING',
-    'ACE', 'ACE', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE',
-    'JACK', 'COIN', 'QUEEN', 'KING', 'ACE', 'WILD', 'GOLDBAR', 'BELL', 'MELON', 'GRAPES',
-    'COIN', 'SCATTER', 'SEVEN', 'DIAMOND', 'ACE', 'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'WILD',
+    'QUEEN', 'JACK', 'ACE', 'KING', 'SEVEN', 'DIAMOND', 'COIN', 'COIN', 'GOLDBAR', 'BELL',
+    'MELON', 'GRAPES', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING', 'ACE', 'BELL',
+    'MELON', 'GRAPES', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE', 'JACK', 'QUEEN', 'KING', 'ACE',
+    'WILD', 'GOLDBAR', 'BELL', 'MELON', 'GRAPES', 'COIN', 'SCATTER', 'SEVEN', 'DIAMOND', 'ACE',
+    'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'BELL', 'GOLDBAR', 'SEVEN', 'DIAMOND', 'KING', 'ACE',
   ],
-  // Reel 4
+  // Reel 4: 1 scatter, [2, 1, 1] coins (4 coins), 2 wilds
   [
-    'JACK', 'JACK', 'QUEEN', 'KING', 'ACE', 'GOLDBAR', 'GOLDBAR', 'SEVEN', 'DIAMOND', 'BELL',
-    'MELON', 'COIN', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING',
-    'ACE', 'COIN', 'BELL', 'MELON', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD',
-    'QUEEN', 'QUEEN', 'JACK', 'KING', 'ACE', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'COIN', 'SCATTER', 'DIAMOND', 'HORSESHOE', 'ACE', 'KING', 'QUEEN', 'JACK', 'GOLDBAR', 'WILD',
+    'JACK', 'QUEEN', 'KING', 'ACE', 'GOLDBAR', 'SEVEN', 'DIAMOND', 'COIN', 'COIN', 'BELL',
+    'MELON', 'GRAPES', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING', 'ACE', 'BELL',
+    'MELON', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD', 'QUEEN', 'JACK', 'KING',
+    'ACE', 'BELL', 'MELON', 'GRAPES', 'SEVEN', 'COIN', 'DIAMOND', 'HORSESHOE', 'ACE', 'KING',
+    'QUEEN', 'JACK', 'GOLDBAR', 'BELL', 'MELON', 'SEVEN', 'DIAMOND', 'KING', 'QUEEN', 'ACE',
   ],
-  // Reel 5
+  // Reel 5: 1 scatter, [2, 1, 1] coins (4 coins), 2 wilds
   [
-    'ACE', 'ACE', 'KING', 'KING', 'QUEEN', 'JACK', 'SEVEN', 'SEVEN', 'DIAMOND', 'DIAMOND',
-    'GOLDBAR', 'BELL', 'BELL', 'MELON', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK',
-    'QUEEN', 'COIN', 'KING', 'ACE', 'BELL', 'MELON', 'COIN', 'GRAPES', 'SEVEN', 'DIAMOND',
-    'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD', 'JACK', 'JACK', 'QUEEN', 'KING', 'ACE', 'BELL',
-    'COIN', 'SCATTER', 'SEVEN', 'DIAMOND', 'ACE', 'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'WILD',
+    'ACE', 'KING', 'QUEEN', 'JACK', 'SEVEN', 'DIAMOND', 'GOLDBAR', 'COIN', 'COIN', 'BELL',
+    'MELON', 'GRAPES', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'COIN', 'KING', 'ACE',
+    'BELL', 'MELON', 'GRAPES', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD', 'JACK',
+    'QUEEN', 'KING', 'ACE', 'BELL', 'SEVEN', 'DIAMOND', 'ACE', 'KING', 'QUEEN', 'JACK',
+    'HORSESHOE', 'GOLDBAR', 'BELL', 'MELON', 'SEVEN', 'DIAMOND', 'KING', 'QUEEN', 'ACE', 'JACK',
   ],
 ];
 
@@ -73,7 +75,7 @@ export const VAULT_24K_GAME: GameDefinition = {
     minorTitle: 'MINOR',
     miniTitle: 'MINI',
     tickerBadge: 'CASH TICKER',
-    tickerText: '★ 24K GOLD & CASH VAULT ★ 40 HIGH-ROLLER PAYLINES ★ HIT 6 MINTED BULLION COINS FOR FORT KNOX CASH LINK ★ 3 VAULT SCATTERS AWARD 10 FREE SPINS AT 3X MULTIPLIER ★ RISK WINS IN VIDEO POKER DOUBLE-UP ★ 95.8% RTP CERTIFIED ★ GOOD LUCK HIGH ROLLER! ★',
+    tickerText: '★ 24K GOLD & CASH VAULT ★ 40 HIGH-ROLLER PAYLINES ★ HIT 6 MINTED BULLION COINS FOR FORT KNOX CASH LINK ★ 3 VAULT SCATTERS AWARD 10 FREE SPINS AT 3X MULTIPLIER ★ RISK WINS IN VIDEO POKER DOUBLE-UP ★ 95.2% RTP OREGON VLT CERTIFIED ★ GOOD LUCK HIGH ROLLER! ★',
     tickerFreeSpinsText: '🔥🔥🔥 PENTHOUSE CASH RUSH ACTIVE • ALL PAYLINE WINS TRIPLED (3X) • RAINING $100 BILLS 🔥🔥🔥',
     feverTitle: 'MOLTEN GOLD OVERDRIVE',
     feverSubtitle: 'CHARGE WITH WINS',

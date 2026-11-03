@@ -1,15 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { soundManager } from '../../audio/soundManager';
+import { Coins, Trophy, Trees } from 'lucide-react';
+import type { GameId } from '../../games/types';
 
 interface RollingWinDisplayProps {
   targetAmount: number;
   isFreeSpins: boolean;
+  activeGameId?: GameId;
 }
 
 export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
   targetAmount,
   isFreeSpins,
+  activeGameId = 'vault-24k',
 }) => {
+  const isTimber = activeGameId === 'timber-critters';
   const [displayedAmount, setDisplayedAmount] = useState(targetAmount);
   const animRef = useRef<number | null>(null);
   const prevTargetRef = useRef(targetAmount);
@@ -33,7 +38,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
       soundManager.playCoinCascade(Math.min(16, Math.max(6, Math.floor(endVal / 250))));
     }
 
-    const duration = 650; // ms
+    const duration = 750; // ms
     const startTime = performance.now();
 
     const step = (now: number) => {
@@ -58,26 +63,67 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
     };
   }, [targetAmount]);
 
+  const hasWin = targetAmount > 0;
+
   return (
     <div
-      className={`flex flex-col items-center justify-center bg-gradient-to-b from-casino-950 to-casino-900 px-2 sm:px-3 rounded-xl border transition-colors duration-200 w-28 sm:w-36 h-9 sm:h-10 flex-shrink-0 overflow-hidden ${
-        targetAmount > 0
-          ? 'border-gold-bright shadow-[0_0_15px_rgba(245,158,11,0.5),inset_0_0_12px_rgba(245,158,11,0.25)]'
-          : 'border-white/10 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]'
+      className={`relative flex flex-col items-center justify-center rounded-xl sm:rounded-2xl border transition-all duration-300 w-32 sm:w-48 xl:w-56 h-10 sm:h-12 flex-shrink-0 overflow-hidden ${
+        hasWin
+          ? isTimber
+            ? 'bg-gradient-to-b from-[#1b3323] via-[#0d1f14] to-[#061009] border-2 border-emerald-400 shadow-[0_0_25px_rgba(52,211,153,0.8),inset_0_0_15px_rgba(52,211,153,0.3)] animate-pulse'
+            : 'bg-gradient-to-b from-amber-950 via-slate-950 to-black border-2 border-yellow-300 shadow-[0_0_25px_rgba(253,224,71,0.85),inset_0_0_15px_rgba(245,158,11,0.3)] animate-pulse'
+          : isTimber
+          ? 'bg-gradient-to-b from-[#142318] to-[#0a140e] border-emerald-700/40 shadow-inner'
+          : 'bg-gradient-to-b from-casino-950 to-casino-900 border-white/15 shadow-inner'
       }`}
     >
-      <span className="text-[7.5px] sm:text-[8.5px] uppercase font-extrabold tracking-widest text-gold-bright leading-tight truncate">
-        {isFreeSpins ? 'FREE SPIN WIN' : 'WIN PAYOUT'}
-      </span>
-      <span
-        className={`text-sm sm:text-base font-black font-mono leading-tight truncate ${
-          displayedAmount > 0
-            ? 'text-gold-light animate-pulse filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]'
-            : 'text-slate-500'
-        }`}
-      >
-        {displayedAmount > 0 ? `+${displayedAmount.toLocaleString()}` : '0'}
-      </span>
+      {/* Top Banner Label */}
+      <div className="flex items-center space-x-1 leading-none">
+        {hasWin ? (
+          isTimber ? (
+            <Trees className="w-3 h-3 text-emerald-400 animate-bounce" />
+          ) : (
+            <Trophy className="w-3 h-3 text-yellow-300 fill-yellow-400 animate-bounce" />
+          )
+        ) : null}
+        <span
+          className={`text-[8px] sm:text-[9.5px] uppercase font-black tracking-widest ${
+            hasWin
+              ? isTimber
+                ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.9)]'
+                : 'text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.9)]'
+              : 'text-slate-400'
+          }`}
+        >
+          {hasWin
+            ? isFreeSpins
+              ? '★ FREE SPIN WIN ★'
+              : '★ TOTAL WIN ★'
+            : 'WIN PAYOUT'}
+        </span>
+      </div>
+
+      {/* Massive Hero Win Digits */}
+      <div className="flex items-center space-x-1 mt-0.5">
+        {hasWin && (
+          <Coins
+            className={`w-4 h-4 sm:w-5 sm:h-5 ${
+              isTimber ? 'text-emerald-300 fill-emerald-400 animate-spin' : 'text-yellow-300 fill-yellow-400 animate-spin'
+            }`}
+          />
+        )}
+        <span
+          className={`font-black font-mono tracking-tight leading-none ${
+            hasWin
+              ? isTimber
+                ? 'text-xl sm:text-2xl xl:text-3xl text-emerald-200 drop-shadow-[0_0_15px_rgba(52,211,153,1)]'
+                : 'text-xl sm:text-2xl xl:text-3xl text-yellow-300 drop-shadow-[0_0_15px_rgba(253,224,71,1)]'
+              : 'text-base sm:text-lg text-slate-500'
+          }`}
+        >
+          {displayedAmount > 0 ? `+${displayedAmount.toLocaleString()}` : '0'}
+        </span>
+      </div>
     </div>
   );
 };

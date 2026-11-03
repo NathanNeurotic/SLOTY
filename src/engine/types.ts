@@ -36,7 +36,7 @@ export type SymbolTier = 'special' | 'high' | 'mid' | 'low';
 export interface SlotSymbol {
   id: SymbolId;
   name: string;
-  payouts: { 3: number; 4: number; 5: number };
+  payouts: { 2?: number; 3: number; 4: number; 5: number };
   weight: number;
   color: string;
   tier: SymbolTier;

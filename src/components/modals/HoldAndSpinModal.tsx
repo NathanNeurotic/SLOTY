@@ -27,19 +27,22 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
   const [isSpinning, setIsSpinning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
-  // 5 columns x 4 rows = 20 positions
+  // Dynamic rows based on game (Timberland = 5x3 = 15, Vault = 5x4 = 20)
+  const numRows = isTimber ? 3 : 4;
+  const totalPositions = 5 * numRows;
+
   const [grid, setGrid] = useState<OrbCell[][]>(() => {
     const initial: OrbCell[][] = [];
     let lockedCount = 0;
-    const targetLocks = Math.max(6, initialCoinCount);
+    const targetLocks = Math.max(isTimber ? 5 : 6, initialCoinCount);
 
     for (let c = 0; c < 5; c++) {
       const col: OrbCell[] = [];
-      for (let r = 0; r < 4; r++) {
+      for (let r = 0; r < numRows; r++) {
         // Place initial locked coins
         const shouldLock =
           lockedCount < targetLocks &&
-          (Math.random() < 0.4 || targetLocks - lockedCount >= 20 - (c * 4 + r));
+          (Math.random() < 0.4 || targetLocks - lockedCount >= totalPositions - (c * numRows + r));
         if (shouldLock) {
           lockedCount++;
           const valMultiplier = [2, 5, 10, 15, 25][Math.floor(Math.random() * 5)];
@@ -255,18 +258,26 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
           </div>
         </div>
 
-        {/* 5x4 Golden Orb Matrix */}
-        <div className="grid grid-cols-5 gap-1.5 sm:gap-2 w-full p-2.5 sm:p-3 bg-casino-950/90 rounded-2xl border border-yellow-500/30 shadow-inner my-1.5">
+        {/* Golden Orb / Acorn Matrix */}
+        <div className={`grid grid-cols-5 gap-1.5 sm:gap-2 w-full p-2.5 sm:p-3 rounded-2xl border shadow-inner my-1.5 ${
+          isTimber ? 'bg-[#0a120b] border-emerald-600/50' : 'bg-casino-950/90 border-yellow-500/30'
+        }`}>
           {grid.map((col, colIdx) => (
             <div key={colIdx} className="flex flex-col gap-1.5 sm:gap-2">
               {col.map((cell, rowIdx) => (
                 <div
                   key={rowIdx}
-                  className={`h-14 sm:h-18 w-full rounded-xl flex flex-col items-center justify-center p-1 border transition-all duration-200 ${
+                  className={`${isTimber ? 'h-16 sm:h-22' : 'h-14 sm:h-18'} w-full rounded-xl flex flex-col items-center justify-center p-1 border transition-all duration-200 ${
                     cell.isLocked
-                      ? 'bg-gradient-to-b from-yellow-300 via-amber-400 to-amber-600 border-yellow-100 text-black font-black shadow-[0_0_12px_rgba(245,158,11,0.8)] scale-[1.02]'
+                      ? isTimber
+                        ? 'bg-gradient-to-b from-amber-400 via-amber-600 to-[#451a03] border-2 border-emerald-300 text-yellow-100 font-black shadow-[0_0_15px_rgba(245,158,11,0.9)] scale-[1.02]'
+                        : 'bg-gradient-to-b from-yellow-300 via-amber-400 to-amber-600 border-yellow-100 text-black font-black shadow-[0_0_12px_rgba(245,158,11,0.8)] scale-[1.02]'
                       : isSpinning
-                      ? 'bg-casino-900/40 border-yellow-400/20 animate-pulse'
+                      ? isTimber
+                        ? 'bg-emerald-950/30 border-emerald-500/30 animate-pulse'
+                        : 'bg-casino-900/40 border-yellow-400/20 animate-pulse'
+                      : isTimber
+                      ? 'bg-[#150d07] border-white/5'
                       : 'bg-casino-900/20 border-white/5'
                   }`}
                 >
@@ -277,11 +288,11 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                           {cell.jackpot}
                         </span>
                       ) : isTimber ? (
-                        <span className="text-xs">🌰</span>
+                        <span className="text-base sm:text-lg animate-bounce">🌰</span>
                       ) : (
                         <Coins className="w-3.5 h-3.5 text-amber-950" />
                       )}
-                      <span className="text-xs sm:text-sm font-black leading-tight mt-0.5 text-amber-950 font-mono">
+                      <span className={`text-xs sm:text-sm font-black leading-tight mt-0.5 font-mono ${isTimber ? 'text-amber-200 drop-shadow' : 'text-amber-950'}`}>
                         +${cell.value.toLocaleString()}
                       </span>
                     </>
@@ -295,7 +306,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         </div>
 
         {/* Total Cash Pot summary */}
-        <div className="flex items-center justify-between w-full px-3 py-2 bg-casino-900/80 rounded-xl border border-yellow-400/30 my-1.5">
+        <div className={`flex items-center justify-between w-full px-3 py-2 rounded-xl border my-1.5 ${
+          isTimber ? 'bg-[#140c06] border-emerald-600/40' : 'bg-casino-900/80 border-yellow-400/30'
+        }`}>
           <div className="flex flex-col">
             <span className="text-[9px] uppercase font-bold text-slate-400">Total Accumulated Cash Win</span>
             <span className="text-lg sm:text-xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)] font-mono">
@@ -307,8 +320,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             <span className="text-[9px] uppercase font-bold text-slate-400 block">
               {isTimber ? 'Locked Golden Acorns' : 'Locked Bullion Coins'}
             </span>
-            <span className="text-sm font-black text-neon-cyan">
-              {lockedCellsCount} / 20
+            <span className={`text-sm font-black ${isTimber ? 'text-emerald-300' : 'text-neon-cyan'}`}>
+              {lockedCellsCount} / {totalPositions}
             </span>
           </div>
         </div>

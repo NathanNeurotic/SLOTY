@@ -9,50 +9,10 @@ import type {
 } from './types';
 import type { GameDefinition } from '../games/types';
 import { getGame, DEFAULT_GAME_ID } from '../games/gameRegistry';
+import { VAULT_REEL_STRIPS } from '../games/vault24k/vaultDefinition';
 
-// Realistic 50-stop reel strips with authentic Vegas symbol distribution and stacks
-const REEL_STRIPS: SymbolId[][] = [
-  // Reel 1
-  [
-    'ACE', 'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'JACK', 'COIN', 'QUEEN', 'KING', 'ACE', 'WILD', 'HORSESHOE', 'GOLDBAR', 'COIN', 'SCATTER',
-    'DIAMOND', 'SEVEN', 'BELL', 'MELON', 'COIN', 'GRAPES', 'ACE', 'KING', 'QUEEN', 'JACK',
-    'COIN', 'HORSESHOE', 'BELL', 'GOLDBAR', 'WILD', 'SEVEN', 'DIAMOND', 'KING', 'QUEEN', 'JACK',
-    'ACE', 'MELON', 'GRAPES', 'COIN', 'SCATTER', 'BELL', 'HORSESHOE', 'KING', 'QUEEN', 'JACK',
-  ],
-  // Reel 2
-  [
-    'KING', 'KING', 'QUEEN', 'JACK', 'ACE', 'WILD', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'DIAMOND', 'COIN', 'COIN', 'HORSESHOE', 'GOLDBAR', 'SCATTER', 'JACK', 'QUEEN', 'KING', 'ACE',
-    'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN', 'WILD', 'HORSESHOE', 'COIN', 'JACK', 'QUEEN',
-    'ACE', 'COIN', 'KING', 'QUEEN', 'JACK', 'GOLDBAR', 'DIAMOND', 'SEVEN', 'BELL', 'MELON',
-    'COIN', 'SCATTER', 'HORSESHOE', 'GRAPES', 'ACE', 'KING', 'QUEEN', 'JACK', 'BELL', 'WILD',
-  ],
-  // Reel 3
-  [
-    'QUEEN', 'QUEEN', 'JACK', 'ACE', 'KING', 'SEVEN', 'SEVEN', 'DIAMOND', 'GOLDBAR', 'BELL',
-    'MELON', 'COIN', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING',
-    'ACE', 'ACE', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE',
-    'JACK', 'COIN', 'QUEEN', 'KING', 'ACE', 'WILD', 'GOLDBAR', 'BELL', 'MELON', 'GRAPES',
-    'COIN', 'SCATTER', 'SEVEN', 'DIAMOND', 'ACE', 'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'WILD',
-  ],
-  // Reel 4
-  [
-    'JACK', 'JACK', 'QUEEN', 'KING', 'ACE', 'GOLDBAR', 'GOLDBAR', 'SEVEN', 'DIAMOND', 'BELL',
-    'MELON', 'COIN', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK', 'QUEEN', 'KING',
-    'ACE', 'COIN', 'BELL', 'MELON', 'SEVEN', 'DIAMOND', 'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD',
-    'QUEEN', 'QUEEN', 'JACK', 'KING', 'ACE', 'BELL', 'BELL', 'MELON', 'GRAPES', 'SEVEN',
-    'COIN', 'SCATTER', 'DIAMOND', 'HORSESHOE', 'ACE', 'KING', 'QUEEN', 'JACK', 'GOLDBAR', 'WILD',
-  ],
-  // Reel 5
-  [
-    'ACE', 'ACE', 'KING', 'KING', 'QUEEN', 'JACK', 'SEVEN', 'SEVEN', 'DIAMOND', 'DIAMOND',
-    'GOLDBAR', 'BELL', 'BELL', 'MELON', 'GRAPES', 'COIN', 'WILD', 'SCATTER', 'HORSESHOE', 'JACK',
-    'QUEEN', 'COIN', 'KING', 'ACE', 'BELL', 'MELON', 'COIN', 'GRAPES', 'SEVEN', 'DIAMOND',
-    'COIN', 'HORSESHOE', 'GOLDBAR', 'WILD', 'JACK', 'JACK', 'QUEEN', 'KING', 'ACE', 'BELL',
-    'COIN', 'SCATTER', 'SEVEN', 'DIAMOND', 'ACE', 'KING', 'QUEEN', 'JACK', 'HORSESHOE', 'WILD',
-  ],
-];
+// Calibrated 50-stop reel strips with authentic Oregon Lottery VLT distribution
+const REEL_STRIPS: SymbolId[][] = VAULT_REEL_STRIPS;
 
 // 5 reels x dynamic rows (4 for 24K Vault, 3 for Timberland Critters)
 export function generateRandomGrid(gameDef?: GameDefinition): SymbolGrid {
@@ -215,10 +175,10 @@ export function evaluateSpin(
       }
     }
 
-    if (matchCount >= 3) {
+    if (matchCount >= 2) {
       const symbolDef = symbolsMap[targetSymbol];
       if (symbolDef) {
-        const payoutMultiplier = symbolDef.payouts[matchCount as 3 | 4 | 5] || 0;
+        const payoutMultiplier = (symbolDef.payouts as Record<number, number>)[matchCount] || 0;
         if (payoutMultiplier > 0) {
           const linePayout = lineBet * payoutMultiplier * winMultiplier;
           totalPayout += linePayout;

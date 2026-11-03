@@ -141,21 +141,21 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
         </div>
 
         {/* Desktop / Tablet Mountain Cabin A-Frame Shingle Roof Pediment (>= 640px) */}
-        <div className="hidden sm:block relative pt-3">
+        <div className="hidden sm:block relative pt-1 sm:pt-1.5">
           {/* Ambient Warm Hearth Glow */}
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-3/4 h-20 rounded-full bg-gradient-to-t from-amber-600/35 via-emerald-600/20 to-transparent filter blur-xl pointer-events-none" />
+          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-amber-600/30 via-emerald-600/15 to-transparent filter blur-lg pointer-events-none" />
 
-          {/* Roof Shingles & Log Trusses Container */}
-          <div className="relative bg-gradient-to-b from-[#3b1d0c] via-[#241207] to-[#120703] border-4 border-[#78350f] rounded-t-[36px] rounded-b-2xl shadow-[0_16px_40px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.35)] p-2 transition-transform duration-200">
+          {/* Roof Shingles & Log Trusses Container - Sleek Bounded Height (~88px - 96px) */}
+          <div className="relative bg-gradient-to-b from-[#3b1d0c] via-[#241207] to-[#120703] border-2 sm:border-3 border-[#78350f] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(16,185,129,0.3)] p-1.5 transition-transform duration-200">
             {/* Top Roof Peak: Nature's Fury Sap Branch & Trail Controls */}
-            <div className="flex items-center justify-between px-2 sm:px-4 -mt-5 mb-1.5 z-30 relative">
+            <div className="flex items-center justify-between px-2 mb-1 z-30 relative">
               {/* Left Trail Sign: Floor Bank Toggle */}
               {onToggleFloorMode && (
                 <button
                   onClick={onToggleFloorMode}
-                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border-2 text-[9px] sm:text-[10px] font-black uppercase shadow-lg transition-all ${
+                  className={`flex items-center space-x-1 px-2.5 py-0.5 rounded-full border text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all ${
                     isFloorMode
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white border-emerald-200 shadow-[0_0_15px_rgba(52,211,153,0.7)]'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white border-emerald-200 shadow-[0_0_10px_rgba(52,211,153,0.7)]'
                       : 'bg-[#261207] text-amber-200 border-[#a16207] hover:border-amber-400'
                   }`}
                   title="Toggle Camp Bank view"
@@ -166,20 +166,20 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
 
               {/* Center: Nature's Fury Birch Sap Meter */}
-              <div className="flex-1 max-w-xs sm:max-w-sm mx-2 px-3 py-1 rounded-full bg-[#1c0c04] border-2 border-[#a16207] shadow-inner flex items-center space-x-2">
-                <div className="flex items-center space-x-1 text-[9px] font-black text-emerald-300 uppercase whitespace-nowrap">
+              <div className="flex-1 max-w-xs sm:max-w-sm mx-2 px-2.5 py-0.5 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner flex items-center space-x-2">
+                <div className="flex items-center space-x-1 text-[8.5px] font-black text-emerald-300 uppercase whitespace-nowrap">
                   <Trees className="w-3 h-3 text-emerald-400 animate-pulse" />
                   <span className="hidden xs:inline">SAP:</span>
                   <span className="text-amber-300 font-mono">{feverCharge}%</span>
                 </div>
-                <div className="flex-1 bg-black/80 h-2 rounded-full overflow-hidden p-0.5 border border-emerald-600/40">
+                <div className="flex-1 bg-black/80 h-1.5 rounded-full overflow-hidden p-0.5 border border-emerald-600/40">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-300 shadow-[0_0_8px_#34D399] transition-all duration-300"
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-300 shadow-[0_0_6px_#34D399] transition-all duration-300"
                     style={{ width: `${feverCharge}%` }}
                   />
                 </div>
                 {isFeverActive && (
-                  <span className="text-[9px] font-black text-amber-300 animate-bounce">2X!</span>
+                  <span className="text-[8.5px] font-black text-amber-300 animate-bounce">2X!</span>
                 )}
               </div>
 
@@ -187,7 +187,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               {onOpenLeaderboard && (
                 <button
                   onClick={onOpenLeaderboard}
-                  className="flex items-center space-x-1 px-3 py-1 rounded-full bg-[#261207] hover:bg-[#3b1d0c] text-amber-200 border-2 border-[#a16207] hover:border-amber-400 text-[9px] sm:text-[10px] font-black uppercase shadow-lg transition-all"
+                  className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#261207] hover:bg-[#3b1d0c] text-amber-200 border border-[#a16207] hover:border-amber-400 text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all"
                   title="View Forest Hall of Fame"
                 >
                   <Trophy className="w-3 h-3 text-yellow-400 fill-yellow-400" />
@@ -196,114 +196,98 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
             </div>
 
-            {/* Hand-Carved Hollowed Cedar Log Grand Jackpot Marquee */}
-            <div
-              onClick={handleJackpotClick}
-              className="relative w-full rounded-2xl bg-gradient-to-r from-[#170a04] via-[#0b1f13] to-[#170a04] border-2 border-[#a16207] shadow-inner p-2 sm:p-3 flex items-center justify-between cursor-pointer group overflow-hidden"
-            >
-              {/* Left Critter & Lantern Sconce */}
-              <div className="flex items-center space-x-2 z-10 flex-shrink-0">
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#2e180e] border-2 border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.7)] flex items-center justify-center text-xl sm:text-2xl animate-bounce">
-                  🐻
-                </div>
-                <div className="hidden md:flex flex-col text-left">
-                  <span className="text-[9.5px] font-black text-amber-300 leading-tight">GRIZZLY GUS</span>
-                  <span className="text-[8px] font-bold text-emerald-400">LODGE MASCOT</span>
-                </div>
-              </div>
-
-              {/* Center Chiseled Log Readout */}
-              <div className="flex flex-col items-center z-10 mx-auto px-2 text-center">
-                <div className="flex items-center space-x-1 text-amber-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
-                  <Trees className="w-3 h-3 text-emerald-400" />
-                  <span>🌲 {gameDef.theme.grandTitle} 🌲</span>
-                  <Trees className="w-3 h-3 text-emerald-400" />
-                </div>
-                <div className="flex items-baseline font-mono mt-0.5">
-                  <span className="text-base sm:text-xl font-black text-amber-400 mr-1">$</span>
-                  <span className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_20px_rgba(52,211,153,1)]">
-                    {Math.floor(grand).toLocaleString()}
-                  </span>
-                  <span className="text-sm sm:text-xl font-bold text-emerald-400/90 ml-0.5">
-                    .{(grand % 1).toFixed(2).slice(2)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Critter & Mystic Owl */}
-              <div className="flex items-center space-x-2 z-10 flex-shrink-0">
-                <div className="hidden md:flex flex-col text-right">
-                  <span className="text-[9.5px] font-black text-amber-300 leading-tight">MYSTIC OWL</span>
-                  <span className="text-[8px] font-bold text-teal-300">FREE SPINS</span>
-                </div>
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#182a1d] border-2 border-emerald-400/80 shadow-[0_0_12px_rgba(52,211,153,0.7)] flex items-center justify-center text-xl sm:text-2xl animate-pulse">
-                  🦉
-                </div>
-              </div>
-            </div>
-
-            {/* THREE ASYMMETRIC HAND-CARVED WOODEN ANIMAL TOTEM PLAQUES */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-2 z-10">
-              {/* MAJOR: Carved Timber Wolf Plaque */}
+            {/* UNIFIED HORIZONTAL CEDAR LODGE JACKPOT DECK */}
+            <div className="grid grid-cols-12 gap-1.5 items-stretch">
+              {/* Left Column: MAJOR Timber Wolf Plaque */}
               <div
                 onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border-2 border-[#b45309] shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
+                className="col-span-3 cursor-pointer group relative p-1 sm:p-1.5 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
               >
                 <div className="flex items-center space-x-1">
-                  <span className="text-xs sm:text-sm">🐺</span>
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-teal-300 tracking-wider">
+                  <span className="text-xs">🐺</span>
+                  <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase text-teal-300 tracking-wider">
                     {gameDef.theme.majorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-teal-200 drop-shadow-[0_0_8px_#2DD4BF] mt-0.5">
+                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-teal-200 drop-shadow-[0_0_8px_#2DD4BF] mt-0.5">
                   <span>${Math.floor(major).toLocaleString()}</span>
-                  <span className="text-[10px] text-teal-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[9px] text-teal-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
-              {/* MINOR: Carved Clever Fox Plaque */}
+              {/* Center Column: GRAND JACKPOT Hollowed Cedar Log (HERO) */}
               <div
                 onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border-2 border-[#b45309] shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
+                className="col-span-6 relative rounded-xl bg-gradient-to-r from-[#170a04] via-[#0b1f13] to-[#170a04] border-2 border-[#a16207] shadow-inner p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
               >
-                <div className="flex items-center space-x-1">
-                  <span className="text-xs sm:text-sm">🦊</span>
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-amber-300 tracking-wider">
-                    {gameDef.theme.minorTitle}
-                  </span>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2e180e] border border-amber-400/80 shadow-[0_0_8px_rgba(245,158,11,0.7)] flex items-center justify-center text-sm sm:text-base animate-bounce flex-shrink-0">
+                  🐻
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-amber-200 drop-shadow-[0_0_8px_#FBBF24] mt-0.5">
-                  <span>${Math.floor(minor).toLocaleString()}</span>
-                  <span className="text-[10px] text-amber-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
+
+                <div className="flex flex-col items-center z-10 mx-auto px-1 text-center">
+                  <div className="flex items-center space-x-1 text-amber-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest">
+                    <span>🌲 {gameDef.theme.grandTitle} 🌲</span>
+                  </div>
+                  <div className="flex items-baseline font-mono">
+                    <span className="text-xs sm:text-sm font-black text-amber-400 mr-0.5">$</span>
+                    <span className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_15px_rgba(52,211,153,1)]">
+                      {Math.floor(grand).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-bold text-emerald-400/90 ml-0.5">
+                      .{(grand % 1).toFixed(2).slice(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#182a1d] border border-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.7)] flex items-center justify-center text-sm sm:text-base animate-pulse flex-shrink-0">
+                  🦉
                 </div>
               </div>
 
-              {/* MINI: Carved Forest Squirrel Plaque */}
-              <div
-                onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border-2 border-[#b45309] shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
-              >
-                <div className="flex items-center space-x-1">
-                  <span className="text-xs sm:text-sm">🐿️</span>
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-emerald-300 tracking-wider">
-                    {gameDef.theme.miniTitle}
-                  </span>
+              {/* Right Column: MINOR & MINI Split Totem Plaque */}
+              <div className="col-span-3 grid grid-cols-2 gap-1">
+                {/* MINOR */}
+                <div
+                  onClick={handleJackpotClick}
+                  className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex items-center space-x-0.5">
+                    <span className="text-[10px]">🦊</span>
+                    <span className="text-[7px] sm:text-[8px] font-black uppercase text-amber-300 tracking-wider">
+                      {gameDef.theme.minorTitle}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-amber-200 drop-shadow-[0_0_6px_#FBBF24]">
+                    <span>${Math.floor(minor).toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-emerald-200 drop-shadow-[0_0_8px_#34D399] mt-0.5">
-                  <span>${Math.floor(mini).toLocaleString()}</span>
-                  <span className="text-[10px] text-emerald-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
+
+                {/* MINI */}
+                <div
+                  onClick={handleJackpotClick}
+                  className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex items-center space-x-0.5">
+                    <span className="text-[10px]">🐿️</span>
+                    <span className="text-[7px] sm:text-[8px] font-black uppercase text-emerald-300 tracking-wider">
+                      {gameDef.theme.miniTitle}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-emerald-200 drop-shadow-[0_0_6px_#34D399]">
+                    <span>${Math.floor(mini).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Cross-Cut Cedar Beam Ticker Ribbon Across Bottom of Gable */}
-            <div className="mt-2 rounded-xl bg-[#08180e] border border-emerald-600/50 px-2.5 py-1 flex items-center overflow-hidden">
-              <div className="flex items-center space-x-1 pr-2 border-r border-emerald-700/60 flex-shrink-0 text-[8.5px] font-black text-emerald-300 uppercase whitespace-nowrap">
-                <Trees className="w-3 h-3 text-emerald-400 animate-pulse" />
+            <div className="mt-1 rounded-lg bg-[#08180e] border border-emerald-600/40 px-2 py-0.5 flex items-center overflow-hidden">
+              <div className="flex items-center space-x-1 pr-1.5 border-r border-emerald-700/60 flex-shrink-0 text-[8px] font-black text-emerald-300 uppercase whitespace-nowrap">
+                <Trees className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
                 <span>FOREST TICKER</span>
               </div>
-              <div className="flex-1 overflow-hidden whitespace-nowrap ml-2 relative">
-                <div className="inline-block animate-marquee-text font-mono text-[9.5px] sm:text-[10.5px] font-bold text-emerald-200 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]">
+              <div className="flex-1 overflow-hidden whitespace-nowrap ml-1.5 relative">
+                <div className="inline-block animate-marquee-text font-mono text-[9px] sm:text-[10px] font-bold text-emerald-200 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]">
                   {tickerText}
                 </div>
               </div>
@@ -358,22 +342,22 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
       </div>
 
       {/* Desktop / Tablet Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment (>= 640px) */}
-      <div className="hidden sm:block relative pt-3">
+      <div className="hidden sm:block relative pt-1 sm:pt-1.5">
         {/* Radial Sunburst Gold Glow */}
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-3/4 h-20 rounded-full bg-gradient-to-t from-yellow-500/35 via-amber-500/20 to-transparent filter blur-xl pointer-events-none" />
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-yellow-500/30 via-amber-500/15 to-transparent filter blur-lg pointer-events-none" />
 
-        {/* Monolithic Top Box Housing */}
-        <div className="relative bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 p-[3px] rounded-t-[36px] rounded-b-2xl shadow-[0_16px_40px_rgba(0,0,0,0.95),0_0_35px_rgba(245,158,11,0.5)]">
-          <div className="relative bg-gradient-to-b from-slate-950 via-casino-950 to-black rounded-t-[33px] rounded-b-xl p-2 sm:p-2.5">
+        {/* Monolithic Top Box Housing - Sleek Bounded Height (~88px - 96px) */}
+        <div className="relative bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 p-[2px] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(245,158,11,0.4)]">
+          <div className="relative bg-gradient-to-b from-slate-950 via-casino-950 to-black rounded-t-[22px] sm:rounded-t-[30px] rounded-b-lg p-1.5">
             {/* Top Header: Molten Gold Reactor Gauge & High-Roller Mode Switches */}
-            <div className="flex items-center justify-between px-2 sm:px-4 -mt-5 mb-1.5 z-30 relative">
+            <div className="flex items-center justify-between px-2 mb-1 z-30 relative">
               {/* Left Switch: Bank View */}
               {onToggleFloorMode && (
                 <button
                   onClick={onToggleFloorMode}
-                  className={`flex items-center space-x-1.5 px-3 py-1 rounded-full border-2 text-[9px] sm:text-[10px] font-black uppercase shadow-lg transition-all ${
+                  className={`flex items-center space-x-1 px-2.5 py-0.5 rounded-full border text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all ${
                     isFloorMode
-                      ? 'bg-gradient-to-r from-amber-500 to-yellow-300 text-amber-950 border-yellow-100 shadow-[0_0_15px_rgba(251,191,36,0.8)]'
+                      ? 'bg-gradient-to-r from-amber-500 to-yellow-300 text-amber-950 border-yellow-100 shadow-[0_0_10px_rgba(251,191,36,0.8)]'
                       : 'bg-casino-900 text-amber-300 border-amber-500/60 hover:border-yellow-300'
                   }`}
                   title="Toggle Multiplayer Casino Floor Bank"
@@ -384,20 +368,20 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
 
               {/* Center: Molten Gold Reactor PSI Overdrive Bar */}
-              <div className="flex-1 max-w-xs sm:max-w-sm mx-2 px-3 py-1 rounded-full bg-slate-950 border-2 border-yellow-500/60 shadow-inner flex items-center space-x-2">
-                <div className="flex items-center space-x-1 text-[9px] font-black text-amber-300 uppercase whitespace-nowrap">
+              <div className="flex-1 max-w-xs sm:max-w-sm mx-2 px-2.5 py-0.5 rounded-full bg-slate-950 border border-yellow-500/60 shadow-inner flex items-center space-x-2">
+                <div className="flex items-center space-x-1 text-[8.5px] font-black text-amber-300 uppercase whitespace-nowrap">
                   <Flame className="w-3 h-3 text-red-500 fill-red-500 animate-pulse" />
                   <span className="hidden xs:inline">REACTOR:</span>
                   <span className="text-yellow-300 font-mono">{feverCharge}%</span>
                 </div>
-                <div className="flex-1 bg-black h-2 rounded-full overflow-hidden p-0.5 border border-amber-500/40">
+                <div className="flex-1 bg-black h-1.5 rounded-full overflow-hidden p-0.5 border border-amber-500/40">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-600 via-yellow-400 to-yellow-200 shadow-[0_0_10px_#FDE047] transition-all duration-300"
+                    className="h-full rounded-full bg-gradient-to-r from-amber-600 via-yellow-400 to-yellow-200 shadow-[0_0_8px_#FDE047] transition-all duration-300"
                     style={{ width: `${feverCharge}%` }}
                   />
                 </div>
                 {isFeverActive && (
-                  <span className="text-[9px] font-black text-yellow-300 animate-bounce">FEVER!</span>
+                  <span className="text-[8.5px] font-black text-yellow-300 animate-bounce">FEVER!</span>
                 )}
               </div>
 
@@ -405,7 +389,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               {onOpenLeaderboard && (
                 <button
                   onClick={onOpenLeaderboard}
-                  className="flex items-center space-x-1 px-3 py-1 rounded-full bg-casino-900 hover:bg-casino-800 text-yellow-300 border-2 border-yellow-400/60 hover:border-yellow-300 text-[9px] sm:text-[10px] font-black uppercase shadow-lg transition-all"
+                  className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-casino-900 hover:bg-casino-800 text-yellow-300 border border-yellow-400/60 hover:border-yellow-300 text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all"
                   title="View Vegas Server High Scores"
                 >
                   <Trophy className="w-3 h-3 text-yellow-400 fill-yellow-400" />
@@ -414,117 +398,114 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
             </div>
 
-            {/* Fort Knox Armored Glass Grand Marquee Chamber */}
-            <div
-              onClick={handleJackpotClick}
-              className="relative w-full rounded-2xl bg-gradient-to-r from-amber-950 via-black to-amber-950 border-2 border-yellow-400/70 shadow-inner p-2 sm:p-3 flex items-center justify-between cursor-pointer group overflow-hidden"
-            >
-              {/* Shimmer sweep */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-shimmer-sweep pointer-events-none" />
-
-              {/* Left Vertical Coin Tube with LED Chasers */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FDE047] animate-pulse"
-                    style={{ animationDuration: '500ms', animationDelay: `${i * 120}ms` }}
-                  />
-                ))}
-              </div>
-
-              {/* Center 7-Segment Digital Grand Display */}
-              <div className="flex flex-col items-center z-10 mx-auto px-2 text-center">
-                <div className="flex items-center space-x-1 text-amber-300 text-[9px] sm:text-[10px] font-black uppercase tracking-widest">
-                  <Crown className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300 animate-bounce" />
-                  <span>★ {gameDef.theme.grandTitle} ★</span>
-                  <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-                </div>
-                <div className="flex items-baseline font-mono mt-0.5">
-                  <span className="text-base sm:text-xl font-black text-amber-400 mr-1">$</span>
-                  <span className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
-                    {Math.floor(grand).toLocaleString()}
-                  </span>
-                  <span className="text-sm sm:text-xl font-bold text-amber-400/90 ml-0.5">
-                    .{(grand % 1).toFixed(2).slice(2)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Vertical Coin Tube with LED Chasers */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5 z-10 flex-shrink-0">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FDE047] animate-pulse"
-                    style={{ animationDuration: '500ms', animationDelay: `${(3 - i) * 120}ms` }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* THREE BRUSHED TITANIUM VAULT METERS (MAJOR, MINOR, MINI) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-2 z-10">
-              {/* MAJOR: Polished Amethyst Vault Meter */}
+            {/* UNIFIED HORIZONTAL VAULT METERS DECK */}
+            <div className="grid grid-cols-12 gap-1.5 items-stretch">
+              {/* Left Column: MAJOR Amethyst Meter */}
               <div
                 onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-purple-950 via-slate-950 to-black border-2 border-purple-400/70 shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
+                className="col-span-3 cursor-pointer group relative p-1 sm:p-1.5 rounded-xl bg-gradient-to-b from-purple-950 via-slate-950 to-black border border-purple-400/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
               >
                 <div className="flex items-center space-x-1">
                   <Gem className="w-3 h-3 text-purple-300" />
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-purple-300 tracking-wider">
+                  <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase text-purple-300 tracking-wider">
                     {gameDef.theme.majorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-purple-200 drop-shadow-[0_0_8px_#D8B4FE] mt-0.5">
+                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-purple-200 drop-shadow-[0_0_8px_#D8B4FE] mt-0.5">
                   <span>${Math.floor(major).toLocaleString()}</span>
-                  <span className="text-[10px] text-purple-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[9px] text-purple-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
-              {/* MINOR: High-Security Cyan Meter */}
+              {/* Center Column: GRAND JACKPOT Fort Knox Armored Glass Chamber (HERO) */}
               <div
                 onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-cyan-950 via-slate-950 to-black border-2 border-cyan-400/70 shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
+                className="col-span-6 relative rounded-xl bg-gradient-to-r from-amber-950 via-black to-amber-950 border-2 border-yellow-400/70 shadow-inner p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
               >
-                <div className="flex items-center space-x-1">
-                  <Coins className="w-3 h-3 text-cyan-300" />
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-cyan-300 tracking-wider">
-                    {gameDef.theme.minorTitle}
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer-sweep pointer-events-none" />
+
+                <div className="flex items-center space-x-1 z-10 flex-shrink-0">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_6px_#FDE047] animate-pulse"
+                      style={{ animationDuration: '500ms', animationDelay: `${i * 120}ms` }}
+                    />
+                  ))}
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-cyan-200 drop-shadow-[0_0_8px_#67E8F9] mt-0.5">
-                  <span>${Math.floor(minor).toLocaleString()}</span>
-                  <span className="text-[10px] text-cyan-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
+
+                <div className="flex flex-col items-center z-10 mx-auto px-1 text-center">
+                  <div className="flex items-center space-x-1 text-amber-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest">
+                    <Crown className="w-3 h-3 text-yellow-300 fill-yellow-300 animate-bounce" />
+                    <span>★ {gameDef.theme.grandTitle} ★</span>
+                    <Sparkles className="w-3 h-3 text-yellow-300" />
+                  </div>
+                  <div className="flex items-baseline font-mono">
+                    <span className="text-xs sm:text-sm font-black text-amber-400 mr-0.5">$</span>
+                    <span className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_15px_rgba(253,224,71,1)]">
+                      {Math.floor(grand).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-bold text-amber-400/90 ml-0.5">
+                      .{(grand % 1).toFixed(2).slice(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-1 z-10 flex-shrink-0">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-300 shadow-[0_0_6px_#FDE047] animate-pulse"
+                      style={{ animationDuration: '500ms', animationDelay: `${(2 - i) * 120}ms` }}
+                    />
+                  ))}
                 </div>
               </div>
 
-              {/* MINI: Solid Gold Vault Meter */}
-              <div
-                onClick={handleJackpotClick}
-                className="cursor-pointer group relative p-1.5 sm:p-2 rounded-xl bg-gradient-to-b from-amber-950 via-slate-950 to-black border-2 border-yellow-400/70 shadow-lg flex flex-col items-center hover:scale-105 transition-transform"
-              >
-                <div className="flex items-center space-x-1">
-                  <Crown className="w-3 h-3 text-yellow-300" />
-                  <span className="text-[8px] sm:text-[9.5px] font-black uppercase text-yellow-300 tracking-wider">
-                    {gameDef.theme.miniTitle}
-                  </span>
+              {/* Right Column: MINOR & MINI High-Security Cyan & Gold Meter */}
+              <div className="col-span-3 grid grid-cols-2 gap-1">
+                {/* MINOR */}
+                <div
+                  onClick={handleJackpotClick}
+                  className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-cyan-950 via-slate-950 to-black border border-cyan-400/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex items-center space-x-0.5">
+                    <Coins className="w-2.5 h-2.5 text-cyan-300" />
+                    <span className="text-[7px] sm:text-[8px] font-black uppercase text-cyan-300 tracking-wider">
+                      {gameDef.theme.minorTitle}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-cyan-200 drop-shadow-[0_0_6px_#67E8F9]">
+                    <span>${Math.floor(minor).toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-yellow-200 drop-shadow-[0_0_8px_#FDE047] mt-0.5">
-                  <span>${Math.floor(mini).toLocaleString()}</span>
-                  <span className="text-[10px] text-yellow-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
+
+                {/* MINI */}
+                <div
+                  onClick={handleJackpotClick}
+                  className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-amber-950 via-slate-950 to-black border border-yellow-400/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex items-center space-x-0.5">
+                    <Crown className="w-2.5 h-2.5 text-yellow-300" />
+                    <span className="text-[7px] sm:text-[8px] font-black uppercase text-yellow-300 tracking-wider">
+                      {gameDef.theme.miniTitle}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-yellow-200 drop-shadow-[0_0_6px_#FDE047]">
+                    <span>${Math.floor(mini).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* High-Roller Gold-Bezeled LED Ticker Ribbon Across Bottom */}
-            <div className="mt-2 rounded-xl bg-slate-950 border border-yellow-500/50 px-2.5 py-1 flex items-center overflow-hidden">
-              <div className="flex items-center space-x-1 pr-2 border-r border-yellow-500/40 flex-shrink-0 text-[8.5px] font-black text-yellow-300 uppercase whitespace-nowrap">
-                <Coins className="w-3 h-3 text-yellow-400 animate-pulse" />
+            <div className="mt-1 rounded-lg bg-slate-950 border border-yellow-500/40 px-2 py-0.5 flex items-center overflow-hidden">
+              <div className="flex items-center space-x-1 pr-1.5 border-r border-yellow-500/40 flex-shrink-0 text-[8px] font-black text-yellow-300 uppercase whitespace-nowrap">
+                <Coins className="w-2.5 h-2.5 text-yellow-400 animate-pulse" />
                 <span>CASH TICKER</span>
               </div>
-              <div className="flex-1 overflow-hidden whitespace-nowrap ml-2 relative">
-                <div className="inline-block animate-marquee-text font-mono text-[9.5px] sm:text-[10.5px] font-bold text-amber-300 drop-shadow-[0_0_4px_rgba(251,191,36,0.8)]">
+              <div className="flex-1 overflow-hidden whitespace-nowrap ml-1.5 relative">
+                <div className="inline-block animate-marquee-text font-mono text-[9px] sm:text-[10px] font-bold text-amber-300 drop-shadow-[0_0_4px_rgba(251,191,36,0.8)]">
                   {tickerText}
                 </div>
               </div>

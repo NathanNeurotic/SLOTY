@@ -31,8 +31,8 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
 
   return (
     <div className="relative w-full flex flex-col items-center flex-1 min-h-0 justify-center">
-      {/* Main Floor Arena */}
-      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 lg:gap-6 px-1 sm:px-2 py-0.5 sm:py-1 flex-1 min-h-0">
+      {/* Main Floor Arena with generous clearance for lever & flank cards */}
+      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 lg:gap-8 xl:gap-14 2xl:gap-16 px-1 sm:px-2 py-0.5 sm:py-1 flex-1 min-h-0">
         {/* Left Flank: Neighbor Terminal (in Floor Mode) OR Full Mascot Standee */}
         {isFloorMode && leftNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">

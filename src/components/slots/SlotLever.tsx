@@ -34,14 +34,14 @@ export const SlotLever: React.FC<SlotLeverProps> = ({
   return (
     <div
       onClick={handlePullLever}
-      className={`hidden xl:flex items-center absolute -right-16 sm:-right-20 top-1/3 select-none cursor-pointer group z-20 ${
+      className={`hidden xl:flex items-center absolute -right-6 sm:-right-7 top-1/3 select-none cursor-pointer group z-20 ${
         disabled && !isSpinning ? 'opacity-40 cursor-not-allowed' : ''
       }`}
       title={disabled ? 'Insufficient coins' : isTimber ? 'Pull the Timberland Logging Lever!' : 'Pull the 24K Vegas Slot Lever!'}
     >
       {/* 1. Heavy Structural Chassis Mount Extension (Connects seamlessly to Cabinet border) */}
       <div
-        className={`w-14 sm:w-16 h-10 -mr-2 shadow-2xl flex items-center justify-between px-1.5 border-y-2 border-r-2 rounded-r-md relative z-10 ${
+        className={`w-6 sm:w-7 h-9 -mr-1.5 shadow-2xl flex items-center justify-between px-1 border-y-2 border-r-2 rounded-r-md relative z-10 ${
           isTimber
             ? 'bg-gradient-to-r from-[#2a1306] via-[#3d1c0a] to-[#1c0c04] border-[#78350f]'
             : 'bg-gradient-to-r from-amber-900 via-slate-800 to-black border-yellow-500/80'

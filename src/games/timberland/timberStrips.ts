@@ -1,45 +1,46 @@
 import type { SymbolId } from '../../engine/types';
 
-// Authentic 50-stop reel strips for 5-reel Timberland Critters
+// Calibrated to Oregon Lottery Video Lottery Terminal (VLT) specifications
+// 50-stop reel strips with 3 rows per reel (5x3, 25 paylines)
 export const TIMBER_REEL_STRIPS: SymbolId[][] = [
-  // Reel 1
+  // Reel 1: 1 owl, [2, 2] acorns (4 acorns), 1 bear
   [
-    'WOOD_A', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'MUSHROOM', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX',
-    'WOOD_J', 'ACORN', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'BEAR', 'SQUIRREL', 'WOLF', 'ACORN', 'OWL',
-    'RACCOON', 'FOX', 'MUSHROOM', 'BERRIES', 'ACORN', 'PINECONE', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J',
-    'ACORN', 'SQUIRREL', 'MUSHROOM', 'WOLF', 'BEAR', 'FOX', 'RACCOON', 'WOOD_K', 'WOOD_Q', 'WOOD_J',
-    'WOOD_A', 'BERRIES', 'PINECONE', 'ACORN', 'OWL', 'MUSHROOM', 'SQUIRREL', 'WOOD_K', 'WOOD_Q', 'WOOD_J',
+    'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'MUSHROOM', 'ACORN', 'ACORN', 'BERRIES', 'PINECONE', 'FOX',
+    'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'BEAR', 'SQUIRREL', 'WOLF', 'OWL', 'RACCOON', 'FOX',
+    'MUSHROOM', 'BERRIES', 'ACORN', 'ACORN', 'PINECONE', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'SQUIRREL',
+    'MUSHROOM', 'WOLF', 'FOX', 'RACCOON', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOOD_A', 'BERRIES', 'PINECONE',
+    'MUSHROOM', 'SQUIRREL', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOLF', 'FOX', 'RACCOON', 'PINECONE', 'WOOD_A',
   ],
-  // Reel 2
+  // Reel 2: 2 owls, [2, 2] acorns (4 acorns), 2 bears
   [
-    'WOOD_K', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOOD_A', 'BEAR', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX',
-    'RACCOON', 'ACORN', 'ACORN', 'SQUIRREL', 'WOLF', 'OWL', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A',
-    'MUSHROOM', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX', 'BEAR', 'SQUIRREL', 'ACORN', 'WOOD_J', 'WOOD_Q',
-    'WOOD_A', 'ACORN', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOLF', 'RACCOON', 'FOX', 'MUSHROOM', 'BERRIES',
-    'ACORN', 'OWL', 'SQUIRREL', 'PINECONE', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'MUSHROOM', 'BEAR',
+    'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOOD_A', 'BEAR', 'MUSHROOM', 'ACORN', 'ACORN', 'BERRIES', 'PINECONE',
+    'FOX', 'RACCOON', 'SQUIRREL', 'WOLF', 'OWL', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'FOX', 'BEAR', 'SQUIRREL', 'ACORN', 'ACORN', 'WOOD_J', 'WOOD_Q', 'WOOD_A',
+    'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOLF', 'RACCOON', 'FOX', 'MUSHROOM', 'BERRIES', 'OWL', 'SQUIRREL',
+    'PINECONE', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'MUSHROOM', 'FOX', 'WOLF', 'RACCOON', 'WOOD_K',
   ],
-  // Reel 3
+  // Reel 3: 2 owls, [2, 2] acorns (4 acorns), 2 bears
   [
-    'WOOD_Q', 'WOOD_Q', 'WOOD_J', 'WOOD_A', 'WOOD_K', 'FOX', 'FOX', 'RACCOON', 'WOLF', 'MUSHROOM',
-    'BERRIES', 'ACORN', 'PINECONE', 'ACORN', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J', 'WOOD_Q', 'WOOD_K',
-    'WOOD_A', 'WOOD_A', 'MUSHROOM', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX', 'RACCOON', 'ACORN', 'SQUIRREL',
-    'WOOD_J', 'ACORN', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'BEAR', 'WOLF', 'MUSHROOM', 'BERRIES', 'PINECONE',
-    'ACORN', 'OWL', 'FOX', 'RACCOON', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'SQUIRREL', 'BEAR',
+    'WOOD_Q', 'WOOD_J', 'WOOD_A', 'WOOD_K', 'FOX', 'RACCOON', 'WOLF', 'ACORN', 'ACORN', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'FOX', 'RACCOON', 'SQUIRREL', 'WOOD_J', 'ACORN', 'ACORN', 'WOOD_Q', 'WOOD_K',
+    'WOOD_A', 'BEAR', 'WOLF', 'MUSHROOM', 'BERRIES', 'PINECONE', 'OWL', 'FOX', 'RACCOON', 'WOOD_A',
+    'WOOD_K', 'WOOD_Q', 'WOOD_J', 'SQUIRREL', 'MUSHROOM', 'WOLF', 'FOX', 'PINECONE', 'WOOD_A', 'WOOD_Q',
   ],
-  // Reel 4
+  // Reel 4: 2 owls, [2, 2] acorns (4 acorns), 2 bears
   [
-    'WOOD_J', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'WOLF', 'WOLF', 'FOX', 'RACCOON', 'MUSHROOM',
-    'BERRIES', 'ACORN', 'PINECONE', 'ACORN', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J', 'WOOD_Q', 'WOOD_K',
-    'WOOD_A', 'ACORN', 'MUSHROOM', 'BERRIES', 'FOX', 'RACCOON', 'ACORN', 'SQUIRREL', 'WOLF', 'BEAR',
-    'WOOD_Q', 'WOOD_Q', 'WOOD_J', 'WOOD_K', 'WOOD_A', 'MUSHROOM', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX',
-    'ACORN', 'OWL', 'RACCOON', 'SQUIRREL', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOLF', 'BEAR',
+    'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'WOLF', 'FOX', 'RACCOON', 'ACORN', 'ACORN', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM',
+    'BERRIES', 'FOX', 'RACCOON', 'ACORN', 'ACORN', 'SQUIRREL', 'WOLF', 'BEAR', 'WOOD_Q', 'WOOD_J',
+    'WOOD_K', 'WOOD_A', 'MUSHROOM', 'BERRIES', 'PINECONE', 'FOX', 'OWL', 'RACCOON', 'SQUIRREL', 'WOOD_A',
+    'WOOD_K', 'WOOD_Q', 'WOOD_J', 'WOLF', 'ACORN', 'MUSHROOM', 'FOX', 'PINECONE', 'WOOD_A', 'WOOD_K',
   ],
-  // Reel 5
+  // Reel 5: 1 owl, [2, 2] acorns (4 acorns), 2 bears
   [
-    'WOOD_A', 'WOOD_A', 'WOOD_K', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'FOX', 'FOX', 'RACCOON', 'RACCOON',
-    'WOLF', 'MUSHROOM', 'MUSHROOM', 'BERRIES', 'PINECONE', 'ACORN', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J',
-    'WOOD_Q', 'ACORN', 'WOOD_K', 'WOOD_A', 'MUSHROOM', 'BERRIES', 'ACORN', 'PINECONE', 'FOX', 'RACCOON',
-    'ACORN', 'SQUIRREL', 'WOLF', 'BEAR', 'WOOD_J', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM',
-    'ACORN', 'OWL', 'FOX', 'RACCOON', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'SQUIRREL', 'BEAR',
+    'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'FOX', 'RACCOON', 'WOLF', 'ACORN', 'ACORN', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'BEAR', 'OWL', 'SQUIRREL', 'WOOD_J', 'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM',
+    'BERRIES', 'PINECONE', 'FOX', 'RACCOON', 'ACORN', 'ACORN', 'SQUIRREL', 'WOLF', 'BEAR', 'WOOD_J',
+    'WOOD_Q', 'WOOD_K', 'WOOD_A', 'MUSHROOM', 'FOX', 'RACCOON', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J',
+    'SQUIRREL', 'WOLF', 'PINECONE', 'MUSHROOM', 'FOX', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J', 'BEAR',
   ],
 ];

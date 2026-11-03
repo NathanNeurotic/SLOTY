@@ -177,8 +177,8 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           </div>
 
           {/* Win Display */}
-          <div className="flex items-center pl-1 border-l border-white/10">
-            <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
+          <div className="flex items-center pl-1 border-l border-white/10 flex-shrink-0">
+            <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} activeGameId={activeGameId} />
           </div>
 
           {/* Gamble 2X (shown when win > 0) */}
@@ -428,9 +428,9 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
         </div>
 
         {/* Right: Win Payout, Gamble 2X, and Auto-Spin */}
-        <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 flex-shrink-0 h-9 sm:h-10">
-          {/* Animated Rolling Win Display */}
-          <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} />
+        <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 flex-shrink-0 h-10 sm:h-12">
+          {/* Animated Large Hero Rolling Win Display */}
+          <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} activeGameId={activeGameId} />
 
           {/* Themed Video Poker Style Double-Up Gamble Button (Always present to prevent layout shift) */}
           {onOpenGamble && (
@@ -442,7 +442,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 }
               }}
               disabled={winAmount <= 0 || isSpinning || isFreeSpins}
-              className={`flex items-center justify-center space-x-1 w-20 sm:w-24 h-9 sm:h-10 rounded-xl font-black text-[9px] sm:text-[10px] uppercase transition-all duration-200 flex-shrink-0 ${
+              className={`flex items-center justify-center space-x-1 w-20 sm:w-24 h-10 sm:h-12 rounded-xl font-black text-[9px] sm:text-[10px] uppercase transition-all duration-200 flex-shrink-0 ${
                 winAmount > 0 && !isSpinning && !isFreeSpins
                   ? 'vlt-gamble-btn text-white animate-pulse cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.7)]'
                   : 'bg-casino-950/40 border border-white/5 text-slate-600 opacity-40 cursor-not-allowed'
@@ -450,7 +450,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               title={
                 winAmount > 0 && !isSpinning && !isFreeSpins
                   ? 'Risk your win to double it in Video Poker Double-Up'
-                  : 'Win credits on any spin to activate Gamble 2X'
+                  : undefined
               }
             >
               <Dices className={`w-3.5 h-3.5 ${winAmount > 0 ? 'text-yellow-300' : 'text-slate-600'}`} />
@@ -464,7 +464,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             {isAutoSpinning ? (
               <button
                 onClick={onAutoSpinStop}
-                className="flex items-center justify-center space-x-1 px-2.5 h-9 sm:h-10 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.5)]"
+                className="flex items-center justify-center space-x-1 px-2.5 h-10 sm:h-12 rounded-xl bg-rose-600/30 border border-rose-500 text-rose-300 font-bold text-xs uppercase animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.5)]"
               >
                 <StopCircle className="w-4 h-4" />
                 <span>Stop ({autoSpinsRemaining})</span>
@@ -476,7 +476,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   setShowAutoMenu(!showAutoMenu);
                 }}
                 disabled={isSpinning || isFreeSpins}
-                className="flex items-center justify-center space-x-1 px-2.5 h-9 sm:h-10 rounded-xl vlt-btn-stepper text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
+                className="flex items-center justify-center space-x-1 px-2.5 h-10 sm:h-12 rounded-xl vlt-btn-stepper text-slate-300 font-bold text-xs uppercase tracking-wider disabled:opacity-40"
               >
                 <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Auto</span>
@@ -509,18 +509,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* TIER 2: Dedicated Centered Action Line for SPIN / STOP - (Desktop only >= 640px) */}
-      <div className="hidden sm:flex w-full h-14 sm:h-16 items-center justify-center flex-shrink-0">
+      <div className="hidden sm:flex w-full h-12 sm:h-14 items-center justify-center flex-shrink-0 mb-1">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
-          title={
-            isSpinning
-              ? 'Quick Stop (Space / Click)'
-              : !isFreeSpins && balance < totalBet
-              ? 'Insufficient coins'
-              : undefined
-          }
-          className={`relative w-72 sm:w-96 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-2xl uppercase text-white select-none transition-all touch-manipulation shadow-2xl active:scale-95 ${
+          className={`relative w-72 sm:w-96 h-11 sm:h-13 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-2xl uppercase text-white select-none transition-all touch-manipulation shadow-2xl active:scale-95 ${
             isSpinning
               ? isTimber
                 ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_20px_rgba(244,63,94,0.8)] animate-pulse cursor-pointer'

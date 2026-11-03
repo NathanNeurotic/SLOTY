@@ -9,7 +9,7 @@ import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
 import { soundManager } from '../../audio/soundManager';
-import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Award, Film, Trophy } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 import type { GameId } from '../../games/types';
 import { getGame } from '../../games/gameRegistry';
@@ -557,7 +557,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(230px,46vh,420px)] sm:h-[clamp(300px,52vh,620px)] md:h-[clamp(340px,55vh,680px)] xl:h-[clamp(380px,58vh,720px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(230px,48vh,440px)] sm:h-[clamp(320px,56vh,640px)] md:h-[clamp(360px,59vh,690px)] xl:h-[clamp(390px,62vh,730px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : 'bg-casino-950/95 border-white/10'
@@ -661,9 +661,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           )}
         </div>
 
-        {/* Cabinet Bottom Status Bar - Strictly Fixed Height with Themed Speakers */}
-        <div className="h-5 sm:h-7 overflow-hidden flex items-center justify-between text-[9px] sm:text-[11px] text-slate-400 font-semibold px-1.5 sm:px-2 mt-0.5 sm:mt-2 truncate whitespace-nowrap flex-shrink-0 border-t border-white/5 pt-0.5 sm:pt-1">
-          {/* Left Speaker */}
+        {/* Cabinet Bottom Status Bar - Upgrades to Illuminated Hero Win Banner when Winning */}
+        <div
+          className={`overflow-hidden flex items-center justify-between text-[9px] sm:text-[11px] font-semibold px-2 sm:px-3 mt-1 sm:mt-1.5 flex-shrink-0 rounded-lg sm:rounded-xl border transition-all duration-300 ${
+            !isAnyReelSpinning && spinResult && spinResult.totalPayout > 0
+              ? isTimber
+                ? 'h-8 sm:h-10 bg-gradient-to-r from-[#0d2818] via-[#1a4028] to-[#0d2818] border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]'
+                : 'h-8 sm:h-10 bg-gradient-to-r from-amber-950 via-casino-900 to-amber-950 border-yellow-300 shadow-[0_0_20px_rgba(253,224,71,0.8)]'
+              : 'h-5 sm:h-7 bg-black/40 border-white/5 text-slate-400'
+          }`}
+        >
+          {/* Left Speaker + RTP Cert */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
             <div
               className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
@@ -680,16 +688,31 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-mono text-emerald-400 text-[10px]">{isTimber ? '96.2% RTP' : '95.8% RTP'}</span>
+            <span className="font-mono text-emerald-400 text-[10px] hidden xs:inline">{isTimber ? '95.2% RTP' : '95.2% RTP'}</span>
           </div>
 
-          <div className={`font-black text-xs truncate px-2 text-center flex-1 ${isTimber ? 'text-emerald-300' : 'text-gold-bright'}`}>
-            {!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0 ? (
-              <span className="animate-pulse">{spinResult.winningLines.length} {isTimber ? 'CRITTER WINS HIT!' : 'CASH PAYLINES HIT!'}</span>
-            ) : null}
+          {/* Center: MASSIVE HERO WIN DISPLAY BANNER */}
+          <div className="flex items-center justify-center space-x-1.5 truncate px-1 sm:px-2 flex-1 text-center">
+            {!isAnyReelSpinning && spinResult && spinResult.totalPayout > 0 ? (
+              <div className="flex items-center space-x-1.5 animate-pulse truncate">
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-400 flex-shrink-0 animate-bounce" />
+                <span className={`text-xs sm:text-base font-black font-mono tracking-wide ${
+                  isTimber
+                    ? 'text-emerald-200 drop-shadow-[0_0_12px_rgba(52,211,153,1)]'
+                    : 'text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]'
+                }`}>
+                  WIN: +{spinResult.totalPayout.toLocaleString()} COINS {activeWin ? `• ${activeWin.count}x ${(gameDef.symbols[activeWin.symbolId]?.name || '').toUpperCase()} (+${activeWin.payout.toLocaleString()})` : `(${spinResult.winningLines.length} LINES)`}
+                </span>
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-400 flex-shrink-0 animate-bounce" />
+              </div>
+            ) : isAnyReelSpinning ? (
+              <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">REELS IN MOTION</span>
+            ) : (
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">READY TO SPIN</span>
+            )}
           </div>
 
-          {/* Right Speaker */}
+          {/* Right Speaker + Scene */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
             <span className={`text-[10px] hidden sm:inline tracking-wide ${isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
               SCENE: {isTimber ? 'DEEP WOODS' : currentSceneId}
