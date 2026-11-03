@@ -410,6 +410,19 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
         </span>
         <Trees className="w-3.5 h-3.5 text-emerald-400" />
       </div>
+
+      {/* 3D Mossy Cedar Log Stump Base resting on the boardwalk floor */}
+      <div className="w-full flex flex-col items-center -mt-1 z-10 pointer-events-none">
+        <div className="w-44 h-4 bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] rounded-t-lg border-t-2 border-[#a16207] shadow-md flex items-center justify-around px-4">
+          <span className="text-[10px]">🍂</span>
+          <span className="text-[10px]">🌰</span>
+          <span className="text-[10px]">🍁</span>
+        </div>
+        <div className="w-52 h-6 bg-gradient-to-r from-[#170a04] via-[#2e180e] to-[#170a04] rounded-b-xl border-b-2 border-x-2 border-[#78350f] shadow-2xl relative flex items-center justify-center">
+          <div className="w-24 h-1.5 bg-emerald-700/60 rounded-full blur-[0.5px]" />
+        </div>
+        <div className="w-56 h-3 bg-black/80 blur-sm rounded-full -mt-1" />
+      </div>
     </div>
   );
 };

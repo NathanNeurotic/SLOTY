@@ -283,7 +283,7 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
               {/* ===================================================================== */}
               {/* --- GIGANTIC FORT KNOX CIRCULAR VAULT DOOR (UPPER CENTER BACKDROP) --- */}
               {/* ===================================================================== */}
-              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[480px] sm:w-[680px] h-[480px] sm:h-[680px] pointer-events-none opacity-40 z-0">
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[480px] sm:w-[680px] h-[480px] sm:h-[680px] pointer-events-none opacity-80 z-0">
                 <div className="relative w-full h-full flex items-center justify-center">
                   {/* Outer Armored Titanium Ring with 24 Radial Steel Locking Bolts */}
                   <div className="absolute inset-0 rounded-full border-[18px] border-slate-700/80 shadow-[0_0_60px_rgba(0,240,255,0.25),inset_0_0_50px_rgba(0,0,0,0.9)] bg-gradient-to-br from-slate-900 via-slate-950 to-black">

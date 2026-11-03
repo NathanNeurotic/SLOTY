@@ -18,12 +18,10 @@ import { soundManager } from './audio/soundManager';
 import { storage } from './utils/storage';
 import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
-import { VegasTicker } from './components/hud/VegasTicker';
 import { SceneBackdrop } from './components/scenes/SceneBackdrop';
 import { VaultBlastDoors } from './components/scenes/VaultBlastDoors';
 import { CASINO_SCENES, type CasinoScene, type CasinoSceneId } from './components/scenes/SceneTypes';
 import { CashRainCanvas } from './fx/CashRainCanvas';
-import { FeverMeter } from './components/hud/FeverMeter';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
 import { launchCoinFountain } from './fx/celebrations';
@@ -114,6 +112,8 @@ export const App: React.FC = () => {
       if (gameId === 'timber-critters') {
         soundManager.playOwlHoot(1);
       } else {
+        setCurrentSceneId('VAULT');
+        storage.setItem('sloty_scene', 'VAULT');
         soundManager.playCashRegister();
       }
     },
@@ -192,9 +192,10 @@ export const App: React.FC = () => {
   }, []);
 
   // --- Active Scenic Environment State (Persisted) ---
-  const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() =>
-    (storage.getItem('sloty_scene') as CasinoSceneId) || 'VAULT'
-  );
+  const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() => {
+    const saved = storage.getItem('sloty_scene') as CasinoSceneId;
+    return saved === 'VAULT' ? 'VAULT' : 'VAULT';
+  });
   const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
   const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
 
@@ -801,14 +802,23 @@ export const App: React.FC = () => {
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
       <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start sm:justify-center gap-1 sm:gap-1.5 w-full px-1 sm:px-2 py-0.5 overflow-y-auto sm:overflow-hidden">
-        {/* 4-Tier Deluxe Progressive Jackpots */}
-        <JackpotMarquee totalBet={totalBet} activeGameId={activeGameId} />
-
-        {/* Live Casino LED Marquee Ticker */}
-        <VegasTicker freeSpinsRemaining={freeSpinsRemaining} activeGameId={activeGameId} />
-
-        {/* Hyper Fever Overdrive Super Meter */}
-        <FeverMeter charge={feverCharge} feverSpinsLeft={feverSpinsLeft} activeGameId={activeGameId} />
+        {/* Dynamic Architectural Physical Top Box (Fort Knox Vault vs Cedar Cabin Gable) */}
+        <JackpotMarquee
+          totalBet={totalBet}
+          activeGameId={activeGameId}
+          freeSpinsRemaining={freeSpinsRemaining}
+          feverCharge={feverCharge}
+          feverSpinsLeft={feverSpinsLeft}
+          isFloorMode={isFloorMode}
+          onToggleFloorMode={() => {
+            setIsFloorMode((prev) => {
+              const next = !prev;
+              storage.setItem('sloty_floor_mode', next.toString());
+              return next;
+            });
+          }}
+          onOpenLeaderboard={() => setShowLeaderboardModal(true)}
+        />
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         {(() => {
@@ -822,34 +832,10 @@ export const App: React.FC = () => {
               peers={roomPeers}
               isFloorMode={isFloorMode}
               activeGameId={activeGameId}
-              onToggleFloorMode={() => {
-                setIsFloorMode((prev) => {
-                  const next = !prev;
-                  storage.setItem('sloty_floor_mode', next.toString());
-                  return next;
-                });
-              }}
-              onOpenLeaderboard={() => setShowLeaderboardModal(true)}
               onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
               flankCompanion={
                 <CompanionLounge
                   position="desktop-flank"
-                  isSpinning={isSpinning}
-                  isAnticipating={isAnticipating}
-                  isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
-                  isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
-                  isFeverMode={feverSpinsLeft > 0}
-                  winAmount={spinResult?.totalPayout || 0}
-                  onRewardCoins={(amount) => {
-                    setBalance((b) => b + amount);
-                    soundManager.playCoinTally();
-                  }}
-                  activeGameId={activeGameId}
-                />
-              }
-              companionNode={
-                <CompanionLounge
-                  position="mobile-bar"
                   isSpinning={isSpinning}
                   isAnticipating={isAnticipating}
                   isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}

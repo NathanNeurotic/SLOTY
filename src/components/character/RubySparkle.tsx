@@ -367,6 +367,15 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 3D Grounded VIP Stanchion & Velvet Pedestal Base */}
+      <div className="w-full flex flex-col items-center -mt-2 z-10 pointer-events-none">
+        <div className="w-48 h-3 bg-gradient-to-r from-amber-700 via-yellow-300 to-amber-700 rounded-t-md border-t border-yellow-100 shadow-md" />
+        <div className="w-56 h-6 bg-gradient-to-r from-[#4a0614] via-[#880d25] to-[#4a0614] rounded-b-xl border-b-2 border-x-2 border-yellow-500 shadow-2xl relative flex items-center justify-center">
+          <div className="w-16 h-1 bg-yellow-400/60 rounded-full" />
+        </div>
+        <div className="w-60 h-3 bg-black/70 blur-sm rounded-full -mt-1" />
+      </div>
     </div>
   );
 };

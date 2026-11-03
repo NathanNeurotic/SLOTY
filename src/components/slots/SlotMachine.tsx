@@ -328,30 +328,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           onPull={() => {
             if (onSpin) onSpin();
           }}
+          activeGameId={activeGameId}
         />
       )}
-
-      {/* Handcrafted Rustic Log Pediment Crest / Fort Knox Pediment Crest */}
-      {/* Top Machine Pediment Sign */}
-      <div className="w-full flex justify-center -mb-1 relative z-20 pointer-events-none">
-        {isTimber ? (
-          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-[#2e180e] via-[#451a03] to-[#2e180e] border-t-4 border-x-4 border-[#78350f] shadow-[0_-6px_15px_rgba(0,0,0,0.85)]">
-            <span className="text-amber-400 text-sm animate-pulse">🐻</span>
-            <span className="text-[10px] sm:text-xs font-black tracking-widest text-[#fde047] uppercase font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-              🌲 TIMBERLAND CRITTERS: CABIN SLOTS 🌲
-            </span>
-            <span className="text-amber-400 text-sm animate-pulse">🦉</span>
-          </div>
-        ) : (
-          <div className="flex items-center space-x-2 px-6 py-1.5 rounded-t-2xl bg-gradient-to-r from-amber-700 via-yellow-500 to-amber-700 border-t-2 border-x-2 border-yellow-200 shadow-[0_-6px_20px_rgba(245,158,11,0.6)]">
-            <span className="text-yellow-100 text-sm animate-bounce">💰</span>
-            <span className="text-[10px] sm:text-xs font-black tracking-widest text-slate-950 uppercase font-sans drop-shadow-[0_1px_2px_rgba(255,255,255,0.5)]">
-              FORT KNOX 24K IMPERIAL VAULT
-            </span>
-            <span className="text-yellow-100 text-sm animate-bounce">💰</span>
-          </div>
-        )}
-      </div>
 
       {/* Outer Luxury Cabinet Frame with Handcrafted Theming */}
       <div
