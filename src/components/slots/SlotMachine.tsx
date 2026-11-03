@@ -340,16 +340,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
       {/* Outer Luxury Cabinet Frame with Handcrafted Theming */}
       <div
-        className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
+        className={`relative p-[2px] sm:p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
           isTimber
-            ? 'border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
+            ? 'border-4 sm:border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
             : isPixel
-            ? 'border-4 border-pink-500/80 bg-gradient-to-b from-purple-950 via-slate-950 to-black shadow-[0_0_45px_rgba(236,72,153,0.5),0_25px_60px_rgba(0,0,0,0.98)]'
-            : 'border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
+            ? 'border-2 sm:border-4 border-pink-500/80 bg-gradient-to-b from-purple-950 via-slate-950 to-black shadow-[0_0_45px_rgba(236,72,153,0.5),0_25px_60px_rgba(0,0,0,0.98)]'
+            : 'border-2 sm:border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >
         <div
-          className={`relative p-1 sm:p-3.5 rounded-[14px] sm:rounded-[22px] transition-all duration-300 shadow-2xl ${
+          className={`relative p-1 sm:p-2 md:p-2.5 rounded-[12px] sm:rounded-[20px] transition-all duration-300 shadow-2xl ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
@@ -388,7 +388,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           />
 
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
-        <div className="flex items-center justify-between h-8 sm:h-11 px-1.5 sm:px-2 border-b border-white/10 mb-1 sm:mb-2 overflow-hidden flex-shrink-0">
+        <div className="flex items-center justify-between h-7 sm:h-8 px-1.5 sm:px-2 border-b border-white/10 mb-0.5 sm:mb-1 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
             {isPixel ? (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#06B6D4]">
@@ -571,12 +571,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
               rowCount === 5
-                ? 'h-[clamp(280px,50vh,430px)] sm:h-[clamp(320px,52vh,480px)] md:h-[clamp(350px,54vh,530px)] lg:h-[clamp(380px,56vh,580px)] xl:h-[clamp(420px,58vh,630px)]'
+                ? 'h-[clamp(210px,36vh,380px)] sm:h-[clamp(230px,38vh,410px)] md:h-[clamp(250px,40vh,450px)] lg:h-[clamp(280px,43vh,490px)] xl:h-[clamp(310px,46vh,540px)]'
                 : rowCount === 3
-                ? 'h-[clamp(210px,38vh,300px)] sm:h-[clamp(230px,40vh,340px)] md:h-[clamp(260px,42vh,380px)] lg:h-[clamp(290px,44vh,420px)]'
-                : 'h-[clamp(240px,44vh,360px)] sm:h-[clamp(270px,46vh,410px)] md:h-[clamp(300px,48vh,460px)] lg:h-[clamp(330px,50vh,500px)]'
+                ? 'h-[clamp(140px,24vh,240px)] sm:h-[clamp(160px,26vh,270px)] md:h-[clamp(180px,28vh,300px)] lg:h-[clamp(210px,31vh,340px)] xl:h-[clamp(230px,33vh,380px)]'
+                : 'h-[clamp(170px,29vh,310px)] sm:h-[clamp(190px,32vh,340px)] md:h-[clamp(210px,34vh,370px)] lg:h-[clamp(240px,37vh,410px)] xl:h-[clamp(270px,40vh,450px)]'
             } ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
@@ -704,14 +704,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Cabinet Bottom Status Bar - Upgrades to Illuminated Hero Win Banner when Winning */}
         <div
-          className={`overflow-hidden flex items-center justify-between text-[9px] sm:text-[11px] font-semibold px-2 sm:px-3 mt-1 sm:mt-1.5 flex-shrink-0 rounded-lg sm:rounded-xl border transition-all duration-300 ${
+          className={`overflow-hidden flex items-center justify-between text-[9px] sm:text-[11px] font-semibold px-2 sm:px-3 mt-0.5 sm:mt-1 flex-shrink-0 rounded-lg sm:rounded-xl border transition-all duration-300 ${
             !isAnyReelSpinning && spinResult && spinResult.totalPayout > 0
               ? isTimber
-                ? 'h-8 sm:h-10 bg-gradient-to-r from-[#0d2818] via-[#1a4028] to-[#0d2818] border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]'
+                ? 'h-7 sm:h-8 bg-gradient-to-r from-[#0d2818] via-[#1a4028] to-[#0d2818] border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]'
                 : isPixel
-                ? 'h-8 sm:h-10 bg-gradient-to-r from-purple-950 via-pink-900 to-purple-950 border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.8)]'
-                : 'h-8 sm:h-10 bg-gradient-to-r from-amber-950 via-casino-900 to-amber-950 border-yellow-300 shadow-[0_0_20px_rgba(253,224,71,0.8)]'
-              : 'h-5 sm:h-7 bg-black/40 border-white/5 text-slate-400'
+                ? 'h-7 sm:h-8 bg-gradient-to-r from-purple-950 via-pink-900 to-purple-950 border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.8)]'
+                : 'h-7 sm:h-8 bg-gradient-to-r from-amber-950 via-casino-900 to-amber-950 border-yellow-300 shadow-[0_0_20px_rgba(253,224,71,0.8)]'
+              : 'h-4.5 sm:h-5.5 bg-black/40 border-white/5 text-slate-400'
           }`}
         >
           {/* Left Speaker + RTP Cert */}

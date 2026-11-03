@@ -41,12 +41,12 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
   return (
     <div
       onClick={handleClickLogo}
-      className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group select-none"
+      className="flex items-center space-x-1 sm:space-x-2 xl:space-x-3 cursor-pointer group select-none"
       title={isTimber ? 'Timberland Critters' : isPixel ? 'Pixel Arcade 8-Bit Quest' : 'SLOTY 24K Gold & Cash Vault'}
     >
       {/* 3D Emblem Token */}
       <div
-        className={`relative w-9 h-9 sm:w-11 sm:h-11 rounded-2xl p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
+        className={`relative w-8 h-8 sm:w-9 sm:h-9 xl:w-11 xl:h-11 rounded-xl xl:rounded-2xl p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
           isTimber
             ? 'bg-gradient-to-tr from-amber-700 via-emerald-600 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.6)]'
             : isPixel

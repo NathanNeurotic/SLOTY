@@ -110,7 +110,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <SlotyLogo activeGameId={activeGameId} />
 
           {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
-          <div className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-xl shadow-md border ${
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2 xl:px-3 py-0.5 sm:py-1 rounded-xl shadow-md border ${
             isTimber
               ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
               : isPixel
@@ -182,7 +182,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               soundManager.playButtonClick();
               onOpenBonusWheel();
             }}
-            className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-1 rounded-xl border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1 px-1.5 sm:px-2 xl:px-2.5 py-1 rounded-xl border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
               canClaimBonus
                 ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 border-yellow-300 text-white shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-pulse'
                 : 'vlt-btn-stepper text-amber-300 hover:text-white'
@@ -190,7 +190,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             title="Claim Daily Bonus Wheel"
           >
             <Gift className={`w-3.5 h-3.5 ${canClaimBonus ? 'animate-bounce text-yellow-300' : 'text-amber-400'}`} />
-            <span className="hidden md:inline font-mono font-black">
+            <span className="hidden xl:inline font-mono font-black">
               {canClaimBonus ? 'FREE BONUS' : timeUntilBonus}
             </span>
           </button>
@@ -208,20 +208,20 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <Music className={`w-3.5 h-3.5 ${isMusicOn ? 'text-emerald-300' : 'text-slate-400'}`} />
           </button>
 
-          {/* Mobile Tools Drawer Launcher (< 640px) */}
+          {/* Tools & Audio Settings Drawer Launcher (< 1024px) */}
           <button
             onClick={() => {
               soundManager.playButtonClick();
               setShowMobileToolsDrawer(true);
             }}
-            className="sm:hidden p-1.5 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            className="lg:hidden p-1.5 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
             title="Open Tools & Settings"
           >
             <Sliders className="w-3.5 h-3.5 text-yellow-300" />
           </button>
 
-          {/* Desktop-only individual utility buttons (>= 640px) */}
-          <div className="hidden sm:flex items-center space-x-1.5">
+          {/* Desktop-only individual utility buttons (>= 1024px) */}
+          <div className="hidden lg:flex items-center space-x-1.5">
             <button
               onClick={() => {
                 soundManager.playButtonClick();

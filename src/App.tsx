@@ -837,7 +837,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
-      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start gap-1 sm:gap-2 w-full px-1 sm:px-2 py-1 overflow-y-auto overflow-x-hidden">
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start gap-1 sm:gap-1.5 w-full px-1 sm:px-2 py-0.5 sm:py-1 overflow-y-auto overflow-x-hidden">
         {/* Dynamic Architectural Physical Top Box (Fort Knox Vault vs Cedar Cabin Gable) */}
         <JackpotMarquee
           totalBet={totalBet}
@@ -952,7 +952,7 @@ export const App: React.FC = () => {
         />
 
         {/* Integrated Footer info banner (desktop only) with clean clearance */}
-        <footer className={`hidden sm:block py-1.5 sm:py-2 border-t text-center text-[9px] sm:text-[10px] flex-shrink-0 ${
+        <footer className={`hidden sm:block py-0.5 sm:py-1 border-t text-center text-[8.5px] sm:text-[9.5px] flex-shrink-0 ${
           isTimber
             ? 'bg-[#0e0a07]/95 border-emerald-900/40 text-emerald-500/80'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
