@@ -4,6 +4,7 @@ import { storage } from '../../utils/storage';
 import { soundManager } from '../../audio/soundManager';
 import type { GameId } from '../../games/types';
 import { getGame } from '../../games/gameRegistry';
+import { RetroCasinoAdBanner } from './RetroCasinoAdBanner';
 
 interface JackpotMarqueeProps {
   totalBet: number;
@@ -19,7 +20,7 @@ interface JackpotMarqueeProps {
 export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   totalBet,
   activeGameId = 'vault-24k',
-  freeSpinsRemaining = 0,
+  freeSpinsRemaining: _freeSpinsRemaining = 0,
   feverCharge = 35,
   feverSpinsLeft = 0,
   isFloorMode = false,
@@ -91,11 +92,6 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
     }
   };
 
-  const tickerText =
-    freeSpinsRemaining > 0
-      ? gameDef.theme.tickerFreeSpinsText
-      : gameDef.theme.tickerText;
-
   // =========================================================================
   // --- VERSION A: TIMBERLAND CRITTERS (HANDCRAFTED CEDAR CABIN GABLE) ---
   // =========================================================================
@@ -161,7 +157,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                   title="Toggle Camp Bank view"
                 >
                   <Users className="w-3 h-3 text-amber-300" />
-                  <span>{isFloorMode ? 'CAMP BANK ON' : '🌲 CAMP BANK'}</span>
+                  <span>{isFloorMode ? 'CAMP BANK ON' : 'CAMP BANK'}</span>
                 </button>
               )}
 
@@ -225,8 +221,10 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
 
                 <div className="flex flex-col items-center z-10 mx-auto px-1 text-center">
-                  <div className="flex items-center space-x-1 text-amber-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest">
-                    <span>🌲 {gameDef.theme.grandTitle} 🌲</span>
+                  <div className="flex items-center justify-center space-x-1.5 text-amber-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest">
+                    <Trees className="w-3 h-3 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
+                    <span>{gameDef.theme.grandTitle}</span>
+                    <Trees className="w-3 h-3 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
                   </div>
                   <div className="flex items-baseline font-mono">
                     <span className="text-xs sm:text-sm font-black text-amber-400 mr-0.5">$</span>
@@ -280,17 +278,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               </div>
             </div>
 
-            {/* Cross-Cut Cedar Beam Ticker Ribbon Across Bottom of Gable */}
-            <div className="mt-1 rounded-lg bg-[#08180e] border border-emerald-600/40 px-2 py-0.5 flex items-center overflow-hidden">
-              <div className="flex items-center space-x-1 pr-1.5 border-r border-emerald-700/60 flex-shrink-0 text-[8px] font-black text-emerald-300 uppercase whitespace-nowrap">
-                <Trees className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
-                <span>FOREST TICKER</span>
-              </div>
-              <div className="flex-1 overflow-hidden whitespace-nowrap ml-1.5 relative">
-                <div className="inline-block animate-marquee-text font-mono text-[9px] sm:text-[10px] font-bold text-emerald-200 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]">
-                  {tickerText}
-                </div>
-              </div>
+            {/* Retro Casino Promotional Ad Banner */}
+            <div className="mt-1">
+              <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
         </div>
@@ -498,17 +488,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               </div>
             </div>
 
-            {/* High-Roller Gold-Bezeled LED Ticker Ribbon Across Bottom */}
-            <div className="mt-1 rounded-lg bg-slate-950 border border-yellow-500/40 px-2 py-0.5 flex items-center overflow-hidden">
-              <div className="flex items-center space-x-1 pr-1.5 border-r border-yellow-500/40 flex-shrink-0 text-[8px] font-black text-yellow-300 uppercase whitespace-nowrap">
-                <Coins className="w-2.5 h-2.5 text-yellow-400 animate-pulse" />
-                <span>CASH TICKER</span>
-              </div>
-              <div className="flex-1 overflow-hidden whitespace-nowrap ml-1.5 relative">
-                <div className="inline-block animate-marquee-text font-mono text-[9px] sm:text-[10px] font-bold text-amber-300 drop-shadow-[0_0_4px_rgba(251,191,36,0.8)]">
-                  {tickerText}
-                </div>
-              </div>
+            {/* Retro Casino Promotional Ad Banner */}
+            <div className="mt-1">
+              <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
         </div>

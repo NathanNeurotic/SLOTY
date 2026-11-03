@@ -40,10 +40,13 @@ import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordT
 import { CasinoFloorBank } from './components/multiplayer/CasinoFloorBank';
 import { LeaderboardModal } from './components/modals/LeaderboardModal';
 import { CompanionLounge } from './components/character/CompanionLounge';
+import { PuppetCharacterPopup } from './components/popups/PuppetCharacterPopup';
+import { quotaManager, type QuotaTier } from './engine/quotaSystem';
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export const App: React.FC = () => {
+  const [unlockedQuotaTier, setUnlockedQuotaTier] = useState<QuotaTier | null>(null);
   // --- Persistent Storage State (Dual LocalStorage + Cookie Mirroring) ---
   const [balance, setBalance] = useState<number>(() =>
     storage.getNumber('sloty_balance', 50000)
@@ -431,6 +434,12 @@ export const App: React.FC = () => {
           launchCoinFountain('big');
         }
       }
+    }
+
+    // Update Unreasonable Boss / Camp Quota System
+    const quotaResult = quotaManager.addSpinProgress(activeGameId, totalBet, totalPayout);
+    if (quotaResult.unlockedTier) {
+      setUnlockedQuotaTier(quotaResult.unlockedTier);
     }
 
     // Broadcast live spin outcome to Discord channel & casino floor peers
@@ -924,6 +933,23 @@ export const App: React.FC = () => {
           PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
         </footer>
       </div>
+
+      {/* Corny Pin-Joint Puppet Character Pop-Up (Baron Bartholomew Sterling & Grizzly Gus) */}
+      <PuppetCharacterPopup
+        activeGameId={activeGameId}
+        isSpinning={isSpinning}
+        isAnticipating={
+          isSpinning &&
+          !!currentGrid[0]?.includes(activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER') &&
+          !!currentGrid[1]?.includes(activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER')
+        }
+        winAmount={spinResult?.totalPayout || 0}
+        unlockedTier={unlockedQuotaTier}
+        onRewardCoins={(amount) => {
+          setBalance((b) => b + amount);
+          soundManager.playCoinTally();
+        }}
+      />
 
       {/* --- Modals & Overlays --- */}
 

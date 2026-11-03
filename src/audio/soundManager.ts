@@ -1957,6 +1957,78 @@ class SoundManager {
     subOsc.stop(now + 0.2);
   }
 
+  // Playful spring boing for puppet joint animations
+  public playPuppetBoing() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(460, now + 0.08);
+    osc.frequency.exponentialRampToValueAtTime(220, now + 0.20);
+    osc.frequency.exponentialRampToValueAtTime(340, now + 0.32);
+
+    gain.gain.setValueAtTime(0.28 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.40);
+  }
+
+  // Playful pop for character speech bubbles
+  public playPuppetQuip() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(840, now + 0.06);
+
+    gain.gain.setValueAtTime(0.25 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.14);
+  }
+
+  // Retro comedy honk-honk for boomer humor moments
+  public playCornyHorn() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const now = this.ctx.currentTime;
+    [0, 0.14].forEach((delay) => {
+      if (!this.ctx) return;
+      const t = now + delay;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(260, t);
+      osc.frequency.linearRampToValueAtTime(245, t + 0.09);
+
+      gain.gain.setValueAtTime(0.18 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.10);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.11);
+    });
+  }
+
   // Voice synthesizer casino announcement
   public speakAnnouncement(phrase: string) {
     this.speakAnnouncer(phrase);

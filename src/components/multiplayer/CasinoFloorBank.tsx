@@ -50,13 +50,13 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 min-h-0 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center">
+        <div className="flex-1 min-h-0 max-w-4xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl z-10 flex flex-col justify-center">
           {children}
         </div>
 
         {/* Right Flank: Neighbor Terminal (in Floor Mode) OR Full Perk Guide Standee */}
         {isFloorMode && rightNeighbor ? (
-          <div className="hidden md:block transition-all duration-300 flex-shrink-0">
+          <div className="hidden md:block transition-all duration-300 flex-shrink-0 xl:ml-4 2xl:ml-8">
             <NeighborTerminal
               peer={rightNeighbor}
               seatNumber={3}
@@ -65,7 +65,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
             />
           </div>
         ) : (
-          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20">
+          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20 xl:ml-5 2xl:ml-8">
             <GamePerkCard
               activeGameId={activeGameId}
               onOpenPaytable={onOpenPaytable}

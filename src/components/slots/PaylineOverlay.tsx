@@ -37,7 +37,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
     <svg
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
+      className="absolute inset-1 sm:inset-2 pointer-events-none z-20 overflow-visible"
     >
       <defs>
         <filter id="lineNeonGlow" x="-30%" y="-30%" width="160%" height="160%">

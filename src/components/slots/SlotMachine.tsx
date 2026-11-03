@@ -445,21 +445,21 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 PAYLINE {hoveredLineIndex + 1} PATH PREVIEW
               </span>
             ) : activeWin ? (
-              <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 truncate whitespace-nowrap animate-pulse">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 truncate whitespace-nowrap animate-pulse min-w-0 flex-1">
                 <button
                   onClick={handlePrevWinningLine}
-                  className="p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
+                  className="p-0.5 sm:p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
                   title="Previous Winning Line"
                 >
                   <ChevronLeft className="w-3.5 h-3.5 text-cyan-300" />
                 </button>
-                <span className="text-xs sm:text-sm font-black tracking-wide text-gold-light truncate drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
-                  <Award className="w-4 h-4 inline mr-1 text-gold-bright flex-shrink-0 animate-pulse" />
+                <span className="text-[10.5px] sm:text-xs md:text-sm font-black tracking-tight sm:tracking-wide text-gold-light truncate drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
+                  <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1 text-gold-bright flex-shrink-0 animate-pulse" />
                   LINE {activeWin.lineIndex + 1}: {activeWin.count}x {(gameDef.symbols[activeWin.symbolId]?.name || SYMBOLS[activeWin.symbolId]?.name || '').toUpperCase()} (+{activeWin.payout.toLocaleString()} COINS)
                 </span>
                 <button
                   onClick={handleNextWinningLine}
-                  className="p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
+                  className="p-0.5 sm:p-1 rounded-md vlt-btn-stepper text-white flex-shrink-0"
                   title="Next Winning Line"
                 >
                   <ChevronRight className="w-3.5 h-3.5 text-cyan-300" />
@@ -672,7 +672,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           }`}
         >
           {/* Left Speaker + RTP Cert */}
-          <div className="flex items-center space-x-1.5 flex-shrink-0">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 pl-1.5 sm:pl-2.5">
             <div
               className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
                 isTimber
@@ -687,16 +687,18 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 <div className={`w-0.5 h-0.5 rounded-full ${isTimber ? 'bg-emerald-400' : 'bg-amber-400'}`} />
               </div>
             </div>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-mono text-emerald-400 text-[10px] hidden xs:inline">{isTimber ? '95.2% RTP' : '95.2% RTP'}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+            <span className="font-mono text-emerald-400 text-[10px] font-black flex-shrink-0 whitespace-nowrap">
+              {isTimber ? '95.2% RTP' : '95.2% RTP'}
+            </span>
           </div>
 
           {/* Center: MASSIVE HERO WIN DISPLAY BANNER */}
-          <div className="flex items-center justify-center space-x-1.5 truncate px-1 sm:px-2 flex-1 text-center">
+          <div className="flex items-center justify-center space-x-1.5 truncate px-1 sm:px-2 flex-1 text-center min-w-0">
             {!isAnyReelSpinning && spinResult && spinResult.totalPayout > 0 ? (
-              <div className="flex items-center space-x-1.5 animate-pulse truncate">
+              <div className="flex items-center justify-center space-x-1.5 animate-pulse truncate">
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-400 flex-shrink-0 animate-bounce" />
-                <span className={`text-xs sm:text-base font-black font-mono tracking-wide ${
+                <span className={`text-xs sm:text-sm md:text-base font-black font-mono tracking-tight sm:tracking-wide truncate ${
                   isTimber
                     ? 'text-emerald-200 drop-shadow-[0_0_12px_rgba(52,211,153,1)]'
                     : 'text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]'
@@ -713,8 +715,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
 
           {/* Right Speaker + Scene */}
-          <div className="flex items-center space-x-1.5 flex-shrink-0">
-            <span className={`text-[10px] hidden sm:inline tracking-wide ${isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
+          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 pr-1.5 sm:pr-2.5">
+            <span className={`text-[10px] font-mono font-bold hidden sm:inline tracking-wide ${isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
               SCENE: {isTimber ? 'DEEP WOODS' : currentSceneId}
             </span>
             <div
