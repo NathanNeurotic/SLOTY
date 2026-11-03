@@ -1,6 +1,6 @@
 import type { SlotSymbol, SymbolId } from './types';
 
-// Calibrated to Oregon Lottery Video Lottery Terminal (VLT) specifications
+// SLOTY's own free-play math model (not lottery-calibrated)
 // Target Theoretical RTP: 94.8% ± 0.5% | Base Hit Frequency: ~31% | Scatter Odds: ~1:135 | Hold & Spin: ~1:180
 export const SYMBOLS: Record<string, SlotSymbol> = {
   WILD: {
