@@ -20,6 +20,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [displayedAmount, setDisplayedAmount] = useState(0);
   const [isFinishedCounting, setIsFinishedCounting] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
@@ -43,7 +44,9 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
     launchCoinFountain(intensity);
 
     if (winTier === 'EPIC_JACKPOT') {
-      if (isPixel) {
+      if (isPs2) {
+        soundManager.playPs2Startup();
+      } else if (isPixel) {
         soundManager.playArcadeVictoryFanfare();
       } else if (isTimber) {
         soundManager.playWoodlandFanfare();
@@ -52,7 +55,9 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
         soundManager.playJackpotFanfare();
       }
     } else {
-      if (isPixel) {
+      if (isPs2) {
+        soundManager.playPs2Win(winTier === 'MEGA_WIN' ? 25 : 10);
+      } else if (isPixel) {
         soundManager.playArcadeVictoryFanfare();
       } else if (isTimber) {
         soundManager.playForestWin(winTier === 'MEGA_WIN' ? 25 : 10);
@@ -129,7 +134,43 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   };
 
   const getTierDetails = () => {
-    if (isPixel) {
+    if (isPs2) {
+      switch (winTier) {
+        case 'EPIC_JACKPOT':
+          return {
+            title: '🎮 128-BIT EMOTION ENGINE GRAND JACKPOT! 🎮',
+            subtitle: 'DUALSHOCK 2 SYSTEM MASTER REWARD UNLOCKED!',
+            gradient: 'from-[#00F0FF] via-white to-[#006FCD]',
+            borderColor: 'border-[#00F0FF]',
+            textColor: 'text-[#00F0FF]',
+            glow: 'shadow-[0_0_90px_rgba(0,240,255,0.95),inset_0_0_40px_rgba(0,0,0,0.98)]',
+            bg: 'bg-gradient-to-b from-[#00102b] via-[#000817] to-black',
+            buttonClass: 'bg-gradient-to-r from-[#00478F] via-[#006FCD] to-[#00F0FF] text-white border-2 border-cyan-200 shadow-[0_0_30px_rgba(0,111,205,0.9)] font-mono',
+          };
+        case 'MEGA_WIN':
+          return {
+            title: '💿 OPTICAL DVD-ROM MEGA WIN! 💿',
+            subtitle: '294 MHZ HIGH SPEED CLOCK CYCLE HIT!',
+            gradient: 'from-cyan-200 via-sky-400 to-[#006FCD]',
+            borderColor: 'border-[#006FCD]',
+            textColor: 'text-cyan-200',
+            glow: 'shadow-[0_0_75px_rgba(0,111,205,0.85),inset_0_0_35px_rgba(0,0,0,0.95)]',
+            bg: 'bg-gradient-to-b from-[#020b18] via-[#000511] to-black',
+            buttonClass: 'bg-gradient-to-r from-[#003875] via-[#006FCD] to-cyan-400 text-white border-2 border-[#00F0FF] shadow-[0_0_25px_rgba(0,111,205,0.8)] font-mono',
+          };
+        default:
+          return {
+            title: '⚡ DUALSHOCK 2 BIG WIN! ⚡',
+            subtitle: '8MB MEMORY CARD CASH STORED!',
+            gradient: 'from-cyan-300 via-blue-400 to-indigo-300',
+            borderColor: 'border-[#006FCD]',
+            textColor: 'text-[#00F0FF]',
+            glow: 'shadow-[0_0_55px_rgba(0,111,205,0.75)]',
+            bg: 'bg-gradient-to-b from-[#010816] via-[#00030a] to-black',
+            buttonClass: 'bg-gradient-to-r from-[#00478F] to-[#006FCD] text-white border border-[#00F0FF] font-mono',
+          };
+      }
+    } else if (isPixel) {
       switch (winTier) {
         case 'EPIC_JACKPOT':
           return {
@@ -252,7 +293,9 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
       >
         {/* Top Decorative Sparkles */}
         <div className="flex items-center space-x-2 text-gold-bright mb-2 animate-bounce">
-          {isPixel ? (
+          {isPs2 ? (
+            <span className="text-lg">🎮</span>
+          ) : isPixel ? (
             <Gamepad2 className="w-5 h-5 text-cyan-300" />
           ) : isTimber ? (
             <Trees className="w-5 h-5 text-emerald-400" />
@@ -262,7 +305,9 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
           <span className="text-xs font-black uppercase tracking-widest text-slate-200 drop-shadow">
             {tier.subtitle}
           </span>
-          {isPixel ? (
+          {isPs2 ? (
+            <span className="text-lg">💿</span>
+          ) : isPixel ? (
             <Zap className="w-5 h-5 text-pink-400" />
           ) : isTimber ? (
             <Trees className="w-5 h-5 text-emerald-400" />
@@ -280,17 +325,19 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
 
         {/* Animated Win Ticker */}
         <div className={`flex items-center justify-center space-x-3 my-4 ${
-          isPixel
+          isPs2
+            ? 'bg-[#020919] border-2 border-[#006FCD]/70 shadow-[0_0_20px_rgba(0,111,205,0.4)]'
+            : isPixel
             ? 'bg-[#0f041e] border-2 border-pink-500/60 shadow-[0_0_20px_rgba(236,72,153,0.4)]'
             : isTimber
             ? 'bg-[#0f0904] border-2 border-emerald-600/50'
             : 'bg-casino-900/90 border border-white/10'
         } px-6 py-4 rounded-2xl w-full shadow-inner`}>
           <Coins className={`w-8 h-8 ${
-            isPixel ? 'text-cyan-300 fill-cyan-400' : isTimber ? 'text-emerald-400 fill-emerald-500' : 'text-gold-bright fill-gold'
+            isPs2 ? 'text-[#00F0FF] fill-[#006FCD]' : isPixel ? 'text-cyan-300 fill-cyan-400' : isTimber ? 'text-emerald-400 fill-emerald-500' : 'text-gold-bright fill-gold'
           } animate-spin`} />
           <span className="text-4xl sm:text-5xl font-black text-white tracking-wide font-mono">
-            +{displayedAmount.toLocaleString()}
+            +{displayedAmount.toLocaleString()} {isPs2 ? 'CREDITS' : ''}
           </span>
         </div>
 
@@ -303,7 +350,7 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
             }}
             className={`${tier.buttonClass} px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2`}
           >
-            <span>{isFinishedCounting ? 'COLLECT COINS' : 'SKIP TO END'}</span>
+            <span>{isFinishedCounting ? isPs2 ? 'COLLECT CREDITS' : 'COLLECT COINS' : 'SKIP TO END'}</span>
             <span className="px-1.5 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>
           </button>
           <div className="text-[11px] text-slate-400 mt-2">

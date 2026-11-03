@@ -95,10 +95,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
 
   return (
     <header className={`w-full px-2 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
-      isTimber
+      isPs2
+        ? 'bg-gradient-to-r from-[#030612] via-[#081126] to-[#030612] border-b-2 sm:border-b-4 border-[#006FCD] shadow-[0_4px_25px_rgba(0,111,205,0.7)]'
+        : isTimber
         ? 'bg-gradient-to-r from-[#3b1d0c] via-[#200e05] to-[#3b1d0c] border-b-2 sm:border-b-4 border-[#854d0e] shadow-[0_4px_25px_rgba(20,83,45,0.65)]'
         : isPixel
         ? 'bg-gradient-to-r from-[#220642] via-[#0b011c] to-[#220642] border-b-2 sm:border-b-4 border-pink-500 shadow-[0_4px_25px_rgba(236,72,153,0.7)]'
@@ -112,7 +115,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
           <div
             className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2.5 xl:px-3.5 py-0.5 sm:py-1 shadow-md border select-none ${
-              isTimber
+              isPs2
+                ? 'bg-gradient-to-b from-black via-[#040c1e] to-black border-2 border-[#006FCD] shadow-[0_0_12px_rgba(0,111,205,0.6)]'
+                : isTimber
                 ? 'bg-gradient-to-b from-[#241208] via-[#122216] to-[#241208] border-emerald-500/90 shadow-[0_0_12px_rgba(16,185,129,0.5)]'
                 : isPixel
                 ? 'bg-gradient-to-b from-black via-[#1c0638] to-black border-2 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]'
@@ -121,6 +126,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             style={{
               clipPath: isPixel
                 ? 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))'
+                : isPs2
+                ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
                 : isTimber
                 ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
                 : 'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
@@ -128,7 +135,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             <div
               className={`w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md flex-shrink-0 border ${
-                isTimber
+                isPs2
+                  ? 'bg-gradient-to-tr from-[#006FCD] to-cyan-400 border-cyan-300 text-white shadow-[0_0_6px_#00F0FF]'
+                  : isTimber
                   ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
                   : isPixel
                   ? 'bg-gradient-to-tr from-pink-500 to-cyan-400 border-cyan-200 text-white shadow-[0_0_6px_#06B6D4]'
@@ -140,7 +149,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   : undefined,
               }}
             >
-              {isTimber ? (
+              {isPs2 ? (
+                <span className="text-[10px]">💾</span>
+              ) : isTimber ? (
                 <span className="text-[10px]">🌰</span>
               ) : isPixel ? (
                 <span className="text-[10px]">🪙</span>
@@ -150,12 +161,14 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </div>
             <div className="flex flex-col">
               <span className={`text-[6px] sm:text-[7.5px] uppercase font-black tracking-wider leading-none ${
-                isTimber ? 'text-emerald-400 font-serif' : isPixel ? 'text-cyan-300 font-mono' : 'text-yellow-400 font-mono'
+                isPs2 ? 'text-cyan-300 font-mono' : isTimber ? 'text-emerald-400 font-serif' : isPixel ? 'text-cyan-300 font-mono' : 'text-yellow-400 font-mono'
               }`}>
-                {isTimber ? 'FORAGE CACHE' : isPixel ? 'CREDITS (04)' : 'FORT KNOX VAULT'}
+                {isPs2 ? 'SLOT 1 MEMORY' : isTimber ? 'FORAGE CACHE' : isPixel ? 'CREDITS (04)' : 'FORT KNOX VAULT'}
               </span>
               <span className={`text-[11px] sm:text-sm font-black leading-tight font-mono ${
-                isTimber
+                isPs2
+                  ? 'text-cyan-200 drop-shadow-[0_0_8px_#00F0FF]'
+                  : isTimber
                   ? 'text-emerald-200 drop-shadow-[0_0_8px_rgba(52,211,153,0.9)]'
                   : isPixel
                   ? 'text-cyan-200 drop-shadow-[0_0_8px_#06B6D4]'
@@ -169,7 +182,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* Level / Stage Indicator */}
           <div
             className={`hidden xl:flex items-center space-x-1.5 px-2 py-0.5 shadow-md border ${
-              isTimber
+              isPs2
+                ? 'bg-gradient-to-b from-[#02050f] to-black border-[#006FCD]/80 text-cyan-300 font-mono'
+                : isTimber
                 ? 'bg-gradient-to-b from-[#241308] to-[#122216] border-emerald-500/70 text-emerald-300'
                 : isPixel
                 ? 'bg-gradient-to-b from-[#260845] to-black border-pink-500/70 text-pink-300 font-mono'
@@ -178,14 +193,16 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             style={{
               clipPath: isPixel
                 ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+                : isPs2
+                ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
                 : isTimber
                 ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
                 : 'polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px)',
             }}
           >
-            {isTimber ? <Trees className="w-3 h-3 text-emerald-400" /> : isPixel ? <Gamepad2 className="w-3 h-3 text-cyan-300" /> : <Trophy className="w-3 h-3 text-yellow-300" />}
+            {isPs2 ? <Gamepad2 className="w-3 h-3 text-cyan-400" /> : isTimber ? <Trees className="w-3 h-3 text-emerald-400" /> : isPixel ? <Gamepad2 className="w-3 h-3 text-cyan-300" /> : <Trophy className="w-3 h-3 text-yellow-300" />}
             <span className="text-[8px] font-black uppercase">
-              {isTimber ? `RANGER LV.${progression.level}` : isPixel ? `STAGE ${progression.level}` : `VIP LV.${progression.level}`}
+              {isPs2 ? `VPU LV.${progression.level}` : isTimber ? `RANGER LV.${progression.level}` : isPixel ? `STAGE ${progression.level}` : `VIP LV.${progression.level}`}
             </span>
           </div>
         </div>

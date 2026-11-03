@@ -24,6 +24,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [respinsLeft, setRespinsLeft] = useState(3);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -121,7 +122,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       setIsSpinning(false);
 
       if (anyNewLocked) {
-        if (isPixel) {
+        if (isPs2) {
+          soundManager.playPs2MemoryCardSave();
+        } else if (isPixel) {
           soundManager.playArcadeCartridge();
         } else if (isTimber) {
           soundManager.playAcornChime();
@@ -137,7 +140,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
         if (nextRespins <= 0) {
           setIsFinished(true);
-          if (isPixel) {
+          if (isPs2) {
+            soundManager.playPs2Startup();
+          } else if (isPixel) {
             soundManager.playArcadeVictoryFanfare();
           } else if (isTimber) {
             soundManager.playJackpotFanfare();
@@ -182,7 +187,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
     setGrid(currentGridState);
     setRespinsLeft(0);
     setIsFinished(true);
-    if (isPixel) {
+    if (isPs2) {
+      soundManager.playPs2Startup();
+    } else if (isPixel) {
       soundManager.playArcadeVictoryFanfare();
     } else if (isTimber) {
       soundManager.playJackpotFanfare();
@@ -193,7 +200,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
   };
 
   const handleCollectAndExit = () => {
-    if (isPixel) {
+    if (isPs2) {
+      soundManager.playPs2Startup();
+    } else if (isPixel) {
       soundManager.playArcadeVictoryFanfare();
     } else if (isTimber) {
       soundManager.playJackpotFanfare();
@@ -228,7 +237,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
       <div className={`relative max-w-2xl w-full max-h-[92vh] overflow-y-auto rounded-3xl p-3 sm:p-6 flex flex-col items-center ${
-        isPixel
+        isPs2
+          ? 'bg-gradient-to-b from-[#020b18] via-[#000814] to-black border-2 border-[#006FCD] shadow-[0_0_60px_rgba(0,111,205,0.7)]'
+          : isPixel
           ? 'bg-gradient-to-b from-[#18052e] via-[#090117] to-black border-2 border-pink-500 shadow-[0_0_60px_rgba(236,72,153,0.7)]'
           : isTimber
           ? 'bg-gradient-to-b from-[#24130a] via-[#101e14] to-[#040c06] border-2 border-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.5)]'
@@ -236,10 +247,12 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       }`}>
         {/* Header Marquee with Close X Button */}
         <div className={`w-full flex items-center justify-between pb-3 border-b mb-2 ${
-          isPixel ? 'border-pink-500/40' : isTimber ? 'border-emerald-600/40' : 'border-yellow-500/30'
+          isPs2 ? 'border-[#006FCD]/40' : isPixel ? 'border-pink-500/40' : isTimber ? 'border-emerald-600/40' : 'border-yellow-500/30'
         }`}>
           <div className="flex items-center space-x-2">
-            {isPixel ? (
+            {isPs2 ? (
+              <span className="text-2xl animate-pulse flex-shrink-0">💾</span>
+            ) : isPixel ? (
               <Gamepad2 className="w-6 h-6 text-cyan-300 animate-pulse flex-shrink-0" />
             ) : isTimber ? (
               <Trees className="w-6 h-6 text-emerald-400 animate-pulse flex-shrink-0" />
@@ -248,16 +261,20 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             )}
             <div>
               <h2 className={`text-base sm:text-lg font-black uppercase tracking-wider ${
-                isPixel
+                isPs2
+                  ? 'text-[#00F0FF] font-mono drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]'
+                  : isPixel
                   ? 'text-pink-400 font-mono drop-shadow-[0_0_10px_rgba(236,72,153,0.8)]'
                   : isTimber
                   ? 'text-emerald-300 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]'
                   : 'gold-gradient-text'
               }`}>
-                {isPixel ? 'Cyber Power Respin Matrix' : isTimber ? 'Forest Harvest Acorn Respin Bonus' : 'Fort Knox Cash Link Vault Bonus'}
+                {isPs2 ? '8MB Memory Card Save Link Bonus' : isPixel ? 'Cyber Power Respin Matrix' : isTimber ? 'Forest Harvest Acorn Respin Bonus' : 'Fort Knox Cash Link Vault Bonus'}
               </h2>
-              <span className={`text-[10px] block ${isPixel ? 'text-cyan-200/80 font-mono' : isTimber ? 'text-emerald-200/80' : 'text-yellow-300/80'}`}>
-                {isPixel
+              <span className={`text-[10px] block ${isPs2 ? 'text-cyan-200/80 font-mono' : isPixel ? 'text-cyan-200/80 font-mono' : isTimber ? 'text-emerald-200/80' : 'text-yellow-300/80'}`}>
+                {isPs2
+                  ? 'Lock 8MB Save Blocks to store game credits • Respins reset to 3 on new save block'
+                  : isPixel
                   ? 'Lock 8-Bit Power-Up Tokens to power up arcade jackpot pots • Respins reset to 3 on new token'
                   : isTimber
                   ? 'Lock Golden Acorns to harvest forest bounty • Respins reset to 3 on new acorn'
@@ -268,18 +285,20 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
           <div className="flex items-center space-x-2">
             <div className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl border ${
-              isPixel ? 'bg-[#16062b] border-pink-500/50' : 'bg-casino-900/90 border-yellow-400/30'
+              isPs2 ? 'bg-[#020d20] border-[#006FCD]/50' : isPixel ? 'bg-[#16062b] border-pink-500/50' : 'bg-casino-900/90 border-yellow-400/30'
             }`}>
-              <span className={`text-[9px] uppercase font-bold ${isPixel ? 'text-pink-300 font-mono' : 'text-slate-400'}`}>Respins:</span>
+              <span className={`text-[9px] uppercase font-bold ${isPs2 ? 'text-[#00F0FF] font-mono' : isPixel ? 'text-pink-300 font-mono' : 'text-slate-400'}`}>Respins:</span>
               <div className="flex space-x-1">
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
                     className={`w-3 h-3 rounded-full border ${
-                      isPixel ? 'border-cyan-400' : 'border-yellow-400'
+                      isPs2 ? 'border-[#00F0FF]' : isPixel ? 'border-cyan-400' : 'border-yellow-400'
                     } ${
                       i < respinsLeft
-                        ? isPixel
+                        ? isPs2
+                          ? 'bg-[#00F0FF] shadow-[0_0_8px_#00F0FF] animate-pulse'
+                          : isPixel
                           ? 'bg-cyan-400 shadow-[0_0_8px_#06B6D4] animate-pulse'
                           : 'bg-yellow-400 shadow-[0_0_8px_#F59E0B] animate-pulse'
                         : 'bg-black/60 opacity-30'
@@ -300,9 +319,11 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
           </div>
         </div>
 
-        {/* Golden Orb / Acorn / Cyber Token Matrix */}
+        {/* Golden Orb / Acorn / Cyber Token / 8MB Memory Card Matrix */}
         <div className={`grid ${isPixel ? 'grid-cols-6' : 'grid-cols-5'} gap-1.5 sm:gap-2 w-full p-2.5 sm:p-3 rounded-2xl border shadow-inner my-1.5 ${
-          isPixel
+          isPs2
+            ? 'bg-[#020716] border-[#006FCD]/50 shadow-[inset_0_0_30px_rgba(0,111,205,0.3)]'
+            : isPixel
             ? 'bg-[#080212] border-pink-500/50 shadow-[inset_0_0_30px_rgba(236,72,153,0.3)]'
             : isTimber
             ? 'bg-[#0a120b] border-emerald-600/50'
@@ -315,17 +336,23 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                   key={rowIdx}
                   className={`${isPixel ? 'h-11 sm:h-15' : isTimber ? 'h-16 sm:h-22' : 'h-14 sm:h-18'} w-full rounded-xl flex flex-col items-center justify-center p-1 border transition-all duration-200 ${
                     cell.isLocked
-                      ? isPixel
+                      ? isPs2
+                        ? 'bg-gradient-to-b from-[#002b66] via-[#006FCD] to-[#00A3FF] border-2 border-[#00F0FF] text-white font-black shadow-[0_0_15px_#00F0FF] scale-[1.02]'
+                        : isPixel
                         ? 'bg-gradient-to-b from-purple-600 via-pink-600 to-cyan-500 border-2 border-cyan-300 text-white font-black shadow-[0_0_15px_#06B6D4] scale-[1.02]'
                         : isTimber
                         ? 'bg-gradient-to-b from-amber-400 via-amber-600 to-[#451a03] border-2 border-emerald-300 text-yellow-100 font-black shadow-[0_0_15px_rgba(245,158,11,0.9)] scale-[1.02]'
                         : 'bg-gradient-to-b from-yellow-300 via-amber-400 to-amber-600 border-yellow-100 text-black font-black shadow-[0_0_12px_rgba(245,158,11,0.8)] scale-[1.02]'
                       : isSpinning
-                      ? isPixel
+                      ? isPs2
+                        ? 'bg-[#00102b]/30 border-[#006FCD]/30 animate-pulse'
+                        : isPixel
                         ? 'bg-pink-950/30 border-pink-500/30 animate-pulse'
                         : isTimber
                         ? 'bg-emerald-950/30 border-emerald-500/30 animate-pulse'
                         : 'bg-casino-900/40 border-yellow-400/20 animate-pulse'
+                      : isPs2
+                      ? 'bg-[#030917] border-white/5'
                       : isPixel
                       ? 'bg-[#120422] border-white/5'
                       : isTimber
@@ -337,10 +364,12 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                     <>
                       {cell.jackpot ? (
                         <span className={`text-[7px] sm:text-[8px] font-black uppercase tracking-wider ${
-                          isPixel ? 'text-black bg-cyan-200 font-mono' : 'text-rose-950 bg-yellow-200'
+                          isPs2 ? 'text-black bg-cyan-200 font-mono' : isPixel ? 'text-black bg-cyan-200 font-mono' : 'text-rose-950 bg-yellow-200'
                         } px-1 rounded shadow-sm`}>
                           {cell.jackpot}
                         </span>
+                      ) : isPs2 ? (
+                        <span className="text-sm sm:text-base animate-bounce">💾</span>
                       ) : isPixel ? (
                         <span className="text-sm sm:text-base animate-bounce">🪙</span>
                       ) : isTimber ? (
@@ -349,9 +378,9 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                         <Coins className="w-3.5 h-3.5 text-amber-950" />
                       )}
                       <span className={`text-[10px] sm:text-xs font-black leading-tight mt-0.5 font-mono ${
-                        isPixel ? 'text-cyan-200 drop-shadow-[0_0_6px_#06B6D4]' : isTimber ? 'text-amber-200 drop-shadow' : 'text-amber-950'
+                        isPs2 ? 'text-cyan-100 drop-shadow-[0_0_6px_#00F0FF]' : isPixel ? 'text-cyan-200 drop-shadow-[0_0_6px_#06B6D4]' : isTimber ? 'text-amber-200 drop-shadow' : 'text-amber-950'
                       }`}>
-                        +${cell.value.toLocaleString()}
+                        +{cell.value.toLocaleString()}
                       </span>
                     </>
                   ) : (
@@ -365,22 +394,24 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
         {/* Total Cash Pot summary */}
         <div className={`flex items-center justify-between w-full px-3 py-2 rounded-xl border my-1.5 ${
-          isPixel ? 'bg-[#120422] border-pink-500/40' : isTimber ? 'bg-[#140c06] border-emerald-600/40' : 'bg-casino-900/80 border-yellow-400/30'
+          isPs2 ? 'bg-[#030919] border-[#006FCD]/40' : isPixel ? 'bg-[#120422] border-pink-500/40' : isTimber ? 'bg-[#140c06] border-emerald-600/40' : 'bg-casino-900/80 border-yellow-400/30'
         }`}>
           <div className="flex flex-col">
-            <span className="text-[9px] uppercase font-bold text-slate-400">Total Accumulated Cash Win</span>
+            <span className="text-[9px] uppercase font-bold text-slate-400">
+              {isPs2 ? 'Total Accumulated Memory Cache' : 'Total Accumulated Cash Win'}
+            </span>
             <span className={`text-lg sm:text-xl font-black font-mono ${
-              isPixel ? 'text-cyan-300 drop-shadow-[0_0_10px_#06B6D4]' : 'text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]'
+              isPs2 ? 'text-[#00F0FF] drop-shadow-[0_0_10px_#00F0FF]' : isPixel ? 'text-cyan-300 drop-shadow-[0_0_10px_#06B6D4]' : 'text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]'
             }`}>
-              +${totalPot.toLocaleString()}
+              +{totalPot.toLocaleString()} {isPs2 ? 'CREDITS' : ''}
             </span>
           </div>
 
           <div className="text-right">
             <span className="text-[9px] uppercase font-bold text-slate-400 block">
-              {isPixel ? 'Locked Retro Power Tokens' : isTimber ? 'Locked Golden Acorns' : 'Locked Bullion Coins'}
+              {isPs2 ? 'Locked 8MB Save Blocks' : isPixel ? 'Locked Retro Power Tokens' : isTimber ? 'Locked Golden Acorns' : 'Locked Bullion Coins'}
             </span>
-            <span className={`text-sm font-black ${isPixel ? 'text-pink-300 font-mono' : isTimber ? 'text-emerald-300' : 'text-neon-cyan'}`}>
+            <span className={`text-sm font-black ${isPs2 ? 'text-[#00F0FF] font-mono' : isPixel ? 'text-pink-300 font-mono' : isTimber ? 'text-emerald-300' : 'text-neon-cyan'}`}>
               {lockedCellsCount} / {totalPositions}
             </span>
           </div>
@@ -392,13 +423,15 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             <button
               onClick={handleCollectAndExit}
               className={`w-full py-3 sm:py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center space-x-2 animate-pulse hover:scale-[1.01] active:scale-95 transition-transform ${
-                isPixel
+                isPs2
+                  ? 'bg-gradient-to-r from-[#00478F] via-[#006FCD] to-[#00F0FF] text-white shadow-[0_0_30px_rgba(0,240,255,0.9)] font-mono'
+                  : isPixel
                   ? 'bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 text-white shadow-[0_0_30px_rgba(236,72,153,0.9)] font-mono'
                   : 'bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 text-black shadow-[0_0_25px_rgba(34,197,94,0.7)]'
               }`}
             >
               <CheckCircle2 className="w-5 h-5" />
-              <span>COLLECT +${totalPot.toLocaleString()} CASH &amp; RETURN TO SLOTS</span>
+              <span>COLLECT +{totalPot.toLocaleString()} {isPs2 ? 'CREDITS' : 'CASH'} &amp; RETURN TO SLOTS</span>
               <span className="px-2 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>
             </button>
           ) : (
@@ -410,6 +443,8 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
                 className={`flex-1 py-3 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-xl transition-all ${
                   isSpinning
                     ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                    : isPs2
+                    ? 'bg-gradient-to-r from-[#003875] via-[#006FCD] to-[#00A3FF] hover:from-[#00478F] hover:to-[#00F0FF] text-white shadow-[0_0_20px_rgba(0,111,205,0.8)] border border-[#00F0FF] font-mono hover:scale-[1.01] active:scale-95'
                     : isPixel
                     ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 hover:from-pink-500 hover:to-cyan-400 text-white shadow-[0_0_20px_rgba(236,72,153,0.8)] border border-pink-300 font-mono hover:scale-[1.01] active:scale-95'
                     : 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black shadow-[0_0_20px_rgba(245,158,11,0.6)] hover:scale-[1.01] active:scale-95'

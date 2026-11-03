@@ -23,6 +23,7 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [displayedCount, setDisplayedCount] = useState(0);
 
   useEffect(() => {
@@ -61,7 +62,9 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
       {/* 1. Luminous Ambient Radial Backlight */}
       <div
         className={`absolute -inset-8 rounded-3xl filter blur-2xl pointer-events-none opacity-85 transition-colors ${
-          isTimber
+          isPs2
+            ? 'bg-gradient-to-r from-[#006FCD]/60 via-[#00F0FF]/50 to-[#002852]/60'
+            : isTimber
             ? 'bg-gradient-to-r from-emerald-600/50 via-teal-400/40 to-amber-500/50'
             : isPixel
             ? 'bg-gradient-to-r from-purple-600/50 via-pink-500/40 to-cyan-400/50'
@@ -72,7 +75,9 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
       {/* 2. Main Hero Win Plaque Container */}
       <div
         className={`relative w-full max-w-xl sm:max-w-2xl px-4 sm:px-8 py-3 sm:py-5 rounded-2xl sm:rounded-3xl border-3 sm:border-4 shadow-[0_20px_60px_rgba(0,0,0,0.95)] backdrop-blur-md flex flex-col items-center text-center overflow-hidden transition-all ${
-          isTimber
+          isPs2
+            ? 'bg-gradient-to-b from-[#020b18]/95 via-black/95 to-[#00132b]/95 border-[#00F0FF] shadow-[0_0_45px_rgba(0,240,255,0.95)]'
+            : isTimber
             ? 'bg-gradient-to-b from-[#1c3624]/95 via-[#0c1f13]/95 to-[#051009]/95 border-emerald-300 shadow-[0_0_40px_rgba(52,211,153,0.9)]'
             : isPixel
             ? 'bg-gradient-to-b from-[#1c0836]/95 via-black/95 to-[#0e0220]/95 border-pink-400 shadow-[0_0_45px_rgba(236,72,153,0.95)]'
@@ -84,7 +89,9 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
 
         {/* Top Header Tag: Winning Line & Combination */}
         <div className="flex items-center space-x-2 mb-1 z-10">
-          {isTimber ? (
+          {isPs2 ? (
+            <span className="text-sm sm:text-base animate-bounce">🎮</span>
+          ) : isTimber ? (
             <Trees className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300 animate-bounce" />
           ) : isPixel ? (
             <span className="text-sm sm:text-base animate-bounce">🕹️</span>
@@ -93,7 +100,9 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
           )}
           <span
             className={`text-xs sm:text-sm md:text-base font-black uppercase tracking-widest ${
-              isTimber
+              isPs2
+                ? 'text-[#00F0FF] drop-shadow-[0_0_8px_#00F0FF] font-mono'
+                : isTimber
                 ? 'text-emerald-300 drop-shadow-[0_0_8px_#34D399]'
                 : isPixel
                 ? 'text-pink-300 drop-shadow-[0_0_8px_#F472B6] font-mono'
@@ -102,11 +111,15 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
           >
             {activeWinningLine
               ? `LINE ${activeWinningLine.lineIndex + 1} PAYOUT`
+              : isPs2
+              ? `${winningLines.length} HIGH-SPEED LINES HIT!`
               : isPixel
               ? `${winningLines.length} ARCADE PAYLINES CLEARED!`
               : `${winningLines.length} WINNING PAYLINES!`}
           </span>
-          {isTimber ? (
+          {isPs2 ? (
+            <span className="text-sm sm:text-base animate-bounce">💾</span>
+          ) : isTimber ? (
             <Trees className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300 animate-bounce" />
           ) : isPixel ? (
             <span className="text-sm sm:text-base animate-bounce">👾</span>
@@ -118,13 +131,15 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
         {/* GIGANTIC HERO WIN NUMERALS (56px to 76px) */}
         <div className="flex items-baseline justify-center font-mono my-1 z-10">
           <span className={`text-2xl sm:text-4xl md:text-5xl font-black mr-1 sm:mr-2 ${
-            isPixel ? 'text-cyan-400' : 'text-amber-400'
+            isPs2 ? 'text-[#00F0FF]' : isPixel ? 'text-cyan-400' : 'text-amber-400'
           }`}>
             +
           </span>
           <span
             className={`text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none ${
-              isTimber
+              isPs2
+                ? 'text-cyan-200 drop-shadow-[0_0_25px_rgba(0,240,255,1),0_0_50px_rgba(0,111,205,0.8)]'
+                : isTimber
                 ? 'text-emerald-200 drop-shadow-[0_0_25px_rgba(52,211,153,1),0_0_50px_rgba(16,185,129,0.8)]'
                 : isPixel
                 ? 'text-pink-300 drop-shadow-[0_0_25px_rgba(236,72,153,1),0_0_50px_rgba(6,182,212,0.8)]'
@@ -134,9 +149,9 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
             {displayedCount.toLocaleString()}
           </span>
           <span className={`text-sm sm:text-lg md:text-xl font-black uppercase ml-1.5 sm:ml-2.5 ${
-            isPixel ? 'text-cyan-300 font-mono' : 'text-amber-300'
+            isPs2 ? 'text-[#00F0FF] font-mono' : isPixel ? 'text-cyan-300 font-mono' : 'text-amber-300'
           }`}>
-            {isPixel ? 'PTS' : 'COINS'}
+            {isPs2 ? 'CREDITS' : isPixel ? 'PTS' : 'COINS'}
           </span>
         </div>
 
@@ -144,14 +159,16 @@ export const HeroWinCelebration: React.FC<HeroWinCelebrationProps> = ({
         {activeWinningLine && (
           <div
             className={`z-10 mt-1 px-3 sm:px-4 py-1 rounded-full border shadow-md flex items-center space-x-1.5 text-[10px] sm:text-xs font-black uppercase tracking-wider ${
-              isTimber
+              isPs2
+                ? 'bg-[#030e24] text-cyan-100 border-[#006FCD] shadow-[0_0_12px_rgba(0,240,255,0.5)] font-mono'
+                : isTimber
                 ? 'bg-[#183321] text-emerald-100 border-emerald-400/80 shadow-[0_0_12px_rgba(52,211,153,0.5)]'
                 : isPixel
                 ? 'bg-purple-950 text-pink-100 border-pink-400/80 shadow-[0_0_12px_rgba(236,72,153,0.5)] font-mono'
                 : 'bg-casino-900 text-yellow-100 border-yellow-400/80 shadow-[0_0_12px_rgba(253,224,71,0.5)]'
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 animate-spin ${isPixel ? 'text-pink-300' : 'text-yellow-300'}`} />
+            <Sparkles className={`w-3.5 h-3.5 animate-spin ${isPs2 ? 'text-[#00F0FF]' : isPixel ? 'text-pink-300' : 'text-yellow-300'}`} />
             <span>
               {activeWinningLine.count}x {activeWinningLine.symbolId.replace('_', ' ')} HIT • PAYS +
               {activeWinningLine.payout.toLocaleString()}

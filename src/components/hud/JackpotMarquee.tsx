@@ -313,7 +313,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* Hand-carved Trail Announcement Sign */}
-            <div className="mt-0.5 hidden xl:block">
+            <div className="mt-0.5 hidden 2xl:block">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
@@ -755,7 +755,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* Sub-Strip: Live Retro Casino Broadcast Ticker */}
-            <div className="mt-1">
+            <div className="mt-1 hidden 2xl:block">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
@@ -1000,7 +1000,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* Retro Casino Promotional Ad Banner */}
-            <div className="mt-0.5 hidden xl:block">
+            <div className="mt-0.5 hidden 2xl:block">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>

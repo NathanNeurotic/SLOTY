@@ -16,6 +16,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [displayedAmount, setDisplayedAmount] = useState(targetAmount);
   const animRef = useRef<number | null>(null);
   const prevTargetRef = useRef(targetAmount);
@@ -70,11 +71,15 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
     <div
       className={`relative flex flex-col items-center justify-center rounded-xl sm:rounded-2xl border transition-all duration-300 w-32 sm:w-48 xl:w-56 h-10 sm:h-12 flex-shrink-0 overflow-hidden ${
         hasWin
-          ? isTimber
+          ? isPs2
+            ? 'bg-gradient-to-b from-[#001026] via-[#000814] to-black border-2 border-[#00F0FF] shadow-[0_0_25px_rgba(0,240,255,0.85),inset_0_0_15px_rgba(0,111,205,0.4)] animate-pulse'
+            : isTimber
             ? 'bg-gradient-to-b from-[#1b3323] via-[#0d1f14] to-[#061009] border-2 border-emerald-400 shadow-[0_0_25px_rgba(52,211,153,0.8),inset_0_0_15px_rgba(52,211,153,0.3)] animate-pulse'
             : isPixel
             ? 'bg-gradient-to-b from-[#1a0630] via-black to-[#0d021c] border-2 border-pink-400 shadow-[0_0_25px_rgba(236,72,153,0.85),inset_0_0_15px_rgba(6,182,212,0.3)] animate-pulse'
             : 'bg-gradient-to-b from-amber-950 via-slate-950 to-black border-2 border-yellow-300 shadow-[0_0_25px_rgba(253,224,71,0.85),inset_0_0_15px_rgba(245,158,11,0.3)] animate-pulse'
+          : isPs2
+          ? 'bg-gradient-to-b from-[#020b18] to-black border-[#006FCD]/40 shadow-inner'
           : isTimber
           ? 'bg-gradient-to-b from-[#142318] to-[#0a140e] border-emerald-700/40 shadow-inner'
           : isPixel
@@ -85,7 +90,9 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
       {/* Top Banner Label */}
       <div className="flex items-center space-x-1 leading-none">
         {hasWin ? (
-          isTimber ? (
+          isPs2 ? (
+            <span className="text-xs animate-bounce">🎮</span>
+          ) : isTimber ? (
             <Trees className="w-3 h-3 text-emerald-400 animate-bounce" />
           ) : isPixel ? (
             <span className="text-xs animate-bounce">🕹️</span>
@@ -96,20 +103,30 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
         <span
           className={`text-[8px] sm:text-[9.5px] uppercase font-black tracking-widest ${
             hasWin
-              ? isTimber
+              ? isPs2
+                ? 'text-[#00F0FF] drop-shadow-[0_0_6px_rgba(0,240,255,0.9)] font-mono'
+                : isTimber
                 ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.9)]'
                 : isPixel
                 ? 'text-pink-300 drop-shadow-[0_0_6px_rgba(236,72,153,0.9)] font-mono'
                 : 'text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.9)]'
+              : isPs2
+              ? 'text-cyan-600/80'
               : 'text-slate-400'
           }`}
         >
           {hasWin
             ? isFreeSpins
-              ? '★ FREE SPIN WIN ★'
+              ? isPs2
+                ? '★ 128-BIT OVERCLOCK WIN ★'
+                : '★ FREE SPIN WIN ★'
+              : isPs2
+              ? '★ MEMORY CARD SAVE WIN ★'
               : isPixel
               ? '★ HIGH SCORE WIN ★'
               : '★ TOTAL WIN ★'
+            : isPs2
+            ? 'CARD PAYOUT'
             : 'WIN PAYOUT'}
         </span>
       </div>
@@ -119,18 +136,28 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
         {hasWin && (
           <Coins
             className={`w-4 h-4 sm:w-5 sm:h-5 ${
-              isTimber ? 'text-emerald-300 fill-emerald-400 animate-spin' : isPixel ? 'text-pink-300 fill-pink-400 animate-spin' : 'text-yellow-300 fill-yellow-400 animate-spin'
+              isPs2
+                ? 'text-[#00F0FF] fill-[#006FCD] animate-spin'
+                : isTimber
+                ? 'text-emerald-300 fill-emerald-400 animate-spin'
+                : isPixel
+                ? 'text-pink-300 fill-pink-400 animate-spin'
+                : 'text-yellow-300 fill-yellow-400 animate-spin'
             }`}
           />
         )}
         <span
           className={`font-black font-mono tracking-tight leading-none ${
             hasWin
-              ? isTimber
+              ? isPs2
+                ? 'text-xl sm:text-2xl xl:text-3xl text-cyan-200 drop-shadow-[0_0_15px_rgba(0,240,255,1)]'
+                : isTimber
                 ? 'text-xl sm:text-2xl xl:text-3xl text-emerald-200 drop-shadow-[0_0_15px_rgba(52,211,153,1)]'
                 : isPixel
                 ? 'text-xl sm:text-2xl xl:text-3xl text-pink-300 drop-shadow-[0_0_15px_rgba(236,72,153,1)]'
                 : 'text-xl sm:text-2xl xl:text-3xl text-yellow-300 drop-shadow-[0_0_15px_rgba(253,224,71,1)]'
+              : isPs2
+              ? 'text-base sm:text-lg text-cyan-800'
               : 'text-base sm:text-lg text-slate-500'
           }`}
         >

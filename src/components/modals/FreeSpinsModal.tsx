@@ -19,9 +19,12 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
 
   useEffect(() => {
-    if (isPixel) {
+    if (isPs2) {
+      soundManager.playPs2Startup();
+    } else if (isPixel) {
       soundManager.playArcadeVictoryFanfare();
     } else if (isTimber) {
       soundManager.playWoodlandFanfare();
@@ -153,7 +156,61 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
   }
 
   // =========================================================================
-  // --- VERSION C: 24K VAULT (MOLTEN VAULT OVERDRIVE) ---
+  // --- VERSION C: PLAYSTATION 2 (128-BIT EMOTION ENGINE OVERCLOCK FREE SPINS) ---
+  // =========================================================================
+  if (isPs2) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
+        <div className="relative max-w-md w-full bg-gradient-to-b from-[#00102b] via-[#000817] to-black border-4 border-[#006FCD] shadow-[0_0_80px_rgba(0,111,205,0.85),inset_0_0_40px_rgba(0,0,0,0.95)] rounded-3xl p-6 sm:p-8 text-center flex flex-col items-center">
+          {/* Top 128-Bit Disc Core Icon */}
+          <div className="w-18 h-18 rounded-full bg-gradient-to-tr from-[#002660] via-[#006FCD] to-[#00F0FF] flex items-center justify-center shadow-[0_0_40px_rgba(0,240,255,0.9)] mb-4 animate-bounce">
+            <span className="text-4xl">💿</span>
+          </div>
+
+          <div className="flex items-center space-x-1.5 text-[#00F0FF] text-xs font-mono font-black uppercase tracking-widest mb-1">
+            <span className="text-sm">🎮</span>
+            <span>DUALSHOCK 2 CACHE ACTIVE</span>
+            <span className="text-sm">💿</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] via-white to-[#006FCD] tracking-wide uppercase mb-2 drop-shadow-[0_2px_10px_rgba(0,240,255,0.9)] font-mono">
+            128-BIT OVERCLOCK!
+          </h1>
+
+          <p className="text-cyan-100 text-xs sm:text-sm mb-6 leading-relaxed font-mono">
+            Optical DVD laser seeks at 294 MHz! All 40 paylines supercharged at <span className="text-[#00F0FF] font-black">3X OVERCLOCK</span> with DualShock Wilds and Memory Card re-triggers!
+          </p>
+
+          {/* Feature stats in PS2 Memory Card / BIOS readout */}
+          <div className="grid grid-cols-2 gap-3 w-full mb-6 font-mono">
+            <div className="bg-[#020917] border-2 border-[#006FCD]/70 p-3 rounded-2xl flex flex-col items-center shadow-inner">
+              <span className="text-[10px] text-cyan-400 font-black uppercase tracking-wider">Free Spins</span>
+              <span className="text-3xl font-black text-white">{freeSpinsAwarded}</span>
+            </div>
+            <div className="bg-[#020917] border-2 border-[#00F0FF]/70 p-3 rounded-2xl flex flex-col items-center shadow-inner">
+              <span className="text-[10px] text-[#00F0FF] font-black uppercase tracking-wider">Clock Boost</span>
+              <span className="text-3xl font-black text-cyan-200">{multiplier}X</span>
+            </div>
+          </div>
+
+          {/* Start button */}
+          <button
+            onClick={() => {
+              soundManager.playButtonClick();
+              onStart();
+            }}
+            className="w-full py-3.5 rounded-2xl font-black text-base uppercase tracking-wider text-white bg-gradient-to-r from-[#00478F] via-[#006FCD] to-[#00A3FF] hover:from-[#005bb8] hover:to-[#00F0FF] border-2 border-[#00F0FF] shadow-[0_0_35px_rgba(0,111,205,0.9)] hover:scale-105 active:scale-95 transition-transform flex items-center justify-center space-x-2 font-mono"
+          >
+            <span>BOOT EMOTION ENGINE SPINS</span>
+            <span className="px-2 py-0.5 rounded bg-black/40 text-[11px] font-mono tracking-tight font-bold">SPACE</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // --- VERSION D: 24K VAULT (MOLTEN VAULT OVERDRIVE) ---
   // =========================================================================
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">

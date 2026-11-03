@@ -31,6 +31,9 @@ export const CabinetVentsAndWoodsFX: React.FC<CabinetVentsAndWoodsFXProps> = ({
   isAnticipating,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
+  const isVault = activeGameId === 'vault-24k';
 
   // 24K Vault: Steam blast active state
   const [steamActive, setSteamActive] = useState(false);
@@ -41,15 +44,15 @@ export const CabinetVentsAndWoodsFX: React.FC<CabinetVentsAndWoodsFXProps> = ({
   // Timberland: Blinking eyes state
   const [eyesBlinking, setEyesBlinking] = useState(false);
 
-  // Trigger Steam Vents on 24K Vault spin start or cabinet slam
+  // Trigger Steam Vents on 24K Vault spin start or cabinet slam ONLY
   useEffect(() => {
-    if (!isTimber && (isCabinetSlamming || (hasActiveWin && !isSpinning))) {
+    if (isVault && (isCabinetSlamming || (hasActiveWin && !isSpinning))) {
       setSteamActive(true);
       soundManager.playSteamHiss();
       const t = setTimeout(() => setSteamActive(false), 900);
       return () => clearTimeout(t);
     }
-  }, [isCabinetSlamming, hasActiveWin, isSpinning, isTimber]);
+  }, [isCabinetSlamming, hasActiveWin, isSpinning, isVault]);
 
   // Trigger Pine Needle Shower on Timberland cabinet slam
   useEffect(() => {
@@ -165,6 +168,37 @@ export const CabinetVentsAndWoodsFX: React.FC<CabinetVentsAndWoodsFXProps> = ({
           <div className="w-2 h-2.5 rounded-t-full bg-amber-400 shadow-[0_0_8px_#FBBF24] -mr-0.5" />
           <div className="w-2.5 h-3.5 rounded-t-full bg-emerald-400 shadow-[0_0_10px_#34D399] animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // --- VERSION C: PLAYSTATION 2 (OPTICAL BLUE LASER SEEK & BIOS DATA SCAN) ---
+  // =========================================================================
+  if (isPs2) {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
+        {/* Optical Laser Pickup Scanner during Anticipation */}
+        {isAnticipating && (
+          <div className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#00F0FF] to-transparent shadow-[0_0_15px_#00F0FF] animate-laser-scan-vert z-30 opacity-95 flex items-center justify-center">
+            <div className="w-2.5 h-2.5 rounded-full bg-cyan-200 shadow-[0_0_10px_#006FCD] animate-ping" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // --- VERSION D: PIXEL ARCADE (CRT RASTER SCAN & SYNTHWAVE LASER) ---
+  // =========================================================================
+  if (isPixel) {
+    return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
+        {isAnticipating && (
+          <div className="absolute inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-pink-400 to-transparent shadow-[0_0_15px_#EC4899] animate-laser-scan-vert z-30 opacity-90 flex items-center justify-center">
+            <div className="w-3 h-3 rounded-none bg-pink-200 shadow-[0_0_10px_#EC4899] animate-ping" />
+          </div>
+        )}
       </div>
     );
   }

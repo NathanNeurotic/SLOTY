@@ -50,7 +50,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 min-h-0 max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center">
+        <div className="flex-1 min-h-0 max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center my-auto">
           {children}
         </div>
 

@@ -33,6 +33,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
+  const effectiveIsPs2 = activeGameId === 'ps2-legends';
 
   // Continuous measurement of rendered SVG container
   useEffect(() => {
@@ -379,6 +380,87 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                         />
                         {isHighlighted && (
                           <circle cx={x} cy={y} r={3.5} fill="#FFFFFF" />
+                        )}
+                      </g>
+                    );
+                  })}
+                </>
+              ) : effectiveIsPs2 ? (
+                <>
+                  {/* ======================================================== */}
+                  {/* PLAYSTATION 2: 128-BIT VECTOR BUS & GLYPH NODES        */}
+                  {/* ======================================================== */}
+                  {/* 1. Cobalt Blue Vector Bus Ambient Glow */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#006FCD"
+                    strokeWidth={isHighlighted ? 12 : 5}
+                    strokeOpacity={isHighlighted ? 0.75 : 0.25}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    filter="url(#superNeonGlow)"
+                  />
+                  {/* 2. Cyan High-Bandwidth DMA Core */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#00F0FF"
+                    strokeWidth={isHighlighted ? 5 : 2.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    filter="url(#lineNeonGlow)"
+                  />
+                  {/* 3. High-Speed White Bus Pulse */}
+                  {isHighlighted && (
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="animate-laser-stream"
+                    />
+                  )}
+                  {/* 4. PlayStation Controller Glyph Nodes on Symbols */}
+                  {points.map(([x, y], pIdx) => {
+                    const r = isHighlighted ? 10 : 5;
+                    const glyphIndex = pIdx % 4; // 0: Triangle, 1: Circle, 2: Cross, 3: Square
+                    return (
+                      <g key={pIdx}>
+                        {isHighlighted && (
+                          <circle
+                            cx={x}
+                            cy={y}
+                            r={r + 6}
+                            fill="none"
+                            stroke="#00F0FF"
+                            strokeWidth={1.5}
+                            className="animate-node-shockwave"
+                          />
+                        )}
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r={r}
+                          fill="#030816"
+                          stroke="#006FCD"
+                          strokeWidth={2}
+                          filter="url(#lineNeonGlow)"
+                        />
+                        {/* Distinct Controller Symbol Glyphs inside nodes */}
+                        {glyphIndex === 0 ? (
+                          <polygon points={`${x},${y - 4} ${x - 3.5},${y + 3} ${x + 3.5},${y + 3}`} fill="#22C55E" />
+                        ) : glyphIndex === 1 ? (
+                          <circle cx={x} cy={y} r={3} fill="none" stroke="#EF4444" strokeWidth={1.5} />
+                        ) : glyphIndex === 2 ? (
+                          <g stroke="#38BDF8" strokeWidth={1.5} strokeLinecap="round">
+                            <line x1={x - 2.5} y1={y - 2.5} x2={x + 2.5} y2={y + 2.5} />
+                            <line x1={x + 2.5} y1={y - 2.5} x2={x - 2.5} y2={y + 2.5} />
+                          </g>
+                        ) : (
+                          <rect x={x - 2.5} y={y - 2.5} width={5} height={5} fill="none" stroke="#EC4899" strokeWidth={1.5} />
                         )}
                       </g>
                     );

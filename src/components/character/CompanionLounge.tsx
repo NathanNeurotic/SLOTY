@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RubySparkle } from './RubySparkle';
 import { GrizzlyGus } from './GrizzlyGus';
 import { PixelPenny } from './PixelPenny';
+import { VectorVance } from './VectorVance';
 import { storage } from '../../utils/storage';
 import { Eye, EyeOff } from 'lucide-react';
 import type { GameId } from '../../games/types';
@@ -31,6 +32,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     return storage.getBoolean('sloty_hostess_visible', true);
   });
@@ -49,7 +51,19 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
   if (position === 'desktop-flank') {
     return (
       <div className="relative" key={activeGameId}>
-        {isPixel ? (
+        {isPs2 ? (
+          <VectorVance
+            key="vector-vance"
+            isSpinning={isSpinning}
+            isAnticipating={isAnticipating}
+            isWinning={isWinning}
+            isBigWin={isBigWin}
+            isFeverMode={isFeverMode}
+            winAmount={winAmount}
+            onRewardCoins={onRewardCoins}
+            variant="full"
+          />
+        ) : isPixel ? (
           <PixelPenny
             key="pixel-penny"
             isSpinning={isSpinning}
@@ -96,7 +110,18 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
       {isVisible ? (
         <div className="flex items-center space-x-1.5 w-full max-w-sm">
           <div className="flex-1">
-            {isPixel ? (
+            {isPs2 ? (
+              <VectorVance
+                isSpinning={isSpinning}
+                isAnticipating={isAnticipating}
+                isWinning={isWinning}
+                isBigWin={isBigWin}
+                isFeverMode={isFeverMode}
+                winAmount={winAmount}
+                onRewardCoins={onRewardCoins}
+                variant="compact"
+              />
+            ) : isPixel ? (
               <PixelPenny
                 isSpinning={isSpinning}
                 isAnticipating={isAnticipating}
@@ -133,7 +158,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
           </div>
           <button
             onClick={handleToggleVisible}
-            title="Hide Hostess"
+            title="Hide Companion"
             className="p-1 rounded-full text-slate-400 hover:text-white bg-casino-900/80 border border-white/10"
           >
             <EyeOff className="w-3 h-3" />
@@ -142,10 +167,10 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
       ) : (
         <button
           onClick={handleToggleVisible}
-          className="flex items-center space-x-1 px-3 py-1 rounded-full text-[10px] font-bold text-rose-300 bg-rose-950/80 border border-rose-500/30 hover:scale-105 transition-transform"
+          className="flex items-center space-x-1 px-3 py-1 rounded-full text-[10px] font-bold text-cyan-300 bg-black/80 border border-cyan-500/30 hover:scale-105 transition-transform"
         >
-          <Eye className="w-3 h-3 text-rose-400" />
-          <span>Show Hostess Ruby (+50 Coins)</span>
+          <Eye className="w-3 h-3 text-cyan-400" />
+          <span>Show Companion (+50 Coins)</span>
         </button>
       )}
     </div>

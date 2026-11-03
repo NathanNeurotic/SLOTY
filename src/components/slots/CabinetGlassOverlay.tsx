@@ -12,6 +12,7 @@ export const CabinetGlassOverlay: React.FC<CabinetGlassOverlayProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
 
   // Compute divider percentages dynamically
   const dividers = Array.from({ length: reelsCount - 1 }, (_, i) => ((i + 1) * 100) / reelsCount);
@@ -48,7 +49,14 @@ export const CabinetGlassOverlay: React.FC<CabinetGlassOverlayProps> = ({
           className="absolute top-0 bottom-0 pointer-events-none -translate-x-1/2 flex items-center justify-center"
           style={{ left: `${percent}%` }}
         >
-          {isTimber ? (
+          {isPs2 ? (
+            // Obsidian PS2 Divider Mullion with Cobalt Edge & Cyan Micro-LEDs
+            <div className="w-1.5 sm:w-2 h-full bg-gradient-to-r from-[#030612] via-[#09152e] to-[#030612] border-x border-[#006FCD]/70 shadow-[0_0_8px_rgba(0,111,205,0.7)] flex flex-col justify-between py-4">
+              <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00F0FF] mx-auto animate-pulse" />
+              <div className="w-1 h-1 bg-[#006FCD] shadow-[0_0_6px_#006FCD] mx-auto animate-pulse" style={{ animationDelay: '300ms' }} />
+              <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00F0FF] mx-auto animate-pulse" style={{ animationDelay: '600ms' }} />
+            </div>
+          ) : isTimber ? (
             // Hand-Hewn Birch Reel Post with Wrought Nails
             <div className="w-1.5 sm:w-2 h-full bg-gradient-to-r from-[#170a04] via-[#3b1d0c] to-[#170a04] border-x border-[#5c2b09]/80 shadow-[0_0_8px_rgba(0,0,0,0.9)] flex flex-col justify-between py-4">
               <div className="w-1 h-1 rounded-full bg-[#a16207] shadow-xs mx-auto" />

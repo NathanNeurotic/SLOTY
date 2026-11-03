@@ -1288,6 +1288,11 @@ class SoundManager {
       return;
     }
 
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Spin();
+      return;
+    }
+
     const now = this.ctx.currentTime;
 
     // 1. Rising pneumatic air swoosh
@@ -2067,6 +2072,39 @@ class SoundManager {
       osc.start(t);
       osc.stop(t + 1.7);
     });
+  }
+
+  // Optical drive spin-up and laser track alignment on PS2 spin start
+  public playPs2Spin() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // Optical spindle motor accelerating
+    const motor = this.ctx.createOscillator();
+    const motorGain = this.ctx.createGain();
+    motorGain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+    motorGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+    motor.type = 'sine';
+    motor.frequency.setValueAtTime(140, now);
+    motor.frequency.exponentialRampToValueAtTime(540, now + 0.24);
+    motor.connect(motorGain);
+    motorGain.connect(this.ctx.destination);
+    motor.start(now);
+    motor.stop(now + 0.3);
+
+    // Laser seek chirp
+    const chirp = this.ctx.createOscillator();
+    const chirpGain = this.ctx.createGain();
+    chirpGain.gain.setValueAtTime(0.25 * this.sfxVolume, now + 0.05);
+    chirpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    chirp.type = 'triangle';
+    chirp.frequency.setValueAtTime(920, now + 0.05);
+    chirp.frequency.exponentialRampToValueAtTime(1440, now + 0.11);
+    chirp.connect(chirpGain);
+    chirpGain.connect(this.ctx.destination);
+    chirp.start(now + 0.05);
+    chirp.stop(now + 0.13);
   }
 
   // DualShock 2 tactile pressure button click

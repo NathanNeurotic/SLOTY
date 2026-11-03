@@ -31,6 +31,7 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
 
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
+  const effectiveIsPs2 = activeGameId === 'ps2-legends';
 
   const getCellPosition = useCallback(
     (reel: number, row: number) => {
@@ -71,12 +72,18 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
       ref={containerRef}
       className="absolute inset-1 sm:inset-2 pointer-events-none z-30 overflow-visible w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-[calc(100%-8px)] sm:h-[calc(100%-16px)]"
     >
-      {/* 1. Dynamic Coin / Acorn / Token Fountain Bursts from every winning coordinate */}
+      {/* 1. Dynamic Coin / Acorn / Token / Memory Particle Bursts */}
       {activeWin.coords.map(([r, row], idx) => {
         const pos = getCellPosition(r, row);
 
         // Generate 3 energetic flying particles per symbol hit
-        const particles = effectiveIsPixel
+        const particles = effectiveIsPs2
+          ? [
+              { key: 'c1', tx: -30, ty: -65, delay: idx * 50, icon: '🎮' },
+              { key: 'c2', tx: 30, ty: -75, delay: idx * 50 + 70, icon: '💾' },
+              { key: 'c3', tx: 0, ty: -85, delay: idx * 50 + 120, icon: '💿' },
+            ]
+          : effectiveIsPixel
           ? [
               { key: 'c1', tx: -30, ty: -65, delay: idx * 50, icon: '👾' },
               { key: 'c2', tx: 30, ty: -75, delay: idx * 50 + 70, icon: '🪙' },
@@ -100,10 +107,12 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
             style={{ left: pos.left, top: pos.top }}
             className="absolute transform -translate-x-1/2 -translate-y-1/2"
           >
-            {/* Glowing Golden / Emerald / Neon Pink Energy Halo */}
+            {/* Glowing Golden / Emerald / Neon Pink / Cobalt Blue Energy Halo */}
             <div
               className={`absolute w-16 h-16 sm:w-20 sm:h-20 -left-8 -top-8 sm:-left-10 sm:-top-10 rounded-full blur-md animate-ping ${
-                effectiveIsPixel
+                effectiveIsPs2
+                  ? 'bg-[#006FCD]/50 shadow-[0_0_20px_#00F0FF]'
+                  : effectiveIsPixel
                   ? 'bg-pink-500/40 shadow-[0_0_20px_#EC4899]'
                   : effectiveIsTimber
                   ? 'bg-emerald-400/40 shadow-[0_0_20px_#34D399]'
@@ -122,7 +131,7 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
                     animationDelay: `${p.delay}ms`,
                   } as React.CSSProperties
                 }
-                className="absolute text-base sm:text-xl animate-coin-burst filter drop-shadow-[0_0_8px_rgba(251,191,36,1)] font-mono"
+                className="absolute text-base sm:text-xl animate-coin-burst filter drop-shadow-[0_0_8px_rgba(0,111,205,1)] font-mono"
               >
                 {p.icon}
               </div>
@@ -142,22 +151,26 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
       >
         <div
           className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full font-black text-xs sm:text-base border-2 whitespace-nowrap animate-pulse ${
-            effectiveIsPixel
+            effectiveIsPs2
+              ? 'bg-gradient-to-r from-[#001026] via-[#006FCD] to-cyan-500 text-white border-cyan-300 shadow-[0_0_25px_rgba(0,111,205,1)] font-mono'
+              : effectiveIsPixel
               ? 'bg-gradient-to-r from-purple-700 via-pink-600 to-cyan-400 text-white border-pink-300 shadow-[0_0_25px_rgba(236,72,153,1)] font-mono'
               : effectiveIsTimber
               ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 text-black border-emerald-200 shadow-[0_0_25px_rgba(52,211,153,1)]'
               : 'gold-gradient-bg text-black border-yellow-200 shadow-[0_0_25px_rgba(245,158,11,1)]'
           }`}
         >
-          {effectiveIsPixel ? (
+          {effectiveIsPs2 ? (
+            <Gamepad2 className="w-4 h-4 fill-cyan-300 text-cyan-300 animate-spin" />
+          ) : effectiveIsPixel ? (
             <Gamepad2 className="w-4 h-4 fill-cyan-300 text-cyan-300 animate-spin" />
           ) : (
             <Star className="w-4 h-4 fill-amber-950 text-amber-950 animate-spin" />
           )}
           <span className="tracking-wide">
-            {effectiveIsPixel ? '👾 ' : effectiveIsTimber ? '🌲 ' : '★ '}
+            {effectiveIsPs2 ? '🎮 ' : effectiveIsPixel ? '👾 ' : effectiveIsTimber ? '🌲 ' : '★ '}
             LINE {activeWin.lineIndex + 1}: +{activeWin.payout.toLocaleString()}
-            {effectiveIsPixel ? ' PTS 👾' : effectiveIsTimber ? ' ACORNS 🌲' : ' COINS ★'}
+            {effectiveIsPs2 ? ' CREDITS 🎮' : effectiveIsPixel ? ' PTS 👾' : effectiveIsTimber ? ' ACORNS 🌲' : ' COINS ★'}
           </span>
           <Coins className="w-4 h-4 fill-amber-950 text-amber-950" />
         </div>

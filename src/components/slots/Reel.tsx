@@ -27,6 +27,10 @@ const TIMBER_STRIP_B: SymbolId[] = ['OWL', 'ACORN', 'FOX', 'WOOD_K', 'OWL', 'ACO
 const PIXEL_STRIP_A: SymbolId[] = ['CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A', 'CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A'];
 const PIXEL_STRIP_B: SymbolId[] = ['PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K', 'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K'];
 
+// PS2 Legends rolling filler strips
+const PS2_STRIP_A: SymbolId[] = ['PS2_LOGO', 'EMOTION_ENGINE', 'PS_TRIANGLE', 'PS_CROSS', 'PS2_LOGO', 'EMOTION_ENGINE', 'PS_TRIANGLE', 'PS_CROSS'];
+const PS2_STRIP_B: SymbolId[] = ['DVD_DISC', 'MEMORY_CARD', 'DUALSHOCK', 'PS_CIRCLE', 'DVD_DISC', 'MEMORY_CARD', 'DUALSHOCK', 'PS_CIRCLE'];
+
 export const Reel: React.FC<ReelProps> = ({
   reelIndex,
   symbols,
@@ -50,10 +54,13 @@ export const Reel: React.FC<ReelProps> = ({
   // Stagger slightly different filler strips across adjacent reels depending on active game
   const isTimber = gameId === 'timber-critters';
   const isPixel = gameId === 'pixel-arcade';
+  const isPs2 = gameId === 'ps2-legends';
   const rollingStrip = isTimber
     ? (reelIndex % 2 === 0 ? TIMBER_STRIP_A : TIMBER_STRIP_B)
     : isPixel
     ? (reelIndex % 2 === 0 ? PIXEL_STRIP_A : PIXEL_STRIP_B)
+    : isPs2
+    ? (reelIndex % 2 === 0 ? PS2_STRIP_A : PS2_STRIP_B)
     : (reelIndex % 2 === 0 ? VAULT_STRIP_A : VAULT_STRIP_B);
 
   useEffect(() => {
@@ -86,6 +93,8 @@ export const Reel: React.FC<ReelProps> = ({
           ? 'bg-gradient-to-b from-[#142419] via-[#0c1810] to-[#050e08]'
           : isPixel
           ? 'bg-gradient-to-b from-[#180938] via-[#0e0422] to-[#070114]'
+          : isPs2
+          ? 'bg-gradient-to-b from-[#030712] via-[#050d24] to-[#02050e]'
           : 'bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950'
       } ${
         isAnticipating
@@ -93,11 +102,15 @@ export const Reel: React.FC<ReelProps> = ({
             ? 'border-2 border-emerald-400 animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(52,211,153,0.9)]'
             : isPixel
             ? 'border-2 border-pink-400 animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(236,72,153,0.9)]'
+            : isPs2
+            ? 'border-2 border-[#006FCD] animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,111,205,0.95)]'
             : 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
           : isTimber
           ? 'border-emerald-800/40'
           : isPixel
           ? 'border-purple-600/40'
+          : isPs2
+          ? 'border-[#006FCD]/40'
           : 'border-white/10'
       }`}
     >
@@ -108,6 +121,8 @@ export const Reel: React.FC<ReelProps> = ({
             ? 'bg-gradient-to-b from-emerald-500/20 via-amber-400/10 to-emerald-500/20 shadow-[inset_0_0_30px_rgba(52,211,153,0.7)]'
             : isPixel
             ? 'bg-gradient-to-b from-purple-500/20 via-pink-400/10 to-cyan-500/20 shadow-[inset_0_0_30px_rgba(236,72,153,0.7)]'
+            : isPs2
+            ? 'bg-gradient-to-b from-[#006FCD]/25 via-cyan-400/15 to-[#006FCD]/25 shadow-[inset_0_0_30px_rgba(0,111,205,0.8)]'
             : 'bg-gradient-to-b from-cyan-500/20 via-yellow-400/10 to-cyan-500/20 shadow-[inset_0_0_30px_rgba(0,240,255,0.7)]'
         }`}>
           <div className={`w-full text-center text-[8px] font-black tracking-widest rounded py-0.5 animate-pulse uppercase border ${
@@ -115,9 +130,11 @@ export const Reel: React.FC<ReelProps> = ({
               ? 'text-emerald-200 bg-emerald-950/80 border-emerald-400/50'
               : isPixel
               ? 'text-pink-200 bg-purple-950/80 border-pink-400/50'
+              : isPs2
+              ? 'text-cyan-200 bg-[#001026]/90 border-cyan-400/50'
               : 'text-cyan-200 bg-cyan-950/80 border-cyan-400/50'
           }`}>
-            {isTimber ? '🍃 OWL SCATTER LOCK 🍃' : isPixel ? '👾 CARTRIDGE LOCK 👾' : '⚡ SCATTER LOCK ⚡'}
+            {isTimber ? '🍃 OWL SCATTER LOCK 🍃' : isPixel ? '👾 CARTRIDGE LOCK 👾' : isPs2 ? '💿 DVD SCATTER LOCK 💿' : '⚡ SCATTER LOCK ⚡'}
           </div>
           <div className="w-full text-center text-[8px] font-black tracking-widest text-amber-300 bg-amber-950/80 rounded py-0.5 animate-ping uppercase border border-amber-400/50">
             ★ 1 MORE TO WIN ★
@@ -130,6 +147,10 @@ export const Reel: React.FC<ReelProps> = ({
         <div className={`absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-30 animate-landing-flare ${
           isTimber
             ? 'bg-gradient-to-t from-emerald-400/80 via-amber-400/30 to-transparent'
+            : isPixel
+            ? 'bg-gradient-to-t from-purple-400/80 via-pink-400/30 to-transparent'
+            : isPs2
+            ? 'bg-gradient-to-t from-[#006FCD]/80 via-cyan-400/30 to-transparent'
             : 'bg-gradient-to-t from-gold-bright/80 via-amber-400/40 to-transparent'
         }`} />
       )}
@@ -175,10 +196,18 @@ export const Reel: React.FC<ReelProps> = ({
                   isWinning
                     ? isTimber
                       ? 'bg-emerald-500/30 ring-2 ring-emerald-300 shadow-[0_0_25px_rgba(52,211,153,0.85)] z-10 animate-win-symbol-juice'
+                      : isPixel
+                      ? 'bg-purple-500/30 ring-2 ring-pink-400 shadow-[0_0_25px_rgba(236,72,153,0.85)] z-10 animate-win-symbol-juice'
+                      : isPs2
+                      ? 'bg-[#006FCD]/30 ring-2 ring-[#00F0FF] shadow-[0_0_25px_rgba(0,111,205,0.85)] z-10 animate-win-symbol-juice'
                       : 'bg-gold-500/25 ring-2 ring-gold-bright shadow-[0_0_25px_rgba(251,191,36,0.85)] z-10 animate-win-symbol-juice'
                     : isScatterHighlight
                     ? isTimber
                       ? 'bg-emerald-400/25 ring-2 ring-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.7)] z-10 scale-105'
+                      : isPixel
+                      ? 'bg-pink-400/25 ring-2 ring-pink-300 shadow-[0_0_20px_rgba(236,72,153,0.7)] z-10 scale-105'
+                      : isPs2
+                      ? 'bg-[#00F0FF]/25 ring-2 ring-[#006FCD] shadow-[0_0_20px_rgba(0,111,205,0.7)] z-10 scale-105'
                       : 'bg-neon-cyan/20 ring-2 ring-neon-cyan shadow-[0_0_20px_rgba(0,240,255,0.6)] z-10 scale-105'
                     : winningRows.size > 0
                     ? 'opacity-35' // Dim non-winning symbols
@@ -211,6 +240,13 @@ export const Reel: React.FC<ReelProps> = ({
           className="absolute inset-0 pointer-events-none z-10 opacity-25"
           style={{
             backgroundImage: 'repeating-linear-gradient(90deg, rgba(245,158,11,0.08) 0px, transparent 2px, transparent 20px)',
+          }}
+        />
+      ) : isPs2 ? (
+        <div
+          className="absolute inset-0 pointer-events-none z-10 opacity-30"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,111,205,0.14) 0px, transparent 1px, transparent 4px)',
           }}
         />
       ) : (

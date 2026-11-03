@@ -123,13 +123,52 @@ const PIXEL_ADS: CasinoAd[] = [
   },
 ];
 
+const PS2_ADS: CasinoAd[] = [
+  {
+    icon: 'car',
+    tag: 'MIDNIGHT RELEASE NOTICE',
+    headline: 'GRAND THEFT AUTO: VICE CITY & MGS2 NOW IN STOCK!',
+    subtext: 'COMPLIMENTARY PS2 8MB MEMORY CARD WITH HARDWARE PURCHASE • REGISTER 3',
+    disclaimer: 'Must be 17 or older. One memory card per household.',
+  },
+  {
+    icon: 'trophy',
+    tag: 'ANALOG PRECISION UPGRADE',
+    headline: 'DUALSHOCK 2 CONTROLLER TRADE-IN: $15 STORE CREDIT!',
+    subtext: 'ANALOG PRESSURE SENSITIVITY ON ALL 12 BUTTONS • FEEL EVERY PAYLINE HIT',
+    disclaimer: 'Untangled cords only. Working rumble motors required.',
+  },
+  {
+    icon: 'coffee',
+    tag: 'BROADBAND ONLINE GAMING',
+    headline: 'SOCOM II: U.S. NAVY SEALS LAN CLAN TOURNAMENT THIS FRIDAY',
+    subtext: 'NETWORK ADAPTOR READY • 10/100 BASE-TX ETHERNET • USB HEADSET INCLUDED',
+    disclaimer: 'No dial-up modem lag excuses accepted by tournament admin.',
+  },
+  {
+    icon: 'trophy',
+    tag: 'RECENT 128-BIT WINNER',
+    headline: 'CONGRATS TO DAVE K. FROM REDMOND — 145,000 CREDITS ON PS2 LEGENDS!',
+    subtext: 'TRIGGERED 15 OPTICAL FREE SPINS AT 3X CLOCK • "SAVED TO SLOT 1 CARD!"',
+    disclaimer: 'State lottery tax deducted directly at the terminal BIOS.',
+  },
+  {
+    icon: 'car',
+    tag: 'SIMULATION TOURNAMENT',
+    headline: 'GRAN TURISMO 3 A-SPEC TIME TRIAL SUNDAY AT 2 PM',
+    subtext: 'WIN A SPARCO FORCE FEEDBACK WHEEL • ENTRY FEE: 50 CREDITS',
+    disclaimer: 'TCS and ASM driving assists disabled for tournament qualifying.',
+  },
+];
+
 export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
   activeGameId = 'vault-24k',
   onAdClick,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
-  const ads = isTimber ? TIMBER_ADS : isPixel ? PIXEL_ADS : VAULT_ADS;
+  const isPs2 = activeGameId === 'ps2-legends';
+  const ads = isPs2 ? PS2_ADS : isTimber ? TIMBER_ADS : isPixel ? PIXEL_ADS : VAULT_ADS;
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
 
@@ -178,18 +217,26 @@ export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
     <div
       onClick={handleBannerClick}
       className={`relative w-full overflow-hidden select-none cursor-pointer border rounded-lg transition-all duration-300 px-2 py-1 shadow-md group ${
-        isTimber
+        isPs2
+          ? 'bg-gradient-to-r from-[#030612] via-[#081126] to-[#030612] border-[#006FCD]/80 shadow-[0_2px_15px_rgba(0,111,205,0.7)]'
+          : isTimber
           ? 'bg-gradient-to-r from-[#211107] via-[#100703] to-[#211107] border-[#854d0e]/70 shadow-[0_2px_12px_rgba(0,0,0,0.85)]'
+          : isPixel
+          ? 'bg-gradient-to-r from-[#180938] via-[#090218] to-[#180938] border-pink-500/60 shadow-[0_2px_15px_rgba(236,72,153,0.6)]'
           : 'bg-gradient-to-r from-amber-950/90 via-slate-950 to-amber-950/90 border-yellow-500/50 shadow-[0_2px_15px_rgba(0,0,0,0.9)]'
       }`}
-      title="Click to flip to next casino promotion"
+      title="Click to flip to next promotion"
     >
       {/* CRT Scanline Texture Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
 
       {/* Flashing Vintage Corner Bulbs */}
-      <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping opacity-75" />
-      <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping opacity-75" />
+      <div className={`absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full animate-ping opacity-75 ${
+        isPs2 ? 'bg-cyan-400' : isPixel ? 'bg-pink-400' : 'bg-yellow-400'
+      }`} />
+      <div className={`absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full animate-ping opacity-75 ${
+        isPs2 ? 'bg-cyan-400' : isPixel ? 'bg-pink-400' : 'bg-yellow-400'
+      }`} />
 
       {/* Ad Content Container with Split-Flap Transition */}
       <div
@@ -202,8 +249,12 @@ export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
           {renderIcon()}
           <span
             className={`text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border shadow-sm ${
-              isTimber
+              isPs2
+                ? 'bg-[#001026] text-cyan-300 border-[#006FCD]'
+                : isTimber
                 ? 'bg-[#3b1d0c] text-amber-200 border-[#a16207]'
+                : isPixel
+                ? 'bg-purple-950 text-pink-300 border-pink-500'
                 : 'bg-amber-900/80 text-yellow-200 border-yellow-400/60'
             }`}
           >
@@ -211,13 +262,17 @@ export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
           </span>
         </div>
 
-        {/* Center: Main Headline & Hilarious Subtext */}
+        {/* Center: Main Headline & Subtext */}
         <div className="flex-1 min-w-0 text-center overflow-hidden">
           <div className="flex items-center justify-center space-x-2 truncate">
             <span
               className={`text-[9.5px] sm:text-[11px] font-black uppercase tracking-wide truncate ${
-                isTimber
+                isPs2
+                  ? 'text-cyan-200 drop-shadow-[0_0_8px_#00F0FF]'
+                  : isTimber
                   ? 'text-emerald-200 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                  : isPixel
+                  ? 'text-pink-300 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]'
                   : 'text-yellow-200 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]'
               }`}
             >
@@ -234,7 +289,9 @@ export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
           <span className="text-[8px] font-mono text-slate-400 italic truncate max-w-[220px]">
             {activeAd.disclaimer}
           </span>
-          <span className="text-[7.5px] font-black text-amber-400/80 uppercase px-1 py-0.5 rounded bg-black/40 border border-white/10 group-hover:text-yellow-300">
+          <span className={`text-[7.5px] font-black uppercase px-1 py-0.5 rounded bg-black/40 border border-white/10 ${
+            isPs2 ? 'text-cyan-400 group-hover:text-cyan-200' : isPixel ? 'text-pink-400 group-hover:text-pink-200' : 'text-amber-400/80 group-hover:text-yellow-300'
+          }`}>
             NEXT »
           </span>
         </div>
