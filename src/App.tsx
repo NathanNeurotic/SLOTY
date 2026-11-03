@@ -722,7 +722,7 @@ export const App: React.FC = () => {
   const isTimber = activeGameId === 'timber-critters';
 
   return (
-    <div className={`min-h-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-x-hidden transition-colors duration-300 ${
+    <div className={`h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-hidden transition-colors duration-300 ${
       isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
     }`}>
       {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
@@ -764,8 +764,8 @@ export const App: React.FC = () => {
         onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
       />
 
-      {/* Main Gaming Stage with responsive padding */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-start py-0.5 sm:py-2 w-full pb-24 sm:pb-36">
+      {/* Main Gaming Stage with dynamic viewport fitting */}
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-between w-full px-1 sm:px-2 py-0.5 overflow-hidden">
         {/* 4-Tier Deluxe Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} activeGameId={activeGameId} />
 
@@ -855,8 +855,8 @@ export const App: React.FC = () => {
         })()}
       </main>
 
-      {/* Rock-Solid Fixed Bottom Controls Dock - Anchored to Viewport Glass */}
-      <div className={`fixed bottom-0 left-0 right-0 z-40 border-t pb-safe transition-colors duration-300 ${
+      {/* Integrated Bottom Controls Dock */}
+      <div className={`flex-shrink-0 relative z-30 w-full border-t pb-safe transition-colors duration-300 ${
         isTimber
           ? 'bg-gradient-to-t from-stone-950 via-[#18110B] to-[#251A10] border-emerald-600/70 shadow-[0_-8px_30px_rgba(6,40,24,0.95)]'
           : 'bg-casino-950 border-white/15 shadow-[0_-8px_25px_rgba(0,0,0,0.95)]'

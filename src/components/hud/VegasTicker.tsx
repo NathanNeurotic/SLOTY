@@ -21,9 +21,9 @@ export const VegasTicker: React.FC<VegasTickerProps> = ({
       : gameDef.theme.tickerText;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1.5 select-none overflow-hidden flex-shrink-0">
+    <div className="w-full max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 mb-0.5 sm:mb-1 select-none overflow-hidden flex-shrink-0">
       <div
-        className={`relative rounded-lg px-2 py-1 flex items-center overflow-hidden h-8 sm:h-9 flex-shrink-0 border transition-colors ${
+        className={`relative rounded-lg px-2 py-0.5 flex items-center overflow-hidden h-6.5 sm:h-7.5 flex-shrink-0 border transition-colors ${
           isTimber
             ? 'bg-[#08180e]/95 border-emerald-500/50 shadow-[inset_0_0_12px_rgba(16,185,129,0.3)]'
             : 'bg-casino-950/90 border-gold-bright/40 shadow-[inset_0_0_12px_rgba(245,158,11,0.25)]'

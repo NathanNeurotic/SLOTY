@@ -31,9 +31,9 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   const rightNeighbor = peers[1] || null;
 
   return (
-    <div className="relative w-full flex flex-col items-center">
+    <div className="relative w-full flex flex-col items-center flex-1 min-h-0 justify-center">
       {/* Floor Mode Control Header with Integrated Live Mascot Chip */}
-      <div className="hidden sm:flex items-center justify-between w-full max-w-5xl xl:max-w-6xl px-2 sm:px-4 mb-2 z-20">
+      <div className="hidden sm:flex items-center justify-between w-full max-w-5xl xl:max-w-6xl px-2 sm:px-4 mb-0.5 sm:mb-1 z-20">
         {/* Floor Mode Switch Button */}
         <button
           onClick={onToggleFloorMode}
@@ -67,7 +67,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
       </div>
 
       {/* Main Floor Arena */}
-      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 lg:gap-6 px-1 sm:px-2 py-1">
+      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 lg:gap-6 px-1 sm:px-2 py-0.5 sm:py-1 flex-1 min-h-0">
         {/* Left Flank: Neighbor Terminal (in Floor Mode) OR Full Mascot Standee */}
         {isFloorMode && leftNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
@@ -85,7 +85,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 max-w-5xl xl:max-w-6xl z-10">
+        <div className="flex-1 min-h-0 max-w-5xl xl:max-w-6xl z-10 flex flex-col justify-center">
           {children}
         </div>
 

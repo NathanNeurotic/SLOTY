@@ -153,7 +153,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
 
                 {/* Backlit Illustrated Woodland Art Glass Marquee */}
-                <div className="relative w-full h-14 sm:h-16 rounded-t-[26px] bg-gradient-to-r from-[#0d2818] via-[#051a0e] to-[#0d2818] border-b-2 border-[#78350f] flex items-center justify-between px-3 sm:px-6 overflow-hidden">
+                <div className="relative w-full h-10 sm:h-12 rounded-t-[26px] bg-gradient-to-r from-[#0d2818] via-[#051a0e] to-[#0d2818] border-b-2 border-[#78350f] flex items-center justify-between px-3 sm:px-6 overflow-hidden">
                   {/* Glowing Moon & Forest Trees in Background */}
                   <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-400 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute top-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-yellow-200/20 blur-md pointer-events-none" />
@@ -257,7 +257,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
 
                 {/* Backlit Illustrated Fort Knox Bullion Glass Marquee */}
-                <div className="relative w-full h-14 sm:h-16 rounded-t-[34px] bg-gradient-to-r from-amber-950 via-black to-amber-950 border-b-2 border-yellow-400/40 flex items-center justify-between px-3 sm:px-6 overflow-hidden">
+                <div className="relative w-full h-10 sm:h-12 rounded-t-[34px] bg-gradient-to-r from-amber-950 via-black to-amber-950 border-b-2 border-yellow-400/40 flex items-center justify-between px-3 sm:px-6 overflow-hidden">
                   {/* Laser Security Grid Rays */}
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/25 via-transparent to-transparent pointer-events-none" />
 
@@ -385,7 +385,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 }`}
               >
                 <div
-                  className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
+                  className={`px-1 sm:px-2 pt-1 pb-1.5 flex flex-col items-center justify-between min-h-[44px] sm:min-h-[50px] ${
                     isTimber
                       ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
                       : 'bg-gradient-to-b from-purple-950 via-slate-950 to-black'
@@ -472,7 +472,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 }`}
               >
                 <div
-                  className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
+                  className={`px-1 sm:px-2 pt-1 pb-1.5 flex flex-col items-center justify-between min-h-[44px] sm:min-h-[50px] ${
                     isTimber
                       ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
                       : 'bg-gradient-to-b from-cyan-950 via-slate-950 to-black'
@@ -559,7 +559,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 }`}
               >
                 <div
-                  className={`px-1 sm:px-2.5 pt-2 pb-2.5 flex flex-col items-center justify-between min-h-[58px] sm:min-h-[68px] ${
+                  className={`px-1 sm:px-2 pt-1 pb-1.5 flex flex-col items-center justify-between min-h-[44px] sm:min-h-[50px] ${
                     isTimber
                       ? 'bg-gradient-to-b from-[#1c0e07] via-[#0d0603] to-black rounded-xl'
                       : 'bg-gradient-to-b from-green-950 via-slate-950 to-black'

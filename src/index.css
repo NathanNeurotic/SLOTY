@@ -818,3 +818,128 @@
   animation: sparkleGlitz 3.5s linear infinite;
 }
 
+/* --- Atmospheric Environmental Animations --- */
+@keyframes cloudDriftSlow {
+  0% {
+    transform: translateX(-12%);
+  }
+  50% {
+    transform: translateX(12%);
+  }
+  100% {
+    transform: translateX(-12%);
+  }
+}
+
+.animate-cloud-drift {
+  animation: cloudDriftSlow 34s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes pineBranchSwayLeft {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2.8deg);
+  }
+}
+
+@keyframes pineBranchSwayRight {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.8deg);
+  }
+}
+
+.animate-branch-sway-left {
+  animation: pineBranchSwayLeft 6.5s ease-in-out infinite;
+  transform-origin: 0% 0%;
+  will-change: transform;
+}
+
+.animate-branch-sway-right {
+  animation: pineBranchSwayRight 7.5s ease-in-out infinite;
+  transform-origin: 100% 0%;
+  will-change: transform;
+}
+
+@keyframes fogDriftHoriz {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-fog-scroll-slow {
+  animation: fogDriftHoriz 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-fog-scroll-fast {
+  animation: fogDriftHoriz 24s linear infinite;
+  will-change: transform;
+}
+
+@keyframes shootingStarFly {
+  0% {
+    transform: translateX(0) translateY(0) scale(0.4);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  24% {
+    transform: translateX(320px) translateY(220px) scale(1);
+    opacity: 1;
+  }
+  28% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(360px) translateY(250px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.animate-shooting-star {
+  animation: shootingStarFly 9s ease-in infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes starTwinklePulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 6px #FFF);
+  }
+}
+
+.animate-star-twinkle {
+  animation: starTwinklePulse 3s ease-in-out infinite;
+}
+
+@keyframes laserGridScanVert {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(220px);
+    opacity: 0.85;
+  }
+}
+
+.animate-laser-scan-vert {
+  animation: laserGridScanVert 5.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+

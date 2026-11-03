@@ -19,9 +19,9 @@ export const FeverMeter: React.FC<FeverMeterProps> = ({
   const gameDef = getGame(activeGameId);
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-1 sm:px-3 mb-1 select-none flex-shrink-0">
+    <div className="w-full max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 mb-0.5 sm:mb-1 select-none flex-shrink-0">
       <div
-        className={`relative rounded-xl px-2 py-0.5 sm:px-2.5 sm:py-1 border-2 transition-all duration-300 flex items-center justify-between overflow-hidden shadow-lg h-7 sm:h-9 flex-shrink-0 ${
+        className={`relative rounded-xl px-2 py-0.5 sm:px-2.5 sm:py-0.5 border-2 transition-all duration-300 flex items-center justify-between overflow-hidden shadow-lg h-6 sm:h-7.5 flex-shrink-0 ${
           isFeverActive
             ? isTimber
               ? 'bg-gradient-to-r from-emerald-950 via-teal-950 to-amber-950 border-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.7)] animate-pulse'

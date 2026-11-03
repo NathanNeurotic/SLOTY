@@ -315,7 +315,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   return (
     <div
       onClick={handleStageClick}
-      className={`relative w-full max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 select-none ${
+      className={`relative w-full max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-3 select-none flex flex-col flex-1 min-h-0 justify-center ${
         isSpinning ? 'cursor-pointer' : ''
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
@@ -568,7 +568,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
           <div
-            className={`relative flex-1 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[250px] xs:h-[290px] sm:h-[390px] md:h-[470px] lg:h-[530px] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(190px,36vh,400px)] sm:h-[clamp(210px,38vh,430px)] md:h-[clamp(230px,40vh,460px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : 'bg-casino-950/95 border-white/10'
