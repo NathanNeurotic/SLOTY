@@ -829,6 +829,7 @@ export const App: React.FC = () => {
   ]);
 
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
 
   return (
     <div className={`fixed inset-0 h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black overflow-hidden select-none transition-colors duration-300 ${
