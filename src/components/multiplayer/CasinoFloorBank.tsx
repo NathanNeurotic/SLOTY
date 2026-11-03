@@ -65,7 +65,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
             />
           </div>
         ) : (
-          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20 xl:ml-5 2xl:ml-8">
+          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20 xl:ml-12 2xl:ml-16">
             <GamePerkCard
               activeGameId={activeGameId}
               onOpenPaytable={onOpenPaytable}

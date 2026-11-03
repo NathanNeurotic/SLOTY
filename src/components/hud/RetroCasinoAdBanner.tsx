@@ -92,12 +92,44 @@ const TIMBER_ADS: CasinoAd[] = [
   },
 ];
 
+const PIXEL_ADS: CasinoAd[] = [
+  {
+    icon: 'trophy',
+    tag: 'MALL ARCADE TOURNAMENT',
+    headline: '1994 STREET FIGHTER II CHAMPIONSHIP THIS SATURDAY!',
+    subtext: 'WIN A 27-INCH SONY TRINITRON CRT TV • $5 ENTRY INCLUDES 20 TOKENS',
+    disclaimer: 'No holding down select or pausing mid-combo. Attendant decision is final.',
+  },
+  {
+    icon: 'buffet',
+    tag: 'FOOD COURT MEAL COMBO',
+    headline: 'SBARRO NY PIZZA SLICE & 32OZ MOUNTAIN DEW ONLY $2.99',
+    subtext: 'SHOW 5 ARCADE TOKENS AT REGISTER 2 FOR FREE GARLIC ROLLS',
+    disclaimer: 'Limit 1 refill per cup. Extra parmesan packets upon request.',
+  },
+  {
+    icon: 'car',
+    tag: 'NEW CABINET ARRIVAL',
+    headline: 'MORTAL KOMBAT II JUST ARRIVED NEXT TO SKEE-BALL!',
+    subtext: 'PLEASE DO NOT BANG ON THE JOYSTICKS • 25¢ QUARTERS ONLY • NO SLUGS',
+    disclaimer: 'Management is not responsible for blistered thumbs or bruised egos.',
+  },
+  {
+    icon: 'trophy',
+    tag: 'ALL-TIME HIGH SCORE RECORD',
+    headline: 'CONGRATS TO TODD R. FROM EUGENE — 12,450,900 PTS ON PIXEL QUEST!',
+    subtext: 'HIT 6 MECHA DRAGONS ON THE 6x5 MEGA-GRID • "PLAYED ON ONE TOKEN!"',
+    disclaimer: 'Initials AAA permanently etched onto high-score table.',
+  },
+];
+
 export const RetroCasinoAdBanner: React.FC<RetroCasinoAdBannerProps> = ({
   activeGameId = 'vault-24k',
   onAdClick,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
-  const ads = isTimber ? TIMBER_ADS : VAULT_ADS;
+  const isPixel = activeGameId === 'pixel-arcade';
+  const ads = isTimber ? TIMBER_ADS : isPixel ? PIXEL_ADS : VAULT_ADS;
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
 

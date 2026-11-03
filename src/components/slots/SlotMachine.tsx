@@ -558,7 +558,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(280px,56vh,520px)] sm:h-[clamp(360px,62vh,680px)] md:h-[clamp(410px,66vh,740px)] xl:h-[clamp(450px,70vh,820px)] 2xl:h-[clamp(490px,74vh,880px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(240px,44vh,380px)] sm:h-[clamp(270px,46vh,440px)] md:h-[clamp(300px,48vh,480px)] lg:h-[clamp(330px,50vh,520px)] xl:h-[clamp(360px,52vh,560px)] 2xl:h-[clamp(400px,54vh,600px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : isPixel
