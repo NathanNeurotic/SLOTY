@@ -109,7 +109,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const isFreeSpins = freeSpinsRemaining > 0;
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-1 sm:px-3 py-1 sm:py-1.5 select-none flex flex-col space-y-1 sm:space-y-1.5 flex-shrink-0">
+    <div className="relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-3 py-1 sm:py-1.5 select-none flex flex-col space-y-1 sm:space-y-1.5 flex-shrink-0">
       {/* ========================================================================= */}
       {/* --- MOBILE COMPACT CONTROLS DECK (< 640px) - STRICT 82px HEIGHT --- */}
       {/* ========================================================================= */}
@@ -520,7 +520,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               ? 'Insufficient coins'
               : undefined
           }
-          className={`relative w-64 sm:w-80 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-xl uppercase text-white select-none transition-all touch-manipulation ${
+          className={`relative w-72 sm:w-96 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-2xl uppercase text-white select-none transition-all touch-manipulation shadow-2xl active:scale-95 ${
             isSpinning
               ? isTimber
                 ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_20px_rgba(244,63,94,0.8)] animate-pulse cursor-pointer'

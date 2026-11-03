@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { soundManager } from '../../audio/soundManager';
 import { Sparkles, Trees, Star } from 'lucide-react';
+import grizzlyImg from '../../assets/grizzly_gus.jpg';
 
 export type MascotState = 'idle' | 'spinning' | 'anticipation' | 'win' | 'bigwin' | 'fever';
 
@@ -156,7 +157,11 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
         {/* Gus Avatar */}
         <div className="relative flex items-center space-x-2 flex-shrink-0">
           <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-amber-400 bg-[#2d1608] flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(245,158,11,0.6)]">
-            <span className="text-2xl select-none animate-bounce">🐻</span>
+            <img
+              src={grizzlyImg}
+              alt="Grizzly Gus"
+              className="w-full h-full object-cover object-top scale-110"
+            />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center space-x-1">
@@ -191,13 +196,13 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
   return (
     <div
       onClick={handleGusClick}
-      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-52 sm:w-60 ${
+      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-56 ${
         isTapped ? 'scale-105' : 'hover:scale-[1.02]'
       }`}
       title="Click Grizzly Gus for lucky cheers, bear roars & free acorns!"
     >
       {/* Speech Bubble cleanly positioned above the mascot */}
-      <div className="relative mb-2 z-30 w-full max-w-[240px]">
+      <div className="relative mb-2 z-30 w-full max-w-[220px]">
         <div
           className={`relative px-3 py-1.5 rounded-2xl border-2 text-[11px] font-black shadow-xl tracking-wide transition-all ${
             mascotState === 'fever'
@@ -240,188 +245,52 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
         </div>
       )}
 
-      {/* Illustrated 3D Mascot Character Standee: GRIZZLY GUS */}
-      <div className="relative w-48 sm:w-56 h-64 sm:h-72 flex flex-col items-center justify-end">
-        {/* Glow behind Gus */}
-        <div className={`absolute inset-4 rounded-full filter blur-xl pointer-events-none transition-all duration-300 ${
-          mascotState === 'win' || mascotState === 'bigwin'
-            ? 'bg-amber-400/50 scale-110'
-            : mascotState === 'anticipation'
-            ? 'bg-emerald-400/40 animate-pulse'
-            : 'bg-emerald-800/25'
-        }`} />
+      {/* High-Resolution Illustrated 3D Mascot Character Standee */}
+      <div className={`relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black ${
+        mascotState === 'fever'
+          ? 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.8)]'
+          : 'border-emerald-400/70 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
+      }`}>
+        <img
+          src={grizzlyImg}
+          alt="Grizzly Gus"
+          className={`w-full h-full object-cover object-top transition-transform duration-300 ${
+            mascotState === 'win' || mascotState === 'bigwin'
+              ? 'scale-105 animate-pulse'
+              : mascotState === 'anticipation'
+              ? 'scale-105'
+              : 'hover:scale-102'
+          }`}
+        />
 
-        {/* Vector SVG Cartoon Mascot: Grizzly Gus in Lumberjack Vest & Ranger Hat */}
-        <svg viewBox="0 0 160 200" className="w-full h-full drop-shadow-2xl overflow-visible">
-          <defs>
-            <linearGradient id="gusFur" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#854D0E" />
-              <stop offset="40%" stopColor="#542F0B" />
-              <stop offset="100%" stopColor="#2A1405" />
-            </linearGradient>
-            <linearGradient id="gusSnout" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#FDE047" />
-              <stop offset="60%" stopColor="#D97706" />
-              <stop offset="100%" stopColor="#92400E" />
-            </linearGradient>
-            <linearGradient id="plaidRed" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#DC2626" />
-              <stop offset="50%" stopColor="#991B1B" />
-              <stop offset="100%" stopColor="#7F1D1D" />
-            </linearGradient>
-            <linearGradient id="rangerHat" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#65A30D" />
-              <stop offset="100%" stopColor="#365314" />
-            </linearGradient>
-          </defs>
+        {/* Ambient Rim Glow */}
+        <div className="absolute inset-0 pointer-events-none ring-1 ring-inset rounded-2xl ring-emerald-400/40" />
+        <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
 
-          {/* Woody Stump Platform */}
-          <ellipse cx="80" cy="188" rx="60" ry="12" fill="#1C0E06" stroke="#542F0B" strokeWidth="2" />
-          <ellipse cx="80" cy="186" rx="54" ry="9" fill="#3D1E0C" />
-          {/* Annual rings */}
-          <ellipse cx="80" cy="186" rx="40" ry="6" fill="none" stroke="#663311" strokeWidth="1" />
-          <ellipse cx="80" cy="186" rx="24" ry="4" fill="none" stroke="#663311" strokeWidth="1" />
-
-          {/* Bear Legs / Boots */}
-          <ellipse cx="56" cy="172" rx="14" ry="12" fill="#2A1405" stroke="#000" strokeWidth="1" />
-          <ellipse cx="104" cy="172" rx="14" ry="12" fill="#2A1405" stroke="#000" strokeWidth="1" />
-          {/* Boots */}
-          <path d="M42 176 Q56 182 70 178 L70 184 Q56 188 42 184 Z" fill="#78350F" />
-          <path d="M90 178 Q104 182 118 176 L118 184 Q104 188 90 184 Z" fill="#78350F" />
-
-          {/* Massive Bear Body */}
-          <ellipse
-            cx="80"
-            cy="128"
-            rx="46"
-            ry="44"
-            fill="url(#gusFur)"
-            stroke="#1C0A00"
-            strokeWidth="2"
-            className={mascotState === 'idle' ? 'animate-pulse' : ''}
-          />
-
-          {/* Red Buffalo-Plaid Lumberjack Vest */}
-          <path
-            d="M38 108 Q80 102 122 108 L126 152 Q80 162 34 152 Z"
-            fill="url(#plaidRed)"
-            stroke="#450A0A"
-            strokeWidth="2"
-          />
-          {/* Plaid lines */}
-          <path d="M54 106 L52 154" stroke="#000" strokeWidth="2.5" opacity="0.6" />
-          <path d="M106 106 L108 154" stroke="#000" strokeWidth="2.5" opacity="0.6" />
-          <path d="M36 130 Q80 134 124 130" stroke="#000" strokeWidth="2.5" opacity="0.6" />
-
-          {/* Fluffy Tummy Peeking Out with Golden Buckle */}
-          <ellipse cx="80" cy="136" rx="20" ry="24" fill="url(#gusSnout)" opacity="0.9" />
-          <rect x="72" y="152" width="16" height="12" rx="3" fill="#F59E0B" stroke="#78350F" strokeWidth="1.5" />
-
-          {/* Bear Paws / Arms */}
-          {/* Left Arm */}
-          <g className={mascotState === 'win' || mascotState === 'bigwin' ? 'animate-bounce origin-[40px_110px]' : ''}>
-            <ellipse cx="36" cy="122" rx="12" ry="22" fill="url(#gusFur)" transform="rotate(22 36 122)" stroke="#1C0A00" strokeWidth="1.5" />
-            {/* Claws */}
-            <circle cx="30" cy="138" r="3.5" fill="#F59E0B" />
-            <circle cx="36" cy="142" r="3.5" fill="#F59E0B" />
-            <circle cx="43" cy="140" r="3.5" fill="#F59E0B" />
-          </g>
-
-          {/* Right Arm waving or thumbs up */}
-          <g className={mascotState === 'spinning' ? 'animate-pulse origin-[120px_110px]' : ''}>
-            <ellipse cx="124" cy="122" rx="12" ry="22" fill="url(#gusFur)" transform="rotate(-22 124 122)" stroke="#1C0A00" strokeWidth="1.5" />
-            {/* Claws */}
-            <circle cx="117" cy="140" r="3.5" fill="#F59E0B" />
-            <circle cx="124" cy="142" r="3.5" fill="#F59E0B" />
-            <circle cx="130" cy="138" r="3.5" fill="#F59E0B" />
-          </g>
-
-          {/* Fuzzy Round Bear Ears */}
-          <circle cx="48" cy="56" r="14" fill="#542F0B" stroke="#1C0A00" strokeWidth="2" />
-          <circle cx="48" cy="56" r="8" fill="#F59E0B" />
-          <circle cx="112" cy="56" r="14" fill="#542F0B" stroke="#1C0A00" strokeWidth="2" />
-          <circle cx="112" cy="56" r="8" fill="#F59E0B" />
-
-          {/* Round Bear Head */}
-          <circle
-            cx="80"
-            cy="76"
-            rx="38"
-            fill="url(#gusFur)"
-            stroke="#1C0A00"
-            strokeWidth="2"
-          />
-
-          {/* Big Warm Snout / Muzzle */}
-          <ellipse cx="80" cy="86" rx="22" ry="16" fill="url(#gusSnout)" stroke="#78350F" strokeWidth="1.5" />
-
-          {/* Shiny Black Heart-Shaped Nose */}
-          <path d="M72 78 Q80 75 88 78 Q84 88 80 91 Q76 88 72 78 Z" fill="#0F172A" stroke="#000" strokeWidth="1" />
-          <circle cx="76" cy="80" r="1.5" fill="#FFF" opacity="0.8" />
-
-          {/* Big Cheerful Smile */}
-          <path d="M72 93 Q80 100 88 93" fill="none" stroke="#2A1405" strokeWidth="2.5" strokeLinecap="round" />
-          {mascotState === 'win' || mascotState === 'bigwin' ? (
-            <path d="M73 93 Q80 106 87 93 Z" fill="#EF4444" stroke="#7F1D1D" strokeWidth="1" />
-          ) : null}
-
-          {/* Expressive Cartoon Eyes */}
-          <g>
-            {/* Sclera */}
-            <ellipse cx="64" cy="68" rx="8" ry="10" fill="#FFF" stroke="#2A1405" strokeWidth="1.5" />
-            <ellipse cx="96" cy="68" rx="8" ry="10" fill="#FFF" stroke="#2A1405" strokeWidth="1.5" />
-            {/* Pupils */}
-            <circle
-              cx={mascotState === 'spinning' ? '66' : '64'}
-              cy="69"
-              r="5.5"
-              fill={mascotState === 'anticipation' ? '#F59E0B' : '#0F172A'}
-              className={mascotState === 'anticipation' ? 'animate-pulse' : ''}
-            />
-            <circle
-              cx={mascotState === 'spinning' ? '98' : '96'}
-              cy="69"
-              r="5.5"
-              fill={mascotState === 'anticipation' ? '#F59E0B' : '#0F172A'}
-              className={mascotState === 'anticipation' ? 'animate-pulse' : ''}
-            />
-            {/* Highlights */}
-            <circle cx="62" cy="66" r="2" fill="#FFF" />
-            <circle cx="94" cy="66" r="2" fill="#FFF" />
-            {/* Friendly Eyebrows */}
-            <path d="M56 56 Q64 52 72 57" stroke="#2A1405" strokeWidth="3" fill="none" strokeLinecap="round" />
-            <path d="M88 57 Q96 52 104 56" stroke="#2A1405" strokeWidth="3" fill="none" strokeLinecap="round" />
-          </g>
-
-          {/* Forest Ranger Hat */}
-          <path d="M38 52 Q80 36 122 52 L116 46 Q80 34 44 46 Z" fill="url(#rangerHat)" stroke="#1E293B" strokeWidth="1.5" />
-          <path d="M56 46 Q80 20 104 46 Z" fill="url(#rangerHat)" stroke="#1E293B" strokeWidth="1.5" />
-          {/* Hat Leather Band with Pine Sprig */}
-          <path d="M54 46 Q80 40 106 46" stroke="#78350F" strokeWidth="3.5" fill="none" />
-          <path d="M96 44 L102 36 L100 44 L106 38" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      </div>
-
-      {/* Nameplate Badge on Podium */}
-      <div className="mt-1 flex items-center space-x-1.5 px-4 py-1 rounded-full bg-gradient-to-r from-[#2a1308] via-[#451e0e] to-[#2a1308] border-2 border-amber-600/80 shadow-lg">
-        <Trees className="w-3.5 h-3.5 text-emerald-400" />
-        <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 font-sans">
-          GRIZZLY GUS
-        </span>
-        <Trees className="w-3.5 h-3.5 text-emerald-400" />
-      </div>
-
-      {/* 3D Mossy Cedar Log Stump Base resting on the boardwalk floor */}
-      <div className="w-full flex flex-col items-center -mt-1 z-10 pointer-events-none">
-        <div className="w-44 h-4 bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] rounded-t-lg border-t-2 border-[#a16207] shadow-md flex items-center justify-around px-4">
-          <span className="text-[10px]">🍂</span>
-          <span className="text-[10px]">🌰</span>
-          <span className="text-[10px]">🍁</span>
+        {/* Pedestal Nameplate */}
+        <div className="absolute bottom-2 inset-x-3 py-1 px-2 rounded-lg border shadow-lg text-center bg-gradient-to-r from-stone-900 via-[#0a180e] to-stone-900 border-emerald-400/60">
+          <div className="text-[10px] font-black tracking-widest uppercase flex items-center justify-center space-x-1">
+            <Trees className="w-3 h-3 text-emerald-300" />
+            <span className="text-emerald-200">GRIZZLY GUS</span>
+            <Trees className="w-3 h-3 text-emerald-300" />
+          </div>
+          <div className="text-[8px] font-semibold tracking-wider uppercase text-amber-300">
+            WOODLAND LODGE MASCOT
+          </div>
         </div>
-        <div className="w-52 h-6 bg-gradient-to-r from-[#170a04] via-[#2e180e] to-[#170a04] rounded-b-xl border-b-2 border-x-2 border-[#78350f] shadow-2xl relative flex items-center justify-center">
+      </div>
+
+      {/* 3D Mossy Cedar Log Stump Base */}
+      <div className="w-full flex flex-col items-center -mt-2 z-10 pointer-events-none">
+        <div className="w-48 h-3 bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] rounded-t-md border-t border-[#a16207] shadow-md flex items-center justify-around px-4">
+          <span className="text-[8px]">🍂</span>
+          <span className="text-[8px]">🌰</span>
+          <span className="text-[8px]">🍁</span>
+        </div>
+        <div className="w-56 h-6 bg-gradient-to-r from-[#170a04] via-[#2e180e] to-[#170a04] rounded-b-xl border-b-2 border-x-2 border-[#78350f] shadow-2xl relative flex items-center justify-center">
           <div className="w-24 h-1.5 bg-emerald-700/60 rounded-full blur-[0.5px]" />
         </div>
-        <div className="w-56 h-3 bg-black/80 blur-sm rounded-full -mt-1" />
+        <div className="w-60 h-3 bg-black/80 blur-sm rounded-full -mt-1" />
       </div>
     </div>
   );

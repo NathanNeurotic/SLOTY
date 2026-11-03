@@ -2,12 +2,14 @@ import React from 'react';
 import type { CasinoPeerState } from '../../multiplayer/discordTypes';
 import { NeighborTerminal } from './NeighborTerminal';
 import type { GameId } from '../../games/types';
+import { GamePerkCard } from '../hud/GamePerkCard';
 
 interface CasinoFloorBankProps {
   peers: CasinoPeerState[];
   isFloorMode: boolean;
   onToggleFloorMode?: () => void;
   onOpenLeaderboard?: () => void;
+  onOpenPaytable?: () => void;
   onTipNeighbor: (peerId: string) => void;
   children: React.ReactNode; // Center stage slot machine
   activeGameId?: GameId;
@@ -19,6 +21,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   peers,
   isFloorMode,
   onTipNeighbor,
+  onOpenPaytable,
   children,
   activeGameId = 'vault-24k',
   flankCompanion,
@@ -47,18 +50,25 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 min-h-0 max-w-5xl xl:max-w-6xl z-10 flex flex-col justify-center">
+        <div className="flex-1 min-h-0 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center">
           {children}
         </div>
 
-        {/* Right Flank: Neighbor Terminal */}
-        {isFloorMode && rightNeighbor && (
+        {/* Right Flank: Neighbor Terminal (in Floor Mode) OR Full Perk Guide Standee */}
+        {isFloorMode && rightNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
             <NeighborTerminal
               peer={rightNeighbor}
               seatNumber={3}
               onTip={onTipNeighbor}
               activeGameId={activeGameId}
+            />
+          </div>
+        ) : (
+          <div className="hidden lg:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-3 z-20">
+            <GamePerkCard
+              activeGameId={activeGameId}
+              onOpenPaytable={onOpenPaytable}
             />
           </div>
         )}

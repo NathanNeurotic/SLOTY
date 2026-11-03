@@ -39,7 +39,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
   const winningLineIndices = new Set(winningLines.map((w) => w.lineIndex));
 
   return (
-    <div className="hidden sm:flex flex-col justify-between py-1 h-full w-5 sm:w-7 select-none z-20 flex-shrink-0">
+    <div className="hidden sm:flex flex-col justify-between py-1 h-full w-6 sm:w-8 md:w-9 select-none z-20 flex-shrink-0">
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;
         const isWinning = winningLineIndices.has(lineIdx);
@@ -98,7 +98,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                   : 'inset 0 1px 0 rgba(255,255,255,0.15)',
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
             }}
-            className={`w-4 h-3.5 sm:w-6.5 sm:h-5 md:w-7 md:h-5.5 text-[8px] sm:text-[10px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
+            className={`w-5 h-4 sm:w-7 sm:h-5.5 md:w-8 md:h-6 text-[9px] sm:text-[11px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
               isTimber ? leafShape : 'rounded-[4px]'
             } ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''

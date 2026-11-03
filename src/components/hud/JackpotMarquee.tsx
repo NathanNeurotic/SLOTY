@@ -101,7 +101,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   // =========================================================================
   if (isTimber) {
     return (
-      <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
+      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
         {/* Mountain Cabin A-Frame Shingle Roof Pediment */}
         <div className="relative pt-3">
           {/* Ambient Warm Hearth Glow */}
@@ -183,7 +183,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
                 <div className="flex items-baseline font-mono mt-0.5">
                   <span className="text-base sm:text-xl font-black text-amber-400 mr-1">$</span>
-                  <span className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_20px_rgba(52,211,153,1)]">
+                  <span className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_20px_rgba(52,211,153,1)]">
                     {Math.floor(grand).toLocaleString()}
                   </span>
                   <span className="text-sm sm:text-xl font-bold text-emerald-400/90 ml-0.5">
@@ -217,9 +217,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.majorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-teal-200 drop-shadow-[0_0_8px_#2DD4BF] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-teal-200 drop-shadow-[0_0_8px_#2DD4BF] mt-0.5">
                   <span>${Math.floor(major).toLocaleString()}</span>
-                  <span className="text-[9px] text-teal-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-teal-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
@@ -234,9 +234,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.minorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-amber-200 drop-shadow-[0_0_8px_#FBBF24] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-amber-200 drop-shadow-[0_0_8px_#FBBF24] mt-0.5">
                   <span>${Math.floor(minor).toLocaleString()}</span>
-                  <span className="text-[9px] text-amber-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-amber-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
@@ -251,9 +251,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.miniTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-emerald-200 drop-shadow-[0_0_8px_#34D399] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-emerald-200 drop-shadow-[0_0_8px_#34D399] mt-0.5">
                   <span>${Math.floor(mini).toLocaleString()}</span>
-                  <span className="text-[9px] text-emerald-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-emerald-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
             </div>
@@ -280,7 +280,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   // --- VERSION B: 24K VAULT (FORT KNOX HIGH-ROLLER GOLD BULLION TOP BOX) ---
   // =========================================================================
   return (
-    <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
+    <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-1 select-none flex-shrink-0 z-20">
       {/* Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment */}
       <div className="relative pt-3">
         {/* Radial Sunburst Gold Glow */}
@@ -366,7 +366,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
                 <div className="flex items-baseline font-mono mt-0.5">
                   <span className="text-base sm:text-xl font-black text-amber-400 mr-1">$</span>
-                  <span className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
+                  <span className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,1)]">
                     {Math.floor(grand).toLocaleString()}
                   </span>
                   <span className="text-sm sm:text-xl font-bold text-amber-400/90 ml-0.5">
@@ -400,9 +400,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.majorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-purple-200 drop-shadow-[0_0_8px_#D8B4FE] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-purple-200 drop-shadow-[0_0_8px_#D8B4FE] mt-0.5">
                   <span>${Math.floor(major).toLocaleString()}</span>
-                  <span className="text-[9px] text-purple-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-purple-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
@@ -417,9 +417,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.minorTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-cyan-200 drop-shadow-[0_0_8px_#67E8F9] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-cyan-200 drop-shadow-[0_0_8px_#67E8F9] mt-0.5">
                   <span>${Math.floor(minor).toLocaleString()}</span>
-                  <span className="text-[9px] text-cyan-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-cyan-400/80">.{(minor % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
 
@@ -434,9 +434,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                     {gameDef.theme.miniTitle}
                   </span>
                 </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-yellow-200 drop-shadow-[0_0_8px_#FDE047] mt-0.5">
+                <div className="flex items-baseline font-mono text-sm sm:text-base md:text-lg font-black text-yellow-200 drop-shadow-[0_0_8px_#FDE047] mt-0.5">
                   <span>${Math.floor(mini).toLocaleString()}</span>
-                  <span className="text-[9px] text-yellow-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
+                  <span className="text-[10px] text-yellow-400/80">.{(mini % 1).toFixed(2).slice(2)}</span>
                 </div>
               </div>
             </div>

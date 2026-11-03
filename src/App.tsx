@@ -832,6 +832,7 @@ export const App: React.FC = () => {
               peers={roomPeers}
               isFloorMode={isFloorMode}
               activeGameId={activeGameId}
+              onOpenPaytable={() => setShowPaytableModal(true)}
               onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
               flankCompanion={
                 <CompanionLounge

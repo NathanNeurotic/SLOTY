@@ -98,7 +98,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         ? 'bg-gradient-to-r from-[#241308] via-[#140c06] to-[#241308] border-b-4 border-[#78350f]'
         : 'bg-gradient-to-r from-black via-[#1a1205] to-black border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
     }`}>
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 flex-wrap">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3 flex-wrap">
         {/* Left: Brand Logo & Title */}
         <SlotyLogo activeGameId={activeGameId} />
 
