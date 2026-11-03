@@ -45,6 +45,13 @@ import { quotaManager, type QuotaTier } from './engine/quotaSystem';
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
+// The developer debug suite (forced reels, credit injection) is development-only:
+// available in `vite dev`, or on a production build only with an explicit ?debug=1.
+const DEBUG_ENABLED =
+  import.meta.env.DEV ||
+  (typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('debug') === '1');
+
 export const App: React.FC = () => {
   const [unlockedQuotaTier, setUnlockedQuotaTier] = useState<QuotaTier | null>(null);
   const [consecutiveWins, setConsecutiveWins] = useState<number>(0);
@@ -140,10 +147,6 @@ export const App: React.FC = () => {
     [activeGameId, balance, betPerLine]
   );
 
-  useEffect(() => {
-    soundManager.setGameTheme(activeGameId);
-  }, [activeGameId]);
-
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
     storage.getBoolean('sloty_turbo', false)
@@ -169,7 +172,7 @@ export const App: React.FC = () => {
   const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
   const [isFloorMode, setIsFloorMode] = useState<boolean>(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 167075));
+  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 50000));
   const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
   const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
 
@@ -793,7 +796,9 @@ export const App: React.FC = () => {
         }
       } else if (e.key === 'g' || e.key === 'G') {
         e.preventDefault();
-        const nextGame = activeGameIdRef.current === 'vault-24k' ? 'timber-critters' : 'vault-24k';
+        const GAME_CYCLE: GameId[] = ['vault-24k', 'timber-critters', 'pixel-arcade'];
+        const cycleIdx = GAME_CYCLE.indexOf(activeGameIdRef.current);
+        const nextGame = GAME_CYCLE[(cycleIdx + 1) % GAME_CYCLE.length];
         handleSelectGame(nextGame);
       } else if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
@@ -806,7 +811,7 @@ export const App: React.FC = () => {
         e.preventDefault();
         setShowPaytableModal((prev) => !prev);
       } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
-        setShowDebugDrawer((prev) => !prev);
+        if (DEBUG_ENABLED) setShowDebugDrawer((prev) => !prev);
       } else if (e.key === 'm' || e.key === 'M') {
         setIsMuted((prev) => !prev);
       } else if (e.key === 't' || e.key === 'T') {
@@ -874,7 +879,9 @@ export const App: React.FC = () => {
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
-        onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
+        onToggleDebug={() => {
+          if (DEBUG_ENABLED) setShowDebugDrawer((prev) => !prev);
+        }}
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
@@ -1000,7 +1007,7 @@ export const App: React.FC = () => {
             ? 'bg-black/95 border-pink-500/30 text-cyan-400/80 font-mono'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
         }`}>
-          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS
+          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">G</kbd> TO SWITCH GAME • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">P</kbd> FOR PAYTABLE • FREE PLAY — VIRTUAL COINS ONLY, NO REAL-MONEY GAMBLING, NO PRIZES
         </footer>
       </div>
 
@@ -1122,7 +1129,8 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Developer Debug Suite Drawer */}
+      {/* Developer Debug Suite Drawer (development builds / ?debug=1 only) */}
+      {DEBUG_ENABLED && (
       <DebugDrawer
         isOpen={showDebugDrawer}
         balance={balance}
@@ -1154,6 +1162,7 @@ export const App: React.FC = () => {
           })
         }
       />
+      )}
 
       {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
       {showLeaderboardModal && (
