@@ -6,13 +6,12 @@ import { PaylineOverlay } from './PaylineOverlay';
 import { PaylineSideTabs } from './PaylineSideTabs';
 import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
-import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
 import { HeroWinCelebration } from './HeroWinCelebration';
 import { CabinetFrameOverlay } from './CabinetFrameOverlay';
 import { CabinetGlassOverlay } from './CabinetGlassOverlay';
 import { soundManager } from '../../audio/soundManager';
-import { ChevronLeft, ChevronRight, Award, Film, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Award, Trophy } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
 import type { GameId } from '../../games/types';
 import { getGame } from '../../games/gameRegistry';
@@ -67,7 +66,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const [reelSpinning, setReelSpinning] = useState<boolean[]>(() => Array(numReels).fill(false));
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
-  const [isColossalSlideOpen, setIsColossalSlideOpen] = useState(false);
   const [isCabinetSlamming, setIsCabinetSlamming] = useState(false);
 
   // References to active stop timers
@@ -116,17 +114,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       const hasScatter1 = currentGrid[1]?.includes(scatterSym);
       const anticipation = hasScatter0 && hasScatter1;
 
-      // Realistic casino spin durations: satisfying 2.8s - 3.8s total roll for dramatic gameplay
+      // Realistic casino spin durations: satisfying 3.0s - 4.2s total roll for dramatic gameplay
       const baseDelays = Array.from({ length: numReels }, (_, i) => {
         if (isTurbo) {
-          return 350 + i * 180;
+          return 400 + i * 200;
         }
         if (anticipation && i >= 2) {
           // Extended suspense build-up when 2 scatters hit
-          return 1900 + (i - 1) * 750;
+          return 2400 + (i - 1) * 850;
         }
-        // Satisfying mechanical deceleration: Reel 0 rolls for 1,400ms, then +450ms per reel
-        return 1400 + i * 450;
+        // Satisfying mechanical deceleration: Reel 0 rolls for 1,600ms, then +500ms per reel
+        return 1600 + i * 500;
       });
 
       baseDelays.forEach((delay, reelIdx) => {
@@ -146,8 +144,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             return next;
           });
 
-          // Final reel settled
-          if (reelIdx === 4) {
+          // Final reel settled across all reel configurations (5-reel or 6-reel)
+          if (reelIdx === numReels - 1) {
             soundManager.stopSpinRollLoop();
             setIsCabinetSlamming(true);
             setTimeout(() => setIsCabinetSlamming(false), 380);
@@ -166,7 +164,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
-      setReelSpinning([false, false, false, false, false]);
+      setReelSpinning(Array(numReels).fill(false));
     }
 
     return () => {
@@ -321,12 +319,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     }
   };
 
-  const handleToggleColossalSlide = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    soundManager.playVaultSlide();
-    setIsColossalSlideOpen((prev) => !prev);
-  };
-
   return (
     <div
       onClick={handleStageClick}
@@ -479,22 +471,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             )}
           </div>
 
-          {/* Right Header Controls: Colossal Scene Slide Toggle & Flashing Bulbs */}
+          {/* Right Header Controls: Flashing Bulbs */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {/* Interactive Full Slot Slide Button */}
-            <button
-              onClick={handleToggleColossalSlide}
-              className={`flex items-center space-x-1 px-2 py-0.5 rounded-lg border text-[9px] font-black uppercase transition-all ${
-                isColossalSlideOpen
-                  ? 'bg-amber-400 text-black border-white shadow-[0_0_10px_#F59E0B]'
-                  : 'bg-casino-900/80 text-yellow-300 border-yellow-400/30 hover:border-yellow-400'
-              }`}
-              title="Toggle Full Slot Panoramic Scene Slide"
-            >
-              <Film className="w-3 h-3" />
-              <span className="hidden sm:inline">SCENE SLIDE</span>
-            </button>
-
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
@@ -634,18 +612,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 activeGameId={activeGameId}
                 onOpenGamble={onOpenGamble}
               />
-            )}
-
-            {/* Full Slot Panoramic Scene Slide (Middle Reels Merge) */}
-            {isColossalSlideOpen && !isAnyReelSpinning && (
-              <div className="absolute inset-x-16 sm:inset-x-24 inset-y-2 z-25">
-                <ColossalSceneSlide
-                  sceneId={currentSceneId}
-                  multiplier={freeSpinsRemaining > 0 ? 3 : isFeverMode ? 2 : 1}
-                  onClose={() => setIsColossalSlideOpen(false)}
-                  activeGameId={activeGameId}
-                />
-              </div>
             )}
 
             {/* Dynamic Reels (5 Reels for Vault & Timberland, 6 Reels for Pixel Arcade) */}

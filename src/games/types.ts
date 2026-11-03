@@ -37,4 +37,7 @@ export interface GameDefinition {
   symbols: Record<string, SlotSymbol>;
   reelStrips: SymbolId[][];
   theme: GameTheme;
+  betSteps: number[];
+  maxBetPerLine: number;
+  maxTotalBet: number;
 }

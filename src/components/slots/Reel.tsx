@@ -78,6 +78,7 @@ export const Reel: React.FC<ReelProps> = ({
 
   return (
     <div
+      data-reel-container={reelIndex}
       className={`relative flex-1 h-full min-h-0 overflow-hidden rounded-xl border transition-all duration-300 ${
         isDimmed ? 'opacity-40 brightness-75 scale-[0.98]' : ''
       } ${
@@ -167,6 +168,8 @@ export const Reel: React.FC<ReelProps> = ({
             return (
               <div
                 key={rowIdx}
+                data-reel={reelIndex}
+                data-row={rowIdx}
                 className={`flex-1 min-h-0 w-full flex items-center justify-center p-0.5 sm:p-1 transition-all duration-200 ${
                   isWinning
                     ? isTimber

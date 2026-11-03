@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import type { WinningLine } from '../../engine/types';
 import { Coins, Star, Gamepad2 } from 'lucide-react';
 import type { GameId } from '../../games/types';
@@ -20,10 +20,42 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
   reelsCount = 5,
   activeGameId,
 }) => {
-  if (!activeWin || activeWin.coords.length === 0) return null;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [, setTick] = useState(0);
+
+  // Re-render once on mount to capture accurate DOM cell bounding rects
+  useEffect(() => {
+    const t = requestAnimationFrame(() => setTick((v) => v + 1));
+    return () => cancelAnimationFrame(t);
+  }, [activeWin]);
 
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
+
+  const getCellPosition = useCallback(
+    (reel: number, row: number) => {
+      if (containerRef.current && containerRef.current.parentElement) {
+        const cell = containerRef.current.parentElement.querySelector(`[data-reel="${reel}"][data-row="${row}"]`);
+        if (cell) {
+          const cellRect = cell.getBoundingClientRect();
+          const parentRect = containerRef.current.getBoundingClientRect();
+          if (parentRect.width > 0 && parentRect.height > 0) {
+            return {
+              left: `${cellRect.left - parentRect.left + cellRect.width / 2}px`,
+              top: `${cellRect.top - parentRect.top + cellRect.height / 2}px`,
+            };
+          }
+        }
+      }
+      return {
+        left: `${((reel + 0.5) / reelsCount) * 100}%`,
+        top: `${((row + 0.5) / rowCount) * 100}%`,
+      };
+    },
+    [reelsCount, rowCount]
+  );
+
+  if (!activeWin || activeWin.coords.length === 0) return null;
 
   // Find center-most coordinate of the winning sequence to anchor the main payout banner
   const midCoordIdx = Math.floor(activeWin.coords.length / 2);
@@ -32,15 +64,16 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
     Math.floor(rowCount / 2),
   ];
 
-  const mainLeftPercent = ((midReel + 0.5) / reelsCount) * 100;
-  const mainTopPercent = ((midRow + 0.5) / rowCount) * 100;
+  const mainPos = getCellPosition(midReel, midRow);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-30 overflow-visible">
+    <div
+      ref={containerRef}
+      className="absolute inset-1 sm:inset-2 pointer-events-none z-30 overflow-visible w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-[calc(100%-8px)] sm:h-[calc(100%-16px)]"
+    >
       {/* 1. Dynamic Coin / Acorn / Token Fountain Bursts from every winning coordinate */}
       {activeWin.coords.map(([r, row], idx) => {
-        const leftPct = ((r + 0.5) / reelsCount) * 100;
-        const topPct = ((row + 0.5) / rowCount) * 100;
+        const pos = getCellPosition(r, row);
 
         // Generate 3 energetic flying particles per symbol hit
         const particles = effectiveIsPixel
@@ -64,7 +97,7 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
         return (
           <div
             key={`win-burst-${r}-${row}-${idx}`}
-            style={{ left: `${leftPct}%`, top: `${topPct}%` }}
+            style={{ left: pos.left, top: pos.top }}
             className="absolute transform -translate-x-1/2 -translate-y-1/2"
           >
             {/* Glowing Golden / Emerald / Neon Pink Energy Halo */}
@@ -102,8 +135,8 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
       <div
         key={`banner-${activeWin.lineIndex}-${activeWin.payout}`}
         style={{
-          left: `${mainLeftPercent}%`,
-          top: `${mainTopPercent}%`,
+          left: mainPos.left,
+          top: mainPos.top,
         }}
         className="absolute transform -translate-x-1/2 -translate-y-1/2 animate-float-score z-40"
       >

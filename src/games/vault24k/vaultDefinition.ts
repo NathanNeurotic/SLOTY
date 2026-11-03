@@ -81,4 +81,7 @@ export const VAULT_24K_GAME: GameDefinition = {
     feverSubtitle: 'CHARGE WITH WINS',
     spinButtonLabel: 'SPIN',
   },
+  betSteps: [1, 2, 5, 10, 25, 50],
+  maxBetPerLine: 50,
+  maxTotalBet: 2000,
 };

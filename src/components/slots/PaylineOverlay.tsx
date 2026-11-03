@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import type { WinningLine, Payline } from '../../engine/types';
 import { PAYLINES, PAYLINE_COLORS } from '../../engine/paylines';
 import type { GameId } from '../../games/types';
@@ -34,52 +34,95 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
 
+  // Continuous measurement of rendered SVG container
   useEffect(() => {
-    if (!svgRef.current) return;
     const updateSize = () => {
       if (svgRef.current) {
-        const { clientWidth, clientHeight } = svgRef.current;
-        if (clientWidth > 0 && clientHeight > 0) {
-          setDimensions({ width: clientWidth, height: clientHeight });
+        const rect = svgRef.current.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          setDimensions((prev) => {
+            if (Math.abs(prev.width - rect.width) > 0.5 || Math.abs(prev.height - rect.height) > 0.5) {
+              return { width: rect.width, height: rect.height };
+            }
+            return prev;
+          });
         }
       }
     };
-    updateSize();
-    const ro = new ResizeObserver(updateSize);
-    ro.observe(svgRef.current);
-    return () => ro.disconnect();
-  }, []);
 
-  // If no winning lines and no previewed line, render nothing
-  if (winningLines.length === 0 && previewLineIndex === null) {
-    return null;
-  }
+    updateSize();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && svgRef.current) {
+      ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const w = entry.contentRect.width || entry.target.getBoundingClientRect().width;
+          const h = entry.contentRect.height || entry.target.getBoundingClientRect().height;
+          if (w > 0 && h > 0) {
+            setDimensions({ width: w, height: h });
+          }
+        }
+      });
+      ro.observe(svgRef.current);
+      if (svgRef.current.parentElement) {
+        ro.observe(svgRef.current.parentElement);
+      }
+    }
+
+    window.addEventListener('resize', updateSize);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, []);
 
   const { width, height } = dimensions;
   const isMeasured = width > 0 && height > 0;
-  const svgW = isMeasured ? width : 100;
-  const svgH = isMeasured ? height : 100;
+  const svgW = isMeasured ? width : 1000;
+  const svgH = isMeasured ? height : 500;
 
-  // Exact reel gap calculation matching Tailwind space-x-1 (4px) / sm:space-x-1.5 (6px)
-  const isSm = typeof window !== 'undefined' ? window.innerWidth >= 640 : width >= 640;
-  const gap = isMeasured ? (isSm ? 6 : 4) : 0;
-  const totalGap = (reelsCount - 1) * gap;
-  const reelWidth = isMeasured ? (width - totalGap) / reelsCount : 100 / reelsCount;
+  // Exact reel column & row slice center calculation using rendered DOM elements with mathematical fallback
+  const getCellCenter = useCallback(
+    (reel: number, row: number): [number, number] => {
+      if (svgRef.current && svgRef.current.parentElement) {
+        const cell = svgRef.current.parentElement.querySelector(`[data-reel="${reel}"][data-row="${row}"]`);
+        if (cell) {
+          const cellRect = cell.getBoundingClientRect();
+          const svgRect = svgRef.current.getBoundingClientRect();
+          if (svgRect.width > 0 && svgRect.height > 0) {
+            const xRel = cellRect.left - svgRect.left + cellRect.width / 2;
+            const yRel = cellRect.top - svgRect.top + cellRect.height / 2;
+            const scaleX = svgW / svgRect.width;
+            const scaleY = svgH / svgRect.height;
+            return [xRel * scaleX, yRel * scaleY];
+          }
+        }
+      }
 
-  // Exact pixel center of reel column & row slice
-  const getCellCenter = (reel: number, row: number): [number, number] => {
-    if (!isMeasured) {
-      return [(reel + 0.5) * (100 / reelsCount), (row + 0.5) * (100 / rowCount)];
-    }
-    const x = reel * (reelWidth + gap) + reelWidth / 2;
-    const y = (row + 0.5) * (height / rowCount);
-    return [x, y];
-  };
+      // Mathematical fallback matching slot machine grid flex layout
+      const isSm = typeof window !== 'undefined' ? window.innerWidth >= 640 : svgW >= 640;
+      const gap = isSm ? 6 : 4;
+      const totalGap = (reelsCount - 1) * gap;
+      const reelWidth = Math.max(10, (svgW - totalGap) / reelsCount);
+      const x = reel * (reelWidth + gap) + reelWidth / 2;
+      const y = (row + 0.5) * (svgH / rowCount);
+      return [x, y];
+    },
+    [reelsCount, rowCount, svgW, svgH]
+  );
+
+  const hasContent = winningLines.length > 0 || previewLineIndex !== null;
 
   return (
     <svg
       ref={svgRef}
       viewBox={`0 0 ${svgW} ${svgH}`}
+      preserveAspectRatio="none"
+      style={{
+        opacity: hasContent ? 1 : 0,
+        visibility: hasContent ? 'visible' : 'hidden',
+        transition: 'opacity 200ms ease',
+      }}
       className="absolute inset-1 sm:inset-2 pointer-events-none z-20 overflow-visible w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-[calc(100%-8px)] sm:h-[calc(100%-16px)]"
     >
       <defs>
@@ -122,7 +165,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   d={pathData}
                   fill="none"
                   stroke={color}
-                  strokeWidth={isMeasured ? 5 : 2.5}
+                  strokeWidth={5}
                   strokeOpacity="0.85"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -132,7 +175,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   d={pathData}
                   fill="none"
                   stroke="#FFFFFF"
-                  strokeWidth={isMeasured ? 2 : 1}
+                  strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -141,10 +184,10 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     key={pIdx}
                     cx={x}
                     cy={y}
-                    r={isMeasured ? 6 : 2.5}
+                    r={6}
                     fill={color}
                     stroke="#FFF"
-                    strokeWidth={isMeasured ? 1.5 : 0.8}
+                    strokeWidth={1.5}
                     filter="url(#lineNeonGlow)"
                   />
                 ))}
@@ -180,7 +223,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? (isMeasured ? 12 : 5) : (isMeasured ? 5 : 2)}
+                    strokeWidth={isHighlighted ? 12 : 5}
                     strokeOpacity={isHighlighted ? 0.75 : 0.25}
                     strokeLinecap="square"
                     strokeLinejoin="miter"
@@ -192,7 +235,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? (isMeasured ? 6 : 2.8) : (isMeasured ? 3 : 1.4)}
+                    strokeWidth={isHighlighted ? 6 : 3}
                     strokeLinecap="square"
                     strokeLinejoin="miter"
                     filter="url(#lineNeonGlow)"
@@ -204,7 +247,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                       d={pathData}
                       fill="none"
                       stroke="#FFFFFF"
-                      strokeWidth={isMeasured ? 2.5 : 1.2}
+                      strokeWidth={2.5}
                       strokeLinecap="square"
                       strokeLinejoin="miter"
                       className="animate-laser-stream"
@@ -213,19 +256,19 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
                   {/* 4. 8-Bit Chunky Square Beacon Nodes on Winning Symbols */}
                   {points.map(([x, y], pIdx) => {
-                    const boxSize = isHighlighted ? (isMeasured ? 24 : 6) : (isMeasured ? 14 : 3.5);
+                    const boxSize = isHighlighted ? 24 : 14;
                     const half = boxSize / 2;
                     return (
                       <g key={pIdx}>
                         {isHighlighted && (
                           <rect
-                            x={x - half - (isMeasured ? 5 : 1.5)}
-                            y={y - half - (isMeasured ? 5 : 1.5)}
-                            width={boxSize + (isMeasured ? 10 : 3)}
-                            height={boxSize + (isMeasured ? 10 : 3)}
+                            x={x - half - 5}
+                            y={y - half - 5}
+                            width={boxSize + 10}
+                            height={boxSize + 10}
                             fill="none"
                             stroke="#FFF"
-                            strokeWidth={isMeasured ? 1.5 : 0.8}
+                            strokeWidth={1.5}
                             strokeDasharray="4 2"
                             className="animate-node-shockwave"
                           />
@@ -238,7 +281,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           height={boxSize}
                           fill={color}
                           stroke="#FFF"
-                          strokeWidth={isMeasured ? 2 : 1}
+                          strokeWidth={2}
                           filter="url(#lineNeonGlow)"
                         />
                         {/* Inner Specular Core */}
@@ -265,7 +308,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#10B981"
-                    strokeWidth={isHighlighted ? (isMeasured ? 14 : 6) : (isMeasured ? 6 : 2.2)}
+                    strokeWidth={isHighlighted ? 14 : 6}
                     strokeOpacity={isHighlighted ? 0.7 : 0.25}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -276,7 +319,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#042F1A"
-                    strokeWidth={isHighlighted ? (isMeasured ? 9 : 4) : (isMeasured ? 4 : 1.8)}
+                    strokeWidth={isHighlighted ? 9 : 4}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -285,7 +328,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#F59E0B"
-                    strokeWidth={isHighlighted ? (isMeasured ? 5 : 2.4) : (isMeasured ? 2.5 : 1.0)}
+                    strokeWidth={isHighlighted ? 5 : 2.5}
                     strokeDasharray={isHighlighted ? '10,5' : undefined}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -296,32 +339,32 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#FEF08A"
-                    strokeWidth={isHighlighted ? (isMeasured ? 2 : 1) : (isMeasured ? 1 : 0.4)}
+                    strokeWidth={isHighlighted ? 2 : 1}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   {/* 5. Blooming Flower & Acorn Nodes */}
                   {points.map(([x, y], pIdx) => {
-                    const r = isHighlighted ? (isMeasured ? 10 : 3.6) : (isMeasured ? 5 : 1.8);
+                    const r = isHighlighted ? 10 : 5;
                     return (
                       <g key={pIdx}>
                         {isHighlighted && (
                           <circle
                             cx={x}
                             cy={y}
-                            r={r + (isMeasured ? 6 : 2)}
+                            r={r + 6}
                             fill="none"
                             stroke="#34D399"
-                            strokeWidth={isMeasured ? 2 : 1.2}
+                            strokeWidth={2}
                             className="animate-node-shockwave"
                           />
                         )}
                         {/* Leaf Petals around node */}
                         {isHighlighted && (
                           <>
-                            <circle cx={x - (isMeasured ? 5 : 2)} cy={y - (isMeasured ? 5 : 2)} r={isMeasured ? 4 : 1.6} fill="#059669" opacity="0.8" />
-                            <circle cx={x + (isMeasured ? 5 : 2)} cy={y - (isMeasured ? 5 : 2)} r={isMeasured ? 4 : 1.6} fill="#059669" opacity="0.8" />
-                            <circle cx={x} cy={y + (isMeasured ? 6 : 2.5)} r={isMeasured ? 4 : 1.6} fill="#10B981" opacity="0.8" />
+                            <circle cx={x - 5} cy={y - 5} r={4} fill="#059669" opacity="0.8" />
+                            <circle cx={x + 5} cy={y - 5} r={4} fill="#059669" opacity="0.8" />
+                            <circle cx={x} cy={y + 6} r={4} fill="#10B981" opacity="0.8" />
                           </>
                         )}
                         {/* Central Golden Honey Node */}
@@ -331,11 +374,11 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           r={r}
                           fill="#F59E0B"
                           stroke="#FEF08A"
-                          strokeWidth={isHighlighted ? (isMeasured ? 2.5 : 1.2) : (isMeasured ? 1.5 : 0.6)}
+                          strokeWidth={isHighlighted ? 2.5 : 1.5}
                           filter="url(#lineNeonGlow)"
                         />
                         {isHighlighted && (
-                          <circle cx={x} cy={y} r={isMeasured ? 3.5 : 1.3} fill="#FFFFFF" />
+                          <circle cx={x} cy={y} r={3.5} fill="#FFFFFF" />
                         )}
                       </g>
                     );
@@ -351,7 +394,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? (isMeasured ? 12 : 4.5) : (isMeasured ? 5 : 1.8)}
+                    strokeWidth={isHighlighted ? 12 : 5}
                     strokeOpacity={isHighlighted ? 0.75 : 0.2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -363,7 +406,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? (isMeasured ? 7 : 2.8) : (isMeasured ? 3 : 1.2)}
+                    strokeWidth={isHighlighted ? 7 : 3}
                     strokeOpacity={isHighlighted ? 0.95 : 0.3}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -376,7 +419,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                       d={pathData}
                       fill="none"
                       stroke="#FFFFFF"
-                      strokeWidth={isMeasured ? 3.5 : 1.6}
+                      strokeWidth={3.5}
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className="animate-laser-stream"
@@ -388,7 +431,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#FFFFFF"
-                    strokeWidth={isHighlighted ? (isMeasured ? 2 : 0.9) : (isMeasured ? 1 : 0.4)}
+                    strokeWidth={isHighlighted ? 2 : 1}
                     strokeOpacity={1}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -396,17 +439,17 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
                   {/* 5. Concentric Shockwave Ripples & Glowing Nodes on Symbols */}
                   {points.map(([x, y], pIdx) => {
-                    const r = isHighlighted ? (isMeasured ? 9 : 3.4) : (isMeasured ? 5 : 1.8);
+                    const r = isHighlighted ? 9 : 5;
                     return (
                       <g key={pIdx}>
                         {isHighlighted && (
                           <circle
                             cx={x}
                             cy={y}
-                            r={r + (isMeasured ? 6 : 2)}
+                            r={r + 6}
                             fill="none"
                             stroke={color}
-                            strokeWidth={isMeasured ? 2 : 1.2}
+                            strokeWidth={2}
                             className="animate-node-shockwave"
                           />
                         )}
@@ -417,12 +460,12 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           r={r}
                           fill={color}
                           stroke="#FFF"
-                          strokeWidth={isHighlighted ? (isMeasured ? 2 : 1) : (isMeasured ? 1.2 : 0.6)}
+                          strokeWidth={isHighlighted ? 2 : 1.2}
                           filter="url(#lineNeonGlow)"
                         />
                         {/* White Center Flare Core */}
                         {isHighlighted && (
-                          <circle cx={x} cy={y} r={isMeasured ? 3.2 : 1.2} fill="#FFFFFF" />
+                          <circle cx={x} cy={y} r={3.2} fill="#FFFFFF" />
                         )}
                       </g>
                     );

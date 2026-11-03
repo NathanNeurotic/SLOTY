@@ -38,4 +38,7 @@ export const PIXEL_ARCADE_GAME: GameDefinition = {
     feverSubtitle: 'CHARGE 100% FEVER FOR 2X 8-BIT WIN STRIKES',
     spinButtonLabel: 'INSERT COIN / SPIN',
   },
+  betSteps: [1, 2, 3, 4, 5],
+  maxBetPerLine: 5,
+  maxTotalBet: 250,
 };

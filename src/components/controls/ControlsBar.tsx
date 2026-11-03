@@ -27,6 +27,9 @@ interface ControlsBarProps {
   availableLines?: number[];
   maxLines?: number;
   activeGameId?: GameId;
+  betSteps?: number[];
+  maxBetPerLine?: number;
+  maxTotalBet?: number;
 }
 
 const DEFAULT_LINES = [1, 5, 10, 20, 30, 40];
@@ -55,11 +58,18 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   availableLines = DEFAULT_LINES,
   maxLines = 40,
   activeGameId = 'vault-24k',
+  betSteps,
+  maxBetPerLine,
+  maxTotalBet,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
   const [showAutoMenu, setShowAutoMenu] = useState(false);
-  const maxAllowedBet = Math.min(balance, maxBet);
+
+  const effectiveBetSteps = betSteps && betSteps.length > 0 ? betSteps : BET_PER_LINE_STEPS;
+  const effectiveMaxBetPerLine = maxBetPerLine || effectiveBetSteps[effectiveBetSteps.length - 1];
+  const effectiveMaxTotalBet = maxTotalBet || maxBet;
+  const maxAllowedBet = Math.min(balance, maxBet, effectiveMaxTotalBet);
 
   const handleLinesStep = (direction: 'up' | 'down') => {
     soundManager.playChipClick();
@@ -76,19 +86,19 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 
   const handleBetStep = (direction: 'up' | 'down') => {
     soundManager.playChipClick();
-    let curIdx = BET_PER_LINE_STEPS.indexOf(betPerLine);
+    let curIdx = effectiveBetSteps.indexOf(betPerLine);
     if (curIdx === -1) {
-      curIdx = BET_PER_LINE_STEPS.findIndex((s) => s >= betPerLine);
-      if (curIdx === -1) curIdx = BET_PER_LINE_STEPS.length - 1;
+      curIdx = effectiveBetSteps.findIndex((s) => s >= betPerLine);
+      if (curIdx === -1) curIdx = effectiveBetSteps.length - 1;
     }
 
-    if (direction === 'up' && curIdx < BET_PER_LINE_STEPS.length - 1) {
-      const nextStep = BET_PER_LINE_STEPS[curIdx + 1];
-      if (nextStep * selectedLines <= maxAllowedBet) {
+    if (direction === 'up' && curIdx < effectiveBetSteps.length - 1) {
+      const nextStep = effectiveBetSteps[curIdx + 1];
+      if (nextStep <= effectiveMaxBetPerLine && nextStep * selectedLines <= maxAllowedBet) {
         onBetPerLineChange(nextStep);
       }
     } else if (direction === 'down' && curIdx > 0) {
-      onBetPerLineChange(BET_PER_LINE_STEPS[curIdx - 1]);
+      onBetPerLineChange(effectiveBetSteps[curIdx - 1]);
     }
   };
 
@@ -160,7 +170,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             </span>
             <button
               onClick={() => handleBetStep('up')}
-              disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxAllowedBet}
+              disabled={isSpinning || isFreeSpins || betPerLine >= effectiveMaxBetPerLine || (betPerLine * selectedLines) >= maxAllowedBet}
               className="w-5 h-5 rounded vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200"
             >
               <Plus className="w-2.5 h-2.5 text-amber-300" />
@@ -392,7 +402,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 </span>
                 <button
                   onClick={() => handleBetStep('up')}
-                  disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxAllowedBet}
+                  disabled={isSpinning || isFreeSpins || betPerLine >= effectiveMaxBetPerLine || (betPerLine * selectedLines) >= maxAllowedBet}
                   className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
                   <Plus className="w-3.5 h-3.5 text-amber-300" />

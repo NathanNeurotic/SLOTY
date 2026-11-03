@@ -1284,7 +1284,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <path d="M12 78 H88 V94 H12 Z" fill="#000" />
             <path d="M14 80 H86 V92 H14 Z" fill="#00F0FF" />
             <path d="M16 82 H84 V90 H16 Z" fill="#061826" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+            <text x="50" y="88.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               SCATTER
             </text>
           </svg>
@@ -1322,10 +1322,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </text>
 
             {/* Stepped 1-UP Badge */}
-            <path d="M20 78 H80 V94 H20 Z" fill="#000" />
-            <path d="M22 80 H78 V92 H22 Z" fill="#FBBF24" />
-            <path d="M24 82 H76 V90 H24 Z" fill="#451A03" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
+            <path d="M12 78 H88 V94 H12 Z" fill="#000" />
+            <path d="M14 80 H86 V92 H14 Z" fill="#FBBF24" />
+            <path d="M16 82 H84 V90 H16 Z" fill="#451A03" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               1-UP TOKEN
             </text>
           </svg>
@@ -1365,10 +1365,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="60" y="58" width="6" height="8" fill="#FFF" />
 
             {/* Stepped BOSS Plaque */}
-            <path d="M16 78 H84 V94 H16 Z" fill="#000" />
-            <path d="M18 80 H82 V92 H18 Z" fill="#EF4444" />
-            <path d="M20 82 H80 V90 H20 Z" fill="#450A0A" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#FCA5A5" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
+            <path d="M12 78 H88 V94 H12 Z" fill="#000" />
+            <path d="M14 80 H86 V92 H14 Z" fill="#EF4444" />
+            <path d="M16 82 H84 V90 H16 Z" fill="#450A0A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FCA5A5" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               BOSS 1500X
             </text>
           </svg>
@@ -1406,10 +1406,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="72" y="24" width="6" height="4" fill="#F59E0B" />
 
             {/* Stepped HERO Plaque */}
-            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
-            <path d="M20 80 H80 V92 H20 Z" fill="#3B82F6" />
-            <path d="M22 82 H78 V90 H22 Z" fill="#0F172A" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#93C5FD" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
+            <path d="M12 78 H88 V94 H12 Z" fill="#000" />
+            <path d="M14 80 H86 V92 H14 Z" fill="#3B82F6" />
+            <path d="M16 82 H84 V90 H16 Z" fill="#0F172A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#93C5FD" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               HERO 900X
             </text>
           </svg>
@@ -1455,10 +1455,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="77" y="37" width="2" height="2" fill="#FFF" />
 
             {/* Stepped GAMEPAD Plaque */}
-            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
-            <path d="M20 80 H80 V92 H20 Z" fill="#10B981" />
-            <path d="M22 82 H78 V90 H22 Z" fill="#062E1A" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#34D399" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+            <path d="M14 78 H86 V94 H14 Z" fill="#000" />
+            <path d="M16 80 H84 V92 H16 Z" fill="#10B981" />
+            <path d="M18 82 H82 V90 H18 Z" fill="#062E1A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#34D399" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               GAMEPAD
             </text>
           </svg>
@@ -1498,10 +1498,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="52" y="36" width="10" height="6" fill="#7F1D1D" />
 
             {/* Stepped JOYSTICK Plaque */}
-            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
-            <path d="M20 80 H80 V92 H20 Z" fill="#F97316" />
-            <path d="M22 82 H78 V90 H22 Z" fill="#431407" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#FDBA74" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+            <path d="M14 78 H86 V94 H14 Z" fill="#000" />
+            <path d="M16 80 H84 V92 H16 Z" fill="#F97316" />
+            <path d="M18 82 H82 V90 H18 Z" fill="#431407" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FDBA74" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               JOYSTICK
             </text>
           </svg>
@@ -1540,10 +1540,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="40" y="62" width="3" height="3" fill="#FFF" />
 
             {/* Stepped POTION Plaque */}
-            <path d="M20 78 H80 V94 H20 Z" fill="#000" />
-            <path d="M22 80 H78 V92 H22 Z" fill="#A855F7" />
-            <path d="M24 82 H76 V90 H24 Z" fill="#2E1065" />
-            <text x="50" y="88.5" textAnchor="middle" fill="#E9D5FF" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+            <path d="M14 78 H86 V94 H14 Z" fill="#000" />
+            <path d="M16 80 H84 V92 H16 Z" fill="#A855F7" />
+            <path d="M18 82 H82 V90 H18 Z" fill="#2E1065" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#E9D5FF" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
               POTION
             </text>
           </svg>

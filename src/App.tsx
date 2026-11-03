@@ -82,6 +82,11 @@ export const App: React.FC = () => {
   );
   const activeGameDef = getGame(activeGameId);
 
+  // Synchronize audio theme with active game on initial load and updates
+  useEffect(() => {
+    soundManager.setGameTheme(activeGameId);
+  }, [activeGameId]);
+
   const [selectedLines, setSelectedLines] = useState<number>(() =>
     storage.getNumber('sloty_lines', activeGameDef.defaultLines)
   );
@@ -101,13 +106,21 @@ export const App: React.FC = () => {
       setSelectedLines(lines);
       storage.setItem('sloty_lines', lines.toString());
 
-      // Ensure bet never exceeds balance when switching games
-      if (balance > 0 && lines * betPerLine > balance) {
-        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
-        const affordable = steps.find((s) => s * lines <= balance) || 1;
-        setBetPerLine(affordable);
-        storage.setItem('sloty_bet_per_line', affordable.toString());
+      // Ensure bet conforms to the selected game's max bet rules and player balance
+      let nextBet = betPerLine;
+      if (nextBet > target.maxBetPerLine) {
+        nextBet = target.maxBetPerLine;
       }
+      if (lines * nextBet > target.maxTotalBet) {
+        const revSteps = [...target.betSteps].reverse();
+        nextBet = revSteps.find((s) => s * lines <= target.maxTotalBet) || 1;
+      }
+      if (balance > 0 && lines * nextBet > balance) {
+        const revSteps = [...target.betSteps].reverse();
+        nextBet = revSteps.find((s) => s * lines <= balance) || 1;
+      }
+      setBetPerLine(nextBet);
+      storage.setItem('sloty_bet_per_line', nextBet.toString());
 
       const newGrid = generateRandomGrid(target);
       setCurrentGrid(newGrid);
@@ -116,6 +129,8 @@ export const App: React.FC = () => {
       setWinAmount(0);
       if (gameId === 'timber-critters') {
         soundManager.playOwlHoot(1);
+      } else if (gameId === 'pixel-arcade') {
+        soundManager.playLaserZap();
       } else {
         setCurrentSceneId('VAULT');
         storage.setItem('sloty_scene', 'VAULT');
@@ -531,48 +546,52 @@ export const App: React.FC = () => {
     handleAllReelsStopped();
   }, [isSpinning, handleAllReelsStopped]);
 
-  // Max Bet Handler - capped by balance and progression maxBet
+  // Max Bet Handler - capped by game max bet rules, balance and progression maxBet
   const handleMaxBet = useCallback(() => {
     const lines = activeGameDef.defaultLines;
     setSelectedLines(lines);
-    const maxAffordable = Math.min(balance, progression.maxBet);
+    const gameMaxTotal = activeGameDef.maxTotalBet || 2000;
+    const maxAffordable = Math.min(balance, progression.maxBet, gameMaxTotal);
     if (maxAffordable <= 0) {
       setBetPerLine(1);
       return;
     }
-    const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
-    const bestStep = steps.find((s) => s * lines <= maxAffordable) || 1;
+    const revSteps = [...(activeGameDef.betSteps || [1])].reverse();
+    const bestStep = revSteps.find((s) => s * lines <= maxAffordable && s <= activeGameDef.maxBetPerLine) || 1;
     setBetPerLine(bestStep);
-  }, [balance, progression.maxBet, activeGameDef.defaultLines]);
+    storage.setItem('sloty_bet_per_line', bestStep.toString());
+  }, [balance, progression.maxBet, activeGameDef]);
 
   const handleSelectLines = useCallback(
     (lines: number) => {
       setSelectedLines(lines);
       storage.setItem('sloty_lines', lines.toString());
-      if (balance > 0 && lines * betPerLine > balance) {
-        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
-        const affordable = steps.find((s) => s * lines <= balance) || 1;
+      const maxAllowed = Math.min(balance > 0 ? balance : Infinity, activeGameDef.maxTotalBet);
+      if (lines * betPerLine > maxAllowed) {
+        const revSteps = [...(activeGameDef.betSteps || [1])].reverse();
+        const affordable = revSteps.find((s) => s * lines <= maxAllowed && s <= activeGameDef.maxBetPerLine) || 1;
         setBetPerLine(affordable);
         storage.setItem('sloty_bet_per_line', affordable.toString());
       }
     },
-    [balance, betPerLine]
+    [balance, betPerLine, activeGameDef]
   );
 
   const handleSelectBetPerLine = useCallback(
     (bet: number) => {
-      const maxAllowed = Math.min(balance, progression.maxBet);
-      if (balance > 0 && bet * selectedLines > maxAllowed) {
-        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
-        const affordable = steps.find((s) => s * selectedLines <= maxAllowed) || 1;
+      const maxAllowed = Math.min(balance > 0 ? balance : Infinity, progression.maxBet, activeGameDef.maxTotalBet);
+      const clampedBet = Math.min(bet, activeGameDef.maxBetPerLine);
+      if (clampedBet * selectedLines > maxAllowed) {
+        const revSteps = [...(activeGameDef.betSteps || [1])].reverse();
+        const affordable = revSteps.find((s) => s * selectedLines <= maxAllowed && s <= activeGameDef.maxBetPerLine) || 1;
         setBetPerLine(affordable);
         storage.setItem('sloty_bet_per_line', affordable.toString());
       } else {
-        setBetPerLine(bet);
-        storage.setItem('sloty_bet_per_line', bet.toString());
+        setBetPerLine(clampedBet);
+        storage.setItem('sloty_bet_per_line', clampedBet.toString());
       }
     },
-    [balance, progression.maxBet, selectedLines]
+    [balance, progression.maxBet, selectedLines, activeGameDef]
   );
 
   const handleStartFreeSpins = useCallback(() => {
@@ -927,6 +946,9 @@ export const App: React.FC = () => {
           availableLines={activeGameDef.availableLines}
           maxLines={activeGameDef.defaultLines}
           activeGameId={activeGameId}
+          betSteps={activeGameDef.betSteps}
+          maxBetPerLine={activeGameDef.maxBetPerLine}
+          maxTotalBet={activeGameDef.maxTotalBet}
         />
 
         {/* Integrated Footer info banner (desktop only) with clean clearance */}
@@ -1074,7 +1096,7 @@ export const App: React.FC = () => {
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
         onInjectCustomGrid={(grid) => {
           setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? 3 : 1);
+          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? 3 : 1, activeGameDef);
           setSpinResult(evaluated);
         }}
         onResetStats={() =>

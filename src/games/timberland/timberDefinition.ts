@@ -36,4 +36,7 @@ export const TIMBER_CRITTERS_GAME: GameDefinition = {
     feverSubtitle: 'CHARGE WITH FOREST WINS',
     spinButtonLabel: 'WOODLAND SPIN',
   },
+  betSteps: [1, 2, 3, 5, 10, 20],
+  maxBetPerLine: 20,
+  maxTotalBet: 500,
 };
