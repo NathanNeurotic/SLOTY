@@ -340,15 +340,15 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               }`}>
                 Lines
               </span>
-              <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
+              <div className="flex items-center space-x-1 mt-0.5">
                 <button
                   onClick={() => handleLinesStep('down')}
                   disabled={isSpinning || isFreeSpins || selectedLines <= 1}
-                  className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Minus className={`w-3 h-3 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
+                  <Minus className={`w-3.5 h-3.5 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
                 </button>
-                <span className={`text-xs sm:text-sm font-black min-w-[20px] text-center font-mono ${
+                <span className={`text-xs sm:text-base font-black min-w-[24px] text-center font-mono ${
                   isTimber
                     ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
                     : 'text-neon-cyan drop-shadow-[0_0_6px_rgba(0,240,255,0.7)]'
@@ -358,37 +358,37 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 <button
                   onClick={() => handleLinesStep('up')}
                   disabled={isSpinning || isFreeSpins || selectedLines >= maxLines}
-                  className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Plus className={`w-3 h-3 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
+                  <Plus className={`w-3.5 h-3.5 ${isTimber ? 'text-emerald-300' : 'text-cyan-300'}`} />
                 </button>
               </div>
             </div>
 
             {/* Bet Per Line with - / + buttons */}
-            <div className="flex flex-col items-center px-0.5 sm:px-1">
-              <span className={`text-[7.5px] sm:text-[8.5px] uppercase font-bold tracking-wider leading-none ${
+            <div className="flex flex-col items-center px-1 sm:px-1.5">
+              <span className={`text-[8px] sm:text-[9px] uppercase font-bold tracking-wider leading-none ${
                 isTimber ? 'text-emerald-400' : 'text-slate-400'
               }`}>
                 Bet/Line
               </span>
-              <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
+              <div className="flex items-center space-x-1 mt-0.5">
                 <button
                   onClick={() => handleBetStep('down')}
                   disabled={isSpinning || isFreeSpins || betPerLine <= 1}
-                  className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Minus className={`w-3 h-3 ${isTimber ? 'text-amber-300' : 'text-amber-300'}`} />
+                  <Minus className="w-3.5 h-3.5 text-amber-300" />
                 </button>
-                <span className="text-xs sm:text-sm font-black text-white min-w-[26px] text-center font-mono">
+                <span className="text-xs sm:text-base font-black text-white min-w-[28px] text-center font-mono">
                   {betPerLine.toLocaleString()}
                 </span>
                 <button
                   onClick={() => handleBetStep('up')}
                   disabled={isSpinning || isFreeSpins || (betPerLine * selectedLines) >= maxAllowedBet}
-                  className="w-5 h-5 rounded-md vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg vlt-btn-stepper disabled:opacity-30 flex items-center justify-center text-slate-200 font-bold"
                 >
-                  <Plus className={`w-3 h-3 ${isTimber ? 'text-amber-300' : 'text-amber-300'}`} />
+                  <Plus className="w-3.5 h-3.5 text-amber-300" />
                 </button>
               </div>
             </div>

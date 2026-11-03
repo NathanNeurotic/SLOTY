@@ -217,7 +217,7 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
           <div className="flex items-center space-x-1">
             {mascotState === 'anticipation' && <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-spin" />}
             {(mascotState === 'win' || mascotState === 'bigwin') && <Star className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300 animate-ping" />}
-            <span className="truncate whitespace-normal leading-tight text-center w-full">
+            <span className="text-[10px] sm:text-[11px] font-black leading-tight text-center w-full block">
               {tapBonusText || currentQuote}
             </span>
           </div>

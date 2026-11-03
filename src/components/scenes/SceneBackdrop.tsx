@@ -392,34 +392,34 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
                 }}
               />
 
-              {/* Stacks of 24K Gold Bullion on Heavy Pallets Flanking the Floor */}
-              <div className="absolute bottom-6 left-6 sm:left-48 w-36 sm:w-48 h-32 pointer-events-none z-10 opacity-80 hidden md:block">
+              {/* Stacks of 24K Gold Bullion on Heavy Pallets Flanking the Outer Edges */}
+              <div className="absolute bottom-4 sm:bottom-8 left-1 sm:left-3 w-32 sm:w-44 h-36 pointer-events-none z-10 opacity-90 hidden sm:block">
                 <div className="relative w-full h-full flex flex-col justify-end">
                   {/* Bullion stack pyramid */}
-                  <div className="w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_15px_rgba(251,191,36,0.8)] mx-auto relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" />
-                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-mono font-black text-amber-950">999.9 FINE GOLD</span>
+                  <div className="w-24 sm:w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_20px_rgba(251,191,36,0.9)] mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer-sweep" />
+                    <span className="absolute inset-0 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-black text-amber-950">999.9 FINE GOLD</span>
                   </div>
-                  <div className="w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
+                  <div className="w-30 sm:w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1s' }} />
                   </div>
-                  <div className="w-44 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
+                  <div className="w-36 sm:w-42 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
                   {/* Steel pallet */}
-                  <div className="w-48 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
+                  <div className="w-40 sm:w-44 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
                 </div>
               </div>
 
-              <div className="absolute bottom-6 right-6 sm:right-48 w-36 sm:w-48 h-32 pointer-events-none z-10 opacity-80 hidden md:block">
+              <div className="absolute bottom-4 sm:bottom-8 right-1 sm:right-3 w-32 sm:w-44 h-36 pointer-events-none z-10 opacity-90 hidden sm:block">
                 <div className="relative w-full h-full flex flex-col justify-end">
-                  <div className="w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_15px_rgba(251,191,36,0.8)] mx-auto relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1.5s' }} />
-                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-mono font-black text-amber-950">24K FORT KNOX</span>
+                  <div className="w-24 sm:w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_20px_rgba(251,191,36,0.9)] mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1.5s' }} />
+                    <span className="absolute inset-0 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-black text-amber-950">24K FORT KNOX</span>
                   </div>
-                  <div className="w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
+                  <div className="w-30 sm:w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-sweep" style={{ animationDelay: '2.5s' }} />
                   </div>
-                  <div className="w-44 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
-                  <div className="w-48 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
+                  <div className="w-36 sm:w-42 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
+                  <div className="w-40 sm:w-44 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
                 </div>
               </div>
 

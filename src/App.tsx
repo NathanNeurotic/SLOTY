@@ -884,6 +884,7 @@ export const App: React.FC = () => {
                 }}
                 activeGameId={activeGameId}
                 isFloorMode={isFloorMode}
+                onOpenGamble={() => setShowGambleModal(true)}
               />
             </CasinoFloorBank>
           );

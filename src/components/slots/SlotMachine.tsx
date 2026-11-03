@@ -8,6 +8,7 @@ import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
+import { HeroWinCelebration } from './HeroWinCelebration';
 import { soundManager } from '../../audio/soundManager';
 import { ChevronLeft, ChevronRight, Award, Film, Trophy } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
@@ -31,6 +32,7 @@ interface SlotMachineProps {
   onRewardCoins?: (amount: number) => void;
   activeGameId?: GameId;
   isFloorMode?: boolean;
+  onOpenGamble?: () => void;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -50,6 +52,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onRewardCoins: _onRewardCoins,
   activeGameId = 'vault-24k',
   isFloorMode = false,
+  onOpenGamble,
 }) => {
   const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
@@ -557,7 +560,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The 5 Animated Reels with SVG Payline Canvas */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(230px,48vh,440px)] sm:h-[clamp(320px,56vh,640px)] md:h-[clamp(360px,59vh,690px)] xl:h-[clamp(390px,62vh,730px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(240px,50vh,460px)] sm:h-[clamp(360px,62vh,680px)] md:h-[clamp(410px,66vh,740px)] xl:h-[clamp(450px,70vh,820px)] 2xl:h-[clamp(490px,74vh,880px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : 'bg-casino-950/95 border-white/10'
@@ -584,6 +587,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             {/* Floating Win Badges on Active Winning Paylines */}
             {!isAnyReelSpinning && activeWin && (
               <FloatingWins activeWin={activeWin} isTimber={isTimber} />
+            )}
+
+            {/* HERO CENTER-STAGE WIN CELEBRATION BANNER */}
+            {!isAnyReelSpinning && spinResult && spinResult.totalPayout > 0 && (
+              <HeroWinCelebration
+                totalPayout={spinResult.totalPayout}
+                winningLines={spinResult.winningLines}
+                activeWinningLine={activeWin}
+                activeGameId={activeGameId}
+                onOpenGamble={onOpenGamble}
+              />
             )}
 
             {/* Full Slot Panoramic Scene Slide (Middle 3 Reels Merge) */}
