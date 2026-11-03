@@ -2036,6 +2036,391 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           </svg>
         );
 
+      // =====================================================================
+      // --- PLAYSTATION 2 EMOTION ENGINE LEGENDS SYMBOLS ---
+      // =====================================================================
+
+      case 'PS2_LOGO':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)] overflow-visible">
+            <defs>
+              <linearGradient id="ps2BlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#00F0FF" />
+                <stop offset="30%" stopColor="#006FCD" />
+                <stop offset="70%" stopColor="#003791" />
+                <stop offset="100%" stopColor="#4F46E5" />
+              </linearGradient>
+              <linearGradient id="ps2BadgeChassis" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#1E293B" />
+                <stop offset="50%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#020617" />
+              </linearGradient>
+            </defs>
+
+            {/* Monolithic Ribbed PS2 Standee Plaque */}
+            <rect x="6" y="8" width="88" height="84" rx="4" fill="url(#ps2BadgeChassis)" stroke="#006FCD" strokeWidth="2.5" />
+            <rect x="10" y="12" width="80" height="8" rx="1" fill="#020617" />
+            <rect x="10" y="80" width="80" height="8" rx="1" fill="#020617" />
+
+            {/* Glowing Cooling Rib Lines */}
+            <line x1="12" y1="23" x2="88" y2="23" stroke="#006FCD" strokeWidth="0.8" opacity="0.6" />
+            <line x1="12" y1="77" x2="88" y2="77" stroke="#006FCD" strokeWidth="0.8" opacity="0.6" />
+
+            {/* Rotating PlayStation Quad-Color Family Badge in Corner */}
+            <rect x="12" y="14" width="9" height="9" rx="1" fill="#000" stroke="#38BDF8" strokeWidth="0.8" />
+            <path d="M14 16 L17 19 L19 14" stroke="#FF1744" strokeWidth="1" fill="none" />
+            <path d="M14 20 L19 20" stroke="#00E676" strokeWidth="1" />
+
+            {/* Standby & Eject LEDs */}
+            <circle cx="82" cy="18" r="2" fill="#00F0FF" className="animate-pulse" />
+            <circle cx="76" cy="18" r="1.5" fill="#10B981" />
+
+            {/* Iconic 128-Bit Stylized 'PS2' Monolithic Wordmark */}
+            <text x="50" y="56" textAnchor="middle" fill="url(#ps2BlueGrad)" fontWeight="900" fontSize="30" fontFamily="'Impact', 'Arial Black', sans-serif" letterSpacing="2.5" stroke="#E0F2FE" strokeWidth="0.8">
+              PS2
+            </text>
+
+            {/* Badge: EMOTION ENGINE • 128-BIT */}
+            <rect x="14" y="64" width="72" height="12" rx="2" fill="#003791" stroke="#38BDF8" strokeWidth="1" />
+            <text x="50" y="72.5" textAnchor="middle" fill="#FFFFFF" fontWeight="900" fontSize="6.5" fontFamily="monospace" letterSpacing="1.2">
+              ★ EMOTION WILD ★
+            </text>
+          </svg>
+        );
+
+      case 'DVD_DISC':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(56,189,248,0.8)] overflow-visible">
+            <defs>
+              <radialGradient id="ps2DiscSheen" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#0F172A" />
+                <stop offset="18%" stopColor="#1E293B" />
+                <stop offset="22%" stopColor="#E2E8F0" />
+                <stop offset="35%" stopColor="#38BDF8" />
+                <stop offset="55%" stopColor="#818CF8" />
+                <stop offset="75%" stopColor="#006FCD" />
+                <stop offset="90%" stopColor="#C084FC" />
+                <stop offset="100%" stopColor="#0284C7" />
+              </radialGradient>
+              <linearGradient id="discHoloPrism" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
+                <stop offset="30%" stopColor="rgba(56,189,248,0.7)" />
+                <stop offset="60%" stopColor="rgba(236,72,153,0.7)" />
+                <stop offset="100%" stopColor="rgba(52,211,153,0.8)" />
+              </linearGradient>
+            </defs>
+
+            {/* Disc Outer Rim */}
+            <circle cx="50" cy="50" r="44" fill="url(#ps2DiscSheen)" stroke="#BAE6FD" strokeWidth="2" />
+
+            {/* Prismatic Rainbow Laser Reflection Cones */}
+            <path d="M50 50 L18 18 A44 44 0 0 1 82 18 Z" fill="url(#discHoloPrism)" opacity="0.45" />
+            <path d="M50 50 L82 82 A44 44 0 0 1 18 82 Z" fill="url(#discHoloPrism)" opacity="0.45" />
+
+            {/* Clear Center Spindle Ring */}
+            <circle cx="50" cy="50" r="18" fill="#020617" stroke="#E2E8F0" strokeWidth="1.5" />
+            <circle cx="50" cy="50" r="14" fill="#0F172A" stroke="#94A3B8" strokeWidth="1" />
+            <circle cx="50" cy="50" r="7" fill="#000" stroke="#38BDF8" strokeWidth="1" />
+
+            {/* PlayStation Authentic Outer Hologram Ring */}
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="3,2" opacity="0.8" />
+
+            {/* Banner: FREE SPINS SCATTER */}
+            <rect x="10" y="74" width="80" height="15" rx="3" fill="#000" stroke="#38BDF8" strokeWidth="1.5" />
+            <rect x="12" y="76" width="76" height="11" rx="2" fill="#003791" />
+            <text x="50" y="84" textAnchor="middle" fill="#E0F2FE" fontWeight="900" fontSize="7" fontFamily="monospace" letterSpacing="1.2">
+              💿 DVD SCATTER 💿
+            </text>
+          </svg>
+        );
+
+      case 'MEMORY_CARD':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(168,85,247,0.7)] overflow-visible">
+            <defs>
+              <linearGradient id="memCardBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#1E1B4B" />
+                <stop offset="40%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#020617" />
+              </linearGradient>
+            </defs>
+
+            {/* 8MB Memory Card Silhouette with Notched Corner */}
+            <path
+              d="M18 10 H76 L84 18 V88 H18 Z"
+              fill="url(#memCardBody)"
+              stroke="#A855F7"
+              strokeWidth="2.5"
+            />
+
+            {/* Top Grip Recess */}
+            <rect x="26" y="16" width="48" height="6" rx="2" fill="#020617" stroke="#38BDF8" strokeWidth="0.8" />
+            <line x1="32" y1="19" x2="68" y2="19" stroke="#64748B" strokeWidth="1" strokeDasharray="2,2" />
+
+            {/* Red Access LED */}
+            <circle cx="74" cy="28" r="2.5" fill="#EF4444" className="animate-pulse" />
+            <circle cx="74" cy="28" r="4" fill="none" stroke="#EF4444" strokeWidth="0.8" opacity="0.6" />
+
+            {/* Printed "Memory Card" Label Plaque */}
+            <rect x="22" y="26" width="46" height="16" rx="2" fill="#000" stroke="#64748B" strokeWidth="1" />
+            <text x="25" y="34" fill="#C084FC" fontWeight="900" fontSize="6.5" fontFamily="sans-serif">
+              MagicGate
+            </text>
+            <text x="25" y="40" fill="#94A3B8" fontWeight="bold" fontSize="5" fontFamily="monospace">
+              MEMORY CARD
+            </text>
+
+            {/* Big 8MB Foil Stamp */}
+            <rect x="22" y="46" width="56" height="26" rx="2" fill="#1E1B4B" stroke="#C084FC" strokeWidth="1.2" />
+            <text x="50" y="65" textAnchor="middle" fill="#F3E8FF" fontWeight="900" fontSize="18" fontFamily="monospace" letterSpacing="1">
+              8MB
+            </text>
+
+            {/* Bottom Connector Pin Notches */}
+            <rect x="26" y="80" width="48" height="6" fill="#020617" />
+            {[...Array(6)].map((_, i) => (
+              <rect key={i} x={30 + i * 7} y="81" width="4" height="4" fill="#EAB308" />
+            ))}
+          </svg>
+        );
+
+      case 'EMOTION_ENGINE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(96,165,250,0.8)] overflow-visible">
+            <defs>
+              <linearGradient id="eeChipBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#1E293B" />
+                <stop offset="50%" stopColor="#0B132B" />
+                <stop offset="100%" stopColor="#020617" />
+              </linearGradient>
+              <linearGradient id="eeGoldPins" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FDE047" />
+                <stop offset="100%" stopColor="#D97706" />
+              </linearGradient>
+            </defs>
+
+            {/* Silicon Ceramic Chip Package */}
+            <rect x="14" y="14" width="72" height="72" rx="4" fill="url(#eeChipBody)" stroke="#38BDF8" strokeWidth="2" />
+
+            {/* Gold Wire Leads / Pins on Perimeter */}
+            {[...Array(8)].map((_, i) => (
+              <React.Fragment key={i}>
+                <rect x={18 + i * 8} y="8" width="4" height="6" fill="url(#eeGoldPins)" />
+                <rect x={18 + i * 8} y="86" width="4" height="6" fill="url(#eeGoldPins)" />
+                <rect x="8" y={18 + i * 8} width="6" height="4" fill="url(#eeGoldPins)" />
+                <rect x="86" y={18 + i * 8} width="6" height="4" fill="url(#eeGoldPins)" />
+              </React.Fragment>
+            ))}
+
+            {/* Central Heatspreader Mirror Die */}
+            <rect x="24" y="24" width="52" height="52" rx="2" fill="#020617" stroke="#60A5FA" strokeWidth="1.5" />
+
+            {/* Circuit Traces */}
+            <path d="M28 28 H38 V40 H48" stroke="#38BDF8" strokeWidth="1" fill="none" opacity="0.6" />
+            <path d="M72 72 H62 V60 H52" stroke="#38BDF8" strokeWidth="1" fill="none" opacity="0.6" />
+
+            {/* Laser Engraved CPU Branding */}
+            <text x="50" y="42" textAnchor="middle" fill="#94A3B8" fontWeight="bold" fontSize="7" fontFamily="sans-serif" letterSpacing="1.5">
+              SONY ®
+            </text>
+            <text x="50" y="52" textAnchor="middle" fill="#38BDF8" fontWeight="900" fontSize="9" fontFamily="sans-serif" letterSpacing="0.8">
+              Emotion
+            </text>
+            <text x="50" y="61" textAnchor="middle" fill="#60A5FA" fontWeight="900" fontSize="9" fontFamily="sans-serif" letterSpacing="0.8">
+              Engine
+            </text>
+            <text x="50" y="70" textAnchor="middle" fill="#E2E8F0" fontWeight="bold" fontSize="6" fontFamily="monospace">
+              294.912 MHz
+            </text>
+          </svg>
+        );
+
+      case 'DUALSHOCK':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(56,189,248,0.7)] overflow-visible">
+            {/* DualShock 2 Monolithic Grip Chassis */}
+            <path
+              d="M15 72 C12 55 16 34 26 28 C34 24 42 28 50 32 C58 28 66 24 74 28 C84 34 88 55 85 72 C83 80 75 82 70 76 L62 58 C58 56 54 56 50 56 C46 56 42 56 38 58 L30 76 C25 82 17 80 15 72 Z"
+              fill="#0F172A"
+              stroke="#006FCD"
+              strokeWidth="2.5"
+            />
+
+            {/* D-Pad on Left */}
+            <path d="M26 36 H32 V42 H38 V48 H32 V54 H26 V48 H20 V42 H26 Z" fill="#020617" stroke="#64748B" strokeWidth="1" />
+
+            {/* Twin Analog Sticks with Concave Thumb Cups */}
+            <circle cx="38" cy="62" r="9" fill="#020617" stroke="#38BDF8" strokeWidth="1.5" />
+            <circle cx="38" cy="62" r="5" fill="#1E293B" stroke="#64748B" strokeWidth="0.8" />
+            <circle cx="62" cy="62" r="9" fill="#020617" stroke="#38BDF8" strokeWidth="1.5" />
+            <circle cx="62" cy="62" r="5" fill="#1E293B" stroke="#64748B" strokeWidth="0.8" />
+
+            {/* Red Analog Mode LED */}
+            <circle cx="50" cy="50" r="1.5" fill="#EF4444" className="animate-pulse" />
+
+            {/* The 4 Iconic Symbol Buttons on Right Face */}
+            <circle cx="74" cy="36" r="2.8" fill="#020617" stroke="#00E676" strokeWidth="1" />
+            <circle cx="81" cy="43" r="2.8" fill="#020617" stroke="#FF1744" strokeWidth="1" />
+            <circle cx="74" cy="50" r="2.8" fill="#020617" stroke="#2979FF" strokeWidth="1" />
+            <circle cx="67" cy="43" r="2.8" fill="#020617" stroke="#F50057" strokeWidth="1" />
+
+            {/* SONY Branding Header */}
+            <text x="50" y="38" textAnchor="middle" fill="#94A3B8" fontWeight="bold" fontSize="5" fontFamily="sans-serif" letterSpacing="1">
+              SONY
+            </text>
+          </svg>
+        );
+
+      case 'PS_TRIANGLE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,230,118,0.8)] overflow-visible">
+            {/* DualShock Beveled Button Well */}
+            <circle cx="50" cy="50" r="42" fill="#0F172A" stroke="#1E293B" strokeWidth="3" />
+            <circle cx="50" cy="50" r="36" fill="#020617" stroke="#00E676" strokeWidth="2" />
+
+            {/* Radiant Glowing Triangle */}
+            <polygon
+              points="50,22 76,68 24,68"
+              fill="none"
+              stroke="#00E676"
+              strokeWidth="7"
+              strokeLinejoin="round"
+              className="drop-shadow-[0_0_10px_#00E676]"
+            />
+            <polygon
+              points="50,22 76,68 24,68"
+              fill="none"
+              stroke="#FFFFFF"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+
+      case 'PS_CIRCLE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(255,23,68,0.8)] overflow-visible">
+            {/* DualShock Beveled Button Well */}
+            <circle cx="50" cy="50" r="42" fill="#0F172A" stroke="#1E293B" strokeWidth="3" />
+            <circle cx="50" cy="50" r="36" fill="#020617" stroke="#FF1744" strokeWidth="2" />
+
+            {/* Radiant Glowing Circle */}
+            <circle
+              cx="50"
+              cy="50"
+              r="24"
+              fill="none"
+              stroke="#FF1744"
+              strokeWidth="7"
+              className="drop-shadow-[0_0_10px_#FF1744]"
+            />
+            <circle cx="50" cy="50" r="24" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+          </svg>
+        );
+
+      case 'PS_CROSS':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(41,121,255,0.8)] overflow-visible">
+            {/* DualShock Beveled Button Well */}
+            <circle cx="50" cy="50" r="42" fill="#0F172A" stroke="#1E293B" strokeWidth="3" />
+            <circle cx="50" cy="50" r="36" fill="#020617" stroke="#2979FF" strokeWidth="2" />
+
+            {/* Radiant Glowing Cross */}
+            <path
+              d="M32 32 L68 68 M68 32 L32 68"
+              stroke="#2979FF"
+              strokeWidth="8"
+              strokeLinecap="round"
+              className="drop-shadow-[0_0_10px_#2979FF]"
+            />
+            <path
+              d="M32 32 L68 68 M68 32 L32 68"
+              stroke="#FFFFFF"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        );
+
+      case 'PS_SQUARE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(245,0,87,0.8)] overflow-visible">
+            {/* DualShock Beveled Button Well */}
+            <circle cx="50" cy="50" r="42" fill="#0F172A" stroke="#1E293B" strokeWidth="3" />
+            <circle cx="50" cy="50" r="36" fill="#020617" stroke="#F50057" strokeWidth="2" />
+
+            {/* Radiant Glowing Square */}
+            <rect
+              x="29"
+              y="29"
+              width="42"
+              height="42"
+              rx="4"
+              fill="none"
+              stroke="#F50057"
+              strokeWidth="7"
+              className="drop-shadow-[0_0_10px_#F50057]"
+            />
+            <rect x="29" y="29" width="42" height="42" rx="4" fill="none" stroke="#FFFFFF" strokeWidth="2" />
+          </svg>
+        );
+
+      case 'BOOT_TOWER':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(129,140,248,0.8)] overflow-visible">
+            <defs>
+              <linearGradient id="towerGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#C7D2FE" />
+                <stop offset="35%" stopColor="#818CF8" />
+                <stop offset="70%" stopColor="#4338CA" />
+                <stop offset="100%" stopColor="#1E1B4B" />
+              </linearGradient>
+            </defs>
+
+            {/* Bios Ocean Dark Void Background with Horizon Grid Line */}
+            <rect x="8" y="10" width="84" height="80" rx="4" fill="#020617" stroke="#4338CA" strokeWidth="2" />
+            <line x1="8" y1="65" x2="92" y2="65" stroke="#6366F1" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+
+            {/* 3D Translucent Floating Boot Monoliths */}
+            {/* Monolith 1 (Back left) */}
+            <polygon points="22,35 32,28 32,70 22,76" fill="#312E81" opacity="0.7" />
+            <polygon points="32,28 42,34 42,74 32,70" fill="#4338CA" opacity="0.8" />
+            <polygon points="22,35 32,28 42,34 32,40" fill="#818CF8" opacity="0.9" />
+
+            {/* Monolith 2 (Main front right) */}
+            <polygon points="46,24 64,14 64,68 46,78" fill="#4338CA" />
+            <polygon points="64,14 78,22 78,74 64,68" fill="url(#towerGlassGrad)" />
+            <polygon points="46,24 64,14 78,22 60,32" fill="#E0E7FF" opacity="0.9" />
+
+            {/* Atmospheric Starlight Specks */}
+            <circle cx="28" cy="20" r="1.5" fill="#FFF" className="animate-ping" />
+            <circle cx="80" cy="40" r="1" fill="#818CF8" />
+            <circle cx="70" cy="80" r="1.2" fill="#00F0FF" />
+          </svg>
+        );
+
+      case 'ANALOG_STICK':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(148,163,184,0.7)] overflow-visible">
+            {/* Beveled Stick Well */}
+            <circle cx="50" cy="50" r="42" fill="#0B132B" stroke="#1E293B" strokeWidth="3" />
+            <circle cx="50" cy="50" r="36" fill="#020617" stroke="#475569" strokeWidth="1.5" />
+
+            {/* Knurled Outer Rubber Thumb Cap */}
+            <circle cx="50" cy="50" r="30" fill="#1E293B" stroke="#64748B" strokeWidth="2" />
+
+            {/* Tactile 4-Direction Knurls */}
+            <rect x="48" y="22" width="4" height="6" rx="1" fill="#94A3B8" />
+            <rect x="48" y="72" width="4" height="6" rx="1" fill="#94A3B8" />
+            <rect x="22" y="48" width="6" height="4" rx="1" fill="#94A3B8" />
+            <rect x="72" y="48" width="6" height="4" rx="1" fill="#94A3B8" />
+
+            {/* Concave Center Cup */}
+            <circle cx="50" cy="50" r="18" fill="#0F172A" stroke="#334155" strokeWidth="1.5" />
+            <circle cx="50" cy="50" r="10" fill="#020617" />
+          </svg>
+        );
+
       default:
         return null;
     }
@@ -2049,6 +2434,11 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
   const isPixelSymbol = [
     'CYBER_WILD', 'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'BOSS_DRAGON', 'HERO_KNIGHT',
     'GAMEPAD', 'JOYSTICK', 'POTION_HEAL', 'PIXEL_A', 'PIXEL_K', 'PIXEL_Q', 'PIXEL_J', 'PIXEL_10'
+  ].includes(id);
+
+  const isPs2Symbol = [
+    'PS2_LOGO', 'DVD_DISC', 'MEMORY_CARD', 'EMOTION_ENGINE', 'DUALSHOCK',
+    'PS_TRIANGLE', 'PS_CIRCLE', 'PS_CROSS', 'PS_SQUARE', 'BOOT_TOWER', 'ANALOG_STICK'
   ].includes(id);
 
   const getWinningAnimationClass = () => {
@@ -2106,6 +2496,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               ? 'bg-gradient-to-r from-emerald-400/40 via-amber-400/40 to-emerald-400/40 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
               : isPixelSymbol
               ? 'bg-gradient-to-r from-purple-500/40 via-pink-500/40 to-cyan-400/40 shadow-[0_0_25px_rgba(236,72,153,0.9)]'
+              : isPs2Symbol
+              ? 'bg-gradient-to-r from-blue-600/45 via-cyan-400/45 to-indigo-600/45 shadow-[0_0_30px_rgba(0,111,205,0.95)]'
               : 'bg-gold-400/40 shadow-[0_0_25px_rgba(251,191,36,0.9)]'
           }`}
         />
@@ -2118,6 +2510,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               ? 'bg-emerald-400/45 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
               : id === 'PIXEL_CARTRIDGE'
               ? 'bg-purple-400/45 shadow-[0_0_25px_rgba(168,85,247,0.9)]'
+              : id === 'DVD_DISC' || id === 'MEMORY_CARD'
+              ? 'bg-cyan-400/50 shadow-[0_0_30px_rgba(56,189,248,0.9)]'
               : 'bg-cyan-400/40 shadow-[0_0_25px_rgba(0,240,255,0.8)]'
           }`}
         />
@@ -2135,6 +2529,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               ? 'bg-gradient-to-r from-transparent via-amber-200/50 via-emerald-100/60 to-transparent'
               : isPixelSymbol
               ? 'bg-gradient-to-r from-transparent via-cyan-200/55 via-pink-200/60 to-transparent'
+              : isPs2Symbol
+              ? 'bg-gradient-to-r from-transparent via-cyan-300/60 via-blue-200/70 to-transparent'
               : 'bg-gradient-to-r from-transparent via-white/65 via-yellow-100/80 to-transparent'
           } animate-symbol-gleam mix-blend-screen pointer-events-none`}
           style={staggerDelay ? { animationDelay: staggerDelay } : undefined}
@@ -2170,6 +2566,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               ? 'fill-amber-300 drop-shadow-[0_0_6px_#F59E0B]'
               : isPixelSymbol
               ? 'fill-cyan-300 drop-shadow-[0_0_6px_#06B6D4]'
+              : isPs2Symbol
+              ? 'fill-blue-400 drop-shadow-[0_0_8px_#38BDF8]'
               : 'fill-yellow-200 drop-shadow-[0_0_6px_#FDE047]'
           }`}
         >

@@ -64,6 +64,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const [showAutoMenu, setShowAutoMenu] = useState(false);
 
   const effectiveBetSteps = betSteps && betSteps.length > 0 ? betSteps : BET_PER_LINE_STEPS;
@@ -957,6 +958,286 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
     </div>
   );
 
+  // =========================================================================
+  // --- VERSION D: PLAYSTATION 2 EMOTION ENGINE DUALSHOCK 2 CONTROLS DECK ---
+  // =========================================================================
+  const renderPs2DesktopControls = () => (
+    <div className="hidden sm:flex flex-col space-y-1 sm:space-y-1.5 w-full font-mono">
+      {/* Matte Obsidian Ribbed DualShock 2 Console Frame */}
+      <div
+        className="relative bg-gradient-to-r from-[#03060c] via-[#080d1a] to-[#03060c] border-2 border-[#006FCD] p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(0,111,205,0.45)] flex items-center justify-between gap-1.5 sm:gap-2"
+        style={{
+          clipPath:
+            'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)',
+        }}
+      >
+        {/* Left Wing: DualShock D-Pad & Analog Bet Stepper */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 pl-1.5 sm:pl-2.5">
+          {/* DualShock Red LED Analog / Turbo Mode Toggle */}
+          <button
+            onClick={() => {
+              soundManager.playButtonClick();
+              onTurboToggle();
+            }}
+            disabled={isSpinning}
+            title={isTurbo ? 'Analog Turbo Mode Active' : 'Digital Mode (Normal)'}
+            className={`flex flex-col items-center justify-center w-8 h-8 sm:w-9 sm:h-9 border transition-all ${
+              isTurbo
+                ? 'bg-gradient-to-b from-[#1a080c] to-[#2a0c14] border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)]'
+                : 'bg-[#080a14] border-slate-700 hover:border-[#006FCD]'
+            }`}
+            style={{
+              clipPath:
+                'polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)',
+            }}
+          >
+            <span className="text-[6.5px] font-black tracking-tighter text-slate-400 uppercase">ANALOG</span>
+            <div
+              className={`w-2 h-2 rounded-full mt-0.5 border ${
+                isTurbo
+                  ? 'bg-rose-500 border-white shadow-[0_0_8px_#f43f5e] animate-pulse'
+                  : 'bg-rose-950 border-rose-900/60'
+              }`}
+            />
+          </button>
+
+          {/* D-Pad Payline Selector */}
+          <div
+            className="flex flex-col items-center bg-[#050811] px-1.5 py-0.5 sm:py-1 border border-[#006FCD]/60 shadow-inner"
+            style={{
+              clipPath:
+                'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+            }}
+          >
+            <span className="text-[7px] font-black uppercase text-[#00F0FF] tracking-wider">LINES</span>
+            <div className="flex items-center space-x-0.5 sm:space-x-1 mt-0.5">
+              <button
+                onClick={() => handleLinesStep('down')}
+                disabled={isSpinning || isFreeSpins || selectedLines <= 1}
+                className="w-5 h-5 sm:w-5.5 sm:h-5.5 bg-[#0a1224] border border-[#006FCD]/40 disabled:opacity-30 flex items-center justify-center text-cyan-300 font-bold active:scale-95 hover:bg-[#006FCD]/30"
+              >
+                <Minus className="w-2.5 h-2.5 text-cyan-300" />
+              </button>
+              <span className="text-xs sm:text-sm font-black text-[#00F0FF] min-w-[22px] sm:min-w-[26px] text-center font-mono drop-shadow-[0_0_6px_#00F0FF]">
+                {selectedLines}
+              </span>
+              <button
+                onClick={() => handleLinesStep('up')}
+                disabled={isSpinning || isFreeSpins || selectedLines >= maxLines}
+                className="w-5 h-5 sm:w-5.5 sm:h-5.5 bg-[#0a1224] border border-[#006FCD]/40 disabled:opacity-30 flex items-center justify-center text-cyan-300 font-bold active:scale-95 hover:bg-[#006FCD]/30"
+              >
+                <Plus className="w-2.5 h-2.5 text-cyan-300" />
+              </button>
+            </div>
+          </div>
+
+          {/* DualShock Stepped Bet Values */}
+          <div
+            className="flex items-center space-x-1 px-1 sm:px-1.5 py-0.5 sm:py-1 bg-black/90 border border-[#006FCD]/60 shadow-inner"
+            style={{
+              clipPath:
+                'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+            }}
+          >
+            {effectiveBetSteps.slice(0, 6).map((step) => {
+              const isSelected = betPerLine === step;
+              const isChipAllowed = step <= effectiveMaxBetPerLine && step * selectedLines <= maxAllowedBet;
+              return (
+                <button
+                  key={step}
+                  onClick={() => {
+                    if (isChipAllowed && !isSpinning && !isFreeSpins) {
+                      soundManager.playChipClick();
+                      onBetPerLineChange(step);
+                    }
+                  }}
+                  disabled={!isChipAllowed || isSpinning || isFreeSpins}
+                  className={`w-6 h-6 sm:w-6.5 sm:h-6.5 border text-[7.5px] sm:text-[8px] font-black font-mono flex items-center justify-center shadow-md transition-all ${
+                    isSelected
+                      ? 'bg-gradient-to-tr from-[#004B93] to-[#00F0FF] text-white border-white ring-2 ring-[#006FCD] scale-110 shadow-[0_0_10px_#006FCD]'
+                      : isChipAllowed
+                      ? 'bg-[#060c18] text-cyan-300 border-[#006FCD]/60 hover:scale-105'
+                      : 'bg-black/40 text-slate-600 border-white/5 opacity-40 cursor-not-allowed'
+                  }`}
+                  style={{
+                    clipPath:
+                      'polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)',
+                  }}
+                  title={`Bet $${step} per line`}
+                >
+                  ${step}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Total Wager Display */}
+          <div
+            className="flex flex-col items-center px-1.5 py-0.5 sm:py-1 bg-black border border-[#006FCD]/80 shadow-inner min-w-[55px] sm:min-w-[65px]"
+            style={{
+              clipPath:
+                'polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)',
+            }}
+          >
+            <span className="text-[6.5px] font-black uppercase text-cyan-400 tracking-wider">TOTAL WAGER</span>
+            <span className="text-xs sm:text-sm font-black text-cyan-200 font-mono drop-shadow-[0_0_8px_#00F0FF]">
+              ${totalBet.toLocaleString()}
+            </span>
+          </div>
+
+          {/* R2 MAX Wager Trigger */}
+          <button
+            onClick={() => {
+              soundManager.playChipClick();
+              onMaxBet();
+            }}
+            disabled={isSpinning || isFreeSpins || totalBet >= maxAllowedBet}
+            className="px-2 sm:px-2.5 h-8 sm:h-8.5 md:h-9 font-black text-[8px] sm:text-[8.5px] uppercase tracking-wider disabled:opacity-40 flex items-center justify-center flex-shrink-0 shadow-md bg-gradient-to-b from-[#003366] to-[#001933] border-2 border-[#006FCD] hover:border-[#00F0FF] text-cyan-200 active:scale-95"
+            style={{
+              clipPath:
+                'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+            }}
+          >
+            R2 MAX
+          </button>
+        </div>
+
+        {/* Right Wing: Win Readout, Gamble, Auto */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 pr-1.5 sm:pr-2.5">
+          <RollingWinDisplay targetAmount={winAmount} isFreeSpins={isFreeSpins} activeGameId={activeGameId} />
+
+          {onOpenGamble && (
+            <button
+              onClick={() => {
+                if (winAmount > 0 && !isSpinning && !isFreeSpins) {
+                  soundManager.playButtonClick();
+                  onOpenGamble();
+                }
+              }}
+              disabled={winAmount <= 0 || isSpinning || isFreeSpins}
+              className={`flex items-center justify-center space-x-1 px-1.5 sm:px-2 h-8 sm:h-8.5 md:h-9 font-black text-[8px] sm:text-[8.5px] uppercase transition-all duration-200 flex-shrink-0 ${
+                winAmount > 0 && !isSpinning && !isFreeSpins
+                  ? 'bg-gradient-to-r from-rose-700 to-rose-900 border border-rose-400 text-white animate-pulse cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.7)]'
+                  : 'bg-[#03060c] border border-white/5 text-slate-600 opacity-40 cursor-not-allowed'
+              }`}
+              style={{
+                clipPath:
+                  'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+              }}
+            >
+              <span className="text-[#24B059] text-[9px]">△</span>
+              <span>2X GAMBLE</span>
+              <span className="text-[#E61A22] text-[9px]">○</span>
+            </button>
+          )}
+
+          {/* DualShock Pill SELECT / START Auto Spins */}
+          <div className="relative">
+            {isAutoSpinning ? (
+              <button
+                onClick={onAutoSpinStop}
+                className="flex items-center justify-center space-x-1 px-2 h-8 sm:h-8.5 md:h-9 bg-rose-900/60 border border-rose-500 text-rose-200 font-bold text-[10px] sm:text-xs uppercase animate-pulse shadow-[0_0_12px_#F43F5E]"
+                style={{
+                  clipPath:
+                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+                }}
+              >
+                <StopCircle className="w-3.5 h-3.5" />
+                <span>Stop ({autoSpinsRemaining})</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  setShowAutoMenu(!showAutoMenu);
+                }}
+                disabled={isSpinning || isFreeSpins}
+                className="flex items-center justify-center space-x-1 px-2 h-8 sm:h-8.5 md:h-9 bg-[#080d1a] border border-[#006FCD] hover:border-[#00F0FF] text-cyan-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider disabled:opacity-40"
+                style={{
+                  clipPath:
+                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+                }}
+              >
+                <RefreshCw className="w-3 h-3 text-[#00F0FF]" />
+                <span>SELECT</span>
+              </button>
+            )}
+
+            {showAutoMenu && !isAutoSpinning && (
+              <div
+                className="absolute bottom-full mb-2 right-0 bg-[#050811] border-2 border-[#006FCD] p-2 shadow-2xl flex flex-col space-y-1.5 z-40 min-w-[130px]"
+                style={{
+                  clipPath:
+                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+                }}
+              >
+                <div className="text-[10px] text-cyan-400 font-bold uppercase text-center py-0.5">AUTO CYCLE</div>
+                {[10, 25, 50, 100].map((count) => (
+                  <button
+                    key={count}
+                    onClick={() => {
+                      soundManager.playButtonClick();
+                      setShowAutoMenu(false);
+                      onAutoSpinStart(count);
+                    }}
+                    className="px-3 py-1.5 bg-[#0a1224] hover:bg-[#006FCD] hover:text-white text-xs font-bold text-cyan-200 text-center transition-colors"
+                  >
+                    {count} Cycles
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Giant DualShock 2 Face Button Actuator */}
+      <div className="w-full h-8 sm:h-9 md:h-10 flex items-center justify-center">
+        <button
+          onClick={handleTriggerSpin}
+          disabled={!isSpinning && !isFreeSpins && balance < totalBet}
+          className={`w-72 sm:w-88 md:w-96 h-8 sm:h-9 md:h-9.5 font-black tracking-widest text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl active:scale-95 flex items-center justify-center ${
+            isSpinning
+              ? 'bg-gradient-to-r from-rose-900 via-rose-700 to-rose-900 border-2 border-rose-400 animate-pulse cursor-pointer shadow-[0_0_20px_rgba(244,63,94,0.7)]'
+              : !isFreeSpins && balance < totalBet
+              ? 'bg-[#080d1a] opacity-40 cursor-not-allowed text-slate-500 border border-white/5'
+              : isFreeSpins
+              ? 'bg-gradient-to-r from-[#003366] via-[#006FCD] to-[#003366] border-2 border-[#00F0FF] animate-pulse text-white shadow-[0_0_25px_rgba(0,111,205,0.8)]'
+              : 'bg-gradient-to-r from-[#001933] via-[#004B93] to-[#001933] border-2 border-[#006FCD] hover:border-[#00F0FF] text-white shadow-[0_0_20px_rgba(0,111,205,0.6)]'
+          }`}
+          style={{
+            clipPath:
+              'polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px)',
+          }}
+        >
+          {isSpinning ? (
+            <span className="flex items-center space-x-2 text-white">
+              <StopCircle className="w-5 h-5 fill-white text-rose-700" />
+              <span>[ ✕ QUICK STOP ]</span>
+            </span>
+          ) : isFreeSpins ? (
+            <span className="flex items-center space-x-2 font-mono text-cyan-200">
+              <Zap className="w-5 h-5 text-[#00F0FF] fill-[#00F0FF] animate-pulse" />
+              <span>⚡ EMOTION ENGINE OVERCLOCK ⚡</span>
+            </span>
+          ) : !isFreeSpins && balance < totalBet ? (
+            <span className="flex items-center space-x-2 text-rose-400 font-mono text-[10px] sm:text-xs">
+              <span>⚠ INSUFFICIENT CREDITS ⚠</span>
+            </span>
+          ) : (
+            <span className="flex items-center space-x-2 font-mono">
+              <span className="text-[#24B059] text-sm">△</span>
+              <span className="text-[#DF508E] text-sm">□</span>
+              <span className="text-[#00F0FF] font-black tracking-widest px-1">EMOTION ENGINE SPIN</span>
+              <span className="text-[#006FCD] text-sm font-black">✕</span>
+              <span className="text-[#E61A22] text-sm">○</span>
+            </span>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-3 py-0.5 sm:py-1 select-none flex flex-col space-y-0.5 sm:space-y-1 flex-shrink-0">
       {/* ========================================================================= */}
@@ -965,7 +1246,9 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       <div className="sm:hidden flex flex-col space-y-1 w-full">
         <div
           className={`flex items-center justify-between px-2 py-1 border shadow-md h-9 ${
-            isTimber
+            isPs2
+              ? 'bg-[#050811]/95 border-[#006FCD] text-cyan-200 font-mono shadow-[0_0_12px_rgba(0,111,205,0.4)]'
+              : isTimber
               ? 'bg-[#121c15]/95 border-emerald-600/70 text-emerald-200'
               : isPixel
               ? 'bg-black border-2 border-pink-500 text-cyan-200 font-mono'
@@ -993,7 +1276,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               <Minus className="w-2.5 h-2.5 text-cyan-300" />
             </button>
             <span className={`text-[11px] font-black font-mono min-w-[16px] text-center ${
-              isTimber ? 'text-emerald-300' : isPixel ? 'text-pink-300' : 'text-neon-cyan'
+              isPs2 ? 'text-[#00F0FF]' : isTimber ? 'text-emerald-300' : isPixel ? 'text-pink-300' : 'text-neon-cyan'
             }`}>
               {selectedLines}
             </span>
@@ -1078,7 +1361,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             }}
             disabled={isSpinning}
             className={`w-9 h-9 border flex items-center justify-center flex-shrink-0 ${
-              isTurbo ? 'bg-amber-600 text-white border-amber-300' : 'vlt-btn-stepper text-slate-400'
+              isPs2
+                ? isTurbo
+                  ? 'bg-rose-600 text-white border-rose-300 shadow-[0_0_10px_#f43f5e]'
+                  : 'bg-[#080d1a] text-cyan-400 border-[#006FCD]'
+                : isTurbo
+                ? 'bg-amber-600 text-white border-amber-300'
+                : 'vlt-btn-stepper text-slate-400'
             }`}
             style={{
               clipPath: isPixel
@@ -1099,6 +1388,8 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 ? 'bg-rose-700 animate-pulse'
                 : isFreeSpins
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse'
+                : isPs2
+                ? 'bg-gradient-to-r from-[#001933] via-[#004B93] to-[#001933] border border-[#00F0FF] text-cyan-200 font-mono shadow-[0_0_12px_rgba(0,111,205,0.6)]'
                 : isPixel
                 ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 border border-pink-300'
                 : isTimber
@@ -1113,7 +1404,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                 : 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)',
             }}
           >
-            {isSpinning ? 'STOP' : isFreeSpins ? 'FREE SPIN' : isPixel ? 'INSERT COIN' : isTimber ? 'WOODLAND SPIN' : 'SPIN'}
+            {isSpinning ? 'STOP' : isFreeSpins ? 'OVERCLOCK' : isPs2 ? '✕ EMOTION ENGINE' : isPixel ? 'INSERT COIN' : isTimber ? 'WOODLAND SPIN' : 'SPIN'}
           </button>
 
           <button
@@ -1137,12 +1428,14 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* --- DESKTOP 3 BESPOKE PHYSICAL CONSOLES (>= 640px) --- */}
+      {/* --- DESKTOP 4 BESPOKE PHYSICAL CONSOLES (>= 640px) --- */}
       {/* ========================================================================= */}
       {isPixel
         ? renderPixelDesktopControls()
         : isTimber
         ? renderTimberDesktopControls()
+        : isPs2
+        ? renderPs2DesktopControls()
         : renderVaultDesktopControls()}
     </div>
   );

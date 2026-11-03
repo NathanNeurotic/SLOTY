@@ -139,6 +139,49 @@ export const PIXEL_QUOTA_TIERS: QuotaTier[] = [
   },
 ];
 
+export const PS2_QUOTA_TIERS: QuotaTier[] = [
+  {
+    tier: 1,
+    name: '8MB MagicGate Memory Card Format',
+    targetPoints: 250,
+    coinReward: 1000,
+    dialogueUnlock: 'FORMAT COMPLETE! 8MB MagicGate card initialized in Slot 1! System save blocks allocated.',
+    perkDescription: 'Authentic 8MB block allocation for session winnings.',
+  },
+  {
+    tier: 2,
+    name: 'DualShock 2 Pressure-Sensitive Calibration',
+    targetPoints: 750,
+    coinReward: 2500,
+    dialogueUnlock: 'ANALOG ACTIVE! Dual analog sticks calibrated with 256 levels of pressure sensitivity!',
+    perkDescription: 'Dual rumble vibration motors active during spin anticipation.',
+  },
+  {
+    tier: 3,
+    name: 'Component AV Gold-Plated Cable Upgrade',
+    targetPoints: 2000,
+    coinReward: 5000,
+    dialogueUnlock: 'CRYSTAL CLARITY! Switched to 480p progressive scan component video! The blue lasers gleam.',
+    perkDescription: '480p crystal progressive visual clarity across all 40 paylines.',
+  },
+  {
+    tier: 4,
+    name: '128-Bit Emotion Engine Core Overclock',
+    targetPoints: 5000,
+    coinReward: 15000,
+    dialogueUnlock: 'OVERCLOCK ENGAGED! Emotion Engine CPU pushed to 294.912 MHz! Maximum vector floating point power!',
+    perkDescription: '66 million polygons per second rendering the jackpot aura.',
+  },
+  {
+    tier: 5,
+    name: 'EXPANSION CHAPTER: Midnight BIOS Ocean Void Archive',
+    targetPoints: 15000,
+    coinReward: 50000,
+    dialogueUnlock: 'SYSTEM UNLOCKED! You summoned all floating 3D save monoliths in the BIOS Ocean Void! Chapter 2 Active!',
+    perkDescription: 'Legendary PS2 Grandmaster. All memory towers permanently illuminated.',
+  },
+];
+
 export interface QuotaState {
   currentPoints: number;
   currentTierIndex: number;
@@ -151,6 +194,7 @@ export class QuotaManager {
     'vault-24k': { currentPoints: 0, currentTierIndex: 0, totalCompletedCycles: 0 },
     'timber-critters': { currentPoints: 0, currentTierIndex: 0, totalCompletedCycles: 0 },
     'pixel-arcade': { currentPoints: 0, currentTierIndex: 0, totalCompletedCycles: 0 },
+    'ps2-legends': { currentPoints: 0, currentTierIndex: 0, totalCompletedCycles: 0 },
   };
 
   private listeners: Array<(gameId: GameId, state: QuotaState) => void> = [];
@@ -159,6 +203,7 @@ export class QuotaManager {
     this.loadState('vault-24k');
     this.loadState('timber-critters');
     this.loadState('pixel-arcade');
+    this.loadState('ps2-legends');
   }
 
   public static getInstance(): QuotaManager {
@@ -190,6 +235,7 @@ export class QuotaManager {
   public getTiers(gameId: GameId): QuotaTier[] {
     if (gameId === 'timber-critters') return TIMBER_QUOTA_TIERS;
     if (gameId === 'pixel-arcade') return PIXEL_QUOTA_TIERS;
+    if (gameId === 'ps2-legends') return PS2_QUOTA_TIERS;
     return VAULT_QUOTA_TIERS;
   }
 

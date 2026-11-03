@@ -29,6 +29,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const gameDef = getGame(activeGameId);
   const isFeverActive = feverSpinsLeft > 0;
 
@@ -86,7 +87,9 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
 
   const handleJackpotClick = () => {
     soundManager.unlockAudio();
-    if (isTimber) {
+    if (isPs2) {
+      soundManager.playPs2Scatter(3);
+    } else if (isTimber) {
       soundManager.playGrizzlyRoar();
     } else if (isPixel) {
       soundManager.playPuppetBoing();
@@ -561,6 +564,199 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // --- VERSION D: PLAYSTATION 2 (EMOTION ENGINE & BIOS MONOLITH TOP BOX) ---
+  // =========================================================================
+  if (isPs2) {
+    const eeMhz = Math.round(294.9 + (feverCharge / 100) * 150);
+    const eeSegments = Math.round((feverCharge / 100) * 12);
+
+    return (
+      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20 font-mono">
+        {/* Mobile Compact PS2 Monolith Bar (< 640px) */}
+        <div className="sm:hidden w-full px-0.5 py-0.5">
+          <div
+            onClick={handleJackpotClick}
+            className="w-full h-11 px-2.5 bg-gradient-to-r from-[#030612] via-[#081126] to-[#030612] border-2 border-[#006FCD] shadow-[0_0_15px_rgba(0,111,205,0.7)] flex items-center justify-between cursor-pointer"
+            style={{
+              clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
+            }}
+          >
+            {/* Left: PS Family Logo badge */}
+            <div className="flex items-center space-x-1.5 flex-shrink-0">
+              <span className="text-[10px] font-black text-[#006FCD] drop-shadow-[0_0_8px_#006FCD]">PS2</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#22c55e]" />
+            </div>
+
+            {/* Center: EMOTION ENGINE GRAND JACKPOT */}
+            <div className="flex flex-col items-center px-1">
+              <span className="text-[7px] font-black text-cyan-400 tracking-wider uppercase">EMOTION ENGINE</span>
+              <div className="flex items-baseline">
+                <span className="text-xs font-black text-cyan-400 mr-0.5">$</span>
+                <span className="text-sm font-black text-white drop-shadow-[0_0_12px_#006FCD]">
+                  {Math.floor(grand).toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            {/* Right: CPU Clock */}
+            <div className="flex items-center space-x-1 flex-shrink-0">
+              <div className="px-1.5 py-0.5 bg-[#00183b] border border-[#006FCD] text-[7.5px] font-bold text-cyan-300">
+                {eeMhz} MHz
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop / Tablet PS2 Console Chassis Top Box (>= 640px) */}
+        <div className="hidden sm:block relative pt-0.5 sm:pt-1">
+          {/* Cobalt Blue Ambient Horizon Glow */}
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3/4 h-10 bg-gradient-to-t from-[#006FCD]/30 via-cyan-500/20 to-transparent filter blur-md pointer-events-none" />
+
+          {/* Ribbed Matte Black Chassis Housing */}
+          <div className="relative bg-gradient-to-b from-[#0a0f1d] via-[#040711] to-[#010308] border-2 border-[#006FCD] shadow-[0_6px_20px_rgba(0,0,0,0.95),0_0_15px_rgba(0,111,205,0.6)] p-1">
+            {/* Top Ribbed Cooling Slat Lines */}
+            <div className="absolute -top-1 left-4 right-4 h-1 flex justify-between space-x-1 opacity-70">
+              {[...Array(24)].map((_, i) => (
+                <div key={i} className="flex-1 h-0.5 bg-[#006FCD]/60 rounded-xs" />
+              ))}
+            </div>
+
+            {/* TIER 1: PS2 EMOTION ENGINE SYSTEM STRIP */}
+            <div className="flex items-center justify-between px-2 py-0.5 border-b border-[#006FCD]/40 bg-[#02050e]/90 text-[8px] sm:text-[9px]">
+              {/* Left: PlayStation 2 Brand Header */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1 px-1.5 py-0.5 bg-black border border-[#006FCD]/80 shadow-[0_0_8px_rgba(0,111,205,0.5)]">
+                  <span className="font-black text-[9px] tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-[#006FCD]">
+                    PlayStation 2
+                  </span>
+                  <span className="text-[7px] text-slate-400">®</span>
+                </div>
+                <div className="hidden md:flex items-center space-x-1 text-[7.5px] text-cyan-300 font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#22c55e] animate-pulse" />
+                  <span>POWER / 294.912 MHz EE</span>
+                </div>
+              </div>
+
+              {/* Center: Overclock Capacitor Meter */}
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <span className="text-[7px] sm:text-[8px] font-black text-cyan-400 uppercase tracking-widest">
+                  EE BUS CLOCK:
+                </span>
+                <div className="flex items-center space-x-0.5 px-1 py-0.5 bg-black border border-[#006FCD]/60">
+                  {[...Array(12)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1.5 sm:w-2 h-2 sm:h-2.5 transition-all ${
+                        i < eeSegments
+                          ? 'bg-gradient-to-t from-[#006FCD] via-cyan-400 to-white shadow-[0_0_6px_#00F0FF]'
+                          : 'bg-[#061024] border border-[#0d2247]'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-[8px] font-black text-cyan-300">{eeMhz} MHz</span>
+              </div>
+
+              {/* Right: Casino Floor Mode / Trophies */}
+              <div className="flex items-center space-x-1 sm:space-x-1.5">
+                {onToggleFloorMode && (
+                  <button
+                    onClick={onToggleFloorMode}
+                    className={`px-1.5 py-0.5 text-[7px] sm:text-[7.5px] font-black uppercase border transition-all ${
+                      isFloorMode
+                        ? 'bg-cyan-500 text-black border-cyan-300 shadow-[0_0_8px_#00F0FF]'
+                        : 'bg-black text-cyan-400/80 border-[#006FCD]/50 hover:bg-[#081836]'
+                    }`}
+                  >
+                    FLOOR
+                  </button>
+                )}
+                {onOpenLeaderboard && (
+                  <button
+                    onClick={onOpenLeaderboard}
+                    className="flex items-center space-x-1 px-1.5 py-0.5 text-[7px] sm:text-[7.5px] font-black uppercase bg-black text-cyan-300 border border-[#006FCD]/60 hover:bg-[#081836]"
+                  >
+                    <Trophy className="w-2.5 h-2.5 text-cyan-400" />
+                    <span>SCORES</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* TIER 2: 3-POD ARCHITECTURAL PROGRESSIVE MARQUEE */}
+            <div className="grid grid-cols-12 gap-1 sm:gap-1.5 pt-1 items-stretch">
+              {/* Left Pod (3 Cols): Graphics Synthesizer Major */}
+              <div
+                onClick={handleJackpotClick}
+                className="col-span-3 bg-gradient-to-b from-[#040a18] via-[#02050e] to-[#010206] border border-[#006FCD]/70 shadow-inner p-1 sm:p-1.5 flex flex-col justify-center items-center cursor-pointer hover:border-cyan-300 transition-all relative overflow-hidden"
+              >
+                <div className="flex items-center space-x-1 text-[#38BDF8] text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-wider">
+                  <span>MAJOR GS 147MHz</span>
+                </div>
+                <div className="flex items-baseline text-white font-mono mt-0.5">
+                  <span className="text-[9px] sm:text-[10px] text-cyan-400 mr-0.5">$</span>
+                  <span className="text-xs sm:text-sm xl:text-base font-black text-cyan-200 drop-shadow-[0_0_8px_#006FCD]">
+                    {major.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Center Monolith (6 Cols): 128-Bit Emotion Engine Grand Jackpot */}
+              <div
+                onClick={handleJackpotClick}
+                className="col-span-6 bg-gradient-to-b from-[#081836] via-[#030917] to-[#010308] border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,111,205,0.8),inset_0_0_15px_rgba(0,111,205,0.4)] p-1 sm:p-1.5 flex flex-col justify-center items-center cursor-pointer hover:border-white transition-all relative overflow-hidden"
+              >
+                <div className="flex items-center space-x-1 sm:space-x-2 text-[8px] sm:text-[9.5px] font-black uppercase tracking-widest text-cyan-300 drop-shadow">
+                  <span>★</span>
+                  <span>128-BIT EMOTION ENGINE GRAND</span>
+                  <span>★</span>
+                </div>
+                <div className="flex items-baseline text-white font-mono mt-0.5">
+                  <span className="text-sm sm:text-base xl:text-xl font-black text-cyan-400 mr-1">$</span>
+                  <span className="text-lg sm:text-xl xl:text-2xl font-black text-white drop-shadow-[0_0_15px_#00F0FF]">
+                    {grand.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Pod (3 Cols): MagicGate Minor & i.LINK Mini */}
+              <div
+                onClick={handleJackpotClick}
+                className="col-span-3 bg-gradient-to-b from-[#040a18] via-[#02050e] to-[#010206] border border-[#006FCD]/70 shadow-inner p-1 sm:p-1.5 flex flex-col justify-between cursor-pointer hover:border-cyan-300 transition-all relative overflow-hidden"
+              >
+                {/* Minor */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[7px] sm:text-[8px] font-black text-[#A855F7] uppercase tracking-wider">
+                    MINOR 8MB
+                  </span>
+                  <span className="text-[9px] sm:text-xs font-black text-purple-200 font-mono drop-shadow">
+                    ${Math.floor(minor).toLocaleString()}
+                  </span>
+                </div>
+                <div className="w-full h-px bg-white/10 my-0.5" />
+                {/* Mini */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[7px] sm:text-[8px] font-black text-emerald-400 uppercase tracking-wider">
+                    MINI S400
+                  </span>
+                  <span className="text-[9px] sm:text-xs font-black text-emerald-200 font-mono drop-shadow">
+                    ${Math.floor(mini).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sub-Strip: Live Retro Casino Broadcast Ticker */}
+            <div className="mt-1">
+              <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import type { SymbolId, Payline, SlotSymbol } from '../engine/types';
 
-export type GameId = 'vault-24k' | 'timber-critters' | 'pixel-arcade';
+export type GameId = 'vault-24k' | 'timber-critters' | 'pixel-arcade' | 'ps2-legends';
 
 export interface GameTheme {
   primaryColor: string;

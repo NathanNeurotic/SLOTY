@@ -57,6 +57,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const rowCount = gameDef.rows;
   const numReels = gameDef.reels || 5;
   const totalLines = gameDef.defaultLines;
@@ -69,6 +70,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   // References to active stop timers
   const timersRef = useRef<number[]>([]);
+
+  // Reset reels and line state when changing games or reel configurations
+  useEffect(() => {
+    timersRef.current.forEach((t) => clearTimeout(t));
+    timersRef.current = [];
+    setReelSpinning(Array(numReels).fill(false));
+    setActiveWinningLineIdx(null);
+    setHoveredLineIndex(null);
+  }, [numReels, activeGameId]);
 
   // Keep a ref to onAllReelsStopped to prevent recreation of effect timers
   const onAllReelsStoppedRef = useRef(onAllReelsStopped);
@@ -108,7 +118,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       timersRef.current = [];
 
       // Check if reels hit scatters for suspense anticipation excitement
-      const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : 'SCATTER';
+      const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : isPs2 ? 'DVD_DISC' : 'SCATTER';
       const hasScatter0 = currentGrid[0]?.includes(scatterSym);
       const hasScatter1 = currentGrid[1]?.includes(scatterSym);
       const anticipation = hasScatter0 && hasScatter1;
@@ -439,15 +449,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                   ? 'text-emerald-200 bg-emerald-950/80 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]'
                   : 'text-cyan-200 bg-cyan-950/80 border-neon-cyan shadow-[0_0_12px_rgba(0,240,255,0.8)]'
               }`}>
-                {isTimber
+                {isPs2
+                  ? '💿 OPTICAL SEEK! 2 BLUE DISCS • NEED 1 MORE! 💿'
+                  : isTimber
                   ? '🍃 SUSPENSE LOCK! 2 OWLS • NEED 1 MORE! 🍃'
                   : '⚡⚡ SUSPENSE LOCK! 2 VAULT DOORS • NEED 1 MORE! ⚡⚡'}
               </span>
             ) : isAnyReelSpinning ? (
               <span className={`text-xs sm:text-sm font-black tracking-widest uppercase animate-pulse truncate whitespace-nowrap ${
-                isTimber ? 'text-emerald-300' : 'text-amber-300'
+                isPs2 ? 'text-cyan-300' : isTimber ? 'text-emerald-300' : 'text-amber-300'
               }`}>
-                {isTimber ? '🌲 CRITTERS TUMBLING • CLICK TO QUICK STOP 🌲' : '⚡ REELS SPINNING • CLICK TO QUICK STOP ⚡'}
+                {isPs2 ? '🎮 EMOTION ENGINE ROLLING • CLICK TO QUICK STOP 🎮' : isTimber ? '🌲 CRITTERS TUMBLING • CLICK TO QUICK STOP 🌲' : '⚡ REELS SPINNING • CLICK TO QUICK STOP ⚡'}
               </span>
             ) : hoveredLineIndex !== null ? (
               <span className="text-xs sm:text-sm font-black tracking-wider uppercase text-neon-cyan truncate whitespace-nowrap">
@@ -483,7 +495,11 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* Right Header Controls */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {isPixel ? (
+            {isPs2 ? (
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#00F0FF]">
+                <span>40L • PS2 128-BIT</span>
+              </div>
+            ) : isPixel ? (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-pink-400 font-mono text-[8px] font-black text-pink-300 shadow-[0_0_8px_#EC4899]">
                 <span>50L • CRT</span>
               </div>
@@ -512,7 +528,21 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           }`}
         >
           {/* Left Themed Cabinet Pilaster */}
-          {isTimber ? (
+          {isPs2 ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-3 sm:w-4 md:w-5 py-4 rounded-l-xl bg-gradient-to-r from-[#030612] via-[#081226] to-[#02040b] border-y-2 border-l-2 border-[#006FCD] shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-none bg-[#001433] border border-cyan-400 shadow-[0_0_8px_#00F0FF] flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-200" />
+              </div>
+              <div className="flex flex-col space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-1 bg-[#006FCD] shadow-[0_0_6px_#006FCD]" />
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-none bg-[#001433] border border-cyan-400 shadow-[0_0_8px_#00F0FF] flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-200" />
+              </div>
+            </div>
+          ) : isTimber ? (
             <div className="hidden md:flex flex-col items-center justify-between w-3 sm:w-4 md:w-5 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
               <div className="flex flex-col space-y-5">
@@ -572,12 +602,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             totalLinesCount={totalLines}
             isTimber={isTimber}
             isPixel={isPixel}
+            isPs2={isPs2}
           />
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
             className={`relative flex-1 min-h-0 h-full flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
-              isTimber
+              isPs2
+                ? 'bg-[#02050f] border-2 border-[#006FCD] shadow-[inset_0_0_35px_rgba(0,111,205,0.4)]'
+                : isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : isPixel
                 ? 'bg-[#0f0524] border-2 border-purple-500/70 shadow-[inset_0_0_35px_rgba(0,0,0,0.98)]'
@@ -653,10 +686,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             totalLinesCount={totalLines}
             isTimber={isTimber}
             isPixel={isPixel}
+            isPs2={isPs2}
           />
 
           {/* Right Themed Cabinet Pilaster */}
-          {isTimber ? (
+          {isPs2 ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-3 sm:w-4 md:w-5 py-4 rounded-r-xl bg-gradient-to-r from-[#02040b] via-[#081226] to-[#030612] border-y-2 border-r-2 border-[#006FCD] shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-none bg-[#001433] border border-cyan-400 shadow-[0_0_8px_#00F0FF] flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-200" />
+              </div>
+              <div className="flex flex-col space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-1 bg-[#006FCD] shadow-[0_0_6px_#006FCD]" />
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-none bg-[#001433] border border-cyan-400 shadow-[0_0_8px_#00F0FF] flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-200" />
+              </div>
+            </div>
+          ) : isTimber ? (
             <div className="hidden md:flex flex-col items-center justify-between w-3 sm:w-4 md:w-5 py-4 rounded-r-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-r-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
               <div className="flex flex-col space-y-5">

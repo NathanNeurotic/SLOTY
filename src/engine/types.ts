@@ -43,7 +43,19 @@ export type SymbolId =
   | 'PIXEL_K'
   | 'PIXEL_Q'
   | 'PIXEL_J'
-  | 'PIXEL_10';
+  | 'PIXEL_10'
+  // PlayStation 2 Emotion Engine Legends Symbols
+  | 'PS2_LOGO'
+  | 'DVD_DISC'
+  | 'MEMORY_CARD'
+  | 'EMOTION_ENGINE'
+  | 'DUALSHOCK'
+  | 'PS_TRIANGLE'
+  | 'PS_CIRCLE'
+  | 'PS_CROSS'
+  | 'PS_SQUARE'
+  | 'BOOT_TOWER'
+  | 'ANALOG_STICK';
 
 export type SymbolTier = 'special' | 'high' | 'mid' | 'low';
 

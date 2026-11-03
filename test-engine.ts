@@ -74,7 +74,7 @@ console.log(`- Level at 15,000 XP: ${p2.level}, Max Bet: ${p2.maxBet}`);
 if (p2.level <= 1) throw new Error('XP should have leveled up player');
 
 // 4. Monte Carlo Statistical Verification for All Games
-const games = ['vault-24k', 'timber-critters', 'pixel-arcade'] as const;
+const games = ['vault-24k', 'timber-critters', 'pixel-arcade', 'ps2-legends'] as const;
 
 for (const gameId of games) {
   const game = getGame(gameId);

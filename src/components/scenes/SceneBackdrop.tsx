@@ -10,17 +10,28 @@ interface SceneBackdropProps {
 export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGameId = 'vault-24k' }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
 
-  // 32 animated ambient particles (fireflies, gold dust motes, 8-bit pixel cubes)
+  // 32 animated ambient particles (fireflies, gold dust motes, 8-bit pixel cubes, PS2 BIOS crystals)
   const particles = useMemo(() => {
     return Array.from({ length: 32 }).map((_, i) => ({
       id: i,
       left: `${(i * 3.1 + 2) % 96}%`,
       top: `${(i * 3.7 + 6) % 90}%`,
-      size: isPixel ? 3 + (i % 3) * 2 : isTimber ? 2.5 + (i % 3) * 1.5 : 2 + (i % 3) * 1.5,
+      size: isPs2 ? 2.5 + (i % 3) * 2 : isPixel ? 3 + (i % 3) * 2 : isTimber ? 2.5 + (i % 3) * 1.5 : 2 + (i % 3) * 1.5,
       delay: `${(i * 0.25) % 3.5}s`,
       duration: `${3.2 + (i % 4) * 0.9}s`,
-      color: isPixel
+      color: isPs2
+        ? i % 5 === 0
+          ? '#00F0FF' // Crystalline BIOS Cyan
+          : i % 5 === 1
+          ? '#006FCD' // PlayStation Cobalt Blue
+          : i % 5 === 2
+          ? '#A78BFA' // Lavender BIOS Mist
+          : i % 5 === 3
+          ? '#24B059' // DualShock Green
+          : '#E61A22' // DualShock Crimson
+        : isPixel
         ? i % 5 === 0
           ? '#00F0FF' // Neon Cyan
           : i % 5 === 1
@@ -56,7 +67,7 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
         ? '#00F0FF'
         : '#EF4444',
     }));
-  }, [sceneId, isTimber, isPixel]);
+  }, [sceneId, isTimber, isPixel, isPs2]);
 
   // 26 twinkling night sky stars for Timberland
   const stars = useMemo(() => {
@@ -73,9 +84,121 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
       {/* ========================================================= */}
-      {/* --- PIXEL ARCADE: 80s/90s RETRO NEON SYNTHWAVE ARCADE --- */}
+      {/* --- PLAYSTATION 2: BIOS DEEP OCEAN MONOLITH VOID --- */}
       {/* ========================================================= */}
-      {isPixel ? (
+      {isPs2 ? (
+        <>
+          {/* Deep Endless BIOS Ocean Void Radial Base */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_65%,_#001838_0%,_#000a1c_45%,_#000105_100%)]" />
+
+          {/* Vanishing 3D Ocean Perspective Floor Grid */}
+          <div className="absolute inset-x-0 bottom-0 h-3/5 overflow-hidden pointer-events-none opacity-30">
+            <div className="w-full h-full" style={{ perspective: '300px' }}>
+              <div
+                className="w-full h-[220%] origin-bottom"
+                style={{
+                  transform: 'rotateX(72deg)',
+                  backgroundImage:
+                    'linear-gradient(to right, rgba(0, 111, 205, 0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 240, 255, 0.25) 1px, transparent 1px)',
+                  backgroundSize: '48px 48px',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Ambient BIOS Radiant Ocean Fog Swell */}
+          <div className="absolute top-[40%] inset-x-0 h-48 bg-gradient-to-t from-transparent via-[#004B93]/20 to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute top-[52%] left-1/2 -translate-x-1/2 w-[700px] h-32 bg-[radial-gradient(ellipse_at_center,_rgba(0,240,255,0.18)_0%,_transparent_70%)] blur-2xl pointer-events-none" />
+
+          {/* Left Flank: Towering 3D Glass Save Monoliths */}
+          <div className="absolute left-2 sm:left-6 md:left-12 bottom-6 w-32 sm:w-48 md:w-60 h-[480px] pointer-events-none opacity-85 hidden sm:block">
+            {/* Monolith 1: Giant Rear Tower */}
+            <div
+              className="absolute left-0 bottom-0 w-14 sm:w-18 h-[360px] bg-gradient-to-t from-[#000d1e] via-[#002852]/80 to-[#0055a5]/30 border border-[#006FCD]/50 shadow-[0_0_25px_rgba(0,111,205,0.4)] backdrop-blur-xs"
+              style={{ clipPath: 'polygon(0 8px, 8px 0, 100% 0, 100% 100%, 0 100%)' }}
+            >
+              <div className="absolute top-2 inset-x-1 h-0.5 bg-[#00F0FF]/60 shadow-[0_0_6px_#00F0FF]" />
+              <div className="absolute top-0 right-0 w-2 h-full bg-[#00F0FF]/10" />
+            </div>
+
+            {/* Monolith 2: Tall Mid Tower */}
+            <div
+              className="absolute left-10 sm:left-14 bottom-0 w-16 sm:w-20 h-[420px] bg-gradient-to-t from-[#000a18] via-[#003874]/80 to-[#00F0FF]/25 border border-[#00F0FF]/60 shadow-[0_0_35px_rgba(0,240,255,0.3)] animate-pulse"
+              style={{ clipPath: 'polygon(0 12px, 12px 0, 100% 0, 100% 100%, 0 100%)', animationDuration: '4.5s' }}
+            >
+              <div className="absolute top-3 inset-x-2 h-0.5 bg-[#00F0FF] shadow-[0_0_8px_#00F0FF]" />
+              <div className="absolute bottom-6 left-2 text-[7px] font-mono text-[#00F0FF]/70 tracking-widest -rotate-90">
+                DATA 01
+              </div>
+            </div>
+
+            {/* Monolith 3: Low Foreground Pillar */}
+            <div
+              className="absolute left-24 sm:left-32 bottom-0 w-12 sm:w-16 h-[220px] bg-gradient-to-t from-[#000e20] via-[#002244]/90 to-[#006FCD]/40 border border-[#006FCD]/60 shadow-[0_0_20px_rgba(0,111,205,0.5)]"
+              style={{ clipPath: 'polygon(0 8px, 8px 0, 100% 0, 100% 100%, 0 100%)' }}
+            >
+              <div className="absolute top-2 inset-x-1 h-0.5 bg-[#00F0FF]/80" />
+            </div>
+          </div>
+
+          {/* Right Flank: Towering 3D Glass Save Monoliths */}
+          <div className="absolute right-2 sm:right-6 md:right-12 bottom-6 w-32 sm:w-48 md:w-60 h-[480px] pointer-events-none opacity-85 hidden sm:block">
+            {/* Monolith 1: Low Foreground Pillar */}
+            <div
+              className="absolute right-24 sm:right-32 bottom-0 w-12 sm:w-16 h-[240px] bg-gradient-to-t from-[#000e20] via-[#002244]/90 to-[#006FCD]/40 border border-[#006FCD]/60 shadow-[0_0_20px_rgba(0,111,205,0.5)]"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
+            >
+              <div className="absolute top-2 inset-x-1 h-0.5 bg-[#00F0FF]/80" />
+            </div>
+
+            {/* Monolith 2: Tall Mid Tower */}
+            <div
+              className="absolute right-10 sm:right-14 bottom-0 w-16 sm:w-20 h-[440px] bg-gradient-to-t from-[#000a18] via-[#003874]/80 to-[#00F0FF]/25 border border-[#00F0FF]/60 shadow-[0_0_35px_rgba(0,240,255,0.3)] animate-pulse"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)', animationDuration: '5.2s' }}
+            >
+              <div className="absolute top-3 inset-x-2 h-0.5 bg-[#00F0FF] shadow-[0_0_8px_#00F0FF]" />
+              <div className="absolute bottom-6 right-2 text-[7px] font-mono text-[#00F0FF]/70 tracking-widest rotate-90">
+                SYSTEM DATA
+              </div>
+            </div>
+
+            {/* Monolith 3: Giant Rear Tower */}
+            <div
+              className="absolute right-0 bottom-0 w-14 sm:w-18 h-[340px] bg-gradient-to-t from-[#000d1e] via-[#002852]/80 to-[#0055a5]/30 border border-[#006FCD]/50 shadow-[0_0_25px_rgba(0,111,205,0.4)]"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
+            >
+              <div className="absolute top-2 inset-x-1 h-0.5 bg-[#00F0FF]/60 shadow-[0_0_6px_#00F0FF]" />
+            </div>
+          </div>
+
+          {/* Floating Subtle Ambient PlayStation Glyphs in Distance */}
+          <div className="absolute top-24 left-[18%] pointer-events-none opacity-20 text-3xl font-mono text-[#24B059] animate-pulse">
+            △
+          </div>
+          <div className="absolute top-36 right-[20%] pointer-events-none opacity-20 text-3xl font-mono text-[#E61A22] animate-pulse" style={{ animationDelay: '1.2s' }}>
+            ○
+          </div>
+          <div className="absolute top-64 left-[24%] pointer-events-none opacity-15 text-3xl font-mono text-[#006FCD] animate-pulse" style={{ animationDelay: '2.5s' }}>
+            ✕
+          </div>
+          <div className="absolute top-52 right-[25%] pointer-events-none opacity-15 text-3xl font-mono text-[#DF508E] animate-pulse" style={{ animationDelay: '1.8s' }}>
+            □
+          </div>
+
+          {/* OSD Watermark Headers */}
+          <div className="absolute top-3 left-4 sm:left-8 pointer-events-none opacity-40 flex items-center space-x-2 font-mono">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] shadow-[0_0_6px_#00F0FF] animate-ping" />
+            <span className="text-[8px] sm:text-[9px] text-[#00F0FF] tracking-widest uppercase">
+              SONY COMPUTER ENTERTAINMENT // BROWSER 1.00
+            </span>
+          </div>
+          <div className="absolute top-3 right-4 sm:right-8 pointer-events-none opacity-40 flex items-center space-x-2 font-mono">
+            <span className="text-[8px] sm:text-[9px] text-cyan-300 tracking-widest uppercase">
+              EMOTION ENGINE 128-BIT // 294.912 MHz
+            </span>
+          </div>
+        </>
+      ) : isPixel ? (
         <>
           {/* Deep Retro 80s Arcade Cyber-Void Base */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#060112] via-[#0d0422] to-[#04010a]" />

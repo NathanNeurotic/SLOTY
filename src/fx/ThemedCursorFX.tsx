@@ -35,6 +35,8 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
   enabled = true,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mousePosRef = useRef<{ x: number; y: number; visible: boolean; isHovering: boolean }>({
     x: -100,
@@ -70,7 +72,23 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
       const maxCount = isTouch ? 20 : 50;
       if (particlesRef.current.length > maxCount) return;
 
-      if (isTimber) {
+      if (isPs2) {
+        // PS2 BIOS: Cyan spark / PlayStation Cobalt glint
+        particlesRef.current.push({
+          x: x + (Math.random() - 0.5) * 6,
+          y: y + (Math.random() - 0.5) * 6,
+          vx: (Math.random() - 0.5) * 1.0,
+          vy: 0.1 + Math.random() * 0.7,
+          size: 3 + Math.random() * 3,
+          alpha: 1,
+          life: 0,
+          maxLife: 28 + Math.random() * 18,
+          rotation: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.1,
+          type: 'spark',
+          color: Math.random() < 0.6 ? '#00F0FF' : '#006FCD',
+        });
+      } else if (isTimber) {
         // Timberland: Firefly, Leaf, or Spore
         const rand = Math.random();
         const type = rand < 0.4 ? 'firefly' : rand < 0.75 ? 'leaf' : 'spore';
@@ -116,9 +134,9 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
         x,
         y,
         radius: 4,
-        maxRadius: isTimber ? 48 : 56,
+        maxRadius: isPs2 ? 52 : isTimber ? 48 : 56,
         alpha: 0.9,
-        color: isTimber ? '#34D399' : '#FDE047',
+        color: isPs2 ? '#00F0FF' : isTimber ? '#34D399' : '#FDE047',
       });
 
       // Spawn 14 burst particles radiating outwards
@@ -126,7 +144,23 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
       for (let i = 0; i < burstCount; i++) {
         const angle = (i / burstCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
         const speed = 2.5 + Math.random() * 4.5;
-        if (isTimber) {
+        if (isPs2) {
+          const psColors = ['#00F0FF', '#24B059', '#E61A22', '#006FCD', '#DF508E'];
+          particlesRef.current.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 1.4,
+            size: 4 + Math.random() * 4,
+            alpha: 1,
+            life: 0,
+            maxLife: 35 + Math.random() * 20,
+            rotation: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.25,
+            type: 'spark',
+            color: psColors[Math.floor(Math.random() * psColors.length)],
+          });
+        } else if (isTimber) {
           const rand = Math.random();
           const type = rand < 0.5 ? 'leaf' : rand < 0.8 ? 'acorn' : 'firefly';
           particlesRef.current.push({
@@ -351,7 +385,39 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
           ctx.translate(x, y);
           ctx.scale(scale, scale);
 
-          if (isTimber) {
+          if (isPs2) {
+            // PlayStation 2 Emotion Engine Targeting Reticle Cursor
+            ctx.shadowColor = isHovering ? '#00F0FF' : '#006FCD';
+            ctx.shadowBlur = isHovering ? 18 : 10;
+
+            const r = isHovering ? 9 : 7;
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.strokeStyle = isHovering ? '#00F0FF' : '#006FCD';
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+
+            // Inner cyan core
+            ctx.beginPath();
+            ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#00F0FF';
+            ctx.fill();
+
+            // Precision ticks
+            ctx.strokeStyle = '#00F0FF';
+            ctx.lineWidth = 1.2;
+            const ext = r + 4;
+            ctx.beginPath();
+            ctx.moveTo(0, -r);
+            ctx.lineTo(0, -ext);
+            ctx.moveTo(0, r);
+            ctx.lineTo(0, ext);
+            ctx.moveTo(-r, 0);
+            ctx.lineTo(-ext, 0);
+            ctx.moveTo(r, 0);
+            ctx.lineTo(ext, 0);
+            ctx.stroke();
+          } else if (isTimber) {
             // Handcrafted Wooden Acorn / Bear Paw Cursor with Glowing Core
             ctx.shadowColor = isHovering ? '#34D399' : '#F59E0B';
             ctx.shadowBlur = isHovering ? 14 : 8;
@@ -431,7 +497,7 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
       document.removeEventListener('mouseleave', handlePointerLeave);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isTimber, isTouchDevice, enabled]);
+  }, [isTimber, isPixel, isPs2, isTouchDevice, enabled]);
 
   if (!enabled) return null;
 

@@ -186,6 +186,8 @@ class SoundManager {
       this.musicTempo = this.isOverdriveMusic ? 90 : 74;
     } else if (this.activeGameTheme === 'pixel-arcade') {
       this.musicTempo = this.isOverdriveMusic ? 122 : 102;
+    } else if (this.activeGameTheme === 'ps2-legends') {
+      this.musicTempo = this.isOverdriveMusic ? 116 : 94;
     } else {
       this.musicTempo = this.isOverdriveMusic ? 104 : 86;
     }
@@ -256,6 +258,8 @@ class SoundManager {
       this.playWoodlandMusicStep(step);
     } else if (this.activeGameTheme === 'pixel-arcade') {
       this.playPixelMusicStep(step);
+    } else if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2MusicStep(step);
     } else {
       this.playVaultLoungeMusicStep(step);
     }
@@ -967,6 +971,96 @@ class SoundManager {
     osc.stop(now + 0.35);
   }
 
+  // =========================================================================
+  // --- TRACK 4: PLAYSTATION 2 EMOTION ENGINE (DEEP BIOS OCEAN VOID AMBIENCE) ---
+  // =========================================================================
+
+  private playPs2MusicStep(step: number) {
+    if (!this.ctx) return;
+    const dest = this.getMusicDestination();
+    if (!dest) return;
+
+    const now = this.ctx.currentTime;
+    const isOverdrive = this.isOverdriveMusic;
+    const vol = this.musicVolume;
+    const bar = Math.floor(step / 16);
+    const stepInBar = step % 16;
+
+    // 1. Sub-bass pulse (Deep 48Hz / 55Hz ocean floor heartbeat)
+    const isSub = stepInBar === 0 || stepInBar === 8 || (isOverdrive && (stepInBar === 4 || stepInBar === 12));
+    if (isSub) {
+      const subOsc = this.ctx.createOscillator();
+      const subGain = this.ctx.createGain();
+      subGain.gain.setValueAtTime(0.55 * vol, now);
+      subGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.22 : 0.35));
+      subOsc.type = 'sine';
+      const rootFreq = bar % 4 === 3 ? 55.0 : bar % 2 === 1 ? 43.65 : 48.99; // G1, F1, D1
+      subOsc.frequency.setValueAtTime(rootFreq, now);
+      subOsc.frequency.exponentialRampToValueAtTime(rootFreq * 0.85, now + 0.2);
+      subOsc.connect(subGain);
+      subGain.connect(dest);
+      subOsc.start(now);
+      subOsc.stop(now + 0.38);
+    }
+
+    // 2. Optical laser seek step (percussive digital actuator tick)
+    const isSeekTick = stepInBar === 2 || stepInBar === 6 || stepInBar === 10 || stepInBar === 14;
+    if (isSeekTick) {
+      const seekOsc = this.ctx.createOscillator();
+      const seekGain = this.ctx.createGain();
+      seekGain.gain.setValueAtTime(0.18 * vol, now);
+      seekGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      seekOsc.type = 'triangle';
+      seekOsc.frequency.setValueAtTime(1400 + (stepInBar * 80), now);
+      seekOsc.frequency.exponentialRampToValueAtTime(600, now + 0.025);
+      seekOsc.connect(seekGain);
+      seekGain.connect(dest);
+      seekOsc.start(now);
+      seekOsc.stop(now + 0.035);
+    }
+
+    // 3. Ambient Crystalline Monolith Chords (every bar start)
+    if (stepInBar === 0) {
+      const chordRoots = [
+        [293.66, 369.99, 440.0, 554.37], // Dmaj9
+        [246.94, 329.63, 392.0, 493.88], // Em7
+        [220.0, 277.18, 329.63, 440.0],  // A7sus4
+        [293.66, 440.0, 587.33, 739.99], // D high crystal
+      ];
+      const chord = chordRoots[bar % 4];
+      chord.forEach((freq, idx) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const duration = isOverdrive ? 1.4 : 2.2;
+        gain.gain.setValueAtTime(0.09 * vol, now + idx * 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.connect(gain);
+        gain.connect(dest);
+        osc.start(now + idx * 0.03);
+        osc.stop(now + duration + 0.1);
+      });
+    }
+
+    // 4. Overdrive 128-bit Arpeggios when Fever mode is active
+    if (isOverdrive && (stepInBar % 2 === 0)) {
+      const arpNotes = [440.0, 554.37, 659.25, 880.0, 987.77, 1174.66, 1318.51, 1760.0];
+      const note = arpNotes[(step + bar) % arpNotes.length];
+      const arpOsc = this.ctx.createOscillator();
+      const arpGain = this.ctx.createGain();
+      arpGain.gain.setValueAtTime(0.12 * vol, now);
+      arpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      arpOsc.type = 'triangle';
+      arpOsc.frequency.setValueAtTime(note, now);
+      arpOsc.connect(arpGain);
+      arpGain.connect(dest);
+      arpOsc.start(now);
+      arpOsc.stop(now + 0.09);
+    }
+  }
+
   // Rapid High-Speed Currency Counter Machine ("brrrrrr-ch-ch-ch-ch")
   public playCashCounter(count: number = 10) {
     this.initContext();
@@ -1088,6 +1182,11 @@ class SoundManager {
       return;
     }
 
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Button();
+      return;
+    }
+
     // 24K Gold Vault: Heavy Brass Lock Tumbler Click
     const osc = this.ctx.createOscillator();
     const gain = this.createGainNode(0.06, 0.32, 0.01);
@@ -1135,6 +1234,22 @@ class SoundManager {
       gain.connect(this.ctx.destination);
       osc.start(now);
       osc.stop(now + 0.15);
+      return;
+    }
+
+    if (this.activeGameTheme === 'ps2-legends') {
+      // PS2 Red screen of death invalid disc tone
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.28 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(82.4, now);
+      osc.frequency.linearRampToValueAtTime(55, now + 0.2);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.22);
       return;
     }
 
@@ -1916,6 +2031,188 @@ class SoundManager {
     }, 900);
   }
 
+  // PlayStation 2 BIOS Ocean Swell & Crystal Chords Startup Sequence
+  public playPs2Startup() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Resonant Deep Ocean Atmosphere Swell
+    const swellOsc = this.ctx.createOscillator();
+    const swellGain = this.ctx.createGain();
+    swellGain.gain.setValueAtTime(0.001, now);
+    swellGain.gain.exponentialRampToValueAtTime(0.45 * this.sfxVolume, now + 0.4);
+    swellGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+    swellOsc.type = 'sine';
+    swellOsc.frequency.setValueAtTime(55, now);
+    swellOsc.frequency.exponentialRampToValueAtTime(110, now + 1.2);
+    swellOsc.connect(swellGain);
+    swellGain.connect(this.ctx.destination);
+    swellOsc.start(now);
+    swellOsc.stop(now + 1.9);
+
+    // 2. Crystal Monolith Boot Chord [C3, G3, D4, A4, E5]
+    const chord = [130.81, 196.0, 293.66, 440.0, 659.25];
+    chord.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const t = now + 0.35 + idx * 0.08;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 1.6);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 1.7);
+    });
+  }
+
+  // DualShock 2 tactile pressure button click
+  public playPs2Button() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.035);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.045);
+  }
+
+  // Optical drive seek head actuator step & laser track settling for PS2 reels
+  public playPs2Stop(reelIndex: number = 0) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // Laser step actuator click
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    gain1.gain.setValueAtTime(0.55 * this.sfxVolume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+    osc1.type = 'triangle';
+    const baseFreq = 880 + reelIndex * 120;
+    osc1.frequency.setValueAtTime(baseFreq, now);
+    osc1.frequency.exponentialRampToValueAtTime(220, now + 0.03);
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.04);
+
+    // Motor spindle micro-stop
+    const spinOsc = this.ctx.createOscillator();
+    const spinGain = this.ctx.createGain();
+    spinGain.gain.setValueAtTime(0.35 * this.sfxVolume, now + 0.01);
+    spinGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+    spinOsc.type = 'sine';
+    spinOsc.frequency.setValueAtTime(160, now + 0.01);
+    spinOsc.frequency.exponentialRampToValueAtTime(45, now + 0.07);
+    spinOsc.connect(spinGain);
+    spinGain.connect(this.ctx.destination);
+    spinOsc.start(now + 0.01);
+    spinOsc.stop(now + 0.09);
+  }
+
+  // Blue Laser DVD Scatter landing: BIOS Memory Monolith shimmer
+  public playPs2Scatter(scatterIndex: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    const baseNotes = [587.33, 739.99, 880.0, 1174.66, 1479.98];
+    const freq = baseNotes[Math.min(baseNotes.length - 1, Math.max(0, scatterIndex - 1))];
+
+    // Shimmering crystalline overtone
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+    osc.frequency.linearRampToValueAtTime(freq * 1.05, now + 0.4);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.48);
+
+    // Sub-bass ocean echo
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subGain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(75, now);
+    subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.28);
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.32);
+  }
+
+  // 8MB MagicGate Memory Card Save chime (2-tone rising confirmation)
+  public playPs2MemoryCardSave() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    [659.25, 1318.51].forEach((pitch, idx) => {
+      if (!this.ctx) return;
+      const t = now + idx * 0.12;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.35 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(pitch, t);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.38);
+    });
+  }
+
+  // PlayStation 2 emotion engine victory fanfare
+  public playPs2Win(multiplier: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    const chords = [
+      [293.66, 369.99, 440.0],
+      [369.99, 440.0, 587.33],
+      [440.0, 554.37, 659.25],
+      [587.33, 739.99, 880.0, 1174.66],
+    ];
+    const count = multiplier >= 20 ? 4 : multiplier >= 5 ? 3 : 2;
+
+    chords.slice(0, count).forEach((chord, chordIdx) => {
+      if (!this.ctx) return;
+      const t = now + chordIdx * 0.18;
+      chord.forEach((freq) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.25 * this.sfxVolume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.55);
+      });
+    });
+  }
+
   // Heavy tactile physical reel stop (bass punch + spring latch clack)
   public playReelStop(reelIndex: number = 0) {
     if (this.activeGameTheme === 'pixel-arcade') {
@@ -1924,6 +2221,10 @@ class SoundManager {
     }
     if (this.activeGameTheme === 'timber-critters') {
       this.playTimberStop(reelIndex);
+      return;
+    }
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Stop(reelIndex);
       return;
     }
     this.initContext();
@@ -1984,6 +2285,10 @@ class SoundManager {
     }
     if (this.activeGameTheme === 'timber-critters') {
       this.playOwlHoot(scatterIndex);
+      return;
+    }
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Scatter(scatterIndex);
       return;
     }
     this.initContext();
@@ -2066,6 +2371,21 @@ class SoundManager {
       gain.connect(this.ctx.destination);
       osc.start(now);
       osc.stop(now + 0.042);
+      return;
+    }
+
+    if (this.activeGameTheme === 'ps2-legends') {
+      // Memory card sector write tick
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.22 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1046.5 + Math.random() * 200, now);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.038);
       return;
     }
 
@@ -2255,6 +2575,10 @@ class SoundManager {
     }
     if (this.activeGameTheme === 'timber-critters') {
       this.playForestWin(multiplier);
+      return;
+    }
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Win(multiplier);
       return;
     }
     this.initContext();
@@ -2451,6 +2775,11 @@ class SoundManager {
       return;
     }
 
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2MemoryCardSave();
+      return;
+    }
+
     // 24K Gold Vault: Heavy ratcheting brass gear teeth + hydraulic solenoid snap
     for (let i = 0; i < 4; i++) {
       const startTime = now + i * 0.04;
@@ -2515,6 +2844,11 @@ class SoundManager {
       gain.connect(this.ctx.destination);
       osc.start(now);
       osc.stop(now + 0.042);
+      return;
+    }
+
+    if (this.activeGameTheme === 'ps2-legends') {
+      this.playPs2Button();
       return;
     }
 

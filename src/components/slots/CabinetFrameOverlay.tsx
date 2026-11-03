@@ -13,6 +13,92 @@ export const CabinetFrameOverlay: React.FC<CabinetFrameOverlayProps> = ({
 }) => {
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
+
+  // =========================================================================
+  // --- VERSION D: PLAYSTATION 2 (AUTHENTIC CONSOLE BADGES & LED HARDWARE) ---
+  // =========================================================================
+  if (isPs2) {
+    return (
+      <div className="absolute inset-0 pointer-events-none z-30 overflow-visible select-none">
+        {/* Top-Left PlayStation Family Logo Badge */}
+        <div className="absolute -top-3 -left-3 w-16 sm:w-20 h-16 sm:h-20">
+          <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)]">
+            {/* Matte chassis bracket */}
+            <path
+              d="M0 0 L56 0 L56 16 L20 16 L20 56 L0 56 Z"
+              fill="#060913"
+              stroke="#006FCD"
+              strokeWidth="1.5"
+            />
+            {/* Ribbed vent accents */}
+            <line x1="6" y1="6" x2="48" y2="6" stroke="#006FCD" strokeWidth="1" strokeDasharray="3 2" />
+            <line x1="6" y1="10" x2="48" y2="10" stroke="#006FCD" strokeWidth="1" strokeDasharray="3 2" />
+            {/* PlayStation Family Logo */}
+            <g transform="translate(14, 18) scale(0.65)">
+              {/* Upright Red P */}
+              <path d="M12 2 L20 2 C26 2 28 6 28 12 C28 18 24 22 18 22 L12 22 Z" fill="#EF4444" />
+              <path d="M16 6 L18 6 C21 6 23 8 23 12 C23 16 21 18 18 18 L16 18 Z" fill="#060913" />
+              {/* Horizontal Yellow/Green S */}
+              <path d="M6 24 C14 20 28 20 34 24 C38 27 34 30 26 31 C16 32 10 34 10 38 C10 43 20 44 28 42 L26 46 C16 48 4 47 4 40 C4 35 12 32 20 31 C28 30 32 28 30 26 C28 24 16 24 8 28 Z" fill="#38BDF8" opacity="0.9" />
+              <path d="M12 32 C16 30 26 30 30 32 L28 34 C24 33 16 33 12 34 Z" fill="#22C55E" />
+              <path d="M8 26 L12 24 L14 28 L10 30 Z" fill="#EAB308" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Top-Right Power & Eject Buttons with Dual LED Indicators */}
+        <div className="absolute -top-3 -right-3 w-16 sm:w-20 h-16 sm:h-20 transform -scale-x-100">
+          <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)]">
+            <path
+              d="M0 0 L56 0 L56 16 L20 16 L20 56 L0 56 Z"
+              fill="#060913"
+              stroke="#006FCD"
+              strokeWidth="1.5"
+            />
+            <line x1="6" y1="6" x2="48" y2="6" stroke="#006FCD" strokeWidth="1" strokeDasharray="3 2" />
+            <line x1="6" y1="10" x2="48" y2="10" stroke="#006FCD" strokeWidth="1" strokeDasharray="3 2" />
+            {/* Green Power LED */}
+            <circle cx="26" cy="24" r="3" fill="#22C55E" className={isSpinning ? 'animate-ping' : ''} />
+            <circle cx="26" cy="24" r="2" fill="#86EFAC" />
+            {/* Blue Eject LED */}
+            <circle cx="38" cy="24" r="3" fill="#006FCD" />
+            <circle cx="38" cy="24" r="1.8" fill="#38BDF8" className="animate-pulse" />
+          </svg>
+        </div>
+
+        {/* Bottom-Left Controller Port 1 & Memory Card Slot */}
+        <div className="absolute -bottom-3 -left-3 w-16 sm:w-20 h-16 sm:h-20 transform -scale-y-100">
+          <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)]">
+            <path
+              d="M0 0 L56 0 L56 16 L20 16 L20 56 L0 56 Z"
+              fill="#060913"
+              stroke="#006FCD"
+              strokeWidth="1.5"
+            />
+            {/* Memory card flap slot */}
+            <rect x="8" y="6" width="38" height="6" fill="#02040a" stroke="#006FCD" strokeWidth="0.8" />
+            <line x1="12" y1="9" x2="42" y2="9" stroke="#38BDF8" strokeWidth="0.6" opacity="0.6" />
+          </svg>
+        </div>
+
+        {/* Bottom-Right Dual USB 1.1 & S400 i.LINK Jacks */}
+        <div className="absolute -bottom-3 -right-3 w-16 sm:w-20 h-16 sm:h-20 transform -scale-x-100 -scale-y-100">
+          <svg viewBox="0 0 80 80" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)]">
+            <path
+              d="M0 0 L56 0 L56 16 L20 16 L20 56 L0 56 Z"
+              fill="#060913"
+              stroke="#006FCD"
+              strokeWidth="1.5"
+            />
+            {/* USB port silhouettes */}
+            <rect x="10" y="6" width="14" height="6" fill="#02040a" stroke="#006FCD" strokeWidth="0.8" />
+            <rect x="28" y="6" width="14" height="6" fill="#02040a" stroke="#006FCD" strokeWidth="0.8" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
 
   // =========================================================================
   // --- VERSION A: TIMBERLAND CRITTERS (BLACKSMITH HAND-FORGED IRON BRACKETS) ---

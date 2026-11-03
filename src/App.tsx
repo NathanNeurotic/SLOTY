@@ -4,6 +4,7 @@ import type {
   GameStats,
   SpinResult,
   SymbolGrid,
+  SymbolId,
   WinTier,
 } from './engine/types';
 import { calculateProgression, getLevelUpReward, getXpRequiredForLevel } from './engine/progression';
@@ -127,7 +128,9 @@ export const App: React.FC = () => {
       storage.setJSON('sloty_grid', newGrid);
       setSpinResult(null);
       setWinAmount(0);
-      if (gameId === 'timber-critters') {
+      if (gameId === 'ps2-legends') {
+        soundManager.playPs2Startup();
+      } else if (gameId === 'timber-critters') {
         soundManager.playOwlHoot(1);
       } else if (gameId === 'pixel-arcade') {
         soundManager.playLaserZap();
@@ -793,7 +796,9 @@ export const App: React.FC = () => {
         }
       } else if (e.key === 'g' || e.key === 'G') {
         e.preventDefault();
-        const nextGame = activeGameIdRef.current === 'vault-24k' ? 'timber-critters' : 'vault-24k';
+        const gameCycle: GameId[] = ['vault-24k', 'timber-critters', 'pixel-arcade', 'ps2-legends'];
+        const curIdx = gameCycle.indexOf(activeGameIdRef.current);
+        const nextGame = gameCycle[(curIdx + 1) % gameCycle.length];
         handleSelectGame(nextGame);
       } else if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
@@ -830,10 +835,11 @@ export const App: React.FC = () => {
 
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
 
   return (
     <div className={`fixed inset-0 h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black overflow-hidden select-none transition-colors duration-300 ${
-      isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
+      isPs2 ? 'bg-[#00040a]' : isPixel ? 'bg-[#060112]' : isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
     }`}>
       {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
       <SceneBackdrop sceneId={currentSceneId} activeGameId={activeGameId} />
@@ -899,7 +905,14 @@ export const App: React.FC = () => {
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         {(() => {
-          const scatterSym = activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER';
+          const scatterSym: SymbolId =
+            activeGameId === 'ps2-legends'
+              ? 'DVD_DISC'
+              : activeGameId === 'timber-critters'
+              ? 'OWL'
+              : activeGameId === 'pixel-arcade'
+              ? 'PIXEL_CARTRIDGE'
+              : 'SCATTER';
           const hasScatter0 = currentGrid[0]?.includes(scatterSym);
           const hasScatter1 = currentGrid[1]?.includes(scatterSym);
           const isAnticipating = isSpinning && !!hasScatter0 && !!hasScatter1;
@@ -1010,8 +1023,24 @@ export const App: React.FC = () => {
         isSpinning={isSpinning}
         isAnticipating={
           isSpinning &&
-          !!currentGrid[0]?.includes(activeGameId === 'timber-critters' ? 'OWL' : activeGameId === 'pixel-arcade' ? 'PIXEL_CARTRIDGE' : 'SCATTER') &&
-          !!currentGrid[1]?.includes(activeGameId === 'timber-critters' ? 'OWL' : activeGameId === 'pixel-arcade' ? 'PIXEL_CARTRIDGE' : 'SCATTER')
+          !!currentGrid[0]?.includes(
+            activeGameId === 'ps2-legends'
+              ? 'DVD_DISC'
+              : activeGameId === 'timber-critters'
+              ? 'OWL'
+              : activeGameId === 'pixel-arcade'
+              ? 'PIXEL_CARTRIDGE'
+              : 'SCATTER'
+          ) &&
+          !!currentGrid[1]?.includes(
+            activeGameId === 'ps2-legends'
+              ? 'DVD_DISC'
+              : activeGameId === 'timber-critters'
+              ? 'OWL'
+              : activeGameId === 'pixel-arcade'
+              ? 'PIXEL_CARTRIDGE'
+              : 'SCATTER'
+          )
         }
         isNearMiss={!isSpinning && !!spinResult && spinResult.scatterCount === 2}
         isMaxBet={totalBet >= progression.maxBet}

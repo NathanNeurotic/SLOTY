@@ -131,9 +131,9 @@ export function evaluateSpin(
   const symbolsMap = activeDef.symbols;
   const rowCount = activeDef.rows;
 
-  const isWild = (sym: SymbolId) => sym === 'WILD' || sym === 'BEAR' || sym === 'CYBER_WILD';
-  const isScatter = (sym: SymbolId) => sym === 'SCATTER' || sym === 'OWL' || sym === 'PIXEL_CARTRIDGE';
-  const isCoin = (sym: SymbolId) => sym === 'COIN' || sym === 'ACORN' || sym === 'RETRO_TOKEN';
+  const isWild = (sym: SymbolId) => sym === 'WILD' || sym === 'BEAR' || sym === 'CYBER_WILD' || sym === 'PS2_LOGO';
+  const isScatter = (sym: SymbolId) => sym === 'SCATTER' || sym === 'OWL' || sym === 'PIXEL_CARTRIDGE' || sym === 'DVD_DISC';
+  const isCoin = (sym: SymbolId) => sym === 'COIN' || sym === 'ACORN' || sym === 'RETRO_TOKEN' || sym === 'MEMORY_CARD';
 
   const lineBet = Math.max(1, Math.floor(totalBet / activePaylinesCount));
   const winningLines: WinningLine[] = [];
@@ -212,7 +212,7 @@ export function evaluateSpin(
 
   const isFreeSpinsTriggered = scatterCount >= 3;
   if (isFreeSpinsTriggered) {
-    const scatterDef = symbolsMap['SCATTER'] || symbolsMap['OWL'] || symbolsMap['PIXEL_CARTRIDGE'];
+    const scatterDef = symbolsMap['SCATTER'] || symbolsMap['OWL'] || symbolsMap['PIXEL_CARTRIDGE'] || symbolsMap['DVD_DISC'];
     const scatterMultiplier = (scatterDef?.payouts as Record<number, number>)?.[Math.min(numReels, scatterCount)] || 50;
     const scatterPayout = totalBet * (scatterMultiplier / 10) * winMultiplier;
     totalPayout += scatterPayout;

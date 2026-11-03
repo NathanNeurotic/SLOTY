@@ -25,6 +25,50 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
 
   const isTimberActive = activeGameId === 'timber-critters';
   const isPixelActive = activeGameId === 'pixel-arcade';
+  const isPs2Active = activeGameId === 'ps2-legends';
+
+  // 1. PLAYSTATION 2: 8MB MAGICGATE MEMORY CARD BAY
+  if (isPs2Active) {
+    return (
+      <div
+        className="flex items-center space-x-1 p-0.5 sm:p-1 bg-[#05070d] border-2 border-[#006FCD] shadow-[0_0_15px_rgba(0,111,205,0.7)] select-none font-mono"
+        style={{
+          clipPath:
+            'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
+        }}
+      >
+        <span className="hidden 2xl:inline text-[7.5px] font-black text-[#38BDF8] uppercase tracking-widest pl-1.5 pr-0.5">
+          MEMORY CARD [8MB]:
+        </span>
+        {games.map((g) => {
+          const isActive = g.id === activeGameId;
+          return (
+            <button
+              key={g.id}
+              onClick={() => handleSelect(g.id)}
+              disabled={disabled}
+              title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
+              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
+                isActive
+                  ? 'bg-gradient-to-r from-[#003875] via-[#0052a3] to-[#006FCD] text-white border border-cyan-300 shadow-[0_0_15px_rgba(0,111,205,0.9)] scale-[1.02]'
+                  : 'bg-[#0a0d17] text-slate-400 hover:text-cyan-300 border border-[#1e293b]'
+              }`}
+              style={{
+                clipPath:
+                  'polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))',
+              }}
+            >
+              <span className="text-xs">{g.icon}</span>
+              <span className="leading-none">{g.shortName}</span>
+              {isActive && (
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse ml-0.5 shadow-[0_0_6px_#00F0FF]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
 
   // 1. PIXEL ARCADE: 8-BIT ROM CARTRIDGE LOADER
   if (isPixelActive) {
