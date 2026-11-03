@@ -14,6 +14,7 @@ interface PaylineSideTabsProps {
   totalLinesCount?: number;
   paylineColors?: string[];
   isTimber?: boolean;
+  isPixel?: boolean;
 }
 
 export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
@@ -28,6 +29,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
   totalLinesCount = 40,
   paylineColors = PAYLINE_COLORS,
   isTimber = false,
+  isPixel = false,
 }) => {
   const halfCount = Math.ceil(totalLinesCount / 2);
   const lineIndices =
@@ -60,6 +62,8 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
             ? 'rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs'
             : 'rounded-tr-xl rounded-bl-xl rounded-tl-xs rounded-br-xs';
 
+        const pixelShape = 'rounded-none border-2';
+
         return (
           <button
             key={lineIdx}
@@ -78,7 +82,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                 isWinning || isActive || isHovered
                   ? color
                   : isLineActiveInGame
-                  ? isTimber ? '#b45309' : `${color}90`
+                  ? isTimber ? '#b45309' : isPixel ? `${color}bb` : `${color}90`
                   : 'rgba(255, 255, 255, 0.12)',
               backgroundColor: isActive
                 ? color
@@ -87,9 +91,9 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                 : isHovered
                 ? `${color}40`
                 : isLineActiveInGame
-                ? isTimber ? 'rgba(36, 19, 10, 0.95)' : 'rgba(15, 23, 42, 0.95)'
+                ? isTimber ? 'rgba(36, 19, 10, 0.95)' : isPixel ? '#0f0524' : 'rgba(15, 23, 42, 0.95)'
                 : 'rgba(10, 12, 18, 0.65)',
-              color: isActive ? '#000' : isWinning || isHovered ? '#FFF' : isLineActiveInGame ? (isTimber ? '#fde047' : '#FFF') : 'rgba(255, 255, 255, 0.3)',
+              color: isActive ? '#000' : isWinning || isHovered ? '#FFF' : isLineActiveInGame ? (isTimber ? '#fde047' : isPixel ? '#00F0FF' : '#FFF') : 'rgba(255, 255, 255, 0.3)',
               boxShadow:
                 isWinning || isActive
                   ? `0 0 10px ${color}, inset 0 1px 0 rgba(255,255,255,0.6)`
@@ -97,9 +101,14 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                   ? `0 0 6px ${color}`
                   : 'inset 0 1px 0 rgba(255,255,255,0.15)',
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
+              fontFamily: isPixel ? "'Courier New', monospace" : undefined,
             }}
-            className={`w-5 h-4 sm:w-7 sm:h-5.5 md:w-8 md:h-6 text-[9px] sm:text-[11px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
-              isTimber ? leafShape : 'rounded-[4px]'
+            className={`${
+              totalLinesCount > 40
+                ? 'w-4 h-3 sm:w-6 sm:h-3.5 md:w-7 md:h-4 text-[7px] sm:text-[8px] md:text-[9px]'
+                : 'w-5 h-4 sm:w-7 sm:h-5.5 md:w-8 md:h-6 text-[9px] sm:text-[11px]'
+            } font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
+              isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[4px]'
             } ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''
             }`}

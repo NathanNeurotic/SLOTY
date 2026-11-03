@@ -1161,6 +1161,83 @@ class SoundManager {
     return this.activeGameTheme;
   }
 
+  // Authentic 8-bit square-wave reel stop blip for Pixel Arcade
+  public playArcadeStop(reelIndex: number = 0) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const basePitch = 220 * Math.pow(2, (reelIndex * 2) / 12);
+    const now = this.ctx.currentTime;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.55 * this.sfxVolume, now);
+    gain.gain.setValueAtTime(0.55 * this.sfxVolume, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(basePitch, now);
+    osc.frequency.setValueAtTime(basePitch * 1.5, now + 0.03);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.09);
+  }
+
+  // 8-bit Power-Up chime for Pixel Cartridge
+  public playArcadeCartridge(scatterIndex: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+    const now = this.ctx.currentTime;
+
+    notes.slice(0, Math.min(notes.length, scatterIndex + 2)).forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const t = now + idx * 0.055;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.4 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, t);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.13);
+    });
+  }
+
+  // 8-bit arpeggiated victory fanfare
+  public playArcadeWin(multiplier: number = 1) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98];
+    const count = multiplier >= 20 ? 6 : multiplier >= 5 ? 5 : 4;
+    const now = this.ctx.currentTime;
+
+    notes.slice(0, count).forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const t = now + idx * 0.07;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.45 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, t);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.15);
+    });
+  }
+
   // Resonant wooden block strike for Timberland reels
   public playTimberStop(reelIndex: number = 0) {
     this.initContext();
@@ -1456,6 +1533,10 @@ class SoundManager {
 
   // Heavy tactile physical reel stop (bass punch + spring latch clack)
   public playReelStop(reelIndex: number = 0) {
+    if (this.activeGameTheme === 'pixel-arcade') {
+      this.playArcadeStop(reelIndex);
+      return;
+    }
     if (this.activeGameTheme === 'timber-critters') {
       this.playTimberStop(reelIndex);
       return;
@@ -1512,6 +1593,10 @@ class SoundManager {
 
   // Radiant casino scatter bell fanfare with dual harmonic ring
   public playScatterLand(scatterIndex: number = 1) {
+    if (this.activeGameTheme === 'pixel-arcade') {
+      this.playArcadeCartridge(scatterIndex);
+      return;
+    }
     if (this.activeGameTheme === 'timber-critters') {
       this.playOwlHoot(scatterIndex);
       return;
@@ -1703,6 +1788,10 @@ class SoundManager {
 
   // Win chime arpeggio
   public playWinChime(multiplier: number = 1) {
+    if (this.activeGameTheme === 'pixel-arcade') {
+      this.playArcadeWin(multiplier);
+      return;
+    }
     if (this.activeGameTheme === 'timber-critters') {
       this.playForestWin(multiplier);
       return;

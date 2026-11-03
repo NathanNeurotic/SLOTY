@@ -352,6 +352,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         className={`relative p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
           isTimber
             ? 'border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
+            : isPixel
+            ? 'border-4 border-pink-500/80 bg-gradient-to-b from-purple-950 via-slate-950 to-black shadow-[0_0_45px_rgba(236,72,153,0.5),0_25px_60px_rgba(0,0,0,0.98)]'
             : 'border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
       >
@@ -362,10 +364,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             isFeverMode
               ? isTimber
                 ? 'bg-gradient-to-b from-emerald-950 via-teal-950 to-amber-950 border-2 border-emerald-300 shadow-[0_0_60px_rgba(52,211,153,0.7)]'
+                : isPixel
+                ? 'bg-gradient-to-b from-pink-900 via-purple-950 to-cyan-950 border-2 border-pink-300 shadow-[0_0_60px_rgba(236,72,153,0.8)]'
                 : 'bg-gradient-to-b from-red-900 via-purple-950 to-amber-950 shadow-[0_0_60px_rgba(234,179,8,0.7)] border-2 border-yellow-300'
               : freeSpinsRemaining > 0
               ? isTimber
                 ? 'bg-gradient-to-b from-emerald-900 via-stone-900 to-[#120a05] shadow-[0_0_50px_rgba(16,185,129,0.6)] border-2 border-emerald-400'
+                : isPixel
+                ? 'bg-gradient-to-b from-purple-900 via-pink-950 to-[#0c041c] shadow-[0_0_50px_rgba(236,72,153,0.7)] border-2 border-pink-400'
                 : 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
               : isTimber
               ? 'bg-gradient-to-b from-[#182a1d] via-[#0d1810] to-[#050a06] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-emerald-700/60'
@@ -523,6 +529,22 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
             </div>
+          ) : isPixel ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#180938] via-purple-950 to-black border-y-2 border-l-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-none border border-pink-400 bg-purple-950 flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
+              </div>
+              <div className="flex flex-col space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-2.5 rounded-none bg-purple-950 border border-pink-400 flex items-center justify-center">
+                    <div className="w-1 h-1 bg-pink-300 animate-pulse shadow-[0_0_6px_#ec4899]" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-none border border-cyan-400 bg-purple-950 flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
+              </div>
+            </div>
           ) : (
             <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-slate-900 via-amber-900 to-black border-y-2 border-l-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
@@ -554,6 +576,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             onSelectLines={onSelectLines}
             totalLinesCount={totalLines}
             isTimber={isTimber}
+            isPixel={isPixel}
           />
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
@@ -583,6 +606,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               reelsCount={numReels}
               paylines={gameDef.paylines}
               isTimber={isTimber}
+              isPixel={isPixel}
+              activeGameId={activeGameId}
             />
 
             {/* Physical Cabinet Glass Depth Overlay (Cylindrical softbox reflection, studio streak & divider mullions) */}
@@ -590,7 +615,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
             {/* Floating Win Badges on Active Winning Paylines */}
             {!isAnyReelSpinning && activeWin && (
-              <FloatingWins activeWin={activeWin} isTimber={isTimber} />
+              <FloatingWins
+                activeWin={activeWin}
+                isTimber={isTimber}
+                isPixel={isPixel}
+                rowCount={rowCount}
+                reelsCount={numReels}
+                activeGameId={activeGameId}
+              />
             )}
 
             {/* HERO CENTER-STAGE WIN CELEBRATION BANNER */}
@@ -611,6 +643,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                   sceneId={currentSceneId}
                   multiplier={freeSpinsRemaining > 0 ? 3 : isFeverMode ? 2 : 1}
                   onClose={() => setIsColossalSlideOpen(false)}
+                  activeGameId={activeGameId}
                 />
               </div>
             )}
@@ -647,6 +680,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             onSelectLines={onSelectLines}
             totalLinesCount={totalLines}
             isTimber={isTimber}
+            isPixel={isPixel}
           />
 
           {/* Right Themed Cabinet Pilaster */}
@@ -661,6 +695,22 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 ))}
               </div>
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
+            </div>
+          ) : isPixel ? (
+            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-purple-950 via-[#180938] to-black border-y-2 border-r-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+              <div className="w-3 h-3 rounded-none border border-pink-400 bg-purple-950 flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
+              </div>
+              <div className="flex flex-col space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-2.5 h-2.5 rounded-none bg-purple-950 border border-pink-400 flex items-center justify-center">
+                    <div className="w-1 h-1 bg-pink-300 animate-pulse shadow-[0_0_6px_#ec4899]" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-3 h-3 rounded-none border border-cyan-400 bg-purple-950 flex items-center justify-center">
+                <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
+              </div>
             </div>
           ) : (
             <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-black via-amber-900 to-slate-900 border-y-2 border-r-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
@@ -685,6 +735,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             !isAnyReelSpinning && spinResult && spinResult.totalPayout > 0
               ? isTimber
                 ? 'h-8 sm:h-10 bg-gradient-to-r from-[#0d2818] via-[#1a4028] to-[#0d2818] border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]'
+                : isPixel
+                ? 'h-8 sm:h-10 bg-gradient-to-r from-purple-950 via-pink-900 to-purple-950 border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.8)]'
                 : 'h-8 sm:h-10 bg-gradient-to-r from-amber-950 via-casino-900 to-amber-950 border-yellow-300 shadow-[0_0_20px_rgba(253,224,71,0.8)]'
               : 'h-5 sm:h-7 bg-black/40 border-white/5 text-slate-400'
           }`}
@@ -693,21 +745,23 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 pl-1.5 sm:pl-2.5">
             <div
               className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
-                isTimber
+                isPixel
+                  ? 'border-pink-400 bg-purple-950 shadow-[0_0_8px_rgba(236,72,153,0.8)]'
+                  : isTimber
                   ? 'border-amber-600/70 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.5)]'
                   : 'border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.6)]'
               } ${isSpinning ? 'animate-subwoofer' : ''}`}
-              title={isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
+              title={isPixel ? "Arcade Stereo Cabinet Speakers" : isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
             >
               <div className={`w-2 h-2 rounded-full border flex items-center justify-center ${
-                isTimber ? 'border-emerald-500 bg-stone-950' : 'border-cyan-400 bg-black'
+                isPixel ? 'border-cyan-300 bg-black' : isTimber ? 'border-emerald-500 bg-stone-950' : 'border-cyan-400 bg-black'
               }`}>
-                <div className={`w-0.5 h-0.5 rounded-full ${isTimber ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                <div className={`w-0.5 h-0.5 rounded-full ${isPixel ? 'bg-pink-400' : isTimber ? 'bg-emerald-400' : 'bg-amber-400'}`} />
               </div>
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
             <span className="font-mono text-emerald-400 text-[10px] font-black flex-shrink-0 whitespace-nowrap">
-              {isTimber ? '95.2% RTP' : '95.2% RTP'}
+              {isPixel ? '94.0% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
             </span>
           </div>
 
@@ -717,11 +771,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div className="flex items-center justify-center space-x-1.5 animate-pulse truncate">
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-400 flex-shrink-0 animate-bounce" />
                 <span className={`text-xs sm:text-sm md:text-base font-black font-mono tracking-tight sm:tracking-wide truncate ${
-                  isTimber
+                  isPixel
+                    ? 'text-pink-300 drop-shadow-[0_0_12px_rgba(236,72,153,1)]'
+                    : isTimber
                     ? 'text-emerald-200 drop-shadow-[0_0_12px_rgba(52,211,153,1)]'
                     : 'text-yellow-300 drop-shadow-[0_0_12px_rgba(253,224,71,1)]'
                 }`}>
-                  WIN: +{spinResult.totalPayout.toLocaleString()} COINS {activeWin ? `• ${activeWin.count}x ${(gameDef.symbols[activeWin.symbolId]?.name || '').toUpperCase()} (+${activeWin.payout.toLocaleString()})` : `(${spinResult.winningLines.length} LINES)`}
+                  WIN: +{spinResult.totalPayout.toLocaleString()} {isPixel ? 'PTS' : 'COINS'} {activeWin ? `• ${activeWin.count}x ${(gameDef.symbols[activeWin.symbolId]?.name || '').toUpperCase()} (+${activeWin.payout.toLocaleString()})` : `(${spinResult.winningLines.length} LINES)`}
                 </span>
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-400 flex-shrink-0 animate-bounce" />
               </div>
@@ -734,19 +790,21 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* Right Speaker + Scene */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0 pr-1.5 sm:pr-2.5">
-            <span className={`text-[10px] font-mono font-bold hidden sm:inline tracking-wide ${isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
-              SCENE: {isTimber ? 'DEEP WOODS' : currentSceneId}
+            <span className={`text-[10px] font-mono font-bold hidden sm:inline tracking-wide ${isPixel ? 'text-pink-300' : isTimber ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {isPixel ? 'STAGE: 1989 CYBERSPACE' : isTimber ? 'SCENE: DEEP WOODS' : `SCENE: ${currentSceneId}`}
             </span>
             <div
               className={`w-4 h-4 rounded-full border flex items-center justify-center shadow-md ${
-                isTimber
+                isPixel
+                  ? 'border-pink-400 bg-purple-950 shadow-[0_0_8px_rgba(236,72,153,0.8)]'
+                  : isTimber
                   ? 'border-amber-600/70 bg-gradient-to-br from-stone-800 via-stone-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.5)]'
                   : 'border-yellow-400/60 bg-gradient-to-br from-slate-700 via-slate-900 to-black shadow-[0_0_6px_rgba(245,158,11,0.6)]'
               } ${isSpinning ? 'animate-subwoofer' : ''}`}
-              title={isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
+              title={isPixel ? "Arcade Stereo Cabinet Speakers" : isTimber ? "Acoustic Forest Speakers" : "Vegas Subwoofer Sound System"}
             >
               <div className={`w-2 h-2 rounded-full border flex items-center justify-center ${
-                isTimber ? 'border-amber-500 bg-stone-950' : 'border-pink-400 bg-black'
+                isPixel ? 'border-cyan-300 bg-black' : isTimber ? 'border-amber-500 bg-stone-950' : 'border-pink-400 bg-black'
               }`}>
                 <div className={`w-0.5 h-0.5 rounded-full ${isTimber ? 'bg-amber-400' : 'bg-rose-400'}`} />
               </div>

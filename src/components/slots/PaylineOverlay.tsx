@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import type { WinningLine, Payline } from '../../engine/types';
 import { PAYLINES, PAYLINE_COLORS } from '../../engine/paylines';
+import type { GameId } from '../../games/types';
 
 interface PaylineOverlayProps {
   winningLines: WinningLine[];
@@ -11,6 +12,8 @@ interface PaylineOverlayProps {
   paylines?: Payline[];
   paylineColors?: string[];
   isTimber?: boolean;
+  isPixel?: boolean;
+  activeGameId?: GameId;
 }
 
 export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
@@ -22,41 +25,82 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   paylines = PAYLINES,
   paylineColors = PAYLINE_COLORS,
   isTimber = false,
+  isPixel = false,
+  activeGameId,
 }) => {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+
+  const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
+  const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
+
+  useEffect(() => {
+    if (!svgRef.current) return;
+    const updateSize = () => {
+      if (svgRef.current) {
+        const { clientWidth, clientHeight } = svgRef.current;
+        if (clientWidth > 0 && clientHeight > 0) {
+          setDimensions({ width: clientWidth, height: clientHeight });
+        }
+      }
+    };
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(svgRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   // If no winning lines and no previewed line, render nothing
   if (winningLines.length === 0 && previewLineIndex === null) {
     return null;
   }
 
-  // Dynamic reels (100 / reelsCount) and dynamic rows (100 / rowCount)
-  const getCellCenterPercent = (reel: number, row: number): [number, number] => {
-    const x = (reel + 0.5) * (100 / reelsCount);
-    const y = (row + 0.5) * (100 / rowCount);
+  const { width, height } = dimensions;
+  const isMeasured = width > 0 && height > 0;
+  const svgW = isMeasured ? width : 100;
+  const svgH = isMeasured ? height : 100;
+
+  // Exact reel gap calculation matching Tailwind space-x-1 (4px) / sm:space-x-1.5 (6px)
+  const isSm = typeof window !== 'undefined' ? window.innerWidth >= 640 : width >= 640;
+  const gap = isMeasured ? (isSm ? 6 : 4) : 0;
+  const totalGap = (reelsCount - 1) * gap;
+  const reelWidth = isMeasured ? (width - totalGap) / reelsCount : 100 / reelsCount;
+
+  // Exact pixel center of reel column & row slice
+  const getCellCenter = (reel: number, row: number): [number, number] => {
+    if (!isMeasured) {
+      return [(reel + 0.5) * (100 / reelsCount), (row + 0.5) * (100 / rowCount)];
+    }
+    const x = reel * (reelWidth + gap) + reelWidth / 2;
+    const y = (row + 0.5) * (height / rowCount);
     return [x, y];
   };
 
   return (
     <svg
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      className="absolute inset-1 sm:inset-2 pointer-events-none z-20 overflow-visible"
+      ref={svgRef}
+      viewBox={`0 0 ${svgW} ${svgH}`}
+      className="absolute inset-1 sm:inset-2 pointer-events-none z-20 overflow-visible w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-[calc(100%-8px)] sm:h-[calc(100%-16px)]"
     >
       <defs>
         <filter id="lineNeonGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feGaussianBlur stdDeviation="3.0" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
         <filter id="superNeonGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3.5" result="blur1" />
-          <feGaussianBlur stdDeviation="1.5" result="blur2" />
+          <feGaussianBlur stdDeviation="6.0" result="blur1" />
+          <feGaussianBlur stdDeviation="2.5" result="blur2" />
           <feMerge>
             <feMergeNode in="blur1" />
             <feMergeNode in="blur2" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
+        </filter>
+        <filter id="pixelBlockGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#EC4899" floodOpacity="0.8" />
         </filter>
       </defs>
 
@@ -66,7 +110,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
           {(() => {
             const pattern = paylines[previewLineIndex];
             if (!pattern) return null;
-            const points = pattern.map((row: number, reel: number) => getCellCenterPercent(reel, row));
+            const points = pattern.map((row: number, reel: number) => getCellCenter(reel, row));
             const pathData = points.reduce((acc: string, [x, y]: [number, number], idx: number) => {
               return idx === 0 ? `M ${x} ${y}` : `${acc} L ${x} ${y}`;
             }, '');
@@ -78,8 +122,8 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   d={pathData}
                   fill="none"
                   stroke={color}
-                  strokeWidth="2.5"
-                  strokeOpacity="0.8"
+                  strokeWidth={isMeasured ? 5 : 2.5}
+                  strokeOpacity="0.85"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   filter="url(#lineNeonGlow)"
@@ -88,7 +132,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   d={pathData}
                   fill="none"
                   stroke="#FFFFFF"
-                  strokeWidth="1"
+                  strokeWidth={isMeasured ? 2 : 1}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -97,10 +141,10 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     key={pIdx}
                     cx={x}
                     cy={y}
-                    r={2.5}
+                    r={isMeasured ? 6 : 2.5}
                     fill={color}
                     stroke="#FFF"
-                    strokeWidth="0.8"
+                    strokeWidth={isMeasured ? 1.5 : 0.8}
                     filter="url(#lineNeonGlow)"
                   />
                 ))}
@@ -116,8 +160,8 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
           const isHighlighted = activeLineIndex === null || activeLineIndex === win.lineIndex;
           const color = paylineColors[win.lineIndex % paylineColors.length];
 
-          // Build SVG path across the points of the winning line
-          const points = win.coords.map(([reel, row]) => getCellCenterPercent(reel, row));
+          // Build SVG path across the exact points of the winning symbols
+          const points = win.coords.map(([reel, row]) => getCellCenter(reel, row));
           if (points.length === 0) return null;
 
           const pathData = points.reduce((acc, [x, y], idx) => {
@@ -126,16 +170,103 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
           return (
             <g key={win.lineIndex} className="transition-opacity duration-300">
-              {isTimber ? (
+              {effectiveIsPixel ? (
                 <>
-                  {/* Timberland: Organic Living Bramble Vine with Golden Sap */}
+                  {/* ======================================================== */}
+                  {/* PIXEL ARCADE: 8-BIT STEPPED NEON LASER & BEACON CHUNKS */}
+                  {/* ======================================================== */}
+                  {/* 1. Ultraviolet Synth Ambient Glow */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={isHighlighted ? (isMeasured ? 12 : 5) : (isMeasured ? 5 : 2)}
+                    strokeOpacity={isHighlighted ? 0.75 : 0.25}
+                    strokeLinecap="square"
+                    strokeLinejoin="miter"
+                    filter="url(#superNeonGlow)"
+                  />
+
+                  {/* 2. Stepped High-Intensity Laser Core */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={isHighlighted ? (isMeasured ? 6 : 2.8) : (isMeasured ? 3 : 1.4)}
+                    strokeLinecap="square"
+                    strokeLinejoin="miter"
+                    filter="url(#lineNeonGlow)"
+                  />
+
+                  {/* 3. White Core Pixel Streak */}
+                  {isHighlighted && (
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth={isMeasured ? 2.5 : 1.2}
+                      strokeLinecap="square"
+                      strokeLinejoin="miter"
+                      className="animate-laser-stream"
+                    />
+                  )}
+
+                  {/* 4. 8-Bit Chunky Square Beacon Nodes on Winning Symbols */}
+                  {points.map(([x, y], pIdx) => {
+                    const boxSize = isHighlighted ? (isMeasured ? 24 : 6) : (isMeasured ? 14 : 3.5);
+                    const half = boxSize / 2;
+                    return (
+                      <g key={pIdx}>
+                        {isHighlighted && (
+                          <rect
+                            x={x - half - (isMeasured ? 5 : 1.5)}
+                            y={y - half - (isMeasured ? 5 : 1.5)}
+                            width={boxSize + (isMeasured ? 10 : 3)}
+                            height={boxSize + (isMeasured ? 10 : 3)}
+                            fill="none"
+                            stroke="#FFF"
+                            strokeWidth={isMeasured ? 1.5 : 0.8}
+                            strokeDasharray="4 2"
+                            className="animate-node-shockwave"
+                          />
+                        )}
+                        {/* Outer Pixel Box with Drop Shadow */}
+                        <rect
+                          x={x - half}
+                          y={y - half}
+                          width={boxSize}
+                          height={boxSize}
+                          fill={color}
+                          stroke="#FFF"
+                          strokeWidth={isMeasured ? 2 : 1}
+                          filter="url(#lineNeonGlow)"
+                        />
+                        {/* Inner Specular Core */}
+                        {isHighlighted && (
+                          <rect
+                            x={x - half * 0.4}
+                            y={y - half * 0.4}
+                            width={boxSize * 0.8}
+                            height={boxSize * 0.8}
+                            fill="#FFFFFF"
+                          />
+                        )}
+                      </g>
+                    );
+                  })}
+                </>
+              ) : effectiveIsTimber ? (
+                <>
+                  {/* ======================================================== */}
+                  {/* TIMBERLAND CRITTERS: ORGANIC BRIAR VINE & HONEY SAP    */}
+                  {/* ======================================================== */}
                   {/* 1. Deep Forest Moss Halo */}
                   <path
                     d={pathData}
                     fill="none"
                     stroke="#10B981"
-                    strokeWidth={isHighlighted ? '6.0' : '2.2'}
-                    strokeOpacity={isHighlighted ? 0.65 : 0.25}
+                    strokeWidth={isHighlighted ? (isMeasured ? 14 : 6) : (isMeasured ? 6 : 2.2)}
+                    strokeOpacity={isHighlighted ? 0.7 : 0.25}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     filter="url(#superNeonGlow)"
@@ -145,7 +276,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#042F1A"
-                    strokeWidth={isHighlighted ? '4.0' : '1.8'}
+                    strokeWidth={isHighlighted ? (isMeasured ? 9 : 4) : (isMeasured ? 4 : 1.8)}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -154,8 +285,8 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#F59E0B"
-                    strokeWidth={isHighlighted ? '2.4' : '1.0'}
-                    strokeDasharray={isHighlighted ? '6,3' : undefined}
+                    strokeWidth={isHighlighted ? (isMeasured ? 5 : 2.4) : (isMeasured ? 2.5 : 1.0)}
+                    strokeDasharray={isHighlighted ? '10,5' : undefined}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     className={isHighlighted ? 'animate-laser-stream' : undefined}
@@ -165,56 +296,62 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#FEF08A"
-                    strokeWidth={isHighlighted ? '1.0' : '0.4'}
+                    strokeWidth={isHighlighted ? (isMeasured ? 2 : 1) : (isMeasured ? 1 : 0.4)}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   {/* 5. Blooming Flower & Acorn Nodes */}
-                  {points.map(([x, y], pIdx) => (
-                    <g key={pIdx}>
-                      {isHighlighted && (
+                  {points.map(([x, y], pIdx) => {
+                    const r = isHighlighted ? (isMeasured ? 10 : 3.6) : (isMeasured ? 5 : 1.8);
+                    return (
+                      <g key={pIdx}>
+                        {isHighlighted && (
+                          <circle
+                            cx={x}
+                            cy={y}
+                            r={r + (isMeasured ? 6 : 2)}
+                            fill="none"
+                            stroke="#34D399"
+                            strokeWidth={isMeasured ? 2 : 1.2}
+                            className="animate-node-shockwave"
+                          />
+                        )}
+                        {/* Leaf Petals around node */}
+                        {isHighlighted && (
+                          <>
+                            <circle cx={x - (isMeasured ? 5 : 2)} cy={y - (isMeasured ? 5 : 2)} r={isMeasured ? 4 : 1.6} fill="#059669" opacity="0.8" />
+                            <circle cx={x + (isMeasured ? 5 : 2)} cy={y - (isMeasured ? 5 : 2)} r={isMeasured ? 4 : 1.6} fill="#059669" opacity="0.8" />
+                            <circle cx={x} cy={y + (isMeasured ? 6 : 2.5)} r={isMeasured ? 4 : 1.6} fill="#10B981" opacity="0.8" />
+                          </>
+                        )}
+                        {/* Central Golden Honey Node */}
                         <circle
                           cx={x}
                           cy={y}
-                          fill="none"
-                          stroke="#34D399"
-                          strokeWidth="1.2"
-                          className="animate-node-shockwave"
+                          r={r}
+                          fill="#F59E0B"
+                          stroke="#FEF08A"
+                          strokeWidth={isHighlighted ? (isMeasured ? 2.5 : 1.2) : (isMeasured ? 1.5 : 0.6)}
+                          filter="url(#lineNeonGlow)"
                         />
-                      )}
-                      {/* Leaf Petals around node */}
-                      {isHighlighted && (
-                        <>
-                          <circle cx={x - 2} cy={y - 2} r={1.6} fill="#059669" opacity="0.8" />
-                          <circle cx={x + 2} cy={y - 2} r={1.6} fill="#059669" opacity="0.8" />
-                          <circle cx={x} cy={y + 2.5} r={1.6} fill="#10B981" opacity="0.8" />
-                        </>
-                      )}
-                      {/* Central Golden Honey Node */}
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r={isHighlighted ? 3.6 : 1.8}
-                        fill="#F59E0B"
-                        stroke="#FEF08A"
-                        strokeWidth={isHighlighted ? 1.2 : 0.6}
-                        filter="url(#lineNeonGlow)"
-                      />
-                      {isHighlighted && (
-                        <circle cx={x} cy={y} r={1.3} fill="#FFFFFF" />
-                      )}
-                    </g>
-                  ))}
+                        {isHighlighted && (
+                          <circle cx={x} cy={y} r={isMeasured ? 3.5 : 1.3} fill="#FFFFFF" />
+                        )}
+                      </g>
+                    );
+                  })}
                 </>
               ) : (
                 <>
-                  {/* 24K Vault: High-Voltage Lasers & Diamond Refractors */}
+                  {/* ======================================================== */}
+                  {/* 24K VAULT: HIGH-VOLTAGE LASERS & DIAMOND REFRACTORS    */}
+                  {/* ======================================================== */}
                   {/* 1. Deep Neon Ambient Aura */}
                   <path
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? '4.5' : '1.8'}
+                    strokeWidth={isHighlighted ? (isMeasured ? 12 : 4.5) : (isMeasured ? 5 : 1.8)}
                     strokeOpacity={isHighlighted ? 0.75 : 0.2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -226,7 +363,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke={color}
-                    strokeWidth={isHighlighted ? '2.8' : '1.2'}
+                    strokeWidth={isHighlighted ? (isMeasured ? 7 : 2.8) : (isMeasured ? 3 : 1.2)}
                     strokeOpacity={isHighlighted ? 0.95 : 0.3}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -239,7 +376,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                       d={pathData}
                       fill="none"
                       stroke="#FFFFFF"
-                      strokeWidth="1.6"
+                      strokeWidth={isMeasured ? 3.5 : 1.6}
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className="animate-laser-stream"
@@ -251,41 +388,45 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     d={pathData}
                     fill="none"
                     stroke="#FFFFFF"
-                    strokeWidth={isHighlighted ? '0.9' : '0.4'}
-                    strokeOpacity={isHighlighted ? 1 : 0.4}
+                    strokeWidth={isHighlighted ? (isMeasured ? 2 : 0.9) : (isMeasured ? 1 : 0.4)}
+                    strokeOpacity={1}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
 
                   {/* 5. Concentric Shockwave Ripples & Glowing Nodes on Symbols */}
-                  {points.map(([x, y], pIdx) => (
-                    <g key={pIdx}>
-                      {isHighlighted && (
+                  {points.map(([x, y], pIdx) => {
+                    const r = isHighlighted ? (isMeasured ? 9 : 3.4) : (isMeasured ? 5 : 1.8);
+                    return (
+                      <g key={pIdx}>
+                        {isHighlighted && (
+                          <circle
+                            cx={x}
+                            cy={y}
+                            r={r + (isMeasured ? 6 : 2)}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth={isMeasured ? 2 : 1.2}
+                            className="animate-node-shockwave"
+                          />
+                        )}
+                        {/* Glowing Node Base */}
                         <circle
                           cx={x}
                           cy={y}
-                          fill="none"
-                          stroke={color}
-                          strokeWidth="1.2"
-                          className="animate-node-shockwave"
+                          r={r}
+                          fill={color}
+                          stroke="#FFF"
+                          strokeWidth={isHighlighted ? (isMeasured ? 2 : 1) : (isMeasured ? 1.2 : 0.6)}
+                          filter="url(#lineNeonGlow)"
                         />
-                      )}
-                      {/* Glowing Node Base */}
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r={isHighlighted ? 3.4 : 1.8}
-                        fill={color}
-                        stroke="#FFF"
-                        strokeWidth={isHighlighted ? 1 : 0.6}
-                        filter="url(#lineNeonGlow)"
-                      />
-                      {/* White Center Flare Core */}
-                      {isHighlighted && (
-                        <circle cx={x} cy={y} r={1.2} fill="#FFFFFF" />
-                      )}
-                    </g>
-                  ))}
+                        {/* White Center Flare Core */}
+                        {isHighlighted && (
+                          <circle cx={x} cy={y} r={isMeasured ? 3.2 : 1.2} fill="#FFFFFF" />
+                        )}
+                      </g>
+                    );
+                  })}
                 </>
               )}
             </g>

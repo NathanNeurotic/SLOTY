@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import { quotaManager, type QuotaState, type QuotaTier } from '../../engine/quotaSystem';
 import baronImg from '../../assets/baron_sterling.jpg';
 import gusImg from '../../assets/grizzly_gus.jpg';
+import pennyImg from '../../assets/pixel_penny.jpg';
 
 interface PuppetCharacterPopupProps {
   activeGameId?: GameId;
@@ -330,24 +331,15 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
           }`}
         >
           {/* Authentic Cutout Puppet Illustration */}
-          {isPixel ? (
-            <div className="w-full h-full bg-gradient-to-b from-purple-900 via-indigo-950 to-black rounded-xl flex flex-col items-center justify-center p-1 text-center border border-pink-500/40">
-              <span className="text-3xl filter drop-shadow animate-pulse">👾</span>
-              <span className="text-[7px] font-black uppercase tracking-wider text-pink-300 mt-1 font-mono">
-                ARCADE BOSS
-              </span>
-            </div>
-          ) : (
-            <img
-              src={isTimber ? gusImg : baronImg}
-              alt={isTimber ? 'Grizzly Gus' : 'Baron Bartholomew Sterling'}
-              className="w-full h-full object-cover object-top rounded-xl filter drop-shadow-md"
-            />
-          )}
+          <img
+            src={isPixel ? pennyImg : isTimber ? gusImg : baronImg}
+            alt={isPixel ? 'Pixel Penny' : isTimber ? 'Grizzly Gus' : 'Baron Bartholomew Sterling'}
+            className="w-full h-full object-cover object-top rounded-xl filter drop-shadow-md"
+          />
 
           {/* Nameplate Pill */}
           <div
-            className={`absolute bottom-0.5 inset-x-0.5 py-0.5 rounded-md text-[6.5px] font-black uppercase text-center border shadow-md truncate ${
+            className={`absolute bottom-0.5 inset-x-0.5 py-0.5 rounded-md text-[6.5px] font-black uppercase text-center border shadow-md truncate font-mono ${
               isTimber
                 ? 'bg-[#2b1407]/95 text-amber-200 border-amber-600/60'
                 : isPixel
@@ -355,7 +347,7 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
                 : 'bg-casino-950/95 text-yellow-300 border-yellow-500/70'
             }`}
           >
-            {isTimber ? '🌲 GRIZZLY GUS' : isPixel ? '👾 BIT-CRUSHER' : '⚙️ BARON STERLING'}
+            {isTimber ? '🌲 GRIZZLY GUS' : isPixel ? '🕹️ PIXEL PENNY' : '⚙️ BARON STERLING'}
           </div>
         </div>
       </div>
@@ -413,7 +405,7 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
                   : isTimber
                   ? 'GUS SHOUTS'
                   : isPixel
-                  ? 'ARCADE OPERATOR'
+                  ? 'PIXEL PENNY'
                   : 'BARON STERLING'}
               </span>
             </div>

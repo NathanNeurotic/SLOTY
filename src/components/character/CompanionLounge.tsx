@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RubySparkle } from './RubySparkle';
 import { GrizzlyGus } from './GrizzlyGus';
+import { PixelPenny } from './PixelPenny';
 import { storage } from '../../utils/storage';
 import { Eye, EyeOff } from 'lucide-react';
 import type { GameId } from '../../games/types';
@@ -29,6 +30,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     return storage.getBoolean('sloty_hostess_visible', true);
   });
@@ -47,7 +49,18 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
   if (position === 'desktop-flank') {
     return (
       <div className="relative">
-        {isTimber ? (
+        {isPixel ? (
+          <PixelPenny
+            isSpinning={isSpinning}
+            isAnticipating={isAnticipating}
+            isWinning={isWinning}
+            isBigWin={isBigWin}
+            isFeverMode={isFeverMode}
+            winAmount={winAmount}
+            onRewardCoins={onRewardCoins}
+            variant="full"
+          />
+        ) : isTimber ? (
           <GrizzlyGus
             isSpinning={isSpinning}
             isAnticipating={isAnticipating}
@@ -81,7 +94,18 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
       {isVisible ? (
         <div className="flex items-center space-x-1.5 w-full max-w-sm">
           <div className="flex-1">
-            {isTimber ? (
+            {isPixel ? (
+              <PixelPenny
+                isSpinning={isSpinning}
+                isAnticipating={isAnticipating}
+                isWinning={isWinning}
+                isBigWin={isBigWin}
+                isFeverMode={isFeverMode}
+                winAmount={winAmount}
+                onRewardCoins={onRewardCoins}
+                variant="compact"
+              />
+            ) : isTimber ? (
               <GrizzlyGus
                 isSpinning={isSpinning}
                 isAnticipating={isAnticipating}

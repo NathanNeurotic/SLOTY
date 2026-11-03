@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices, Trees } from 'lucide-react';
+import { Minus, Plus, Zap, RefreshCw, Flame, StopCircle, Dices, Trees, Gamepad2 } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { RollingWinDisplay } from './RollingWinDisplay';
 import type { GameId } from '../../games/types';
@@ -57,6 +57,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
   const [showAutoMenu, setShowAutoMenu] = useState(false);
   const maxAllowedBet = Math.min(balance, maxBet);
 
@@ -243,15 +244,21 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             disabled={!isSpinning && !isFreeSpins && balance < totalBet}
             className={`flex-1 h-10 flex items-center justify-center rounded-xl font-black tracking-wider text-base uppercase text-white select-none transition-all touch-manipulation shadow-lg ${
               isSpinning
-                ? isTimber
+                ? isPixel
+                  ? 'bg-gradient-to-r from-red-600 to-pink-600 border-2 border-red-300 shadow-[0_0_15px_rgba(239,68,68,0.8)] animate-pulse'
+                  : isTimber
                   ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_15px_rgba(244,63,94,0.8)] animate-pulse'
                   : 'vlt-stop-btn animate-pulse'
                 : !isFreeSpins && balance < totalBet
                 ? 'bg-slate-800 opacity-40 text-slate-500 border border-white/5'
                 : isFreeSpins
-                ? isTimber
+                ? isPixel
+                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 border-2 border-pink-300 shadow-[0_0_20px_rgba(236,72,153,0.9)] animate-pulse font-mono'
+                  : isTimber
                   ? 'bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 border-2 border-yellow-300 shadow-[0_0_20px_rgba(16,185,129,0.9)] animate-pulse'
                   : 'vlt-spin-btn animate-pulse'
+                : isPixel
+                ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 hover:from-pink-500 hover:to-cyan-400 border-2 border-pink-300 shadow-[0_0_25px_rgba(236,72,153,0.8)] active:scale-95 font-mono'
                 : isTimber
                 ? 'bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-700 border-2 border-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.8)] active:scale-95'
                 : 'vlt-spin-btn'
@@ -270,17 +277,17 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             ) : isFreeSpins ? (
               <span className="flex items-center space-x-1.5">
                 <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
-                <span>FREE SPIN</span>
+                <span>{isPixel ? 'BOSS RUSH' : 'FREE SPIN'}</span>
               </span>
             ) : !isFreeSpins && balance < totalBet ? (
               <span className="flex items-center space-x-1 text-amber-300 text-xs">
-                <span>NEED COINS</span>
+                <span>{isPixel ? 'NEED 25¢' : 'NEED COINS'}</span>
               </span>
             ) : (
-              <span className="flex items-center space-x-1.5">
-                {isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
-                <span>{isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
-                {isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
+              <span className="flex items-center space-x-1.5 font-mono">
+                {isPixel ? <Gamepad2 className="w-4 h-4 text-cyan-200" /> : isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
+                <span>{isPixel ? 'INSERT COIN' : isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
+                {isPixel ? <Gamepad2 className="w-4 h-4 text-cyan-200" /> : isTimber ? <Trees className="w-4 h-4 text-emerald-200 fill-emerald-200" /> : null}
               </span>
             )}
           </button>
@@ -515,15 +522,21 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
           className={`relative w-72 sm:w-96 h-11 sm:h-13 flex-shrink-0 flex items-center justify-center rounded-2xl font-black tracking-widest text-lg sm:text-2xl uppercase text-white select-none transition-all touch-manipulation shadow-2xl active:scale-95 ${
             isSpinning
-              ? isTimber
+              ? isPixel
+                ? 'bg-gradient-to-r from-red-600 to-pink-600 border-2 border-red-300 shadow-[0_0_20px_rgba(239,68,68,0.8)] animate-pulse cursor-pointer'
+                : isTimber
                 ? 'bg-gradient-to-r from-rose-700 via-red-600 to-rose-800 border-2 border-red-300 shadow-[0_0_20px_rgba(244,63,94,0.8)] animate-pulse cursor-pointer'
                 : 'vlt-stop-btn animate-pulse cursor-pointer'
               : !isFreeSpins && balance < totalBet
               ? 'bg-slate-800 opacity-40 cursor-not-allowed text-slate-500 border border-white/5'
               : isFreeSpins
-              ? isTimber
+              ? isPixel
+                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 border-2 border-pink-300 shadow-[0_0_25px_rgba(236,72,153,0.9)] animate-pulse font-mono'
+                : isTimber
                 ? 'bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 border-2 border-yellow-300 shadow-[0_0_25px_rgba(16,185,129,0.9)] animate-pulse'
                 : 'vlt-spin-btn animate-pulse'
+              : isPixel
+              ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 hover:from-pink-500 hover:to-cyan-400 border-2 border-pink-300 shadow-[0_0_35px_rgba(236,72,153,0.8)] hover:brightness-110 active:scale-95 font-mono'
               : isTimber
               ? 'bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-700 border-2 border-emerald-300 shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:brightness-110 active:scale-95'
               : 'vlt-spin-btn'
@@ -532,7 +545,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {isSpinning ? (
             <span className="flex items-center space-x-2 text-white">
               <StopCircle className="w-6 h-6 fill-white text-rose-700" />
-              <span>{isTimber ? 'LEAF STOP' : 'STOP'}</span>
+              <span>{isPixel ? 'QUICK STOP' : isTimber ? 'LEAF STOP' : 'STOP'}</span>
             </span>
           ) : isAutoSpinning ? (
             <span className="flex items-center space-x-2">
@@ -540,19 +553,19 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               <span>STOP</span>
             </span>
           ) : isFreeSpins ? (
-            <span className="flex items-center space-x-2">
+            <span className="flex items-center space-x-2 font-mono">
               <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300 animate-pulse" />
-              <span>{isTimber ? 'OWL FREE SPIN' : 'FREE SPIN'}</span>
+              <span>{isPixel ? '👾 8-BIT BOSS RUSH (3X) 👾' : isTimber ? 'OWL FREE SPIN' : 'FREE SPIN'}</span>
             </span>
           ) : !isFreeSpins && balance < totalBet ? (
-            <span className="flex items-center space-x-2 text-amber-300">
-              <span>{isTimber ? '🪵 INSUFFICIENT COINS 🪵' : '⚡ INSUFFICIENT COINS ⚡'}</span>
+            <span className="flex items-center space-x-2 text-amber-300 font-mono">
+              <span>{isPixel ? '🪙 INSERT 25¢ TOKENS 🪙' : isTimber ? '🪵 INSUFFICIENT COINS 🪵' : '⚡ INSUFFICIENT COINS ⚡'}</span>
             </span>
           ) : (
-            <span className="flex items-center space-x-2">
-              {isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
-              <span>{isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
-              {isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
+            <span className="flex items-center space-x-2 font-mono">
+              {isPixel ? <Gamepad2 className="w-6 h-6 text-cyan-200" /> : isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
+              <span>{isPixel ? 'INSERT COIN / SPIN' : isTimber ? 'WOODLAND SPIN' : 'SPIN'}</span>
+              {isPixel ? <Gamepad2 className="w-6 h-6 text-cyan-200" /> : isTimber ? <Trees className="w-6 h-6 text-emerald-200 fill-emerald-200" /> : null}
             </span>
           )}
         </button>

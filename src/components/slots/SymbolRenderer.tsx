@@ -1202,34 +1202,44 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
       // =========================================================================
       case 'CYBER_WILD':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <defs>
-              <linearGradient id="starPixelGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFBEB" />
-                <stop offset="25%" stopColor="#FDE047" />
-                <stop offset="65%" stopColor="#F59E0B" />
-                <stop offset="100%" stopColor="#B45309" />
-              </linearGradient>
-            </defs>
-            {/* 8-Bit Pixelated Star Outline & Body */}
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Chromatic Rainbow 8-Bit Pixel After-Trail */}
+            <rect x="22" y="58" width="8" height="6" fill="#FF007F" opacity="0.6" />
+            <rect x="70" y="58" width="8" height="6" fill="#00F0FF" opacity="0.6" />
+            <rect x="30" y="64" width="8" height="6" fill="#FFE600" opacity="0.6" />
+            <rect x="62" y="64" width="8" height="6" fill="#39FF14" opacity="0.6" />
+
+            {/* Stepped 8-Bit Star Outer Black Border */}
             <path
-              d="M50 10 L58 30 L80 30 L62 44 L68 66 L50 52 L32 66 L38 44 L20 30 L42 30 Z"
-              fill="url(#starPixelGold)"
-              stroke="#FFF"
-              strokeWidth="2.5"
-              strokeLinejoin="miter"
+              d="M44 8 H56 V16 H64 V24 H76 V32 H88 V44 H76 V52 H68 V60 H76 V72 H64 V64 H56 V56 H44 V64 H36 V72 H24 V60 H32 V52 H24 V44 H12 V32 H24 V24 H36 V16 H44 Z"
+              fill="#0F0524"
             />
-            {/* 8-Bit Pixel Eyes */}
-            <rect x="42" y="34" width="4" height="9" fill="#000" />
-            <rect x="42" y="34" width="4" height="3" fill="#FFF" />
-            <rect x="54" y="34" width="4" height="9" fill="#000" />
-            <rect x="54" y="34" width="4" height="3" fill="#FFF" />
-            {/* Scanline CRT Highlights */}
-            <line x1="30" y1="36" x2="70" y2="36" stroke="#FEF08A" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
-            {/* WILD Plaque Badge */}
-            <rect x="15" y="72" width="70" height="20" rx="4" fill="#0B031C" stroke="#F59E0B" strokeWidth="2" />
-            <rect x="17" y="74" width="66" height="16" rx="2.5" fill="#2E1065" stroke="#FDE047" strokeWidth="0.8" />
-            <text x="50" y="86.5" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="11" fontFamily="'Courier New', monospace" letterSpacing="2.5">
+            {/* Stepped 8-Bit Star Inner Body - Golden Core */}
+            <path
+              d="M46 12 H54 V18 H62 V26 H74 V34 H84 V42 H74 V50 H66 V58 H72 V68 H64 V60 H54 V52 H46 V60 H36 V68 H28 V58 H34 V50 H26 V42 H16 V34 H26 V26 H38 V18 H46 Z"
+              fill="#FFE600"
+            />
+            {/* 8-Bit Shading & Specular Highlights */}
+            <rect x="46" y="14" width="8" height="6" fill="#FFF" />
+            <rect x="38" y="20" width="8" height="6" fill="#FFF" />
+            <rect x="28" y="28" width="8" height="6" fill="#FFF" />
+            {/* Bottom Dark Gold Stepped Shading */}
+            <rect x="30" y="54" width="6" height="6" fill="#D97706" />
+            <rect x="64" y="54" width="6" height="6" fill="#D97706" />
+            <rect x="46" y="46" width="8" height="6" fill="#D97706" />
+
+            {/* Iconic 8-Bit Vertical Pixel Eyes */}
+            <rect x="42" y="30" width="5" height="12" fill="#000" />
+            <rect x="42" y="30" width="5" height="4" fill="#FFF" />
+            <rect x="53" y="30" width="5" height="12" fill="#000" />
+            <rect x="53" y="30" width="5" height="4" fill="#FFF" />
+
+            {/* Stepped 8-Bit WILD Plaque */}
+            <path d="M14 74 H86 V92 H14 Z" fill="#000" />
+            <path d="M16 76 H84 V90 H16 Z" fill="#FF007F" />
+            <path d="M18 78 H82 V88 H18 Z" fill="#2E0854" />
+            {/* Stepped 8-bit text: W I L D */}
+            <text x="50" y="86.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="10.5" fontFamily="'Courier New', monospace" letterSpacing="3">
               WILD
             </text>
           </svg>
@@ -1237,33 +1247,44 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'PIXEL_CARTRIDGE':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <defs>
-              <linearGradient id="cartridgeGold" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FDE047" />
-                <stop offset="50%" stopColor="#D97706" />
-                <stop offset="100%" stopColor="#78350F" />
-              </linearGradient>
-            </defs>
-            {/* Golden 8-Bit Cartridge Body */}
-            <rect x="20" y="14" width="60" height="60" rx="5" fill="url(#cartridgeGold)" stroke="#FFF" strokeWidth="2" />
-            {/* Cartridge Top Grip Ridges */}
-            <line x1="28" y1="20" x2="72" y2="20" stroke="#78350F" strokeWidth="2" />
-            <line x1="28" y1="24" x2="72" y2="24" stroke="#78350F" strokeWidth="2" />
-            <line x1="28" y1="28" x2="72" y2="28" stroke="#78350F" strokeWidth="2" />
-            {/* Holographic Label */}
-            <rect x="26" y="32" width="48" height="34" rx="2" fill="#090514" stroke="#06B6D4" strokeWidth="1.5" />
-            <text x="50" y="47" textAnchor="middle" fill="#06B6D4" fontWeight="900" fontSize="8" fontFamily="'Courier New', monospace" letterSpacing="1">
-              BONUS
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Cartridge Black Outer Shell */}
+            <path d="M18 10 H82 V74 H78 V80 H22 V74 H18 Z" fill="#05010B" />
+            {/* Main Cartridge Body (Retro Dark Slate Gray) */}
+            <path d="M20 12 H80 V72 H76 V78 H24 V72 H20 Z" fill="#475569" />
+            {/* Cartridge Bevel Highlight */}
+            <rect x="22" y="14" width="56" height="3" fill="#94A3B8" />
+
+            {/* Top Stepped Grip Ridges */}
+            <rect x="28" y="19" width="44" height="3" fill="#1E293B" />
+            <rect x="28" y="24" width="44" height="3" fill="#1E293B" />
+            <rect x="28" y="29" width="44" height="3" fill="#1E293B" />
+
+            {/* Stepped Holographic Game Label */}
+            <rect x="26" y="35" width="48" height="32" fill="#0D031F" stroke="#00F0FF" strokeWidth="1.5" />
+            {/* 8-Bit Pixel Skull / Lightning Emblem */}
+            <rect x="44" y="39" width="12" height="4" fill="#FF007F" />
+            <rect x="42" y="43" width="16" height="4" fill="#FF007F" />
+            <rect x="46" y="47" width="8" height="4" fill="#FFE600" />
+            <rect x="48" y="51" width="4" height="4" fill="#FFE600" />
+            <text x="50" y="62" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="7" fontFamily="'Courier New', monospace" letterSpacing="1">
+              FREE SPINS
             </text>
-            <text x="50" y="58" textAnchor="middle" fill="#F43F5E" fontWeight="900" fontSize="7" fontFamily="'Courier New', monospace">
-              STAGE
-            </text>
-            {/* Bottom Connector Pins */}
-            <rect x="30" y="74" width="40" height="4" fill="#E2E8F0" stroke="#475569" strokeWidth="0.8" />
-            {/* SCATTER Base Badge */}
-            <rect x="12" y="74" width="76" height="19" rx="4" fill="#020617" stroke="#06B6D4" strokeWidth="1.8" />
-            <text x="50" y="87.5" textAnchor="middle" fill="#38BDF8" fontWeight="900" fontSize="10" fontFamily="'Courier New', monospace" letterSpacing="2">
+
+            {/* Bottom Stepped Gold Connector Fingers */}
+            <rect x="26" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="33" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="40" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="47" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="54" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="61" y="74" width="4" height="5" fill="#FBBF24" />
+            <rect x="68" y="74" width="4" height="5" fill="#FBBF24" />
+
+            {/* SCATTER Badge */}
+            <path d="M12 78 H88 V94 H12 Z" fill="#000" />
+            <path d="M14 80 H86 V92 H14 Z" fill="#00F0FF" />
+            <path d="M16 82 H84 V90 H16 Z" fill="#061826" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1.5">
               SCATTER
             </text>
           </svg>
@@ -1271,24 +1292,40 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'RETRO_TOKEN':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <defs>
-              <linearGradient id="tokenBrass" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFBEB" />
-                <stop offset="30%" stopColor="#FBBF24" />
-                <stop offset="70%" stopColor="#D97706" />
-                <stop offset="100%" stopColor="#78350F" />
-              </linearGradient>
-            </defs>
-            {/* Heavy Ribbed Arcade Token */}
-            <circle cx="50" cy="46" r="38" fill="url(#tokenBrass)" stroke="#FEF08A" strokeWidth="2.5" />
-            <circle cx="50" cy="46" r="32" fill="#92400E" stroke="#FEF08A" strokeWidth="1" strokeDasharray="4 2" />
-            <circle cx="50" cy="46" r="26" fill="url(#tokenBrass)" stroke="#FEF08A" strokeWidth="1.5" />
-            {/* 1UP Star Emblem */}
-            <polygon points="50,32 54,40 62,40 56,45 58,54 50,49 42,54 44,45 38,40 46,40" fill="#FFF" />
-            {/* Base Plaque Badge */}
-            <rect x="16" y="74" width="68" height="19" rx="4" fill="#1C1408" stroke="#F59E0B" strokeWidth="2" />
-            <text x="50" y="87.5" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="10.5" fontFamily="'Courier New', monospace" letterSpacing="2">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Outer Octagon Token Edge */}
+            <path
+              d="M36 8 H64 V14 H78 V22 H86 V36 H92 V64 H86 V78 H78 V86 H64 V92 H36 V86 H22 V78 H14 V64 H8 V36 H14 V22 H22 V14 H36 Z"
+              fill="#0F0524"
+            />
+            {/* Heavy Brass Token Body */}
+            <path
+              d="M38 10 H62 V16 H76 V24 H84 V38 H90 V62 H84 V76 H76 V84 H62 V90 H38 V84 H24 V76 H16 V62 H10 V38 H16 V24 H24 V16 H38 Z"
+              fill="#F59E0B"
+            />
+            {/* Beveled Specular Highlight Ring */}
+            <path
+              d="M38 12 H62 V18 H74 V26 H82 V38 H88 V50 H82 V28 H74 V20 H62 V14 H38 V20 H26 V28 H18 V50 H12 V38 H18 V26 H26 V18 H38 Z"
+              fill="#FEF08A"
+            />
+            {/* Dark Stamped Coin Center */}
+            <rect x="24" y="24" width="52" height="52" fill="#78350F" />
+            <rect x="26" y="26" width="48" height="48" fill="#B45309" />
+
+            {/* Stepped 8-Bit Joystick Stamped Motif */}
+            <rect x="46" y="32" width="8" height="8" fill="#FEF08A" />
+            <rect x="48" y="40" width="4" height="12" fill="#FEF08A" />
+            <rect x="42" y="52" width="16" height="4" fill="#FEF08A" />
+            {/* "25¢" Pixel Stamp */}
+            <text x="50" y="66" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="10" fontFamily="'Courier New', monospace" letterSpacing="1">
+              25¢
+            </text>
+
+            {/* Stepped 1-UP Badge */}
+            <path d="M20 78 H80 V94 H20 Z" fill="#000" />
+            <path d="M22 80 H78 V92 H22 Z" fill="#FBBF24" />
+            <path d="M24 82 H76 V90 H24 Z" fill="#451A03" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
               1-UP TOKEN
             </text>
           </svg>
@@ -1296,27 +1333,42 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'BOSS_DRAGON':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <defs>
-              <linearGradient id="dragonRed" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#F87171" />
-                <stop offset="50%" stopColor="#DC2626" />
-                <stop offset="100%" stopColor="#7F1D1D" />
-              </linearGradient>
-            </defs>
-            {/* Mecha Horns */}
-            <polygon points="28,24 16,6 38,18" fill="#F59E0B" stroke="#000" strokeWidth="1.5" />
-            <polygon points="72,24 84,6 62,18" fill="#F59E0B" stroke="#000" strokeWidth="1.5" />
-            {/* Dragon Head */}
-            <polygon points="26,24 74,24 82,52 64,80 36,80 18,52" fill="url(#dragonRed)" stroke="#FFF" strokeWidth="2" />
-            {/* Glowing Cybernetic Eye */}
-            <rect x="30" y="38" width="14" height="8" rx="2" fill="#00F0FF" stroke="#FFF" strokeWidth="1" />
-            <rect x="56" y="38" width="14" height="8" rx="2" fill="#00F0FF" stroke="#FFF" strokeWidth="1" />
-            {/* Cyber Visor & Pixel Teeth */}
-            <polygon points="36,66 40,58 44,66 48,58 52,66 56,58 60,66 64,58" fill="#FFF" />
-            {/* Boss Header Plaque */}
-            <rect x="18" y="78" width="64" height="16" rx="3" fill="#450A0A" stroke="#EF4444" strokeWidth="1.5" />
-            <text x="50" y="89.5" textAnchor="middle" fill="#FCA5A5" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* 8-Bit Cyber Mecha Dragon Horns */}
+            <path d="M22 8 H32 V18 H22 Z M16 18 H26 V28 H16 Z" fill="#FFE600" />
+            <path d="M68 8 H78 V18 H68 Z M74 18 H84 V28 H74 Z" fill="#FFE600" />
+
+            {/* Stepped Dragon Skull Black Frame */}
+            <path
+              d="M26 22 H74 V32 H86 V56 H78 V68 H68 V80 H32 V68 H22 V56 H14 V32 H26 Z"
+              fill="#0F0208"
+            />
+            {/* Cyber Armor Red Plates */}
+            <path
+              d="M28 24 H72 V34 H84 V54 H76 V66 H66 V78 H34 V66 H24 V54 H16 V34 H28 Z"
+              fill="#DC2626"
+            />
+            {/* Armor Specular Plates */}
+            <rect x="32" y="26" width="36" height="4" fill="#F87171" />
+            <rect x="20" y="36" width="8" height="12" fill="#EF4444" />
+            <rect x="72" y="36" width="8" height="12" fill="#991B1B" />
+
+            {/* Glowing Cyan Optical Visor */}
+            <rect x="22" y="40" width="56" height="8" fill="#000" />
+            <rect x="24" y="42" width="52" height="4" fill="#00F0FF" />
+            <rect x="42" y="42" width="16" height="4" fill="#FFFFFF" />
+
+            {/* Stepped Cyber Fangs & Plasma Vent */}
+            <rect x="34" y="58" width="6" height="8" fill="#FFF" />
+            <rect x="44" y="58" width="6" height="6" fill="#00F0FF" />
+            <rect x="52" y="58" width="6" height="6" fill="#00F0FF" />
+            <rect x="60" y="58" width="6" height="8" fill="#FFF" />
+
+            {/* Stepped BOSS Plaque */}
+            <path d="M16 78 H84 V94 H16 Z" fill="#000" />
+            <path d="M18 80 H82 V92 H18 Z" fill="#EF4444" />
+            <path d="M20 82 H80 V90 H20 Z" fill="#450A0A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FCA5A5" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
               BOSS 1500X
             </text>
           </svg>
@@ -1324,25 +1376,40 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'HERO_KNIGHT':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <defs>
-              <linearGradient id="knightBlue" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#60A5FA" />
-                <stop offset="50%" stopColor="#2563EB" />
-                <stop offset="100%" stopColor="#1E3A8A" />
-              </linearGradient>
-            </defs>
-            {/* Golden Helm Crest & Plume */}
-            <polygon points="46,6 54,6 56,22 44,22" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
-            {/* Helmet Body */}
-            <polygon points="24,24 76,24 80,60 50,78 20,60" fill="url(#knightBlue)" stroke="#FFF" strokeWidth="2" />
-            {/* Cyan Energy Visor */}
-            <rect x="28" y="38" width="44" height="12" rx="2" fill="#22D3EE" stroke="#A5F3FC" strokeWidth="1.2" />
-            {/* Buster Sword Tip */}
-            <polygon points="80,14 88,22 72,50 66,44" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
-            {/* Hero Plaque */}
-            <rect x="20" y="78" width="60" height="16" rx="3" fill="#172554" stroke="#3B82F6" strokeWidth="1.5" />
-            <text x="50" y="89.5" textAnchor="middle" fill="#93C5FD" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped Crimson Feather Plume */}
+            <path d="M46 6 H54 V16 H58 V24 H42 V16 H46 Z" fill="#EF4444" />
+            <rect x="48" y="8" width="4" height="12" fill="#FCA5A5" />
+
+            {/* Stepped Cyber Knight Helmet Shell */}
+            <path
+              d="M24 22 H76 V34 H84 V56 H76 V74 H64 V80 H36 V74 H24 V56 H16 V34 H24 Z"
+              fill="#061226"
+            />
+            {/* Cobalt Armor Body */}
+            <path
+              d="M26 24 H74 V36 H82 V54 H74 V72 H62 V78 H38 V72 H26 V54 H18 V36 H26 Z"
+              fill="#2563EB"
+            />
+            {/* Silver Armor Highlights */}
+            <rect x="30" y="26" width="40" height="4" fill="#93C5FD" />
+            <rect x="20" y="38" width="6" height="12" fill="#60A5FA" />
+            <rect x="74" y="38" width="6" height="12" fill="#1D4ED8" />
+
+            {/* Glowing Cyan Eye Slit */}
+            <rect x="28" y="42" width="44" height="8" fill="#000" />
+            <rect x="30" y="44" width="40" height="4" fill="#22D3EE" />
+            <rect x="46" y="44" width="8" height="4" fill="#FFF" />
+
+            {/* Stepped Diagonal Broadsword */}
+            <path d="M78 12 H86 V20 H78 Z M74 20 H82 V28 H74 Z M68 28 H76 V36 H68 Z" fill="#E2E8F0" />
+            <rect x="72" y="24" width="6" height="4" fill="#F59E0B" />
+
+            {/* Stepped HERO Plaque */}
+            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
+            <path d="M20 80 H80 V92 H20 Z" fill="#3B82F6" />
+            <path d="M22 82 H78 V90 H22 Z" fill="#0F172A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#93C5FD" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="2">
               HERO 900X
             </text>
           </svg>
@@ -1350,20 +1417,48 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'GAMEPAD':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            {/* Retro 8-Bit Controller Body */}
-            <rect x="14" y="24" width="72" height="48" rx="8" fill="#1E293B" stroke="#94A3B8" strokeWidth="2" />
-            {/* D-Pad Cross */}
-            <polygon points="28,42 34,42 34,36 40,36 40,42 46,42 46,48 40,48 40,54 34,54 34,48 28,48" fill="#F8FAFC" />
-            {/* Select / Start */}
-            <rect x="44" y="44" width="5" height="3" rx="1" fill="#64748B" />
-            <rect x="51" y="44" width="5" height="3" rx="1" fill="#64748B" />
-            {/* Action Red Buttons A & B */}
-            <circle cx="66" cy="46" r="4.5" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
-            <circle cx="76" cy="42" r="4.5" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
-            {/* Plaque */}
-            <rect x="22" y="76" width="56" height="16" rx="3" fill="#0F172A" stroke="#10B981" strokeWidth="1.5" />
-            <text x="50" y="87.5" textAnchor="middle" fill="#34D399" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Controller Cord Curling Out Top */}
+            <path d="M50 10 H54 V20 H50 Z" fill="#0F172A" />
+            <rect x="46" y="10" width="8" height="4" fill="#334155" />
+
+            {/* Stepped Controller Outer Shell */}
+            <path
+              d="M14 20 H86 V26 H92 V68 H86 V74 H14 V68 H8 V26 H14 Z"
+              fill="#050811"
+            />
+            {/* Controller Body (Classic 8-Bit Gray) */}
+            <path
+              d="M16 22 H84 V28 H90 V66 H84 V72 H16 V66 H10 V28 H16 Z"
+              fill="#334155"
+            />
+            {/* Top Bevel Highlight */}
+            <rect x="18" y="24" width="64" height="3" fill="#64748B" />
+
+            {/* Stepped D-Pad Cross on Left */}
+            <rect x="22" y="40" width="18" height="6" fill="#0F172A" />
+            <rect x="28" y="34" width="6" height="18" fill="#0F172A" />
+            <rect x="29" y="35" width="4" height="16" fill="#1E293B" />
+            <rect x="23" y="41" width="16" height="4" fill="#1E293B" />
+
+            {/* Select / Start Black Pills in Middle */}
+            <rect x="44" y="44" width="6" height="3" fill="#0F172A" transform="rotate(-25 47 45)" />
+            <rect x="53" y="44" width="6" height="3" fill="#0F172A" transform="rotate(-25 56 45)" />
+
+            {/* Round Cherry-Red A & B Buttons on Right */}
+            <rect x="66" y="42" width="8" height="8" fill="#000" />
+            <rect x="67" y="43" width="6" height="6" fill="#EF4444" />
+            <rect x="67" y="43" width="2" height="2" fill="#FFF" />
+
+            <rect x="76" y="36" width="8" height="8" fill="#000" />
+            <rect x="77" y="37" width="6" height="6" fill="#EF4444" />
+            <rect x="77" y="37" width="2" height="2" fill="#FFF" />
+
+            {/* Stepped GAMEPAD Plaque */}
+            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
+            <path d="M20 80 H80 V92 H20 Z" fill="#10B981" />
+            <path d="M22 82 H78 V90 H22 Z" fill="#062E1A" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#34D399" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
               GAMEPAD
             </text>
           </svg>
@@ -1371,19 +1466,42 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'JOYSTICK':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            {/* Arcade Cabinet Base Plate */}
-            <rect x="20" y="62" width="60" height="18" rx="4" fill="#334155" stroke="#94A3B8" strokeWidth="1.8" />
-            {/* Steel Shaft */}
-            <rect x="47" y="32" width="6" height="32" fill="#E2E8F0" stroke="#475569" strokeWidth="1" />
-            {/* Dust Washer */}
-            <ellipse cx="50" cy="62" rx="14" ry="4" fill="#0F172A" />
-            {/* Big Red Balltop Knob */}
-            <circle cx="50" cy="26" r="16" fill="#DC2626" stroke="#FEF2F2" strokeWidth="2" />
-            <circle cx="45" cy="22" r="4.5" fill="#FFF" opacity="0.8" />
-            {/* Plaque */}
-            <rect x="22" y="78" width="56" height="16" rx="3" fill="#0F172A" stroke="#F97316" strokeWidth="1.5" />
-            <text x="50" y="89.5" textAnchor="middle" fill="#FDBA74" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped Metal Base Plate */}
+            <path d="M16 62 H84 V76 H16 Z" fill="#0F172A" />
+            <path d="M18 64 H82 V74 H18 Z" fill="#475569" />
+            {/* 4 Corner Screws */}
+            <rect x="22" y="67" width="3" height="3" fill="#CBD5E1" />
+            <rect x="75" y="67" width="3" height="3" fill="#CBD5E1" />
+
+            {/* Black Stepped Rubber Dust Washer */}
+            <rect x="36" y="60" width="28" height="4" fill="#0F172A" />
+
+            {/* Stepped Chrome Shaft */}
+            <rect x="46" y="30" width="8" height="30" fill="#0F172A" />
+            <rect x="47" y="30" width="6" height="30" fill="#CBD5E1" />
+            <rect x="48" y="30" width="2" height="30" fill="#FFFFFF" />
+
+            {/* Stepped 8-Bit Red Balltop */}
+            <path
+              d="M42 12 H58 V18 H66 V26 H70 V36 H66 V44 H58 V48 H42 V44 H34 V36 H30 V26 H34 V18 H42 Z"
+              fill="#0F0208"
+            />
+            <path
+              d="M44 14 H56 V20 H64 V28 H68 V34 H64 V42 H56 V46 H44 V42 H36 V34 H32 V28 H36 V20 H44 Z"
+              fill="#DC2626"
+            />
+            {/* White Glint Highlight Pixels */}
+            <rect x="38" y="18" width="6" height="6" fill="#FFF" />
+            <rect x="44" y="24" width="4" height="4" fill="#FFF" />
+            {/* Dark Shading */}
+            <rect x="52" y="36" width="10" height="6" fill="#7F1D1D" />
+
+            {/* Stepped JOYSTICK Plaque */}
+            <path d="M18 78 H82 V94 H18 Z" fill="#000" />
+            <path d="M20 80 H80 V92 H20 Z" fill="#F97316" />
+            <path d="M22 82 H78 V90 H22 Z" fill="#431407" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#FDBA74" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
               JOYSTICK
             </text>
           </svg>
@@ -1391,21 +1509,41 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'POTION_HEAL':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            {/* Bottle Stopper / Cork */}
-            <rect x="42" y="16" width="16" height="8" rx="2" fill="#B45309" stroke="#FEF08A" strokeWidth="1" />
-            {/* Bottle Neck */}
-            <rect x="45" y="24" width="10" height="12" fill="#E0E7FF" opacity="0.7" stroke="#818CF8" strokeWidth="1" />
-            {/* Bottle Body */}
-            <circle cx="50" cy="54" r="24" fill="#1E1B4B" stroke="#C084FC" strokeWidth="2.5" />
-            {/* Glowing Magic Fluid */}
-            <path d="M28 54 Q50 62 72 54 A24 24 0 0 1 28 54 Z" fill="#A855F7" />
-            {/* Bubbles */}
-            <circle cx="44" cy="58" r="3" fill="#FFF" opacity="0.8" />
-            <circle cx="56" cy="62" r="2" fill="#FFF" opacity="0.8" />
-            {/* Plaque */}
-            <rect x="22" y="78" width="56" height="16" rx="3" fill="#1E1B4B" stroke="#A855F7" strokeWidth="1.5" />
-            <text x="50" y="89.5" textAnchor="middle" fill="#E9D5FF" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped Brown Cork Stopper */}
+            <rect x="42" y="12" width="16" height="8" fill="#000" />
+            <rect x="44" y="14" width="12" height="6" fill="#B45309" />
+            <rect x="44" y="14" width="4" height="2" fill="#FEF08A" />
+
+            {/* Stepped Glass Neck */}
+            <rect x="45" y="20" width="10" height="12" fill="#0F172A" />
+            <rect x="46" y="20" width="8" height="12" fill="#6366F1" opacity="0.6" />
+
+            {/* Stepped Spherical Glass Flask Body */}
+            <path
+              d="M34 32 H66 V40 H76 V52 H80 V66 H76 V76 H66 V82 H34 V76 H24 V66 H20 V52 H24 V40 H34 Z"
+              fill="#0F0524"
+            />
+            {/* Bubbling Magic Liquid Body */}
+            <path
+              d="M36 44 H64 V52 H74 V64 H72 V74 H64 V80 H36 V74 H28 V64 H26 V52 H36 Z"
+              fill="#9333EA"
+            />
+            {/* Bright Magenta Glowing Fluid Core */}
+            <rect x="32" y="56" width="36" height="18" fill="#C084FC" />
+            {/* Stepped Glass Specular Glints */}
+            <rect x="28" y="44" width="4" height="10" fill="#FFF" />
+            <rect x="36" y="36" width="6" height="4" fill="#FFF" />
+            {/* Bubbling Rising Pixels */}
+            <rect x="46" y="48" width="4" height="4" fill="#FFF" />
+            <rect x="56" y="54" width="3" height="3" fill="#FFF" />
+            <rect x="40" y="62" width="3" height="3" fill="#FFF" />
+
+            {/* Stepped POTION Plaque */}
+            <path d="M20 78 H80 V94 H20 Z" fill="#000" />
+            <path d="M22 80 H78 V92 H22 Z" fill="#A855F7" />
+            <path d="M24 82 H76 V90 H24 Z" fill="#2E1065" />
+            <text x="50" y="88.5" textAnchor="middle" fill="#E9D5FF" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
               POTION
             </text>
           </svg>
@@ -1413,36 +1551,130 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'PIXEL_A':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <path d="M42 16 L58 16 L76 84 L58 84 L52 62 L48 62 L42 84 L24 84 Z M48 34 L44 50 L56 50 Z" fill="#F43F5E" stroke="#FECDD3" strokeWidth="2.5" strokeLinejoin="miter" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Pixel Font Letter 'A' */}
+            {/* 3D Black Drop-Shadow Extrusion */}
+            <path
+              d="M40 18 H64 V28 H74 V46 H84 V88 H68 V66 H36 V88 H20 V46 H30 V28 H40 Z"
+              fill="#05010B"
+            />
+            {/* Crimson Neon 8-Bit Body */}
+            <path
+              d="M36 14 H60 V24 H70 V42 H80 V84 H64 V62 H32 V84 H16 V42 H26 V24 H36 Z"
+              fill="#F43F5E"
+            />
+            {/* Inner Pixel Hole */}
+            <rect x="36" y="34" width="24" height="14" fill="#0F0524" />
+
+            {/* 3D Specular Pixel Highlights */}
+            <rect x="36" y="14" width="24" height="4" fill="#FECDD3" />
+            <rect x="26" y="24" width="4" height="18" fill="#FECDD3" />
+            <rect x="16" y="42" width="4" height="42" fill="#FECDD3" />
+            {/* Shadow Bevel */}
+            <rect x="60" y="24" width="10" height="18" fill="#BE123C" />
+            <rect x="70" y="42" width="10" height="42" fill="#9F1239" />
           </svg>
         );
 
       case 'PIXEL_K':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <path d="M26 16 L44 16 L44 44 L66 16 L86 16 L58 50 L86 84 L66 84 L44 56 L44 84 L26 84 Z" fill="#06B6D4" stroke="#CFFAFE" strokeWidth="2.5" strokeLinejoin="miter" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Pixel Font Letter 'K' */}
+            {/* 3D Black Drop-Shadow */}
+            <path
+              d="M24 18 H44 V46 H54 V34 H68 V18 H88 V36 H74 V48 H88 V66 H88 V88 H68 V68 H54 V68 H44 V88 H24 Z"
+              fill="#05010B"
+            />
+            {/* Electric Cyan 8-Bit Body */}
+            <path
+              d="M20 14 H40 V42 H50 V30 H64 V14 H84 V32 H70 V44 H84 V62 H84 V84 H64 V64 H50 V64 H40 V84 H20 Z"
+              fill="#06B6D4"
+            />
+            {/* Specular Top & Left Highlights */}
+            <rect x="20" y="14" width="20" height="4" fill="#CFFAFE" />
+            <rect x="20" y="18" width="4" height="66" fill="#CFFAFE" />
+            <rect x="64" y="14" width="20" height="4" fill="#CFFAFE" />
+            <rect x="70" y="48" width="14" height="4" fill="#CFFAFE" />
+            {/* Deep Shading */}
+            <rect x="36" y="18" width="4" height="66" fill="#0E7490" />
+            <rect x="74" y="22" width="10" height="10" fill="#0891B2" />
+            <rect x="74" y="64" width="10" height="20" fill="#155E75" />
           </svg>
         );
 
       case 'PIXEL_Q':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <path d="M50 16 Q28 16 28 50 Q28 84 50 84 Q62 84 70 76 L76 84 L84 78 L74 64 Q72 50 72 50 Q72 16 50 16 Z M50 32 Q58 32 58 50 Q58 68 50 68 Q42 68 42 50 Q42 32 50 32 Z" fill="#FBBF24" stroke="#FEF08A" strokeWidth="2.5" strokeLinejoin="miter" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Pixel Font Letter 'Q' */}
+            {/* 3D Black Drop-Shadow */}
+            <path
+              d="M34 18 H70 V28 H82 V66 H74 V76 H88 V88 H72 V76 H66 V76 H34 V66 H22 V28 H34 Z"
+              fill="#05010B"
+            />
+            {/* Arcade Gold 8-Bit Body */}
+            <path
+              d="M30 14 H66 V24 H78 V62 H70 V72 H84 V84 H68 V72 H62 V72 H30 V62 H18 V24 H30 Z"
+              fill="#FBBF24"
+            />
+            {/* Center Pixel Hole */}
+            <rect x="36" y="32" width="24" height="24" fill="#0F0524" />
+
+            {/* Specular Highlights */}
+            <rect x="30" y="14" width="36" height="4" fill="#FEF08A" />
+            <rect x="18" y="24" width="4" height="38" fill="#FEF08A" />
+            {/* Diagonal Kick-Tail Highlight */}
+            <rect x="70" y="72" width="14" height="4" fill="#FFF" />
+            {/* Shading */}
+            <rect x="66" y="24" width="12" height="38" fill="#D97706" />
+            <rect x="72" y="76" width="12" height="8" fill="#B45309" />
           </svg>
         );
 
       case 'PIXEL_J':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <path d="M44 16 L76 16 L76 30 L62 30 L62 64 C62 76, 54 84, 40 84 C28 84, 22 76, 22 66 L38 66 C38 72, 40 72, 42 72 C44 72, 46 68, 46 62 L46 30 L44 30 Z" fill="#22C55E" stroke="#BBF7D0" strokeWidth="2.5" strokeLinejoin="miter" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Pixel Font Letter 'J' */}
+            {/* 3D Black Drop-Shadow */}
+            <path
+              d="M44 18 H82 V32 H68 V68 H54 V78 H30 V68 H18 V56 H34 V64 H52 V28 H44 Z"
+              fill="#05010B"
+            />
+            {/* Vivid Phosphor Green 8-Bit Body */}
+            <path
+              d="M40 14 H78 V28 H64 V64 H50 V74 H26 V64 H14 V52 H30 V60 H48 V24 H40 Z"
+              fill="#22C55E"
+            />
+            {/* Specular Highlights */}
+            <rect x="40" y="14" width="38" height="4" fill="#BBF7D0" />
+            <rect x="48" y="24" width="4" height="40" fill="#BBF7D0" />
+            <rect x="14" y="52" width="4" height="12" fill="#BBF7D0" />
+            {/* Shading */}
+            <rect x="64" y="28" width="14" height="36" fill="#15803D" />
+            <rect x="26" y="64" width="24" height="10" fill="#166534" />
           </svg>
         );
 
       case 'PIXEL_10':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <path d="M20 26 L34 16 L34 84 L20 84 Z M60 16 Q44 16 44 50 Q44 84 60 84 Q76 84 76 50 Q76 16 60 16 Z M60 30 Q66 30 66 50 Q66 70 60 70 Q54 70 54 50 Q54 30 60 30 Z" fill="#8B5CF6" stroke="#DDD6FE" strokeWidth="2.5" strokeLinejoin="miter" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            {/* Stepped 8-Bit Pixel Font Digits '1' and '0' */}
+            {/* Digit '1' Black Shadow */}
+            <path d="M16 28 H30 V18 H44 V88 H22 V76 H30 V32 H16 Z" fill="#05010B" />
+            {/* Digit '1' Ultraviolet Body */}
+            <path d="M12 24 H26 V14 H40 V84 H18 V72 H26 V28 H12 Z" fill="#A855F7" />
+            <rect x="26" y="14" width="14" height="4" fill="#E9D5FF" />
+            <rect x="26" y="18" width="4" height="66" fill="#E9D5FF" />
+
+            {/* Digit '0' Black Shadow */}
+            <path d="M54 18 H86 V28 H94 V74 H86 V88 H54 V74 H46 V28 H54 Z" fill="#05010B" />
+            {/* Digit '0' Ultraviolet Body */}
+            <path d="M50 14 H82 V24 H90 V70 H82 V84 H50 V70 H42 V24 H50 Z" fill="#A855F7" />
+            {/* Center Hole */}
+            <rect x="56" y="32" width="20" height="34" fill="#0F0524" />
+            {/* Highlights */}
+            <rect x="50" y="14" width="32" height="4" fill="#E9D5FF" />
+            <rect x="42" y="24" width="4" height="46" fill="#E9D5FF" />
+            <rect x="76" y="24" width="14" height="46" fill="#7E22CE" />
           </svg>
         );
 

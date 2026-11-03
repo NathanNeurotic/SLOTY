@@ -9,17 +9,28 @@ interface SceneBackdropProps {
 
 export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGameId = 'vault-24k' }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
 
-  // 32 animated ambient particles (fireflies, gold dust motes, diamond glints)
+  // 32 animated ambient particles (fireflies, gold dust motes, 8-bit pixel cubes)
   const particles = useMemo(() => {
     return Array.from({ length: 32 }).map((_, i) => ({
       id: i,
       left: `${(i * 3.1 + 2) % 96}%`,
       top: `${(i * 3.7 + 6) % 90}%`,
-      size: isTimber ? 2.5 + (i % 3) * 1.5 : 2 + (i % 3) * 1.5,
+      size: isPixel ? 3 + (i % 3) * 2 : isTimber ? 2.5 + (i % 3) * 1.5 : 2 + (i % 3) * 1.5,
       delay: `${(i * 0.25) % 3.5}s`,
       duration: `${3.2 + (i % 4) * 0.9}s`,
-      color: isTimber
+      color: isPixel
+        ? i % 5 === 0
+          ? '#00F0FF' // Neon Cyan
+          : i % 5 === 1
+          ? '#FF007F' // Hot Magenta
+          : i % 5 === 2
+          ? '#39FF14' // Phosphor Green
+          : i % 5 === 3
+          ? '#FFE600' // Arcade Amber
+          : '#B026FF' // Ultraviolet
+        : isTimber
         ? i % 4 === 0
           ? '#F59E0B' // Golden Firefly
           : i % 4 === 1
@@ -45,7 +56,7 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
         ? '#00F0FF'
         : '#EF4444',
     }));
-  }, [sceneId, isTimber]);
+  }, [sceneId, isTimber, isPixel]);
 
   // 26 twinkling night sky stars for Timberland
   const stars = useMemo(() => {
@@ -62,9 +73,171 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
       {/* ========================================================= */}
-      {/* --- TIMBERLAND CRITTERS: LIVING PACIFIC MOUNTAIN FOREST --- */}
+      {/* --- PIXEL ARCADE: 80s/90s RETRO NEON SYNTHWAVE ARCADE --- */}
       {/* ========================================================= */}
-      {isTimber ? (
+      {isPixel ? (
+        <>
+          {/* Deep Retro 80s Arcade Cyber-Void Base */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#060112] via-[#0d0422] to-[#04010a]" />
+
+          {/* Synthwave Retrowave Horizon Sun with Slat Blinds */}
+          <div className="absolute top-[18%] left-1/2 -translate-x-1/2 w-72 sm:w-96 h-72 sm:h-96 pointer-events-none opacity-80">
+            {/* Glowing Radial Aura */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-t from-[#FF007F] via-[#FF5500] to-[#FFE600] blur-xl opacity-50" />
+            {/* Sun Disc */}
+            <div className="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-t from-[#FF007F] via-[#FF6600] to-[#FFE600] shadow-[0_0_80px_rgba(255,0,127,0.8),0_0_120px_rgba(255,230,0,0.5)]">
+              {/* Horizontal Sun Slat Laser Cuts */}
+              <div className="absolute bottom-6 inset-x-0 h-1.5 bg-[#0d0422]" />
+              <div className="absolute bottom-11 inset-x-0 h-2 bg-[#0d0422]" />
+              <div className="absolute bottom-18 inset-x-0 h-3 bg-[#0d0422]" />
+              <div className="absolute bottom-27 inset-x-0 h-4 bg-[#0d0422]" />
+              <div className="absolute bottom-38 inset-x-0 h-5 bg-[#0d0422]" />
+            </div>
+          </div>
+
+          {/* Cyber Wireframe Mountain Silhouettes on Horizon */}
+          <div className="absolute top-[32%] inset-x-0 h-40 pointer-events-none opacity-45">
+            <svg viewBox="0 0 1440 200" className="w-full h-full object-cover" preserveAspectRatio="none">
+              <path
+                d="M 0 180 L 120 120 L 240 160 L 380 90 L 520 170 L 680 80 L 820 150 L 980 70 L 1140 160 L 1280 110 L 1440 180 L 1440 200 L 0 200 Z"
+                fill="none"
+                stroke="#FF007F"
+                strokeWidth="2"
+              />
+              <path
+                d="M 0 190 L 180 140 L 340 175 L 500 130 L 720 180 L 900 120 L 1080 170 L 1260 135 L 1440 190 L 1440 200 L 0 200 Z"
+                fill="#0a0218"
+                stroke="#00F0FF"
+                strokeWidth="1.5"
+                opacity="0.8"
+              />
+            </svg>
+          </div>
+
+          {/* 3D Perspective Wireframe Synthwave Grid Floor */}
+          <div className="absolute inset-x-0 bottom-0 h-[48%] overflow-hidden pointer-events-none opacity-85">
+            <div
+              className="w-full h-full"
+              style={{
+                perspective: '450px',
+                perspectiveOrigin: '50% 0%',
+              }}
+            >
+              <div
+                className="w-[200%] -ml-[50%] h-[200%] origin-top"
+                style={{
+                  transform: 'rotateX(75deg)',
+                  backgroundImage: `
+                    linear-gradient(to right, rgba(0, 240, 255, 0.45) 2px, transparent 2px),
+                    linear-gradient(to bottom, rgba(255, 0, 127, 0.45) 2px, transparent 2px)
+                  `,
+                  backgroundSize: '60px 40px',
+                  boxShadow: 'inset 0 0 80px rgba(0, 240, 255, 0.5)',
+                }}
+              />
+            </div>
+            {/* Horizon Glow Bar */}
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-transparent via-[#00F0FF] to-transparent shadow-[0_0_20px_#00F0FF]" />
+            <div className="absolute top-0 inset-x-0 h-10 bg-gradient-to-b from-[#00F0FF]/30 to-transparent blur-sm" />
+          </div>
+
+          {/* Left Flank: Vintage Arcade Cabinets Silhouette with Illuminated Marquees */}
+          <div className="absolute left-0 bottom-12 w-64 sm:w-80 h-[520px] pointer-events-none opacity-90 hidden md:block">
+            {/* Cabinet 1: Upright Coin-Op (Galaxy 1984) */}
+            <div className="absolute left-2 bottom-0 w-44 h-[440px] bg-gradient-to-r from-[#030108] via-[#090314] to-[#040108] rounded-t-2xl border-r-2 border-t-2 border-purple-500/40 shadow-2xl">
+              {/* Illuminated Marquee Header */}
+              <div className="mx-3 mt-4 h-14 rounded-md bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 p-0.5 border border-white/60 shadow-[0_0_25px_rgba(236,72,153,0.8)]">
+                <div className="w-full h-full bg-black/80 rounded flex items-center justify-center">
+                  <span className="text-[10px] font-black tracking-widest text-cyan-300 animate-pulse font-mono">
+                    ★ GALAXY 1984 ★
+                  </span>
+                </div>
+              </div>
+              {/* CRT Monitor Bezel with 8-bit Attract Demo */}
+              <div className="mx-4 mt-4 h-36 rounded-lg bg-[#020d0a] border-4 border-slate-900 shadow-[inset_0_0_20px_rgba(0,240,255,0.4)] p-1.5 overflow-hidden relative">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px] pointer-events-none" />
+                <div className="w-full h-full flex flex-col items-center justify-center text-center">
+                  <span className="text-[8px] text-green-400 font-mono font-black animate-pulse">INSERT COIN</span>
+                  <span className="text-[7px] text-yellow-300 font-mono mt-1">HIGH SCORE: 999,990</span>
+                  <div className="flex space-x-1 mt-2 text-xs">👾 🚀 👾</div>
+                </div>
+              </div>
+              {/* Coin Door with Glowing 25¢ Insert Slot */}
+              <div className="mx-8 mt-6 h-28 rounded bg-[#0a0512] border border-white/10 p-2 flex flex-col items-center justify-center space-y-2">
+                <div className="w-8 h-3 rounded-xs bg-red-600/80 border border-red-400 shadow-[0_0_8px_#ef4444] flex items-center justify-center">
+                  <div className="w-4 h-0.5 bg-black" />
+                </div>
+                <span className="text-[7px] font-black text-amber-400 font-mono tracking-wider">25¢ PLAY</span>
+              </div>
+            </div>
+
+            {/* Cabinet 2: Angled Wing Cabinet Behind */}
+            <div className="absolute left-36 bottom-0 w-36 h-[380px] bg-gradient-to-r from-[#020106] to-[#080212] rounded-t-xl border-t border-r border-pink-500/30 opacity-70">
+              <div className="mx-2 mt-4 h-10 rounded bg-gradient-to-r from-amber-500 to-red-600 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.6)]">
+                <div className="w-full h-full bg-black/85 rounded flex items-center justify-center">
+                  <span className="text-[8px] font-black text-amber-300 font-mono">BRAWLER II</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Flank: Vintage Arcade Cabinets Silhouette with Marquees */}
+          <div className="absolute right-0 bottom-12 w-64 sm:w-80 h-[520px] pointer-events-none opacity-90 hidden md:block">
+            {/* Cabinet 1: Upright Coin-Op (Cyber Quest) */}
+            <div className="absolute right-2 bottom-0 w-44 h-[440px] bg-gradient-to-l from-[#030108] via-[#090314] to-[#040108] rounded-t-2xl border-l-2 border-t-2 border-pink-500/40 shadow-2xl">
+              {/* Illuminated Marquee Header */}
+              <div className="mx-3 mt-4 h-14 rounded-md bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 p-0.5 border border-white/60 shadow-[0_0_25px_rgba(0,240,255,0.8)]">
+                <div className="w-full h-full bg-black/80 rounded flex items-center justify-center">
+                  <span className="text-[10px] font-black tracking-widest text-pink-300 animate-pulse font-mono">
+                    ★ CYBER QUEST ★
+                  </span>
+                </div>
+              </div>
+              {/* CRT Monitor Bezel with 8-bit Attract Demo */}
+              <div className="mx-4 mt-4 h-36 rounded-lg bg-[#0e0214] border-4 border-slate-900 shadow-[inset_0_0_20px_rgba(255,0,127,0.4)] p-1.5 overflow-hidden relative">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px] pointer-events-none" />
+                <div className="w-full h-full flex flex-col items-center justify-center text-center">
+                  <span className="text-[8px] text-pink-400 font-mono font-black animate-pulse">PRESS START</span>
+                  <span className="text-[7px] text-cyan-300 font-mono mt-1">PLAYER 1 READY</span>
+                  <div className="flex space-x-1 mt-2 text-xs">🕹️ ⭐ 🕹️</div>
+                </div>
+              </div>
+              {/* Coin Door with Glowing 25¢ Insert Slot */}
+              <div className="mx-8 mt-6 h-28 rounded bg-[#0a0512] border border-white/10 p-2 flex flex-col items-center justify-center space-y-2">
+                <div className="w-8 h-3 rounded-xs bg-cyan-500/80 border border-cyan-300 shadow-[0_0_8px_#00F0FF] flex items-center justify-center">
+                  <div className="w-4 h-0.5 bg-black" />
+                </div>
+                <span className="text-[7px] font-black text-cyan-300 font-mono tracking-wider">25¢ PLAY</span>
+              </div>
+            </div>
+
+            {/* Cabinet 2: Angled Wing Cabinet Behind */}
+            <div className="absolute right-36 bottom-0 w-36 h-[380px] bg-gradient-to-l from-[#020106] to-[#080212] rounded-t-xl border-t border-l border-cyan-500/30 opacity-70">
+              <div className="mx-2 mt-4 h-10 rounded bg-gradient-to-r from-emerald-500 to-cyan-500 p-0.5 shadow-[0_0_15px_rgba(16,185,129,0.6)]">
+                <div className="w-full h-full bg-black/85 rounded flex items-center justify-center">
+                  <span className="text-[8px] font-black text-emerald-300 font-mono">PIXEL RACER</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Overhead Retro Neon Arcade Signage */}
+          <div className="absolute top-4 left-6 sm:left-12 pointer-events-none opacity-80">
+            <div className="px-3 py-1 rounded-md border-2 border-pink-500 bg-purple-950/80 shadow-[0_0_20px_#FF007F]">
+              <span className="text-xs sm:text-sm font-black text-pink-300 font-mono tracking-widest animate-pulse">
+                RETRO ARCADE 1989
+              </span>
+            </div>
+          </div>
+          <div className="absolute top-4 right-6 sm:right-12 pointer-events-none opacity-80">
+            <div className="px-3 py-1 rounded-md border-2 border-cyan-400 bg-cyan-950/80 shadow-[0_0_20px_#00F0FF]">
+              <span className="text-xs sm:text-sm font-black text-cyan-300 font-mono tracking-widest animate-pulse">
+                LEVEL 99 HIGH-SCORES
+              </span>
+            </div>
+          </div>
+        </>
+      ) : isTimber ? (
         <>
           {/* Deep Twilight Evergreen Night Sky Base */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#010e05] via-[#041a0e] to-[#010803]" />
@@ -567,7 +740,28 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
       {/* --- PHYSICAL CASINO & BOARDWALK GROUND FLOOR (Full Viewport Width) --- */}
       {/* ========================================================================= */}
       <div className="absolute inset-x-0 bottom-0 h-44 sm:h-56 pointer-events-none z-0 overflow-hidden">
-        {isTimber ? (
+        {isPixel ? (
+          // Pixel Arcade 90s Geometric Neon Roller-Rink & Arcade Carpet
+          <div className="w-full h-full bg-[#0a0318] relative border-t-2 border-purple-500/50 shadow-[inset_0_10px_30px_rgba(0,0,0,0.9)]">
+            <svg viewBox="0 0 200 100" className="w-full h-full object-repeat opacity-45">
+              <defs>
+                <pattern id="carpet90s" width="40" height="40" patternUnits="userSpaceOnUse">
+                  {/* Neon Cyan Geometric Triangles */}
+                  <polygon points="6,6 18,10 10,22" fill="#00F0FF" />
+                  {/* Hot Magenta Confetti Squiggles */}
+                  <path d="M 24 6 Q 28 14 34 8 Q 38 18 30 22" fill="none" stroke="#FF007F" strokeWidth="2" strokeLinecap="round" />
+                  {/* Electric Yellow Zigzags */}
+                  <polygon points="4,28 12,24 10,36 18,32" fill="#FFE600" />
+                  {/* Phosphor Lime Square Confetti */}
+                  <rect x="26" y="28" width="5" height="5" fill="#39FF14" transform="rotate(25 28 30)" />
+                  <rect x="34" y="32" width="3" height="3" fill="#FFF" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#carpet90s)" />
+            </svg>
+            <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-r from-purple-900/60 via-pink-600/50 to-purple-900/60" />
+          </div>
+        ) : isTimber ? (
           // Timberland Hand-Hewn Rustic Boardwalk Floor
           <div className="w-full h-full bg-gradient-to-t from-[#0e0602] via-[#1b0d06] to-transparent relative border-t border-[#78350f]/40">
             <div className="absolute inset-0 opacity-30 bg-[repeating-linear-gradient(0deg,transparent,transparent_22px,#0a0401_22px,#0a0401_24px)]" />
