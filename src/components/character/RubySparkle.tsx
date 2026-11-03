@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { soundManager } from '../../audio/soundManager';
-import { Star, Sparkles, Trees } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
 import hostessImg from '../../assets/hostess_ruby.jpg';
-import type { GameId } from '../../games/types';
 
 export type RubyState = 'idle' | 'spinning' | 'anticipation' | 'win' | 'bigwin' | 'fever';
 
@@ -15,7 +14,6 @@ interface RubySparkleProps {
   winAmount?: number;
   onRewardCoins?: (amount: number) => void;
   variant?: 'full' | 'compact';
-  activeGameId?: GameId;
 }
 
 const VAULT_IDLE_QUOTES = [
@@ -27,15 +25,6 @@ const VAULT_IDLE_QUOTES = [
   "America's brightest jackpot is waiting for you!",
 ];
 
-const TIMBER_IDLE_QUOTES = [
-  "Welcome to the enchanted forest, explorer!",
-  "Hear that owl? Fortune is stirring in the canopy!",
-  "Tap my ranger badge for some lucky golden acorns!",
-  "The bears are friendly and the reels are wild!",
-  "Six golden acorns trigger the Forest Harvest Respin!",
-  "Watch for the mystic owl, 3 scatter doors await!",
-];
-
 const VAULT_SPIN_QUOTES = [
   "Spin, spin, spin! Bring home the gold!",
   "Come on lucky tumblers! Make it rain!",
@@ -43,23 +32,10 @@ const VAULT_SPIN_QUOTES = [
   "Here comes a big one, I can feel it!",
 ];
 
-const TIMBER_SPIN_QUOTES = [
-  "Shake the branches! Bring home the forest harvest!",
-  "Roll 'em high through the towering pines!",
-  "Come on lucky woodland critters! Make it rain acorns!",
-  "Feel that forest breeze! A big win is blowing in!",
-];
-
 const VAULT_ANTICIPATION_QUOTES = [
   "OOH! TWO VAULT DOORS! HOLD YOUR BREATH!",
   "COME ON REEL FIVE! UNLOCK THE FORTRESS!",
   "JUST ONE MORE SCATTER, SUPERSTAR!",
-];
-
-const TIMBER_ANTICIPATION_QUOTES = [
-  "HOOT! TWO MYSTIC OWLS! HOLD YOUR BREATH!",
-  "COME ON REEL FIVE! UNLOCK THE MOONLIT CANOPY!",
-  "JUST ONE MORE OWL TO UNLEASH FREE SPINS!",
 ];
 
 const VAULT_WIN_QUOTES = [
@@ -69,35 +45,16 @@ const VAULT_WIN_QUOTES = [
   "THAT'S WHAT I CALL A HIGH-ROLLER HIT!",
 ];
 
-const TIMBER_WIN_QUOTES = [
-  "YAY! A BOUNTIFUL FOREST HARVEST HIT!",
-  "WOOHOO! THE CRITTERS BROUGHT HOME THE GOLD!",
-  "LOOK AT THAT BEAUTIFUL WOODLAND PAYOUT!",
-  "NATURE REWARDS THE BOLD, EXPLORER!",
-];
-
 const VAULT_BIG_WIN_QUOTES = [
   "HOLY MACKEREL! A COLOSSAL JACKPOT!",
   "YOU BROKE THE VAULT, CHAMPION!",
   "CELEBRATION TIME! CONFETTI FOR EVERYONE!",
 ];
 
-const TIMBER_BIG_WIN_QUOTES = [
-  "HOLY MACKEREL! A COLOSSAL GRIZZLY JACKPOT!",
-  "YOU BROKE THE FOREST RECORD, EXPLORER!",
-  "NATURE'S GREATEST HARVEST! CONGRATS!",
-];
-
 const VAULT_FEVER_QUOTES = [
   "SUPERCHARGED OVERDRIVE! 2X MULTIPLIERS!",
   "THE VAULT IS ON FIRE! BURN IT UP!",
   "MAX POWER, SUPERSTAR! DON'T STOP NOW!",
-];
-
-const TIMBER_FEVER_QUOTES = [
-  "NATURE'S FURY UNLEASHED! 2X MULTIPLIERS!",
-  "THE FOREST IS GLOWING! HARVEST EVERY CRITTER!",
-  "MAX WOODLAND POWER! KEEP SPINNING!",
 ];
 
 export const RubySparkle: React.FC<RubySparkleProps> = ({
@@ -109,11 +66,8 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
   winAmount: _winAmount = 0,
   onRewardCoins,
   variant = 'full',
-  activeGameId = 'vault-24k',
 }) => {
-  const isTimber = activeGameId === 'timber-critters';
-  const defaultIdle = isTimber ? TIMBER_IDLE_QUOTES[0] : VAULT_IDLE_QUOTES[0];
-  const [currentQuote, setCurrentQuote] = useState(defaultIdle);
+  const [currentQuote, setCurrentQuote] = useState(VAULT_IDLE_QUOTES[0]);
   const [isTapped, setIsTapped] = useState(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
   const quoteTimerRef = useRef<number | null>(null);
@@ -135,23 +89,23 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     let pool: string[];
     switch (rubyState) {
       case 'fever':
-        pool = isTimber ? TIMBER_FEVER_QUOTES : VAULT_FEVER_QUOTES;
+        pool = VAULT_FEVER_QUOTES;
         break;
       case 'bigwin':
-        pool = isTimber ? TIMBER_BIG_WIN_QUOTES : VAULT_BIG_WIN_QUOTES;
+        pool = VAULT_BIG_WIN_QUOTES;
         break;
       case 'win':
-        pool = isTimber ? TIMBER_WIN_QUOTES : VAULT_WIN_QUOTES;
+        pool = VAULT_WIN_QUOTES;
         break;
       case 'anticipation':
-        pool = isTimber ? TIMBER_ANTICIPATION_QUOTES : VAULT_ANTICIPATION_QUOTES;
+        pool = VAULT_ANTICIPATION_QUOTES;
         break;
       case 'spinning':
-        pool = isTimber ? TIMBER_SPIN_QUOTES : VAULT_SPIN_QUOTES;
+        pool = VAULT_SPIN_QUOTES;
         break;
       case 'idle':
       default:
-        pool = isTimber ? TIMBER_IDLE_QUOTES : VAULT_IDLE_QUOTES;
+        pool = VAULT_IDLE_QUOTES;
         break;
     }
 
@@ -169,16 +123,12 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     return () => {
       if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
     };
-  }, [rubyState, isTimber]);
+  }, [rubyState]);
 
   const handleRubyClick = () => {
     soundManager.unlockAudio();
     soundManager.playButtonClick();
-    if (isTimber) {
-      soundManager.playOwlHoot(1);
-    } else {
-      soundManager.playGoldBarClank();
-    }
+    soundManager.playGoldBarClank();
     setIsTapped(true);
     setTapBonusText('+50 COINS!');
 
@@ -197,11 +147,9 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     return (
       <div
         onClick={handleRubyClick}
-        className={`relative w-full max-w-md mx-auto flex items-center justify-between px-3 py-1.5 rounded-2xl cursor-pointer select-none transition-all shadow-xl ${
-          isTimber
-            ? 'bg-gradient-to-r from-[#0a1f12] via-[#05140b] to-[#020b06] border-2 border-emerald-400/60 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-            : 'bg-gradient-to-r from-rose-950/90 via-casino-950 to-amber-950/90 border-2 border-yellow-400/60 shadow-[0_0_20px_rgba(244,63,94,0.35)]'
-        } ${isTapped ? 'scale-105' : 'hover:scale-[1.02]'}`}
+        className={`relative w-full max-w-md mx-auto flex items-center justify-between px-3 py-1.5 rounded-2xl cursor-pointer select-none transition-all shadow-xl bg-gradient-to-r from-rose-950/90 via-casino-950 to-amber-950/90 border-2 border-yellow-400/60 shadow-[0_0_20px_rgba(244,63,94,0.35)] ${
+          isTapped ? 'scale-105' : 'hover:scale-[1.02]'
+        }`}
         title="Tap Ruby Sparkle for lucky advice & +50 bonus coins!"
       >
         {/* Hostess Avatar / Bust */}
@@ -217,11 +165,11 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
             <div className="flex items-center space-x-1">
               <Sparkles className="w-3 h-3 text-yellow-300 animate-spin" />
               <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-yellow-300 font-sans">
-                {isTimber ? 'RANGER RUBY' : 'RUBY SPARKLE'}
+                RUBY SPARKLE
               </span>
             </div>
             <span className="text-[8px] font-semibold tracking-wider text-rose-300 uppercase">
-              {isTimber ? 'WOODLAND EXPEDITION GUIDE' : 'VIP CASINO HOSTESS'}
+              VIP CASINO HOSTESS
             </span>
           </div>
         </div>
@@ -256,19 +204,11 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
         <div
           className={`relative px-3 py-1.5 rounded-2xl border-2 text-[11px] font-black shadow-xl tracking-wide transition-all ${
             rubyState === 'fever'
-              ? isTimber
-                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-500 text-white border-emerald-200 animate-pulse'
-                : 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-400 text-black border-red-200 animate-pulse'
+              ? 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-400 text-black border-red-200 animate-pulse'
               : rubyState === 'anticipation'
-              ? isTimber
-                ? 'bg-emerald-950 text-emerald-100 border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.8)] animate-bounce'
-                : 'bg-rose-950 text-rose-100 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.8)] animate-bounce'
+              ? 'bg-rose-950 text-rose-100 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.8)] animate-bounce'
               : rubyState === 'win' || rubyState === 'bigwin'
-              ? isTimber
-                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-500 text-white border-white shadow-[0_0_18px_rgba(16,185,129,0.9)] animate-pulse'
-                : 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 text-white border-white shadow-[0_0_18px_rgba(244,63,94,0.9)] animate-pulse'
-              : isTimber
-              ? 'bg-[#08180e]/95 text-emerald-200 border-emerald-500/50 shadow-[0_4px_12px_rgba(0,0,0,0.8)]'
+              ? 'bg-gradient-to-r from-rose-600 via-pink-600 to-amber-500 text-white border-white shadow-[0_0_18px_rgba(244,63,94,0.9)] animate-pulse'
               : 'bg-casino-900/95 text-rose-200 border-rose-500/50 shadow-[0_4px_12px_rgba(0,0,0,0.8)]'
           }`}
         >
@@ -284,19 +224,11 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
           <div
             className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] ${
               rubyState === 'fever'
-                ? isTimber
-                  ? 'border-t-emerald-600'
-                  : 'border-t-rose-500'
+                ? 'border-t-rose-500'
                 : rubyState === 'anticipation'
-                ? isTimber
-                  ? 'border-t-emerald-400'
-                  : 'border-t-rose-400'
+                ? 'border-t-rose-400'
                 : rubyState === 'win' || rubyState === 'bigwin'
-                ? isTimber
-                  ? 'border-t-emerald-600'
-                  : 'border-t-rose-600'
-                : isTimber
-                ? 'border-t-[#08180e]'
+                ? 'border-t-rose-600'
                 : 'border-t-casino-900'
             }`}
           />
@@ -305,22 +237,14 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
 
       {/* Floating bonus coin particle when tapped */}
       {tapBonusText && (
-        <div className={`absolute top-4 z-40 animate-coin-burst pointer-events-none flex items-center space-x-1 font-black text-sm ${
-          isTimber
-            ? 'text-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,1)]'
-            : 'text-rose-300 drop-shadow-[0_0_10px_rgba(244,63,94,1)]'
-        }`}>
+        <div className="absolute top-4 z-40 animate-coin-burst pointer-events-none flex items-center space-x-1 font-black text-sm text-rose-300 drop-shadow-[0_0_10px_rgba(244,63,94,1)]">
           <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
           <span>+50 COINS!</span>
         </div>
       )}
 
       {/* High-Resolution Illustrated Curvy Hostess Standee */}
-      <div className={`relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black ${
-        isTimber
-          ? 'border-emerald-400/70 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
-          : 'border-yellow-400/60 shadow-[0_0_30px_rgba(244,63,94,0.5)]'
-      }`}>
+      <div className="relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black border-yellow-400/60 shadow-[0_0_30px_rgba(244,63,94,0.5)]">
         <img
           src={hostessImg}
           alt="Ruby Sparkle"
@@ -334,36 +258,18 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
         />
 
         {/* Ambient Rim Glow */}
-        <div className={`absolute inset-0 pointer-events-none ring-1 ring-inset rounded-2xl ${
-          isTimber ? 'ring-emerald-400/40' : 'ring-yellow-300/40'
-        }`} />
+        <div className="absolute inset-0 pointer-events-none ring-1 ring-inset rounded-2xl ring-yellow-300/40" />
         <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
 
         {/* Pedestal Nameplate */}
-        <div className={`absolute bottom-2 inset-x-3 py-1 px-2 rounded-lg border shadow-lg text-center ${
-          isTimber
-            ? 'bg-gradient-to-r from-stone-900 via-[#0a180e] to-stone-900 border-emerald-400/60'
-            : 'bg-gradient-to-r from-rose-950 via-casino-900 to-amber-950 border-yellow-400/60'
-        }`}>
+        <div className="absolute bottom-2 inset-x-3 py-1 px-2 rounded-lg border shadow-lg text-center bg-gradient-to-r from-rose-950 via-casino-900 to-amber-950 border-yellow-400/60">
           <div className="text-[10px] font-black tracking-widest uppercase flex items-center justify-center space-x-1">
-            {isTimber ? (
-              <>
-                <Trees className="w-3 h-3 text-emerald-300" />
-                <span className="text-emerald-200">RANGER RUBY</span>
-                <Trees className="w-3 h-3 text-emerald-300" />
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-3 h-3 text-rose-400" />
-                <span className="text-yellow-300">RUBY SPARKLE</span>
-                <Sparkles className="w-3 h-3 text-rose-400" />
-              </>
-            )}
+            <Sparkles className="w-3 h-3 text-rose-400" />
+            <span className="text-yellow-300">RUBY SPARKLE</span>
+            <Sparkles className="w-3 h-3 text-rose-400" />
           </div>
-          <div className={`text-[8px] font-semibold tracking-wider uppercase ${
-            isTimber ? 'text-emerald-400' : 'text-rose-300'
-          }`}>
-            {isTimber ? 'WOODLAND EXPEDITION GUIDE' : 'VIP CASINO HOSTESS'}
+          <div className="text-[8px] font-semibold tracking-wider uppercase text-rose-300">
+            VIP CASINO HOSTESS
           </div>
         </div>
       </div>

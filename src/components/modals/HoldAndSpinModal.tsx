@@ -121,7 +121,13 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       setIsSpinning(false);
 
       if (anyNewLocked) {
-        soundManager.playGoldBarClank();
+        if (isPixel) {
+          soundManager.playArcadeCartridge();
+        } else if (isTimber) {
+          soundManager.playAcornChime();
+        } else {
+          soundManager.playGoldBarClank();
+        }
         soundManager.playCoinCascade(6);
         setRespinsLeft(3); // Reset to 3 respins!
       } else {
@@ -131,8 +137,14 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
         if (nextRespins <= 0) {
           setIsFinished(true);
-          soundManager.playCashRegister();
-          soundManager.playJackpotFanfare();
+          if (isPixel) {
+            soundManager.playArcadeVictoryFanfare();
+          } else if (isTimber) {
+            soundManager.playJackpotFanfare();
+          } else {
+            soundManager.playCashRegister();
+            soundManager.playJackpotFanfare();
+          }
         }
       }
     }, 450);
@@ -170,13 +182,25 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
     setGrid(currentGridState);
     setRespinsLeft(0);
     setIsFinished(true);
-    soundManager.playCashRegister();
-    soundManager.playJackpotFanfare();
+    if (isPixel) {
+      soundManager.playArcadeVictoryFanfare();
+    } else if (isTimber) {
+      soundManager.playJackpotFanfare();
+    } else {
+      soundManager.playCashRegister();
+      soundManager.playJackpotFanfare();
+    }
   };
 
   const handleCollectAndExit = () => {
-    soundManager.playCashRegister();
-    soundManager.playJackpotFanfare();
+    if (isPixel) {
+      soundManager.playArcadeVictoryFanfare();
+    } else if (isTimber) {
+      soundManager.playJackpotFanfare();
+    } else {
+      soundManager.playCashRegister();
+      soundManager.playJackpotFanfare();
+    }
     onComplete(totalPot);
   };
 

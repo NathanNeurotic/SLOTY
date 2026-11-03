@@ -178,6 +178,21 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
   const lastPopupTimeRef = useRef<number>(0);
   const consecutiveLossesRef = useRef<number>(0);
 
+  // Reset and dismiss popup immediately when switching games (prevents dialogue text carry-over)
+  useEffect(() => {
+    setIsVisible(false);
+    setSpeechText('');
+    setSpeechCategory('idle');
+    setIsJiggling(false);
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    lastSpinTimeRef.current = Date.now();
+    lastPopupTimeRef.current = Date.now();
+    setQuotaState(quotaManager.getState(activeGameId));
+  }, [activeGameId]);
+
   // Listen to quota updates
   useEffect(() => {
     const unsub = quotaManager.subscribe((gId, state) => {

@@ -195,85 +195,83 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
             </div>
 
-            {/* HANGING CEDAR PLAQUES & HONEY POT ARCHITECTURE */}
-            <div className="flex items-stretch gap-1 w-full">
-              {/* Left Hanging Sign: Wolf Pack Major Cache */}
+            {/* ASYMMETRICAL PACIFIC NORTHWEST CABIN GABLE & FOREST TRAILGUIDE */}
+            <div className="grid grid-cols-12 gap-1 items-stretch w-full">
+              {/* Left 8 Columns: THE GREAT GRIZZLY REDWOOD GABLE (HERO) */}
               <div
                 onClick={handleJackpotClick}
-                className="w-1/4 cursor-pointer group relative p-1 rounded-lg bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                className="col-span-8 relative rounded-xl bg-gradient-to-r from-[#241207] via-[#122216] to-[#241207] border-2 border-[#b45309] shadow-inner p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
               >
-                <div className="flex items-center space-x-1">
-                  <span className="text-xs">🐺</span>
-                  <span className="text-[7.5px] sm:text-[8px] font-black uppercase text-teal-300 tracking-wider">
-                    {gameDef.theme.majorTitle}
-                  </span>
-                </div>
-                <div className="flex items-baseline font-mono text-xs sm:text-sm font-black text-teal-200 drop-shadow-[0_0_6px_#2DD4BF] mt-0.5">
-                  <span>${Math.floor(major).toLocaleString()}</span>
-                  <span className="text-[8.5px] text-teal-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
-                </div>
-              </div>
+                {/* Ambient campfire ember glow */}
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,rgba(245,158,11,0.25),transparent_70%)] pointer-events-none" />
 
-              {/* Center Carved Honey Log: Grand Jackpot Hero */}
-              <div
-                onClick={handleJackpotClick}
-                className="flex-1 relative rounded-lg bg-gradient-to-r from-[#170a04] via-[#0b1f13] to-[#170a04] border-2 border-[#a16207] shadow-inner p-1 flex items-center justify-between cursor-pointer group overflow-hidden"
-              >
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#2e180e] border border-amber-400/80 shadow-[0_0_6px_rgba(245,158,11,0.7)] flex items-center justify-center text-xs sm:text-sm animate-bounce flex-shrink-0">
+                {/* Left: Carved Grizzly Totem Icon */}
+                <div className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#3b1d0c] border-2 border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.8)] flex items-center justify-center text-sm sm:text-base animate-bounce flex-shrink-0">
                   🐻
                 </div>
 
+                {/* Center: Grand Harvest Pot Title & Big Amount */}
                 <div className="flex flex-col items-center z-10 mx-auto px-1 text-center">
-                  <div className="flex items-center justify-center space-x-1 text-amber-300 text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-widest">
-                    <Trees className="w-2.5 h-2.5 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
-                    <span>{gameDef.theme.grandTitle}</span>
-                    <Trees className="w-2.5 h-2.5 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
+                  <div className="flex items-center justify-center space-x-1 text-amber-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest font-serif">
+                    <Trees className="w-3 h-3 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
+                    <span>GRIZZLY PEAK GRAND HARVEST</span>
+                    <Trees className="w-3 h-3 text-emerald-400 fill-emerald-500/30 animate-pulse flex-shrink-0" />
                   </div>
                   <div className="flex items-baseline font-mono">
                     <span className="text-xs sm:text-sm font-black text-amber-400 mr-0.5">$</span>
-                    <span className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_12px_rgba(52,211,153,1)]">
+                    <span className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight leading-none text-emerald-200 drop-shadow-[0_0_14px_rgba(52,211,153,1)]">
                       {Math.floor(grand).toLocaleString()}
                     </span>
-                    <span className="text-[9px] sm:text-[10px] font-bold text-emerald-400/90 ml-0.5">
+                    <span className="text-[9px] sm:text-[11px] font-bold text-emerald-400/90 ml-0.5">
                       .{(grand % 1).toFixed(2).slice(2)}
                     </span>
                   </div>
                 </div>
 
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#182a1d] border border-emerald-400/80 shadow-[0_0_6px_rgba(52,211,153,0.7)] flex items-center justify-center text-xs sm:text-sm animate-pulse flex-shrink-0">
+                {/* Right: Mystic Owl Guardian */}
+                <div className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#132216] border-2 border-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)] flex items-center justify-center text-sm sm:text-base animate-pulse flex-shrink-0">
                   🦉
                 </div>
               </div>
 
-              {/* Right Stacked Wood Slices: Minor & Mini */}
-              <div className="w-1/4 grid grid-cols-2 gap-1">
+              {/* Right 4 Columns: VERTICAL FOREST TRAILGUIDE (Wolf Pack & Critter Caches) */}
+              <div className="col-span-4 flex flex-col justify-between gap-1">
+                {/* WOLF PACK MAJOR CACHE */}
                 <div
                   onClick={handleJackpotClick}
-                  className="cursor-pointer group relative p-0.5 sm:p-1 rounded-lg bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                  className="cursor-pointer group relative px-1.5 py-0.5 sm:py-1 rounded-lg bg-gradient-to-r from-[#2e180e] to-[#122216] border border-[#b45309] shadow flex items-center justify-between hover:scale-[1.01] transition-transform flex-1"
                 >
-                  <div className="flex items-center space-x-0.5">
-                    <span className="text-[9px]">🦊</span>
-                    <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase text-amber-300 tracking-wider">
-                      {gameDef.theme.minorTitle}
+                  <div className="flex items-center space-x-1">
+                    <span className="text-xs">🐺</span>
+                    <span className="text-[7.5px] sm:text-[8px] font-black uppercase text-teal-300 tracking-wider">
+                      WOLF PACK
                     </span>
                   </div>
-                  <div className="flex items-baseline font-mono text-[9px] sm:text-xs font-black text-amber-200 drop-shadow-[0_0_4px_#FBBF24]">
-                    <span>${Math.floor(minor).toLocaleString()}</span>
+                  <div className="flex items-baseline font-mono text-xs sm:text-sm font-black text-teal-200 drop-shadow-[0_0_6px_#2DD4BF]">
+                    <span>${Math.floor(major).toLocaleString()}</span>
                   </div>
                 </div>
 
-                <div
-                  onClick={handleJackpotClick}
-                  className="cursor-pointer group relative p-0.5 sm:p-1 rounded-lg bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
-                >
-                  <div className="flex items-center space-x-0.5">
-                    <span className="text-[9px]">🐿️</span>
-                    <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase text-emerald-300 tracking-wider">
-                      {gameDef.theme.miniTitle}
+                {/* FOX & SQUIRREL MINOR & MINI SPLIT */}
+                <div className="grid grid-cols-2 gap-1 flex-1">
+                  <div
+                    onClick={handleJackpotClick}
+                    className="cursor-pointer group relative px-1 py-0.5 rounded-lg bg-gradient-to-b from-[#241208] to-black border border-amber-600/70 shadow flex items-center justify-between hover:scale-[1.01] transition-transform"
+                  >
+                    <span className="text-[9px]">🦊</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-amber-200 font-mono">
+                      ${Math.floor(minor).toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex items-baseline font-mono text-[9px] sm:text-xs font-black text-emerald-200 drop-shadow-[0_0_4px_#34D399]">
-                    <span>${Math.floor(mini).toLocaleString()}</span>
+
+                  <div
+                    onClick={handleJackpotClick}
+                    className="cursor-pointer group relative px-1 py-0.5 rounded-lg bg-gradient-to-b from-[#132216] to-black border border-emerald-600/70 shadow flex items-center justify-between hover:scale-[1.01] transition-transform"
+                  >
+                    <span className="text-[9px]">🐿️</span>
+                    <span className="text-[8px] sm:text-[9.5px] font-black text-emerald-200 font-mono">
+                      ${Math.floor(mini).toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -837,7 +837,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
-      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-center gap-0.5 sm:gap-1 w-full px-1 sm:px-2 py-0.5 overflow-y-auto overflow-x-hidden">
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-center gap-0.5 sm:gap-1 w-full px-1 sm:px-2 py-0.5 overflow-hidden">
         {/* Dynamic Architectural Physical Top Box (Fort Knox Vault vs Cedar Cabin Gable) */}
         <JackpotMarquee
           totalBet={totalBet}

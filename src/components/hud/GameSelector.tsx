@@ -23,8 +23,17 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
     onSelectGame(id);
   };
 
+  const isTimberActive = activeGameId === 'timber-critters';
+  const isPixelActive = activeGameId === 'pixel-arcade';
+
   return (
-    <div className="flex items-center space-x-0.5 sm:space-x-1 xl:space-x-1.5 bg-gradient-to-b from-black via-slate-950 to-black p-0.5 sm:p-1 rounded-2xl border border-amber-500/50 shadow-[inset_0_2px_6px_rgba(0,0,0,0.9)] select-none">
+    <div className={`flex items-center space-x-0.5 sm:space-x-1 xl:space-x-1.5 p-0.5 sm:p-1 rounded-2xl border shadow-inner select-none transition-colors duration-300 ${
+      isTimberActive
+        ? 'bg-gradient-to-b from-[#241208] via-[#120703] to-[#241208] border-[#854d0e] shadow-[inset_0_2px_8px_rgba(0,0,0,0.95)]'
+        : isPixelActive
+        ? 'bg-gradient-to-b from-[#18042c] via-[#090117] to-[#18042c] border-pink-500/80 shadow-[0_0_12px_rgba(236,72,153,0.4)]'
+        : 'bg-gradient-to-b from-black via-slate-950 to-black border-yellow-400/80 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+    }`}>
       {games.map((g) => {
         const isActive = g.id === activeGameId;
         const isTimber = g.id === 'timber-critters';

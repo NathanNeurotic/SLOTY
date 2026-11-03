@@ -1768,47 +1768,55 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           }`}
         />
       )}
-      <div className="relative z-10 w-full h-full flex items-center justify-center p-1">
+      <div className="relative z-10 w-full h-full flex items-center justify-center p-1 drop-shadow-[0_4px_8px_rgba(0,0,0,0.65)] filter">
         {getSymbolSvg()}
       </div>
 
-      {/* Dynamic Specular Shimmer Beam & Lens Reflection */}
+      {/* Dynamic Specular Shimmer Beam, Prismatic Flare & Lens Reflection */}
       <div className="absolute inset-0.5 pointer-events-none overflow-hidden rounded-xl z-20">
+        {/* Layer 1: Sharp specular gleam beam */}
         <div
-          className={`absolute -inset-full w-[300%] h-[150%] ${
+          className={`absolute -inset-full w-[350%] h-[160%] ${
             isTimberSymbol
-              ? 'bg-gradient-to-r from-transparent via-amber-200/40 via-emerald-100/50 to-transparent'
+              ? 'bg-gradient-to-r from-transparent via-amber-200/50 via-emerald-100/60 to-transparent'
               : isPixelSymbol
-              ? 'bg-gradient-to-r from-transparent via-cyan-200/45 via-pink-200/50 to-transparent'
-              : 'bg-gradient-to-r from-transparent via-white/50 via-yellow-100/70 to-transparent'
+              ? 'bg-gradient-to-r from-transparent via-cyan-200/55 via-pink-200/60 to-transparent'
+              : 'bg-gradient-to-r from-transparent via-white/65 via-yellow-100/80 to-transparent'
           } animate-symbol-gleam mix-blend-screen pointer-events-none`}
           style={staggerDelay ? { animationDelay: staggerDelay } : undefined}
         />
+
+        {/* Layer 2: Prismatic chromatic rainbow refraction sweep */}
+        <div
+          className="absolute -inset-full w-[300%] h-[150%] bg-gradient-to-r from-transparent via-cyan-400/25 via-pink-400/25 via-amber-300/30 to-transparent animate-chromatic-sweep mix-blend-color-dodge pointer-events-none"
+          style={staggerDelay ? { animationDelay: `${((parseFloat(staggerDelay) + 0.6) % 3.4).toFixed(2)}s` } : undefined}
+        />
+
         {/* Curved Glass Highlight Dome Rim */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white/20 via-transparent to-black/25 mix-blend-overlay pointer-events-none" />
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white/30 via-transparent to-black/35 mix-blend-overlay pointer-events-none" />
       </div>
 
       {/* Micro-Sparkle Highlight Flares on Symbol Peaks */}
       <div
         className="absolute top-1 left-1.5 pointer-events-none z-20 animate-micro-sparkle-1"
-        style={staggerDelay ? { animationDelay: `${((parseFloat(staggerDelay) + 0.3) % 3.2).toFixed(2)}s` } : undefined}
+        style={staggerDelay ? { animationDelay: `${((parseFloat(staggerDelay) + 0.2) % 2.6).toFixed(2)}s` } : undefined}
       >
-        <svg viewBox="0 0 16 16" className="w-3 h-3 fill-white drop-shadow-[0_0_4px_rgba(255,255,255,0.95)]">
+        <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-white drop-shadow-[0_0_6px_rgba(255,255,255,1)]">
           <path d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z" />
         </svg>
       </div>
       <div
         className="absolute bottom-1.5 right-1.5 pointer-events-none z-20 animate-micro-sparkle-2"
-        style={staggerDelay ? { animationDelay: `${((parseFloat(staggerDelay) + 1.8) % 3.2).toFixed(2)}s` } : undefined}
+        style={staggerDelay ? { animationDelay: `${((parseFloat(staggerDelay) + 1.3) % 2.6).toFixed(2)}s` } : undefined}
       >
         <svg
           viewBox="0 0 16 16"
-          className={`w-2.5 h-2.5 ${
+          className={`w-3 h-3 ${
             isTimberSymbol
-              ? 'fill-amber-300 drop-shadow-[0_0_4px_#F59E0B]'
+              ? 'fill-amber-300 drop-shadow-[0_0_6px_#F59E0B]'
               : isPixelSymbol
-              ? 'fill-cyan-300 drop-shadow-[0_0_4px_#06B6D4]'
-              : 'fill-yellow-200 drop-shadow-[0_0_4px_#FDE047]'
+              ? 'fill-cyan-300 drop-shadow-[0_0_6px_#06B6D4]'
+              : 'fill-yellow-200 drop-shadow-[0_0_6px_#FDE047]'
           }`}
         >
           <path d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z" />

@@ -45,7 +45,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
     <div
       className={`${
         isFiftyLines ? 'hidden lg:flex' : 'hidden md:flex'
-      } flex-col justify-between py-1 h-full w-5 sm:w-7 md:w-8 select-none z-20 flex-shrink-0`}
+      } flex-col justify-between py-0.5 self-stretch h-full w-5 sm:w-6 md:w-7 select-none z-20 flex-shrink-0 min-h-0 gap-[1px]`}
     >
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;
@@ -64,10 +64,10 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
 
         const leafShape =
           side === 'left'
-            ? 'rounded-tl-xl rounded-br-xl rounded-tr-xs rounded-bl-xs'
-            : 'rounded-tr-xl rounded-bl-xl rounded-tl-xs rounded-br-xs';
+            ? 'rounded-tl-lg rounded-br-lg rounded-tr-none rounded-bl-none'
+            : 'rounded-tr-lg rounded-bl-lg rounded-tl-none rounded-br-none';
 
-        const pixelShape = 'rounded-none border-2';
+        const pixelShape = 'rounded-none border';
 
         return (
           <button
@@ -101,19 +101,15 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
               color: isActive ? '#000' : isWinning || isHovered ? '#FFF' : isLineActiveInGame ? (isTimber ? '#fde047' : isPixel ? '#00F0FF' : '#FFF') : 'rgba(255, 255, 255, 0.3)',
               boxShadow:
                 isWinning || isActive
-                  ? `0 0 10px ${color}, inset 0 1px 0 rgba(255,255,255,0.6)`
+                  ? `0 0 8px ${color}, inset 0 1px 0 rgba(255,255,255,0.6)`
                   : isHovered
-                  ? `0 0 6px ${color}`
+                  ? `0 0 5px ${color}`
                   : 'inset 0 1px 0 rgba(255,255,255,0.15)',
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
               fontFamily: isPixel ? "'Courier New', monospace" : undefined,
             }}
-            className={`${
-              totalLinesCount > 40
-                ? 'w-full max-w-[28px] h-3 md:h-3.5 text-[7px] md:text-[8px]'
-                : 'w-full max-w-[32px] h-3.5 sm:h-5 md:h-6 text-[8px] sm:text-[10px]'
-            } font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
-              isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[4px]'
+            className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[16px] text-[7px] sm:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
+              isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[3px]'
             } ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''
             }`}

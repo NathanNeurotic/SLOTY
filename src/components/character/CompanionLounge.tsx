@@ -48,9 +48,10 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
   // Desktop Flank: Elegantly placed on the side, NEVER overlapping the cabinet
   if (position === 'desktop-flank') {
     return (
-      <div className="relative">
+      <div className="relative" key={activeGameId}>
         {isPixel ? (
           <PixelPenny
+            key="pixel-penny"
             isSpinning={isSpinning}
             isAnticipating={isAnticipating}
             isWinning={isWinning}
@@ -62,6 +63,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
           />
         ) : isTimber ? (
           <GrizzlyGus
+            key="grizzly-gus"
             isSpinning={isSpinning}
             isAnticipating={isAnticipating}
             isWinning={isWinning}
@@ -73,6 +75,7 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
           />
         ) : (
           <RubySparkle
+            key="ruby-sparkle"
             isSpinning={isSpinning}
             isAnticipating={isAnticipating}
             isWinning={isWinning}
@@ -81,7 +84,6 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
             winAmount={winAmount}
             onRewardCoins={onRewardCoins}
             variant="full"
-            activeGameId={activeGameId}
           />
         )}
       </div>
@@ -126,7 +128,6 @@ export const CompanionLounge: React.FC<CompanionLoungeProps> = ({
                 winAmount={winAmount}
                 onRewardCoins={onRewardCoins}
                 variant="compact"
-                activeGameId={activeGameId}
               />
             )}
           </div>

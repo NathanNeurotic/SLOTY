@@ -488,7 +488,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         </div>
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
-        <div className="flex items-center space-x-1 sm:space-x-1.5 w-full">
+        <div className="flex items-stretch space-x-1 sm:space-x-1.5 w-full">
           {/* Left Themed Cabinet Pilaster */}
           {isTimber ? (
             <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">

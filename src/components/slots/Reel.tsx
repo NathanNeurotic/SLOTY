@@ -197,6 +197,30 @@ export const Reel: React.FC<ReelProps> = ({
         </div>
       )}
 
+      {/* Themed Reel Background Textures */}
+      {isPixel ? (
+        <div
+          className="absolute inset-0 pointer-events-none z-10 opacity-35"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.4) 0px, rgba(0,0,0,0.4) 1px, transparent 1px, transparent 3px)',
+          }}
+        />
+      ) : isTimber ? (
+        <div
+          className="absolute inset-0 pointer-events-none z-10 opacity-25"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, rgba(245,158,11,0.08) 0px, transparent 2px, transparent 20px)',
+          }}
+        />
+      ) : (
+        <div
+          className="absolute inset-0 pointer-events-none z-10 opacity-30"
+          style={{
+            backgroundImage: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, transparent 40%, rgba(253,224,71,0.1) 60%, transparent 100%)',
+          }}
+        />
+      )}
+
       {/* 3D Cylindrical shadow overlays */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/60 z-20" />
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] z-20" />

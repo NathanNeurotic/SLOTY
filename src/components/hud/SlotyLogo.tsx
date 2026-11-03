@@ -24,11 +24,6 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
     }
   };
 
-  const getGameBadge = () => {
-    if (isTimber) return 'TIMBERLAND';
-    if (isPixel) return 'PIXEL ARCADE';
-    return '24K GOLD';
-  };
 
   const getSubTagline = () => {
     if (isTimber) return { left: '🌲 FOREST CRITTERS', right: 'ACORN CASH LINK 🌲' };
@@ -94,40 +89,44 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
         </div>
       </div>
 
-      {/* Marquee Typography */}
+      {/* Marquee Typography - Bespoke Title Styling Per Game */}
       <div className="flex flex-col justify-center">
-        <div className="flex items-center space-x-1.5 leading-none">
-          <span
-            className={`text-base sm:text-xl font-black tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] group-hover:brightness-110 transition-all font-sans ${
-              isTimber
-                ? 'text-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]'
-                : isPixel
-                ? 'text-pink-400 drop-shadow-[0_0_10px_rgba(236,72,153,0.7)]'
-                : 'gold-gradient-text'
-            }`}
-          >
-            SLOTY
-          </span>
-          <span
-            className={`inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8.5px] sm:text-[9.5px] px-2 py-0.5 rounded font-black tracking-widest uppercase shadow-md border ${
-              isTimber
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.8)]'
-                : isPixel
-                ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white border-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.8)]'
-                : 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-yellow-200 shadow-[0_0_10px_rgba(245,158,11,0.8)]'
-            }`}
-          >
-            {getGameBadge()}
-          </span>
-          <Sparkles className={`w-3.5 h-3.5 animate-spin opacity-80 group-hover:opacity-100 ${isTimber ? 'text-emerald-300 fill-emerald-300' : isPixel ? 'text-pink-300 fill-pink-300' : 'text-yellow-300 fill-yellow-300'}`} />
-        </div>
+        {isTimber ? (
+          <div className="flex items-center space-x-1.5 leading-none">
+            <span className="text-sm sm:text-lg font-black tracking-wider uppercase text-amber-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-serif">
+              TIMBERLAND
+            </span>
+            <span className="inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8.5px] sm:text-[9.5px] px-2 py-0.5 rounded-full font-black tracking-widest uppercase bg-gradient-to-r from-emerald-600 to-teal-500 text-white border border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+              CRITTERS 🌲
+            </span>
+          </div>
+        ) : isPixel ? (
+          <div className="flex items-center space-x-1.5 leading-none font-mono">
+            <span className="text-sm sm:text-lg font-black tracking-wider uppercase text-pink-400 drop-shadow-[0_0_10px_rgba(236,72,153,0.8)]">
+              PIXEL
+            </span>
+            <span className="inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8.5px] sm:text-[9.5px] px-2 py-0.5 rounded font-black tracking-widest uppercase bg-gradient-to-r from-purple-600 to-pink-500 text-cyan-200 border border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.8)]">
+              ARCADE 🕹️
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-1.5 leading-none">
+            <span className="text-sm sm:text-lg font-black tracking-wider uppercase gold-gradient-text drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              24K GOLD
+            </span>
+            <span className="inline-flex items-center justify-center whitespace-nowrap leading-none shrink-0 text-[8.5px] sm:text-[9.5px] px-2 py-0.5 rounded font-black tracking-widest uppercase bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border border-yellow-200 shadow-[0_0_10px_rgba(245,158,11,0.8)]">
+              CASH VAULT 👑
+            </span>
+            <Sparkles className="w-3.5 h-3.5 animate-spin text-yellow-300 fill-yellow-300" />
+          </div>
+        )}
 
         <div
           className={`hidden xl:flex items-center space-x-1 text-[8px] sm:text-[9px] font-black tracking-widest leading-none mt-1 ${
             isTimber
               ? 'text-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.7)]'
               : isPixel
-              ? 'text-cyan-300 drop-shadow-[0_0_6px_rgba(6,182,212,0.7)]'
+              ? 'text-cyan-300 drop-shadow-[0_0_6px_rgba(6,182,212,0.7)] font-mono'
               : 'text-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.7)]'
           }`}
         >

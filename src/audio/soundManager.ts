@@ -1050,29 +1050,95 @@ class SoundManager {
     bellOsc.stop(bellTime + 0.6);
   }
 
-  // Button click
+  // 100% Bespoke Tactile Button Click Per Game
   public playButtonClick() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
 
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 1989 Japanese Arcade Sanwa Push-Button Switch: crisp 8-bit chip blip
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.22 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(987.77, now);
+      osc.frequency.setValueAtTime(1318.51, now + 0.02);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.048);
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Hollow Cedar Woodblock Tap: resonant organic acoustic knock
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(680, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.045);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.055);
+      return;
+    }
+
+    // 24K Gold Vault: Heavy Brass Lock Tumbler Click
     const osc = this.ctx.createOscillator();
-    const gain = this.createGainNode(0.06, 0.3, 0.01);
+    const gain = this.createGainNode(0.06, 0.32, 0.01);
     if (!gain) return;
-
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(440, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.05);
-
+    osc.frequency.setValueAtTime(540, now);
+    osc.frequency.exponentialRampToValueAtTime(1100, now + 0.05);
     osc.connect(gain);
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.06);
+    osc.start(now);
+    osc.stop(now + 0.06);
   }
 
-  // Low error / invalid action buzzer
+  // Low error / invalid action buzzer: Bespoke Per Game
   public playError() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
     const now = this.ctx.currentTime;
+
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 8-Bit Arcade Miss Buzz
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.linearRampToValueAtTime(65, now + 0.16);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Hollow fallen cedar log dull thud
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.30 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(110, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.14);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+      return;
+    }
+
+    // 24K Vault Biometric Security Reject Buzzer
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     gain.gain.setValueAtTime(0.28 * this.sfxVolume, now);
@@ -1092,10 +1158,15 @@ class SoundManager {
   private isSpinRolling: boolean = false;
   private isAnticipationRolling: boolean = false;
 
-  // Spin start: punchy casino excitation chord + pneumatic hiss, or crispy woodland twig snap
+  // Spin start: Bespoke Per Game
   public playSpinStart() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
+
+    if (this.activeGameTheme === 'pixel-arcade') {
+      this.playArcadeCoinDrop();
+      return;
+    }
 
     if (this.activeGameTheme === 'timber-critters') {
       this.playTwigSnap();
@@ -1131,6 +1202,54 @@ class SoundManager {
     clackGain.connect(this.ctx.destination);
     clack.start(now);
     clack.stop(now + 0.09);
+  }
+
+  // 1989 Coin-Op Insert Coin Clink & Stage Start Chime for Pixel Arcade
+  public playArcadeCoinDrop() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // First coin click through arcade slot
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    gain1.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(2800, now);
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.055);
+
+    // Second coin drop landing inside metal hopper
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    gain2.gain.setValueAtTime(0.32 * this.sfxVolume, now + 0.04);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(3400, now + 0.04);
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    osc2.start(now + 0.04);
+    osc2.stop(now + 0.095);
+
+    // Snappy 8-bit game start blip sequence
+    const arpeggio = [523.25, 659.25, 783.99, 1046.5];
+    arpeggio.forEach((pitch, i) => {
+      if (!this.ctx) return;
+      const t = now + 0.08 + i * 0.035;
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0.24 * this.sfxVolume, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(pitch, t);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.055);
+    });
   }
 
   // Crisp woodland twig snap + branch whip for Timberland spin start
@@ -1261,6 +1380,12 @@ class SoundManager {
     this.spinRollStep = 0;
 
     const isTimber = this.activeGameTheme === 'timber-critters';
+    const isPixel = this.activeGameTheme === 'pixel-arcade';
+
+    // Pixel Arcade: 1989 fast Japanese arcade 8-bit square wave arpeggios
+    const pixelRollNotes = isFever
+      ? [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093.0, 2637.02]
+      : [440.0, 523.25, 659.25, 783.99, 880.0, 1046.5, 1318.51, 1567.98];
 
     // Classic VLT ascending arpeggio notes (bright pentatonic chime sequence)
     const vaultRollNotes = isFever
@@ -1272,8 +1397,8 @@ class SoundManager {
       ? [440.0, 493.88, 587.33, 659.25, 783.99, 880.0, 987.77, 1174.66]
       : [392.0, 440.0, 493.88, 587.33, 659.25, 783.99, 880.0, 987.77];
 
-    const rollNotes = isTimber ? timberRollNotes : vaultRollNotes;
-    const stepIntervalMs = isFever ? 48 : 58;
+    const rollNotes = isPixel ? pixelRollNotes : isTimber ? timberRollNotes : vaultRollNotes;
+    const stepIntervalMs = isFever ? 44 : isPixel ? 50 : 58;
 
     const playRollTick = () => {
       if (!this.isSpinRolling || !this.ctx || this.isMuted) return;
@@ -1281,8 +1406,30 @@ class SoundManager {
       const now = this.ctx.currentTime;
       const step = this.spinRollStep;
 
-      // 1. Ticking percussion: Woodpecker/woodblock for Timberland, ratchet for Vault
-      if (isTimber) {
+      // 1. Ticking percussion: 8-bit blip for Pixel, Woodpecker for Timberland, ratchet for Vault
+      if (isPixel) {
+        // Fast 8-Bit Arcade Counter Pulse
+        const bitTick = this.ctx.createOscillator();
+        const bitGain = this.ctx.createGain();
+        bitGain.gain.setValueAtTime(0.20 * this.sfxVolume, now);
+        bitGain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+
+        bitTick.type = 'square';
+        const tickFreq = (step % 2 === 0 ? 880 : 1320);
+        bitTick.frequency.setValueAtTime(tickFreq, now);
+
+        bitTick.connect(bitGain);
+        bitGain.connect(this.ctx.destination);
+        bitTick.start(now);
+        bitTick.stop(now + 0.025);
+
+        setTimeout(() => {
+          try {
+            bitTick.disconnect();
+            bitGain.disconnect();
+          } catch {}
+        }, 30);
+      } else if (isTimber) {
         // Hollow Woodpecker Woodblock Knock
         const woodTick = this.ctx.createOscillator();
         const woodGain = this.ctx.createGain();
@@ -1333,21 +1480,23 @@ class SoundManager {
         }, 25);
       }
 
-      // 2. Melodic Pitch Pulse: Marimba / Banjo for Timberland, Casino Synth for Vault
+      // 2. Melodic Pitch Pulse: 8-Bit Chiptune for Pixel, Marimba for Timberland, Synth for Vault
       const pitch = this.isAnticipationRolling
-        ? isTimber
+        ? isPixel
+          ? 987.77 + (step % 8) * 160 // Fast 8-bit cyber suspense riser
+          : isTimber
           ? 783.99 + (step % 8) * 110 // Suspenseful climbing owl whistle
           : 880 + (step % 8) * 140   // High suspense climbing ladder
         : rollNotes[step % rollNotes.length];
 
       const toneOsc = this.ctx.createOscillator();
       const toneGain = this.ctx.createGain();
-      const toneVol = this.isAnticipationRolling ? 0.35 : isTimber ? 0.28 : 0.24;
+      const toneVol = this.isAnticipationRolling ? 0.35 : isPixel ? 0.22 : isTimber ? 0.28 : 0.24;
 
       toneGain.gain.setValueAtTime(toneVol * this.sfxVolume, now);
       toneGain.gain.exponentialRampToValueAtTime(0.0001, now + (this.isAnticipationRolling ? 0.12 : 0.08));
 
-      toneOsc.type = isTimber ? 'triangle' : this.isAnticipationRolling ? 'sawtooth' : 'triangle';
+      toneOsc.type = isPixel ? 'square' : isTimber ? 'triangle' : this.isAnticipationRolling ? 'sawtooth' : 'triangle';
       toneOsc.frequency.setValueAtTime(pitch, now);
 
       toneOsc.connect(toneGain);
@@ -1883,12 +2032,44 @@ class SoundManager {
     osc.stop(now + 0.15);
   }
 
-  // Coin tally
+  // Coin tally: 100% Bespoke per game
   public playCoinTally() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
-
     const now = this.ctx.currentTime;
+
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 8-bit score counter tick
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.18 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1200 + (Math.random() * 300), now);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.038);
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Organic seed pod / acorn rattle
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(750 + Math.random() * 250, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.035);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.042);
+      return;
+    }
+
+    // 24K Gold Vault: high metallic gold coin ring
     const osc = this.ctx.createOscillator();
     const gain = this.createGainNode(0.04, 0.25, 0.01);
     if (!gain) return;
@@ -1902,14 +2083,58 @@ class SoundManager {
     osc.stop(now + 0.04);
   }
 
-  // Rapid cascading coin hopper clatter
+  // Rapid cascading payout shower: Bespoke per game
   public playCoinCascade(coins: number = 8) {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
-    for (let i = 0; i < Math.min(25, coins); i++) {
+    const count = Math.min(25, coins);
+    const now = this.ctx.currentTime;
+
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 8-bit arcade coin fountain spray
+      for (let i = 0; i < count; i++) {
+        const delay = i * 0.04;
+        const startTime = now + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.18 * this.sfxVolume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.05);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(987.77 + (i % 4) * 220, startTime);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.055);
+      }
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Bountiful acorn & golden pinecone tumble
+      for (let i = 0; i < count; i++) {
+        const delay = i * 0.045 + Math.random() * 0.015;
+        const startTime = now + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.26 * this.sfxVolume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.06);
+        osc.type = 'triangle';
+        const f = 600 + Math.random() * 600;
+        osc.frequency.setValueAtTime(f, startTime);
+        osc.frequency.exponentialRampToValueAtTime(f * 0.5, startTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.065);
+      }
+      return;
+    }
+
+    // 24K Gold Vault: Metallic coin hopper clatter
+    for (let i = 0; i < count; i++) {
       const delay = i * 0.045 + Math.random() * 0.015;
-      const startTime = this.ctx.currentTime + delay;
+      const startTime = now + delay;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
@@ -2163,13 +2388,72 @@ class SoundManager {
     osc.stop(now + 0.8);
   }
 
-  // Mechanical ratcheting slot pull lever sound
+  // Mechanical ratcheting slot pull lever sound: Bespoke per game
   public playLeverPull() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
 
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 1989 Heavy Sanwa microswitch throw + spring rebound
+      const osc1 = this.ctx.createOscillator();
+      const gain1 = this.ctx.createGain();
+      gain1.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc1.type = 'square';
+      osc1.frequency.setValueAtTime(320, now);
+      osc1.frequency.setValueAtTime(740, now + 0.02);
+      osc1.connect(gain1);
+      gain1.connect(this.ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.055);
+
+      const osc2 = this.ctx.createOscillator();
+      const gain2 = this.ctx.createGain();
+      gain2.gain.setValueAtTime(0.4 * this.sfxVolume, now + 0.06);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(1200, now + 0.06);
+      osc2.frequency.exponentialRampToValueAtTime(440, now + 0.13);
+      osc2.connect(gain2);
+      gain2.connect(this.ctx.destination);
+      osc2.start(now + 0.06);
+      osc2.stop(now + 0.15);
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Heavy hand-carved cedar timber arm creak + oak peg lock
+      const osc1 = this.ctx.createOscillator();
+      const gain1 = this.ctx.createGain();
+      gain1.gain.setValueAtTime(0.45 * this.sfxVolume, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(140, now);
+      osc1.frequency.linearRampToValueAtTime(220, now + 0.08);
+      osc1.frequency.exponentialRampToValueAtTime(70, now + 0.11);
+      osc1.connect(gain1);
+      gain1.connect(this.ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.13);
+
+      const osc2 = this.ctx.createOscillator();
+      const gain2 = this.ctx.createGain();
+      gain2.gain.setValueAtTime(0.55 * this.sfxVolume, now + 0.12);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(260, now + 0.12);
+      osc2.frequency.exponentialRampToValueAtTime(45, now + 0.21);
+      osc2.connect(gain2);
+      gain2.connect(this.ctx.destination);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.23);
+      return;
+    }
+
+    // 24K Gold Vault: Heavy ratcheting brass gear teeth + hydraulic solenoid snap
     for (let i = 0; i < 4; i++) {
-      const startTime = this.ctx.currentTime + i * 0.04;
+      const startTime = now + i * 0.04;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       gain.gain.setValueAtTime(0.22 * this.sfxVolume, startTime);
@@ -2182,7 +2466,7 @@ class SoundManager {
       osc.stop(startTime + 0.03);
     }
 
-    const clunkTime = this.ctx.currentTime + 0.17;
+    const clunkTime = now + 0.17;
     const subOsc = this.ctx.createOscillator();
     const subGain = this.ctx.createGain();
     subGain.gain.setValueAtTime(0.55 * this.sfxVolume, clunkTime);
@@ -2196,12 +2480,45 @@ class SoundManager {
     subOsc.stop(clunkTime + 0.16);
   }
 
-  // Crisp ceramic casino chip click
+  // Crisp ceramic casino chip click: Bespoke per game
   public playChipClick() {
     this.initContext();
     if (!this.ctx || this.isMuted) return;
-
     const now = this.ctx.currentTime;
+
+    if (this.activeGameTheme === 'pixel-arcade') {
+      // 8-bit crisp credit tick
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.22 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1480, now);
+      osc.frequency.setValueAtTime(1980, now + 0.015);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.032);
+      return;
+    }
+
+    if (this.activeGameTheme === 'timber-critters') {
+      // Carved birch/cedar wood chip clack
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.32 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(820, now);
+      osc.frequency.exponentialRampToValueAtTime(390, now + 0.035);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.042);
+      return;
+    }
+
+    // 24K Gold Vault: Crisp ceramic clay casino chip click
     const osc = this.ctx.createOscillator();
     const gain = this.createGainNode(0.05, 0.35, 0.01);
     if (!gain) return;
