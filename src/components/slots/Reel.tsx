@@ -148,7 +148,7 @@ export const Reel: React.FC<ReelProps> = ({
               className="w-full flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0 opacity-85"
               style={{ height: `${100 / activeRowCount}%` }}
             >
-              <SymbolRenderer id={sym} />
+              <SymbolRenderer id={sym} reelIndex={reelIndex} rowIndex={idx} />
             </div>
           ))}
         </div>
@@ -188,6 +188,8 @@ export const Reel: React.FC<ReelProps> = ({
                   id={sym}
                   isWinning={isWinning}
                   isScatterHighlight={isScatterHighlight}
+                  reelIndex={reelIndex}
+                  rowIndex={rowIdx}
                 />
               </div>
             );

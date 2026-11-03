@@ -8,13 +8,18 @@ class SoundManager {
   private sfxVolume: number = 0.85;
   private musicVolume: number = 0.70;
 
+  // Master Background Music Bus & Butterworth Warmth Lowpass Filter
+  private musicBus: GainNode | null = null;
+  private musicWarmthFilter: BiquadFilterNode | null = null;
+
   // Background Music Sequencer State
   private isMusicPlayingState: boolean = false;
   private musicStep: number = 0;
   private musicTimerId: number | null = null;
-  private musicTempo: number = 116; // BPM for Vegas VIP Lounge Funk
+  private musicTempo: number = 86; // Relaxed tempo for Vegas Lounge Funk
   private isOverdriveMusic: boolean = false;
   private ratchetBuffer: AudioBuffer | null = null;
+  private softNoiseBuffer: AudioBuffer | null = null;
   private activeGameTheme: GameId = 'vault-24k';
 
   constructor() {
@@ -47,6 +52,43 @@ class SoundManager {
         }
       } catch {}
     }
+    // Pre-allocate warm pink-ish noise buffer for smooth brushed snares and soft acoustic shakers
+    if (this.ctx && !this.softNoiseBuffer) {
+      try {
+        const bufferLength = Math.floor(this.ctx.sampleRate * 0.5); // 0.5s loopable soft noise
+        this.softNoiseBuffer = this.ctx.createBuffer(1, bufferLength, this.ctx.sampleRate);
+        const data = this.softNoiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99765 * b0 + white * 0.0990460;
+          b1 = 0.96300 * b1 + white * 0.170426;
+          b2 = 0.57000 * b2 + white * 0.44910;
+          data[i] = (b0 + b1 + b2 + white * 0.05) * 0.22;
+        }
+      } catch {}
+    }
+    // Master Warmth Bus: lowpass at 3.0 kHz (Butterworth) so no shrill frequencies ever reach speakers
+    if (this.ctx && !this.musicBus) {
+      try {
+        this.musicBus = this.ctx.createGain();
+        this.musicBus.gain.setValueAtTime(this.musicVolume * 0.40, this.ctx.currentTime);
+        this.musicWarmthFilter = this.ctx.createBiquadFilter();
+        this.musicWarmthFilter.type = 'lowpass';
+        this.musicWarmthFilter.frequency.setValueAtTime(3000, this.ctx.currentTime);
+        this.musicWarmthFilter.Q.setValueAtTime(0.707, this.ctx.currentTime);
+        this.musicBus.connect(this.musicWarmthFilter);
+        this.musicWarmthFilter.connect(this.ctx.destination);
+      } catch {}
+    }
+  }
+
+  public getMusicDestination(): AudioNode | null {
+    if (!this.ctx) return null;
+    if (!this.musicBus) {
+      this.initContext();
+    }
+    return this.musicBus || this.ctx.destination;
   }
 
   // Auto-unlock audio and start background music on first user gesture
@@ -97,6 +139,9 @@ class SoundManager {
   public setMusicVolume(vol: number) {
     this.musicVolume = Math.max(0, Math.min(1, vol));
     storage.setItem('sloty_music_volume', Math.round(this.musicVolume * 100).toString());
+    if (this.musicBus && this.ctx) {
+      this.musicBus.gain.setValueAtTime(this.musicVolume * 0.40, this.ctx.currentTime);
+    }
   }
 
   public getMusicVolume(): number {
@@ -136,6 +181,16 @@ class SoundManager {
   // --- PROCEDURAL VEGAS VIP LOUNGE & FEVER BACKGROUND MUSIC SYNTHESIZER ---
   // =========================================================================
 
+  private updateTempoForTheme() {
+    if (this.activeGameTheme === 'timber-critters') {
+      this.musicTempo = this.isOverdriveMusic ? 90 : 74;
+    } else if (this.activeGameTheme === 'pixel-arcade') {
+      this.musicTempo = this.isOverdriveMusic ? 122 : 102;
+    } else {
+      this.musicTempo = this.isOverdriveMusic ? 104 : 86;
+    }
+  }
+
   public startMusic(overdrive: boolean = false) {
     this.initContext();
     if (!this.ctx) return;
@@ -145,7 +200,7 @@ class SoundManager {
     if (this.isMuted || this.isMusicMutedState) return;
 
     this.isOverdriveMusic = overdrive;
-    this.musicTempo = overdrive ? 128 : 116;
+    this.updateTempoForTheme();
 
     if (this.isMusicPlayingState) return;
 
@@ -176,7 +231,7 @@ class SoundManager {
 
   public setOverdriveMusic(overdrive: boolean) {
     this.isOverdriveMusic = overdrive;
-    this.musicTempo = overdrive ? 128 : 116;
+    this.updateTempoForTheme();
   }
 
   private scheduleNextMusicBeat() {
@@ -187,7 +242,7 @@ class SoundManager {
     const stepIntervalMs = (60 / this.musicTempo / 4) * 1000; // 16th note interval
 
     this.playMusicStep(this.musicStep);
-    // 16 bars of 16 steps each = 256 steps (33+ seconds per full musical loop)
+    // 16 bars of 16 steps each = 256 steps
     this.musicStep = (this.musicStep + 1) % 256;
 
     this.musicTimerId = window.setTimeout(() => {
@@ -199,116 +254,122 @@ class SoundManager {
     if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
     if (this.activeGameTheme === 'timber-critters') {
       this.playWoodlandMusicStep(step);
-      return;
+    } else if (this.activeGameTheme === 'pixel-arcade') {
+      this.playPixelMusicStep(step);
+    } else {
+      this.playVaultLoungeMusicStep(step);
     }
+  }
+
+  // =========================================================================
+  // --- TRACK 1: 24K GOLD VAULT (SMOOTH LO-FI RHODES CASINO LOUNGE JAZZ) ---
+  // =========================================================================
+
+  private playVaultLoungeMusicStep(step: number) {
+    if (!this.ctx) return;
+    const dest = this.getMusicDestination();
+    if (!dest) return;
+
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
     const vol = this.musicVolume;
-    const bar = Math.floor(step / 16); // 0 to 15
-    const stepInBar = step % 16; // 0 to 15
+    const bar = Math.floor(step / 16);
+    const stepInBar = step % 16;
 
-    // 1. Kick Drum: Warm punchy 808/909 kick
-    // Bars 0-14 groove: steps 0, 8 (or 4 on overdrive) + syncopations; Bar 15 turnaround fill
+    // 1. Kick Drum: Warm soft sine drop
     const isKick =
       stepInBar === 0 ||
       stepInBar === 8 ||
       (isOverdrive && stepInBar % 4 === 0) ||
-      (!isOverdrive && (bar % 2 === 1) && stepInBar === 14) ||
+      (!isOverdrive && bar % 2 === 1 && stepInBar === 14) ||
       (bar === 15 && (stepInBar === 10 || stepInBar === 12));
 
     if (isKick) {
       const kickOsc = this.ctx.createOscillator();
       const kickGain = this.ctx.createGain();
-      kickGain.gain.setValueAtTime(0.55 * vol, now);
-      kickGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.16 : 0.22));
+      kickGain.gain.setValueAtTime(0.50 * vol, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.15 : 0.20));
 
       kickOsc.type = 'sine';
-      kickOsc.frequency.setValueAtTime(isOverdrive ? 150 : 120, now);
-      kickOsc.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+      kickOsc.frequency.setValueAtTime(isOverdrive ? 130 : 100, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(36, now + 0.12);
 
       kickOsc.connect(kickGain);
-      kickGain.connect(this.ctx.destination);
+      kickGain.connect(dest);
       kickOsc.start(now);
-      kickOsc.stop(now + 0.24);
+      kickOsc.stop(now + 0.22);
     }
 
-    // 2. Snare / Funk Rimshot & Shaker
-    // Backbeat on steps 4 & 12; plus Bar 15 drum turnaround fill on steps 12, 14, 15
+    // 2. Brushed Snare: Filtered soft pink noise
     const isSnare =
       stepInBar === 4 ||
       stepInBar === 12 ||
       (bar === 15 && (stepInBar === 10 || stepInBar === 14 || stepInBar === 15));
 
-    if (isSnare) {
-      const bufferSize = Math.floor(this.ctx.sampleRate * 0.12);
-      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const output = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
-
-      const noiseNode = this.ctx.createBufferSource();
-      noiseNode.buffer = buffer;
+    if (isSnare && this.softNoiseBuffer) {
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = this.softNoiseBuffer;
 
       const noiseFilter = this.ctx.createBiquadFilter();
       noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.setValueAtTime(1400, now);
-      noiseFilter.Q.setValueAtTime(1.8, now);
+      noiseFilter.frequency.setValueAtTime(1100, now);
+      noiseFilter.Q.setValueAtTime(1.5, now);
 
       const noiseGain = this.ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.38 * vol, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+      noiseGain.gain.setValueAtTime(0.32 * vol, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.10);
 
-      noiseNode.connect(noiseFilter);
+      noiseSource.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
-      noiseGain.connect(this.ctx.destination);
-      noiseNode.start(now);
+      noiseGain.connect(dest);
+      noiseSource.start(now);
+      noiseSource.stop(now + 0.12);
 
-      // Body tone
+      // Warm triangle body snap
       const bodyOsc = this.ctx.createOscillator();
       const bodyGain = this.ctx.createGain();
-      bodyGain.gain.setValueAtTime(0.25 * vol, now);
-      bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      bodyGain.gain.setValueAtTime(0.18 * vol, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
       bodyOsc.type = 'triangle';
-      bodyOsc.frequency.setValueAtTime(220, now);
-      bodyOsc.frequency.exponentialRampToValueAtTime(110, now + 0.07);
+      bodyOsc.frequency.setValueAtTime(160, now);
+      bodyOsc.frequency.exponentialRampToValueAtTime(80, now + 0.06);
 
       bodyOsc.connect(bodyGain);
-      bodyGain.connect(this.ctx.destination);
+      bodyGain.connect(dest);
       bodyOsc.start(now);
-      bodyOsc.stop(now + 0.09);
+      bodyOsc.stop(now + 0.08);
     }
 
-    // 3. Crisp Hi-Hat Sizzle (16th note swing)
+    // 3. Gentle Sizzle Hi-Hat: Soft bandpassed pink noise (NO square waves!)
     if (step % 2 === 0 || (isOverdrive && step % 4 === 2)) {
-      const hatGain = this.ctx.createGain();
-      const isAccent = stepInBar === 2 || stepInBar === 6 || stepInBar === 10 || stepInBar === 14;
-      const hatVol = isAccent ? 0.22 : 0.12;
+      if (this.softNoiseBuffer) {
+        const isAccent = stepInBar === 2 || stepInBar === 6 || stepInBar === 10 || stepInBar === 14;
+        const hatGain = this.ctx.createGain();
+        hatGain.gain.setValueAtTime((isAccent ? 0.18 : 0.09) * vol, now);
+        hatGain.gain.exponentialRampToValueAtTime(0.001, now + (isAccent ? 0.05 : 0.035));
 
-      hatGain.gain.setValueAtTime(hatVol * vol, now);
-      hatGain.gain.exponentialRampToValueAtTime(0.001, now + (isAccent ? 0.07 : 0.04));
+        const noiseSource = this.ctx.createBufferSource();
+        noiseSource.buffer = this.softNoiseBuffer;
 
-      const sizzleOsc = this.ctx.createOscillator();
-      sizzleOsc.type = 'square';
-      sizzleOsc.frequency.setValueAtTime(8400, now);
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2600, now);
+        filter.Q.setValueAtTime(2.2, now);
 
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.setValueAtTime(6500, now);
-
-      sizzleOsc.connect(filter);
-      filter.connect(hatGain);
-      hatGain.connect(this.ctx.destination);
-      sizzleOsc.start(now);
-      sizzleOsc.stop(now + 0.08);
+        noiseSource.connect(filter);
+        filter.connect(hatGain);
+        hatGain.connect(dest);
+        noiseSource.start(now);
+        noiseSource.stop(now + 0.06);
+      }
     }
 
-    // 4. Punchy Funk Walking Bassline (16-Bar 256-step harmonic journey)
+    // 4. Velvet Jazz Walking Bassline
     const funkBassline256 = [
-      // Bars 0-1 (Cm9 establish): C2 - C2 - Eb2 - F2 - G2 - Bb2 - C2 - Eb2
+      // Bars 0-1 (Cm9): C2 - C2 - Eb2 - F2 - G2 - Bb2 - C2 - Eb2
       65.41, 0, 65.41, 0, 77.78, 0, 87.31, 0, 98.00, 0, 77.78, 0, 87.31, 98.00, 116.54, 0,
       65.41, 0, 77.78, 0, 87.31, 98.00, 110.00, 0, 98.00, 0, 87.31, 0, 77.78, 0, 65.41, 0,
-      // Bars 2-3 (Fm9 -> G7#9): F2 - Ab2 - Bb2 - C3 - G2 - B2 - D3 - G2
+      // Bars 2-3 (Fm9 -> G7alt): F2 - Ab2 - Bb2 - C3 - G2 - B2 - D3 - G2
       87.31, 0, 87.31, 0, 103.83, 0, 116.54, 0, 130.81, 0, 116.54, 0, 103.83, 0, 87.31, 0,
       98.00, 0, 98.00, 0, 123.47, 0, 146.83, 0, 123.47, 0, 116.54, 0, 98.00, 87.31, 77.78, 0,
       // Bars 4-5 (Abmaj9 -> Bb13): Ab1 - C2 - Eb2 - G2 - Bb1 - D2 - F2 - Ab2
@@ -335,195 +396,171 @@ class SoundManager {
     if (bassFreq > 0) {
       const bassOsc = this.ctx.createOscillator();
       const bassGain = this.ctx.createGain();
-      bassGain.gain.setValueAtTime((isOverdrive ? 0.48 : 0.40) * vol, now);
-      bassGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.15 : 0.22));
+      bassGain.gain.setValueAtTime((isOverdrive ? 0.38 : 0.32) * vol, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.16 : 0.22));
 
-      bassOsc.type = isOverdrive ? 'sawtooth' : 'triangle';
+      bassOsc.type = 'triangle';
       bassOsc.frequency.setValueAtTime(bassFreq, now);
 
       const filter = this.ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(isOverdrive ? 900 : 480, now);
-      filter.frequency.exponentialRampToValueAtTime(140, now + 0.18);
+      filter.frequency.setValueAtTime(isOverdrive ? 480 : 320, now);
+      filter.frequency.exponentialRampToValueAtTime(120, now + 0.18);
 
       bassOsc.connect(filter);
       filter.connect(bassGain);
-      bassGain.connect(this.ctx.destination);
+      bassGain.connect(dest);
       bassOsc.start(now);
       bassOsc.stop(now + 0.24);
     }
 
-    // 5. Velvet Electric Piano Chords across 16 bars (syncopated comping on downbeats & offbeats)
+    // 5. Velvet Rhodes Chords: Soft warm electric piano
     if (stepInBar === 0 || stepInBar === 6 || stepInBar === 10) {
       let chordNotes: number[] = [];
-      if (bar === 0 || bar === 1) {
-        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
-      } else if (bar === 2) {
-        chordNotes = [261.63, 311.13, 349.23, 415.30, 523.25]; // Fm9 (C4, Eb4, F4, Ab4, C5)
-      } else if (bar === 3) {
-        chordNotes = [246.94, 311.13, 392.00, 466.16, 587.33]; // G7#9 (B3, Eb4, G4, Bb4, D5)
-      } else if (bar === 4 || bar === 5) {
-        chordNotes = [261.63, 311.13, 392.00, 415.30, 523.25]; // Abmaj9 (C4, Eb4, G4, Ab4, C5)
-      } else if (bar === 6) {
-        chordNotes = [233.08, 293.66, 349.23, 440.00, 523.25]; // Bb13 (Bb3, D4, F4, A4, C5)
-      } else if (bar === 7) {
-        chordNotes = [261.63, 329.63, 392.00, 466.16, 554.37]; // C7b9 (C4, E4, G4, Bb4, Db5)
-      } else if (bar === 8) {
-        chordNotes = [293.66, 349.23, 415.30, 493.88, 587.33]; // Dm7b5 (D4, F4, Ab4, B4, D5)
-      } else if (bar === 9) {
-        chordNotes = [246.94, 311.13, 392.00, 415.30, 622.25]; // G7alt (B3, Eb4, G4, Ab4, Eb5)
-      } else if (bar === 10) {
-        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Cm9 (C4, Eb4, G4, Bb4, D5)
-      } else if (bar === 11) {
-        chordNotes = [220.00, 261.63, 311.13, 349.23, 440.00]; // F9 (A3, C4, Eb4, F4, A4)
-      } else if (bar === 12) {
-        chordNotes = [261.63, 311.13, 392.00, 466.16, 587.33]; // Ebmaj9 (C4, Eb4, G4, Bb4, D5)
-      } else if (bar === 13) {
-        chordNotes = [261.63, 311.13, 349.23, 415.30, 523.25]; // Fm9 (C4, Eb4, F4, Ab4, C5)
-      } else if (bar === 14) {
-        chordNotes = [261.63, 311.13, 415.30, 493.88, 523.25]; // Abmaj7 (C4, Eb4, Ab4, B4, C5)
-      } else {
-        chordNotes = [246.94, 311.13, 392.00, 466.16, 622.25]; // G7#9alt resolution
-      }
+      if (bar === 0 || bar === 1) chordNotes = [261.63, 311.13, 392.00, 466.16]; // Cm9
+      else if (bar === 2) chordNotes = [261.63, 311.13, 349.23, 415.30]; // Fm9
+      else if (bar === 3) chordNotes = [246.94, 311.13, 392.00, 466.16]; // G7alt
+      else if (bar === 4 || bar === 5) chordNotes = [261.63, 311.13, 392.00, 415.30]; // Abmaj9
+      else if (bar === 6) chordNotes = [233.08, 293.66, 349.23, 440.00]; // Bb13
+      else if (bar === 7) chordNotes = [261.63, 329.63, 392.00, 466.16]; // C7b9
+      else if (bar === 8) chordNotes = [293.66, 349.23, 415.30, 493.88]; // Dm7b5
+      else if (bar === 9) chordNotes = [246.94, 311.13, 392.00, 415.30]; // G7alt
+      else if (bar === 10) chordNotes = [261.63, 311.13, 392.00, 466.16]; // Cm9
+      else if (bar === 11) chordNotes = [220.00, 261.63, 311.13, 349.23]; // F9
+      else if (bar === 12) chordNotes = [261.63, 311.13, 392.00, 466.16]; // Ebmaj9
+      else if (bar === 13) chordNotes = [261.63, 311.13, 349.23, 415.30]; // Fm9
+      else if (bar === 14) chordNotes = [261.63, 311.13, 415.30, 493.88]; // Abmaj7
+      else chordNotes = [246.94, 311.13, 392.00, 466.16]; // G7alt
 
       const isBeatStart = stepInBar === 0;
       chordNotes.forEach((note) => {
         if (!this.ctx) return;
         const chordOsc = this.ctx.createOscillator();
         const chordGain = this.ctx.createGain();
-        chordGain.gain.setValueAtTime((isBeatStart ? 0.14 : 0.08) * vol, now);
-        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + (isBeatStart ? 0.65 : 0.35));
+        chordGain.gain.setValueAtTime((isBeatStart ? 0.09 : 0.05) * vol, now);
+        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + (isBeatStart ? 0.55 : 0.30));
 
         chordOsc.type = 'triangle';
         chordOsc.frequency.setValueAtTime(note, now);
 
         chordOsc.connect(chordGain);
-        chordGain.connect(this.ctx.destination);
+        chordGain.connect(dest);
         chordOsc.start(now);
-        chordOsc.stop(now + (isBeatStart ? 0.70 : 0.40));
+        chordOsc.stop(now + (isBeatStart ? 0.60 : 0.35));
       });
     }
 
-    // 6. Casino Vibraphone / Bell Melodic Cues across the 16 bars
+    // 6. Warm Vibraphone Cues
     const vibraphonePitches: Record<number, number> = {
       2: 783.99,   // G5
-      10: 932.33,  // Bb5
       18: 1046.50, // C6
-      26: 1174.66, // D6
       42: 880.00,  // A5
-      58: 987.77,  // B5
       66: 1046.50, // C6
-      74: 1174.66, // D6
-      82: 1244.51, // Eb6
       98: 932.33,  // Bb5
-      106: 880.00, // A5
       122: 783.99, // G5
       138: 830.61, // Ab5
-      154: 987.77, // B5
       170: 1046.50,// C6
-      186: 1174.66,// D6
       202: 1244.51,// Eb6
-      218: 1046.50,// C6
       234: 932.33, // Bb5
-      242: 830.61, // Ab5
       246: 783.99, // G5
-      250: 622.25, // Eb5
     };
 
     const bellPitch = vibraphonePitches[step];
     if (bellPitch) {
       const bellOsc = this.ctx.createOscillator();
       const bellGain = this.ctx.createGain();
-      bellGain.gain.setValueAtTime(0.18 * vol, now);
-      bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+      bellGain.gain.setValueAtTime(0.12 * vol, now);
+      bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
 
       bellOsc.type = 'sine';
       bellOsc.frequency.setValueAtTime(bellPitch, now);
 
       bellOsc.connect(bellGain);
-      bellGain.connect(this.ctx.destination);
+      bellGain.connect(dest);
       bellOsc.start(now);
-      bellOsc.stop(now + 0.44);
+      bellOsc.stop(now + 0.38);
     }
   }
 
   // =========================================================================
-  // --- PROCEDURAL ACOUSTIC WOODLAND BLUEGRASS & FOLK SYNTHESIZER ---
+  // --- TRACK 2: TIMBERLAND CRITTERS (COZY MOUNTAIN CABIN FOLK) ---
   // =========================================================================
 
   private playWoodlandMusicStep(step: number) {
-    if (!this.ctx || this.isMuted || this.isMusicMutedState) return;
+    if (!this.ctx) return;
+    const dest = this.getMusicDestination();
+    if (!dest) return;
+
     const now = this.ctx.currentTime;
     const isOverdrive = this.isOverdriveMusic;
     const vol = this.musicVolume;
-    const bar = Math.floor(step / 16); // 0 to 15
-    const stepInBar = step % 16; // 0 to 15
+    const bar = Math.floor(step / 16);
+    const stepInBar = step % 16;
 
-    // 1. Organic Log Stomp / Acoustic Bass Drum
+    // 1. Organic Wooden Log Stomp Kick
     if (stepInBar === 0 || stepInBar === 8 || (isOverdrive && stepInBar % 4 === 0)) {
       const kickOsc = this.ctx.createOscillator();
       const kickGain = this.ctx.createGain();
-      kickGain.gain.setValueAtTime(0.48 * vol, now);
-      kickGain.gain.exponentialRampToValueAtTime(0.001, now + (isOverdrive ? 0.15 : 0.20));
+      kickGain.gain.setValueAtTime(0.42 * vol, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
 
       kickOsc.type = 'triangle';
-      kickOsc.frequency.setValueAtTime(90, now);
-      kickOsc.frequency.exponentialRampToValueAtTime(32, now + 0.14);
+      kickOsc.frequency.setValueAtTime(75, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(28, now + 0.12);
 
       kickOsc.connect(kickGain);
-      kickGain.connect(this.ctx.destination);
+      kickGain.connect(dest);
       kickOsc.start(now);
-      kickOsc.stop(now + 0.22);
+      kickOsc.stop(now + 0.18);
     }
 
-    // 2. Resonant Carved Cedar Woodblock Knock
-    // Steps 4, 12; plus Bar 15 hoedown turnaround roll
+    // 2. Hollow Cedar Woodblock Knock (Warm & woody, NO distortion)
     const isWoodblock =
       stepInBar === 4 ||
       stepInBar === 12 ||
-      (bar === 15 && (stepInBar === 8 || stepInBar === 10 || stepInBar === 14 || stepInBar === 15));
+      (bar === 15 && (stepInBar === 8 || stepInBar === 10 || stepInBar === 14));
 
     if (isWoodblock) {
       const blockOsc = this.ctx.createOscillator();
       const blockGain = this.ctx.createGain();
-      blockGain.gain.setValueAtTime(0.55 * vol, now);
-      blockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      blockGain.gain.setValueAtTime(0.35 * vol, now);
+      blockGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
 
       blockOsc.type = 'triangle';
-      blockOsc.frequency.setValueAtTime(680 + (stepInBar % 3) * 60, now);
-      blockOsc.frequency.exponentialRampToValueAtTime(340, now + 0.07);
+      blockOsc.frequency.setValueAtTime(540 + (stepInBar % 3) * 40, now);
+      blockOsc.frequency.exponentialRampToValueAtTime(260, now + 0.05);
 
       blockOsc.connect(blockGain);
-      blockGain.connect(this.ctx.destination);
+      blockGain.connect(dest);
       blockOsc.start(now);
-      blockOsc.stop(now + 0.09);
+      blockOsc.stop(now + 0.07);
     }
 
-    // 3. Dried Seed Pod Shaker / Rustling Leaves (16th-note swing)
-    if (step % 2 === 1) {
-      const rustleOsc = this.ctx.createOscillator();
-      const rustleGain = this.ctx.createGain();
+    // 3. Gentle Dried Seed Pod Shaker: Ultra-soft pink noise (NO square waves!)
+    if (step % 2 === 1 && this.softNoiseBuffer) {
       const isAccent = stepInBar === 4 || stepInBar === 12;
-      rustleGain.gain.setValueAtTime((isAccent ? 0.18 : 0.10) * vol, now);
-      rustleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      const rustleGain = this.ctx.createGain();
+      rustleGain.gain.setValueAtTime((isAccent ? 0.10 : 0.05) * vol, now);
+      rustleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
-      rustleOsc.type = 'square';
-      rustleOsc.frequency.setValueAtTime(7400 + (step % 3) * 400, now);
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = this.softNoiseBuffer;
 
       const filter = this.ctx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.setValueAtTime(5500, now);
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2200, now);
+      filter.Q.setValueAtTime(1.8, now);
 
-      rustleOsc.connect(filter);
+      noiseSource.connect(filter);
       filter.connect(rustleGain);
-      rustleGain.connect(this.ctx.destination);
-      rustleOsc.start(now);
-      rustleOsc.stop(now + 0.06);
+      rustleGain.connect(dest);
+      noiseSource.start(now);
+      noiseSource.stop(now + 0.05);
     }
 
-    // 4. Plucked Acoustic Upright Double Bass (16-Bar 256-step Country Bluegrass Walking Bass)
+    // 4. Plucked Acoustic Upright Bass (G Major Country Walk)
     const woodlandBass256 = [
-      // Bars 0-1 (G major): G2 -> D3 -> G2 -> B2
+      // Bars 0-1 (G): G2 -> D3 -> G2 -> B2
       98.00, 0, 98.00, 0, 146.83, 0, 146.83, 0, 98.00, 0, 123.47, 0, 146.83, 0, 123.47, 0,
       98.00, 0, 98.00, 0, 146.83, 0, 146.83, 0, 98.00, 0, 110.00, 0, 123.47, 0, 110.00, 0,
       // Bars 2-3 (C -> D7): C2 -> G2 -> D2 -> A2
@@ -553,65 +590,65 @@ class SoundManager {
     if (bassPitch > 0) {
       const bassOsc = this.ctx.createOscillator();
       const bassGain = this.ctx.createGain();
-      bassGain.gain.setValueAtTime(0.42 * vol, now);
-      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+      bassGain.gain.setValueAtTime(0.35 * vol, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
       bassOsc.type = 'triangle';
       bassOsc.frequency.setValueAtTime(bassPitch, now);
 
       const bassFilter = this.ctx.createBiquadFilter();
       bassFilter.type = 'lowpass';
-      bassFilter.frequency.setValueAtTime(450, now);
-      bassFilter.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+      bassFilter.frequency.setValueAtTime(260, now);
+      bassFilter.frequency.exponentialRampToValueAtTime(95, now + 0.18);
 
       bassOsc.connect(bassFilter);
       bassFilter.connect(bassGain);
-      bassGain.connect(this.ctx.destination);
+      bassGain.connect(dest);
       bassOsc.start(now);
-      bassOsc.stop(now + 0.25);
+      bassOsc.stop(now + 0.24);
     }
 
-    // 5. Plucked Bluegrass Banjo / Folk Dulcimer 16-bar Arpeggios (Scruggs-Style Rolls)
+    // 5. Plucked Folk Acoustic Nylon Guitar Arpeggios
     const banjoChordsByBar = [
-      [392.00, 493.88, 587.33, 783.99], // Bar 0: G
-      [392.00, 493.88, 587.33, 880.00], // Bar 1: G6
-      [523.25, 659.25, 783.99, 1046.5], // Bar 2: C
-      [587.33, 739.99, 880.00, 1174.6], // Bar 3: D7
-      [659.25, 783.99, 987.77, 1318.5], // Bar 4: Em
-      [493.88, 587.33, 739.99, 987.77], // Bar 5: Bm
-      [523.25, 659.25, 783.99, 1046.5], // Bar 6: C
-      [587.33, 739.99, 880.00, 1174.6], // Bar 7: D
-      [440.00, 523.25, 659.25, 880.00], // Bar 8: Am
-      [587.33, 739.99, 880.00, 1174.6], // Bar 9: D7
-      [392.00, 493.88, 587.33, 783.99], // Bar 10: G
-      [659.25, 783.99, 987.77, 1318.5], // Bar 11: Em
-      [523.25, 659.25, 783.99, 1046.5], // Bar 12: C
-      [493.88, 587.33, 783.99, 987.77], // Bar 13: G/B
-      [440.00, 523.25, 659.25, 880.00], // Bar 14: Am7
-      [587.33, 739.99, 880.00, 1174.6], // Bar 15: D7 Turnaround
+      [392.00, 493.88, 587.33], // Bar 0: G
+      [392.00, 493.88, 587.33], // Bar 1: G6
+      [523.25, 659.25, 783.99], // Bar 2: C
+      [587.33, 739.99, 880.00], // Bar 3: D7
+      [659.25, 783.99, 987.77], // Bar 4: Em
+      [493.88, 587.33, 739.99], // Bar 5: Bm
+      [523.25, 659.25, 783.99], // Bar 6: C
+      [587.33, 739.99, 880.00], // Bar 7: D
+      [440.00, 523.25, 659.25], // Bar 8: Am
+      [587.33, 739.99, 880.00], // Bar 9: D7
+      [392.00, 493.88, 587.33], // Bar 10: G
+      [659.25, 783.99, 987.77], // Bar 11: Em
+      [523.25, 659.25, 783.99], // Bar 12: C
+      [493.88, 587.33, 783.99], // Bar 13: G/B
+      [440.00, 523.25, 659.25], // Bar 14: Am7
+      [587.33, 739.99, 880.00], // Bar 15: D7 Turnaround
     ];
 
     const currentBarPitches = banjoChordsByBar[bar] || banjoChordsByBar[0];
-    const rollPattern = [0, 1, 2, 3, 2, 1, 0, 2, 1, 3, 2, 1, 0, 1, 2, 3];
+    const rollPattern = [0, 1, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 0, 2, 1, 0];
     const noteIdx = rollPattern[stepInBar];
-    const banjoPitch = currentBarPitches[noteIdx];
+    const banjoPitch = currentBarPitches[noteIdx % currentBarPitches.length];
 
-    if (banjoPitch) {
-      const banjoOsc = this.ctx.createOscillator();
-      const banjoGain = this.ctx.createGain();
-      banjoGain.gain.setValueAtTime(0.24 * vol, now);
-      banjoGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+    if (banjoPitch && step % 2 === 0) {
+      const guitarOsc = this.ctx.createOscillator();
+      const guitarGain = this.ctx.createGain();
+      guitarGain.gain.setValueAtTime(0.12 * vol, now);
+      guitarGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
 
-      banjoOsc.type = 'triangle';
-      banjoOsc.frequency.setValueAtTime(banjoPitch, now);
+      guitarOsc.type = 'sine';
+      guitarOsc.frequency.setValueAtTime(banjoPitch, now);
 
-      banjoOsc.connect(banjoGain);
-      banjoGain.connect(this.ctx.destination);
-      banjoOsc.start(now);
-      banjoOsc.stop(now + 0.18);
+      guitarOsc.connect(guitarGain);
+      guitarGain.connect(dest);
+      guitarOsc.start(now);
+      guitarOsc.stop(now + 0.18);
     }
 
-    // 6. Whimsical Forest Cedar Wood Flute Melody (Sings lyrical phrases in Bars 4-12)
+    // 6. Whimsical Forest Cedar Wood Flute Melody (Warm, lyrical, soothing)
     const fluteMelody: Record<number, number> = {
       64: 783.99,   // G5
       72: 987.77,   // B5
@@ -633,18 +670,212 @@ class SoundManager {
     if (flutePitch) {
       const fluteOsc = this.ctx.createOscillator();
       const fluteGain = this.ctx.createGain();
-      fluteGain.gain.setValueAtTime(0.22 * vol, now);
-      fluteGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+      fluteGain.gain.setValueAtTime(0.16 * vol, now);
+      fluteGain.gain.exponentialRampToValueAtTime(0.001, now + 0.50);
 
       fluteOsc.type = 'sine';
       fluteOsc.frequency.setValueAtTime(flutePitch, now);
-      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch * 1.02, now + 0.25);
-      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch, now + 0.5);
+      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch * 1.015, now + 0.22);
+      fluteOsc.frequency.exponentialRampToValueAtTime(flutePitch, now + 0.45);
 
       fluteOsc.connect(fluteGain);
-      fluteGain.connect(this.ctx.destination);
+      fluteGain.connect(dest);
       fluteOsc.start(now);
-      fluteOsc.stop(now + 0.58);
+      fluteOsc.stop(now + 0.52);
+    }
+  }
+
+  // =========================================================================
+  // --- TRACK 3: PIXEL ARCADE (1989 JAPANESE ARCADE CHILLWAVE SYNTH) ---
+  // =========================================================================
+
+  private playPixelMusicStep(step: number) {
+    if (!this.ctx) return;
+    const dest = this.getMusicDestination();
+    if (!dest) return;
+
+    const now = this.ctx.currentTime;
+    const isOverdrive = this.isOverdriveMusic;
+    const vol = this.musicVolume;
+    const bar = Math.floor(step / 16);
+    const stepInBar = step % 16;
+
+    // 1. Analog Arcade Kick: Tight 80s punch
+    const isKick =
+      stepInBar === 0 ||
+      stepInBar === 8 ||
+      (isOverdrive && (stepInBar === 4 || stepInBar === 12)) ||
+      (bar === 15 && (stepInBar === 10 || stepInBar === 12));
+
+    if (isKick) {
+      const kickOsc = this.ctx.createOscillator();
+      const kickGain = this.ctx.createGain();
+      kickGain.gain.setValueAtTime(0.50 * vol, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+      kickOsc.type = 'sine';
+      kickOsc.frequency.setValueAtTime(125, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(42, now + 0.10);
+
+      kickOsc.connect(kickGain);
+      kickGain.connect(dest);
+      kickOsc.start(now);
+      kickOsc.stop(now + 0.17);
+    }
+
+    // 2. 80s Gated Snare & Electronic Clap
+    const isSnare = stepInBar === 4 || stepInBar === 12;
+    if (isSnare && this.softNoiseBuffer) {
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = this.softNoiseBuffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1300, now);
+      filter.Q.setValueAtTime(1.8, now);
+
+      const noiseGain = this.ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.30 * vol, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.10);
+
+      noiseSource.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(dest);
+      noiseSource.start(now);
+      noiseSource.stop(now + 0.11);
+    }
+
+    // 3. Crisp Electronic Hi-Hat: 16th note pattern
+    if (step % 2 === 0 && this.softNoiseBuffer) {
+      const isAccent = stepInBar === 2 || stepInBar === 6 || stepInBar === 10 || stepInBar === 14;
+      const hatGain = this.ctx.createGain();
+      hatGain.gain.setValueAtTime((isAccent ? 0.16 : 0.08) * vol, now);
+      hatGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = this.softNoiseBuffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2800, now);
+      filter.Q.setValueAtTime(2.5, now);
+
+      noiseSource.connect(filter);
+      filter.connect(hatGain);
+      hatGain.connect(dest);
+      noiseSource.start(now);
+      noiseSource.stop(now + 0.05);
+    }
+
+    // 4. Juno / Outrun Synth Bass Pluck (Dm7 -> Bbmaj7 -> C9 -> Am7)
+    const arcadeBass256 = [
+      // Dm7: D2 (73.42) - F2 (87.31) - A2 (110.00)
+      73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0, 73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0,
+      73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0, 73.42, 0, 87.31, 0, 98.00, 0, 110.00, 0,
+      // Bbmaj7: Bb1 (58.27) - D2 (73.42) - F2 (87.31)
+      58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0, 58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0,
+      58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0, 58.27, 0, 65.41, 0, 73.42, 0, 87.31, 0,
+      // C9: C2 (65.41) - E2 (82.41) - G2 (98.00)
+      65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0, 65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0,
+      65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0, 65.41, 0, 73.42, 0, 82.41, 0, 98.00, 0,
+      // Am7: A1 (55.00) - C2 (65.41) - E2 (82.41)
+      55.00, 0, 55.00, 0, 65.41, 0, 82.41, 0, 55.00, 0, 55.00, 0, 65.41, 0, 82.41, 0,
+      55.00, 0, 55.00, 0, 65.41, 0, 82.41, 0, 55.00, 0, 61.74, 0, 65.41, 0, 73.42, 0,
+      // Repeat loop with lift
+      73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0, 73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0,
+      73.42, 0, 73.42, 0, 87.31, 0, 110.00, 0, 73.42, 0, 87.31, 0, 98.00, 0, 110.00, 0,
+      58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0, 58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0,
+      58.27, 0, 58.27, 0, 73.42, 0, 87.31, 0, 58.27, 0, 65.41, 0, 73.42, 0, 87.31, 0,
+      65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0, 65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0,
+      65.41, 0, 65.41, 0, 82.41, 0, 98.00, 0, 65.41, 0, 73.42, 0, 82.41, 0, 98.00, 0,
+      55.00, 0, 55.00, 0, 65.41, 0, 82.41, 0, 55.00, 0, 55.00, 0, 65.41, 0, 82.41, 0,
+      55.00, 0, 65.41, 0, 73.42, 0, 82.41, 0, 87.31, 0, 98.00, 0, 110.00, 0, 123.47, 0
+    ];
+
+    const bassFreq = arcadeBass256[step];
+    if (bassFreq > 0) {
+      const bassOsc = this.ctx.createOscillator();
+      const bassGain = this.ctx.createGain();
+      bassGain.gain.setValueAtTime(0.34 * vol, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+      bassOsc.type = 'triangle';
+      bassOsc.frequency.setValueAtTime(bassFreq, now);
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, now);
+      filter.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+
+      bassOsc.connect(filter);
+      filter.connect(bassGain);
+      bassGain.connect(dest);
+      bassOsc.start(now);
+      bassOsc.stop(now + 0.20);
+    }
+
+    // 5. Analog Synth Poly-Pad Chords: Warm, filtered, ambient
+    if (stepInBar === 0 || stepInBar === 8) {
+      let padPitches: number[] = [];
+      const chordBar = bar % 4;
+      if (chordBar === 0) padPitches = [293.66, 349.23, 440.00, 523.25]; // Dm7
+      else if (chordBar === 1) padPitches = [233.08, 293.66, 349.23, 440.00]; // Bbmaj7
+      else if (chordBar === 2) padPitches = [261.63, 329.63, 392.00, 523.25]; // C9
+      else padPitches = [220.00, 261.63, 329.63, 440.00]; // Am7
+
+      padPitches.forEach((pitch) => {
+        if (!this.ctx) return;
+        const padOsc = this.ctx.createOscillator();
+        const padGain = this.ctx.createGain();
+        padGain.gain.setValueAtTime(0.08 * vol, now);
+        padGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+        padOsc.type = 'triangle';
+        padOsc.frequency.setValueAtTime(pitch, now);
+
+        padOsc.connect(padGain);
+        padGain.connect(dest);
+        padOsc.start(now);
+        padOsc.stop(now + 0.48);
+      });
+    }
+
+    // 6. FM Synth Lead: 8-bit arcade hero melody (Bars 8-15)
+    if (bar >= 8) {
+      const arcadeLeadPitches: Record<number, number> = {
+        128: 587.33, // D5
+        132: 659.25, // E5
+        136: 698.46, // F5
+        144: 880.00, // A5
+        152: 783.99, // G5
+        160: 698.46, // F5
+        168: 587.33, // D5
+        176: 523.25, // C5
+        184: 659.25, // E5
+        192: 587.33, // D5
+        208: 880.00, // A5
+        216: 1046.50,// C6
+        224: 880.00, // A5
+        232: 783.99, // G5
+        240: 698.46, // F5
+        248: 587.33, // D5
+      };
+
+      const leadPitch = arcadeLeadPitches[step];
+      if (leadPitch) {
+        const leadOsc = this.ctx.createOscillator();
+        const leadGain = this.ctx.createGain();
+        leadGain.gain.setValueAtTime(0.14 * vol, now);
+        leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+        leadOsc.type = 'sine';
+        leadOsc.frequency.setValueAtTime(leadPitch, now);
+
+        leadOsc.connect(leadGain);
+        leadGain.connect(dest);
+        leadOsc.start(now);
+        leadOsc.stop(now + 0.35);
+      }
     }
   }
 
@@ -1154,7 +1385,12 @@ class SoundManager {
   }
 
   public setGameTheme(theme: GameId) {
+    const prevTheme = this.activeGameTheme;
     this.activeGameTheme = theme;
+    if (prevTheme !== theme) {
+      this.musicStep = 0;
+      this.updateTempoForTheme();
+    }
   }
 
   public getGameTheme(): GameId {

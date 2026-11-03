@@ -387,35 +387,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             isAnticipating={isAnticipating}
           />
 
-        {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
+        {/* Themed Cabinet Top Header: Bespoke Hardware Per Game Theme */}
         <div className="flex items-center justify-between h-7 sm:h-8 px-1.5 sm:px-2 border-b border-white/10 mb-0.5 sm:mb-1 overflow-hidden flex-shrink-0">
+          {/* Left Header Indicator */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
             {isPixel ? (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#06B6D4]">
                 <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping mr-0.5" />
                 <span>1P READY</span>
               </div>
+            ) : isTimber ? (
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-[#241308] border border-[#a16207] shadow-[0_0_8px_rgba(245,158,11,0.4)]">
+                <span className="text-[10px] animate-pulse">🌲</span>
+                <span className="text-[8px] font-black uppercase text-amber-300 tracking-wider">CAMP 1</span>
+              </div>
             ) : (
-              [...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
-                    isTimber
-                      ? i % 2 === 0
-                        ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
-                        : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
-                      : activeWin
-                      ? 'bg-amber-300 shadow-[0_0_12px_#FCD34D] animate-ping'
-                      : isAnyReelSpinning
-                      ? 'bg-gold-bright shadow-[0_0_10px_#F59E0B] animate-pulse'
-                      : 'bg-gold-bright shadow-[0_0_6px_#F59E0B]'
-                  }`}
-                  style={{
-                    animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
-                    animationDelay: `${i * (isAnyReelSpinning ? 70 : 150)}ms`,
-                  }}
-                />
-              ))
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-black/90 border border-yellow-400/80 shadow-[0_0_10px_rgba(245,158,11,0.5)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-0.5" />
+                <span className="text-[8px] font-mono font-black uppercase text-yellow-300 tracking-wider">VAULT SECURE</span>
+              </div>
             )}
           </div>
 
@@ -483,23 +473,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-pink-400 font-mono text-[8px] font-black text-pink-300 shadow-[0_0_8px_#EC4899]">
                 <span>50L • CRT</span>
               </div>
+            ) : isTimber ? (
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-[#132216] border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+                <span className="text-[8px] font-black uppercase text-emerald-300 tracking-wider">25L • WOODS</span>
+                <span className="text-[9px] animate-bounce">🌰</span>
+              </div>
             ) : (
-              [...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
-                    activeWin
-                      ? 'bg-neon-cyan shadow-[0_0_12px_#00F0FF] animate-ping'
-                      : isAnyReelSpinning
-                      ? 'bg-neon-cyan shadow-[0_0_10px_#00F0FF] animate-pulse'
-                      : 'bg-neon-cyan shadow-[0_0_6px_#00F0FF]'
-                  }`}
-                  style={{
-                    animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
-                    animationDelay: `${(3 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
-                  }}
-                />
-              ))
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 border border-yellow-200 text-amber-950 font-black text-[8px] tracking-wider shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+                <span>👑 999.9 FINE</span>
+                <span>40L</span>
+              </div>
             )}
           </div>
         </div>
@@ -573,10 +556,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           <div
             className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
               rowCount === 5
-                ? 'h-[clamp(210px,36vh,380px)] sm:h-[clamp(230px,38vh,410px)] md:h-[clamp(250px,40vh,450px)] lg:h-[clamp(280px,43vh,490px)] xl:h-[clamp(310px,46vh,540px)]'
+                ? 'h-[clamp(190px,32vh,340px)] sm:h-[clamp(205px,34vh,370px)] md:h-[clamp(215px,36vh,400px)] lg:h-[clamp(245px,39vh,440px)] xl:h-[clamp(275px,42vh,480px)]'
                 : rowCount === 3
-                ? 'h-[clamp(140px,24vh,240px)] sm:h-[clamp(160px,26vh,270px)] md:h-[clamp(180px,28vh,300px)] lg:h-[clamp(210px,31vh,340px)] xl:h-[clamp(230px,33vh,380px)]'
-                : 'h-[clamp(170px,29vh,310px)] sm:h-[clamp(190px,32vh,340px)] md:h-[clamp(210px,34vh,370px)] lg:h-[clamp(240px,37vh,410px)] xl:h-[clamp(270px,40vh,450px)]'
+                ? 'h-[clamp(130px,21vh,210px)] sm:h-[clamp(140px,23vh,230px)] md:h-[clamp(150px,25vh,250px)] lg:h-[clamp(175px,27vh,290px)] xl:h-[clamp(195px,30vh,330px)]'
+                : 'h-[clamp(150px,25vh,270px)] sm:h-[clamp(165px,27vh,290px)] md:h-[clamp(175px,29vh,310px)] lg:h-[clamp(200px,32vh,350px)] xl:h-[clamp(225px,35vh,390px)]'
             } ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'

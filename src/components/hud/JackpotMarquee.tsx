@@ -280,7 +280,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* Hand-carved Trail Announcement Sign */}
-            <div className="mt-0.5">
+            <div className="mt-0.5 hidden xl:block">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>
@@ -364,13 +364,31 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 <Trophy className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 animate-bounce" />
               </div>
 
-              {/* 2UP / Credits Inserted */}
+              {/* 2UP / Credits Inserted & Actions */}
               <div className="flex items-center space-x-1.5">
-                <span className="text-[10px] sm:text-xs font-black text-cyan-400">CREDITS:</span>
-                <span className="text-[11px] sm:text-xs md:text-sm font-black text-emerald-400">04</span>
-                <span className="text-[9px] font-black text-pink-400 animate-pulse uppercase tracking-wider ml-0.5">
-                  INSERT 25¢
-                </span>
+                <span className="text-[10px] sm:text-xs font-black text-cyan-400 hidden sm:inline">CREDITS:</span>
+                <span className="text-[11px] sm:text-xs md:text-sm font-black text-emerald-400 hidden sm:inline">04</span>
+                {onToggleFloorMode && (
+                  <button
+                    onClick={onToggleFloorMode}
+                    className={`px-1.5 py-0.5 rounded text-[7.5px] font-black uppercase border transition-all ${
+                      isFloorMode
+                        ? 'bg-pink-600 text-white border-pink-200 shadow-[0_0_6px_#EC4899]'
+                        : 'bg-purple-950 text-pink-300 border-pink-500/50 hover:border-pink-300'
+                    }`}
+                  >
+                    {isFloorMode ? 'BANK ON' : 'BANK'}
+                  </button>
+                )}
+                {onOpenLeaderboard && (
+                  <button
+                    onClick={onOpenLeaderboard}
+                    className="px-1.5 py-0.5 rounded text-[7.5px] font-black uppercase bg-purple-950 hover:bg-purple-900 text-yellow-300 border border-yellow-400/60 transition-all flex items-center space-x-0.5"
+                  >
+                    <Trophy className="w-2.5 h-2.5 text-yellow-400" />
+                    <span className="hidden xs:inline">SCORES</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -471,7 +489,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* TIER 3: RETRO ARCADE SCANLINE NEWS TICKER & BANK CONTROLS */}
-            <div className="mt-1 flex items-center justify-between px-1.5 py-0.5 bg-black/95 rounded border border-pink-500/50 text-[8px] sm:text-[8.5px] text-cyan-300 overflow-hidden shadow-inner">
+            <div className="mt-1 hidden xl:flex items-center justify-between px-1.5 py-0.5 bg-black/95 rounded border border-pink-500/50 text-[8px] sm:text-[8.5px] text-cyan-300 overflow-hidden shadow-inner">
               <div className="flex items-center space-x-1.5 truncate flex-1 mr-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping flex-shrink-0" />
                 <span className="text-pink-300 font-bold uppercase truncate">
@@ -711,7 +729,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
             </div>
 
             {/* Retro Casino Promotional Ad Banner */}
-            <div className="mt-0.5">
+            <div className="mt-0.5 hidden xl:block">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
           </div>

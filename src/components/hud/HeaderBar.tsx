@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Coins,
+  Crown,
   Trophy,
   Gift,
   Volume2,
@@ -99,10 +99,10 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   return (
     <header className={`w-full px-2 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
       isTimber
-        ? 'bg-gradient-to-r from-[#241308] via-[#140c06] to-[#241308] border-b-2 sm:border-b-4 border-[#78350f]'
+        ? 'bg-gradient-to-r from-[#2d1508] via-[#180b03] to-[#2d1508] border-b-2 sm:border-b-4 border-[#854d0e] shadow-[0_4px_25px_rgba(20,83,45,0.45)]'
         : isPixel
-        ? 'bg-gradient-to-r from-[#18052e] via-[#090117] to-[#18052e] border-b-2 sm:border-b-4 border-pink-500 shadow-[0_4px_25px_rgba(236,72,153,0.5)]'
-        : 'bg-gradient-to-r from-black via-[#1a1205] to-black border-b-2 sm:border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
+        ? 'bg-gradient-to-r from-[#1a0633] via-[#090117] to-[#1a0633] border-b-2 sm:border-b-4 border-pink-500 shadow-[0_4px_25px_rgba(236,72,153,0.5)]'
+        : 'bg-gradient-to-r from-[#171003] via-[#090601] to-[#171003] border-b-2 sm:border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
     }`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-3 w-full h-9 sm:h-11">
         {/* Left: Brand Logo & Coin Balance */}
@@ -112,31 +112,31 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
           <div className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2 xl:px-3 py-0.5 sm:py-1 rounded-xl shadow-md border ${
             isTimber
-              ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+              ? 'bg-gradient-to-b from-[#1c0c04] via-[#0d1a10] to-[#1c0c04] border-emerald-500/80 shadow-[0_0_12px_rgba(16,185,129,0.35)]'
               : isPixel
               ? 'bg-gradient-to-b from-black via-[#140428] to-black border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]'
-              : 'bg-gradient-to-b from-black via-slate-950 to-black border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+              : 'bg-gradient-to-b from-[#140c02] via-[#0a0601] to-[#140c02] border-yellow-400/80 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
           }`}>
             <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center shadow-md flex-shrink-0 border ${
               isTimber
                 ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
                 : isPixel
                 ? 'bg-gradient-to-tr from-pink-500 to-cyan-400 border-cyan-200 text-white shadow-[0_0_6px_#06B6D4]'
-                : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950'
+                : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950 shadow-[0_0_6px_#F59E0B]'
             }`}>
               {isTimber ? (
                 <span className="text-[10px]">🌰</span>
               ) : isPixel ? (
                 <span className="text-[10px]">🪙</span>
               ) : (
-                <Coins className="w-3 h-3 fill-amber-950 text-amber-950" />
+                <Crown className="w-3 h-3 fill-amber-950 text-amber-950" />
               )}
             </div>
             <div className="flex flex-col">
               <span className={`text-[6px] sm:text-[7.5px] uppercase font-black tracking-wider leading-none ${
-                isTimber ? 'text-emerald-400' : isPixel ? 'text-cyan-300 font-mono' : 'text-amber-400'
+                isTimber ? 'text-emerald-400' : isPixel ? 'text-cyan-300 font-mono' : 'text-yellow-400'
               }`}>
-                {isTimber ? 'CACHE' : isPixel ? 'CREDITS' : 'VAULT'}
+                {isTimber ? 'FOREST CACHE' : isPixel ? 'ARCADE CREDITS' : '24K VAULT'}
               </span>
               <span className={`text-[11px] sm:text-sm font-black leading-tight font-mono ${
                 isTimber
