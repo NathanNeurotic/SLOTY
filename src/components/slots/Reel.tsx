@@ -15,19 +15,25 @@ interface ReelProps {
   gameId?: string;
 }
 
-// 24K Vault rolling filler strips
+// 24K Vault rolling filler strips (4 rows x 2 = 8 symbols)
 const VAULT_STRIP_A: SymbolId[] = ['WILD', 'SEVEN', 'DIAMOND', 'BELL', 'WILD', 'SEVEN', 'DIAMOND', 'BELL'];
 const VAULT_STRIP_B: SymbolId[] = ['SEVEN', 'COIN', 'KING', 'ACE', 'SEVEN', 'COIN', 'KING', 'ACE'];
 
-// Timberland Critters rolling filler strips
-const TIMBER_STRIP_A: SymbolId[] = ['BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A', 'BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A'];
-const TIMBER_STRIP_B: SymbolId[] = ['OWL', 'ACORN', 'FOX', 'WOOD_K', 'OWL', 'ACORN', 'FOX', 'WOOD_K'];
+// Timberland Critters rolling filler strips (3 rows x 2 = 6 symbols)
+const TIMBER_STRIP_A: SymbolId[] = ['BEAR', 'WOLF', 'WOOD_A', 'BEAR', 'WOLF', 'WOOD_A'];
+const TIMBER_STRIP_B: SymbolId[] = ['FOX', 'OWL', 'ACORN', 'FOX', 'OWL', 'ACORN'];
 
-// Pixel Arcade rolling filler strips
-const PIXEL_STRIP_A: SymbolId[] = ['CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A', 'CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A'];
-const PIXEL_STRIP_B: SymbolId[] = ['PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K', 'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K'];
+// Pixel Arcade rolling filler strips (5 rows x 2 = 10 symbols)
+const PIXEL_STRIP_A: SymbolId[] = [
+  'CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A', 'PIXEL_10',
+  'CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A', 'PIXEL_10'
+];
+const PIXEL_STRIP_B: SymbolId[] = [
+  'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K', 'JOYSTICK',
+  'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K', 'JOYSTICK'
+];
 
-// PS2 Legends rolling filler strips
+// PS2 Legends rolling filler strips (4 rows x 2 = 8 symbols)
 const PS2_STRIP_A: SymbolId[] = ['PS2_LOGO', 'EMOTION_ENGINE', 'PS_TRIANGLE', 'PS_CROSS', 'PS2_LOGO', 'EMOTION_ENGINE', 'PS_TRIANGLE', 'PS_CROSS'];
 const PS2_STRIP_B: SymbolId[] = ['DVD_DISC', 'MEMORY_CARD', 'DUALSHOCK', 'PS_CIRCLE', 'DVD_DISC', 'MEMORY_CARD', 'DUALSHOCK', 'PS_CIRCLE'];
 
@@ -81,7 +87,13 @@ export const Reel: React.FC<ReelProps> = ({
     }
   }, [isSpinning, reelIndex]);
 
-  const activeRowCount = rowCount || symbols.length || 4;
+  const activeRowCount = rowCount || 4;
+  const displaySymbols = (symbols || []).slice(0, activeRowCount);
+  while (displaySymbols.length < activeRowCount) {
+    displaySymbols.push(
+      isPs2 ? 'PS_CROSS' : isPixel ? 'PIXEL_10' : isTimber ? 'WOOD_A' : 'SEVEN'
+    );
+  }
 
   return (
     <div
@@ -114,6 +126,10 @@ export const Reel: React.FC<ReelProps> = ({
           : 'border-white/10'
       }`}
     >
+      {/* Physical Cabinet Bezel Aperture Shadows (Seamless entrance/exit masking) */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-6 sm:h-8 bg-gradient-to-b from-black/85 via-black/35 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 sm:h-8 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-20" />
+
       {/* High-Voltage Electric Anticipation Tension Frame & Energy Corona */}
       {isAnticipating && (
         <div className={`absolute inset-0 pointer-events-none z-30 flex flex-col justify-between p-1 ${
@@ -155,11 +171,12 @@ export const Reel: React.FC<ReelProps> = ({
         }`} />
       )}
 
-      {/* 1. Fast GPU-Accelerated Rolling Strip (Only rendered when spinning) */}
+      {/* 1. Fast GPU-Accelerated Rolling Strip (Seamless 200% height loop with motion blur) */}
       {isSpinning && (
         <div
-          className="w-full h-full flex flex-col animate-reel-rolling will-change-transform"
+          className="w-full flex flex-col animate-reel-rolling will-change-transform filter blur-[1.5px] brightness-105"
           style={{
+            height: '200%',
             animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
           }}
         >
@@ -167,7 +184,7 @@ export const Reel: React.FC<ReelProps> = ({
             <div
               key={idx}
               className="w-full flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0 opacity-85"
-              style={{ height: `${100 / activeRowCount}%` }}
+              style={{ height: `${100 / rollingStrip.length}%` }}
             >
               <SymbolRenderer id={sym} reelIndex={reelIndex} rowIndex={idx} />
             </div>
@@ -182,7 +199,7 @@ export const Reel: React.FC<ReelProps> = ({
             hasSettled ? 'animate-reel-settle' : ''
           }`}
         >
-          {symbols.map((sym, rowIdx) => {
+          {displaySymbols.map((sym, rowIdx) => {
             const isWinning = winningRows.has(rowIdx);
             const isScatterHighlight = scatterRows.has(rowIdx);
 

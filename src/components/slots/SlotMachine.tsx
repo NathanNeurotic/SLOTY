@@ -538,12 +538,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
         <div
-          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-[160px] ${
+          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-0 ${
             rowCount === 5
-              ? 'h-[clamp(170px,44vh,440px)] xl:h-[clamp(190px,46vh,500px)]'
+              ? 'h-[clamp(130px,32vh,370px)]'
               : rowCount === 3
-              ? 'h-[clamp(130px,36vh,360px)] xl:h-[clamp(150px,38vh,400px)]'
-              : 'h-[clamp(150px,40vh,400px)] xl:h-[clamp(170px,42vh,450px)]'
+              ? 'h-[clamp(105px,25vh,280px)]'
+              : 'h-[clamp(115px,28vh,320px)]'
           }`}
         >
           {/* Left Themed Cabinet Pilaster */}

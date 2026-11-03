@@ -269,16 +269,18 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Initial 5 reels x 4 rows grid (Persisted)
-  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() =>
-    storage.getJSON<SymbolGrid>('sloty_grid', [
-      ['SEVEN', 'DIAMOND', 'BELL', 'JACK'],
-      ['WILD', 'SEVEN', 'MELON', 'QUEEN'],
-      ['DIAMOND', 'GOLDBAR', 'GRAPES', 'KING'],
-      ['HORSESHOE', 'BELL', 'COIN', 'ACE'],
-      ['MELON', 'SEVEN', 'HORSESHOE', 'WILD'],
-    ])
-  );
+  // Initial grid conforming strictly to active game's dimensions (reels x rows)
+  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => {
+    const saved = storage.getJSON<SymbolGrid | null>('sloty_grid', null);
+    if (
+      saved &&
+      saved.length === (activeGameDef.reels || 5) &&
+      saved.every((col) => col.length === activeGameDef.rows)
+    ) {
+      return saved;
+    }
+    return generateRandomGrid(activeGameDef);
+  });
 
   // Save to dual localStorage + cookies on change
   useEffect(() => {
@@ -321,6 +323,22 @@ export const App: React.FC = () => {
   useEffect(() => {
     storage.setJSON('sloty_grid', currentGrid);
   }, [currentGrid]);
+
+  // Ensure currentGrid strictly conforms to active game dimensions (reels x rows)
+  useEffect(() => {
+    setCurrentGrid((prev) => {
+      if (
+        prev &&
+        prev.length === (activeGameDef.reels || 5) &&
+        prev.every((col) => col && col.length === activeGameDef.rows)
+      ) {
+        return prev;
+      }
+      const fresh = generateRandomGrid(activeGameDef);
+      storage.setJSON('sloty_grid', fresh);
+      return fresh;
+    });
+  }, [activeGameDef]);
 
   // --- Derived Progression State ---
   const progression = calculateProgression(totalXp);
@@ -415,9 +433,20 @@ export const App: React.FC = () => {
     casinoRoomManager.broadcastSpinStart(totalBet);
 
     // Generate grid: check forced scenario first, then random for active game definition
-    const nextGrid = forcedScenario
-      ? generateForcedGrid(forcedScenario)
-      : generateRandomGrid(activeGameDef);
+    let nextGrid: SymbolGrid;
+    if (forcedScenario) {
+      const rawForced = generateForcedGrid(forcedScenario);
+      nextGrid = rawForced.map((col) => {
+        const c = [...col];
+        while (c.length < activeGameDef.rows) c.push(c[0] || 'SEVEN');
+        return c.slice(0, activeGameDef.rows);
+      });
+      while (nextGrid.length < (activeGameDef.reels || 5)) {
+        nextGrid.push(Array(activeGameDef.rows).fill('SEVEN'));
+      }
+    } else {
+      nextGrid = generateRandomGrid(activeGameDef);
+    }
 
     // Reset one-time forced scenario
     if (forcedScenario) setForcedScenario(null);
