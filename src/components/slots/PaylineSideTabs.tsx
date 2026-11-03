@@ -108,7 +108,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
               fontFamily: isPixel ? "'Courier New', monospace" : undefined,
             }}
-            className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[16px] text-[7px] sm:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
+            className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[19px] text-[7px] sm:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
               isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[3px]'
             } ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''

@@ -197,39 +197,86 @@ export const GambleModal: React.FC<GambleModalProps> = ({
             )}
 
             {revealedCard && !isFlipping && (
-              <div className="flex flex-col items-center justify-between h-full p-4 w-full">
-                <div className="w-full flex justify-between items-start font-black text-xl">
-                  <span>{revealedCard.rank}</span>
-                  <span>
-                    {revealedCard.suit === 'HEARTS'
-                      ? '♥'
-                      : revealedCard.suit === 'DIAMONDS'
-                      ? '♦'
-                      : revealedCard.suit === 'SPADES'
-                      ? '♠'
-                      : '♣'}
-                  </span>
+              <div className="relative flex flex-col items-center justify-between h-full p-3 sm:p-4 w-full overflow-hidden">
+                {/* Filigree Corner Inset Frame */}
+                <div className={`absolute inset-1.5 rounded-xl border pointer-events-none ${
+                  isPixel
+                    ? 'border-pink-500/40'
+                    : isTimber
+                    ? 'border-[#a16207]/40'
+                    : 'border-yellow-500/40'
+                }`} />
+
+                {/* Top Corner Icon & Rank Badge */}
+                <div className="w-full flex justify-between items-center z-10">
+                  <div className="flex items-center space-x-1">
+                    <span className="font-black text-xl sm:text-2xl leading-none">{revealedCard.rank}</span>
+                    <span className="text-sm">
+                      {isPixel
+                        ? revealedCard.color === 'RED' ? '⚡' : '🔮'
+                        : isTimber
+                        ? revealedCard.color === 'RED' ? '🍓' : '🫐'
+                        : revealedCard.suit === 'HEARTS' ? '♥' : revealedCard.suit === 'DIAMONDS' ? '♦' : revealedCard.suit === 'SPADES' ? '♠' : '♣'}
+                    </span>
+                  </div>
+                  <div className="text-[9px] font-black uppercase tracking-widest opacity-75">
+                    {isPixel ? 'CYBER CARD' : isTimber ? 'WOODLAND CARD' : '24K ROYAL'}
+                  </div>
                 </div>
-                <div className="text-5xl">
-                  {revealedCard.suit === 'HEARTS'
-                    ? '♥'
-                    : revealedCard.suit === 'DIAMONDS'
-                    ? '♦'
-                    : revealedCard.suit === 'SPADES'
-                    ? '♠'
-                    : '♣'}
+
+                {/* Center Giant Custom Themed Icon */}
+                <div className="flex flex-col items-center justify-center my-auto z-10">
+                  {isPixel ? (
+                    <div className="flex flex-col items-center">
+                      <div className="text-5xl sm:text-6xl animate-pulse drop-shadow-[0_0_15px_currentColor]">
+                        {revealedCard.color === 'RED' ? '🔴' : '🔵'}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest mt-1 font-mono">
+                        {revealedCard.color === 'RED' ? 'RED LASER' : 'BLUE PLASMA'}
+                      </span>
+                    </div>
+                  ) : isTimber ? (
+                    <div className="flex flex-col items-center">
+                      <div className="text-5xl sm:text-6xl animate-bounce">
+                        {revealedCard.color === 'RED' ? '🍓' : '🫐'}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-amber-200">
+                        {revealedCard.color === 'RED' ? 'SALMONBERRY' : 'BLACKBERRY'}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <div className="text-5xl sm:text-6xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                        {revealedCard.suit === 'HEARTS'
+                          ? '♥'
+                          : revealedCard.suit === 'DIAMONDS'
+                          ? '♦'
+                          : revealedCard.suit === 'SPADES'
+                          ? '♠'
+                          : '♣'}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-yellow-600">
+                        {revealedCard.color === 'RED' ? 'ROYAL CRIMSON' : 'MIDNIGHT ONYX'}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="w-full flex justify-between items-end font-black text-xl rotate-180">
-                  <span>{revealedCard.rank}</span>
-                  <span>
-                    {revealedCard.suit === 'HEARTS'
-                      ? '♥'
-                      : revealedCard.suit === 'DIAMONDS'
-                      ? '♦'
-                      : revealedCard.suit === 'SPADES'
-                      ? '♠'
-                      : '♣'}
-                  </span>
+
+                {/* Bottom Inverted Rank Badge */}
+                <div className="w-full flex justify-between items-center rotate-180 z-10">
+                  <div className="flex items-center space-x-1">
+                    <span className="font-black text-xl sm:text-2xl leading-none">{revealedCard.rank}</span>
+                    <span className="text-sm">
+                      {isPixel
+                        ? revealedCard.color === 'RED' ? '⚡' : '🔮'
+                        : isTimber
+                        ? revealedCard.color === 'RED' ? '🍓' : '🫐'
+                        : revealedCard.suit === 'HEARTS' ? '♥' : revealedCard.suit === 'DIAMONDS' ? '♦' : revealedCard.suit === 'SPADES' ? '♠' : '♣'}
+                    </span>
+                  </div>
+                  <div className="text-[9px] font-black uppercase tracking-widest opacity-75">
+                    {isPixel ? 'CYBER CARD' : isTimber ? 'WOODLAND CARD' : '24K ROYAL'}
+                  </div>
                 </div>
               </div>
             )}

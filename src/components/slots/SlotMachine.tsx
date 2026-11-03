@@ -488,7 +488,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         </div>
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
-        <div className="flex items-stretch space-x-1 sm:space-x-1.5 w-full">
+        <div
+          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full ${
+            rowCount === 5
+              ? 'h-[clamp(250px,42vh,420px)]'
+              : rowCount === 3
+              ? 'h-[clamp(210px,34vh,340px)]'
+              : 'h-[clamp(240px,38vh,380px)]'
+          }`}
+        >
           {/* Left Themed Cabinet Pilaster */}
           {isTimber ? (
             <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
@@ -554,13 +562,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
-              rowCount === 5
-                ? 'h-[clamp(175px,27vh,290px)] sm:h-[clamp(185px,29vh,320px)] md:h-[clamp(195px,31vh,350px)] lg:h-[clamp(220px,34vh,380px)] xl:h-[clamp(255px,38vh,430px)]'
-                : rowCount === 3
-                ? 'h-[clamp(120px,18vh,190px)] sm:h-[clamp(130px,20vh,210px)] md:h-[clamp(140px,21vh,230px)] lg:h-[clamp(160px,23vh,260px)] xl:h-[clamp(180px,26vh,300px)]'
-                : 'h-[clamp(135px,21vh,240px)] sm:h-[clamp(150px,23vh,260px)] md:h-[clamp(160px,24vh,280px)] lg:h-[clamp(180px,27vh,320px)] xl:h-[clamp(210px,31vh,360px)]'
-            } ${
+            className={`relative flex-1 min-h-0 h-full flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : isPixel

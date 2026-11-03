@@ -668,93 +668,226 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'ACE':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="aceGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="aceIngotGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
-                <stop offset="35%" stopColor="#FBBF24" />
-                <stop offset="75%" stopColor="#D97706" />
-                <stop offset="100%" stopColor="#78350F" />
+                <stop offset="25%" stopColor="#FDE047" />
+                <stop offset="60%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#451A03" />
+              </linearGradient>
+              <linearGradient id="aceGleamLine" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FBBF24" stopOpacity="0" />
+                <stop offset="50%" stopColor="#FFF" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#FBBF24" stopOpacity="0" />
               </linearGradient>
             </defs>
+
+            {/* 3D Gold Ingot Body - Angled Perspective */}
+            <polygon points="18,30 32,14 82,14 68,30" fill="#FEF08A" stroke="#78350F" strokeWidth="1" />
+            <polygon points="68,30 82,14 82,72 68,84" fill="#B45309" stroke="#78350F" strokeWidth="1" />
+            <polygon points="18,30 68,30 68,84 18,84" fill="url(#aceIngotGold)" stroke="#FFF" strokeWidth="1.5" />
+
+            {/* Ingot Inset Bevel Frame */}
+            <rect x="22" y="34" width="42" height="46" rx="3" fill="#1C1004" stroke="#FDE047" strokeWidth="1.2" />
+
+            {/* Ingot Top Hallmark Stamping */}
+            <text x="43" y="42" textAnchor="middle" fill="#FDE047" fontSize="5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.8">
+              ★ 999.9 FINE ★
+            </text>
+
+            {/* Bold 3D Raised Ingot 'A' */}
             <path
-              d="M50 12 L78 84 L60 84 L53 66 L47 66 L40 84 L22 84 Z M48 52 L50 42 L52 52 Z"
-              fill="url(#aceGold)"
+              d="M43 45 L54 71 L48 71 L45 64 L41 64 L38 71 L32 71 Z M43 53 L41 60 L45 60 Z"
+              fill="url(#aceIngotGold)"
               stroke="#FFF"
-              strokeWidth="2.5"
+              strokeWidth="1.2"
               strokeLinejoin="round"
             />
-            {/* Diamond Cut-out at Top */}
-            <polygon points="50,22 55,30 50,38 45,30" fill="#38BDF8" stroke="#FFF" strokeWidth="1" />
+
+            {/* Specular Glint Star on Apex */}
+            <polygon points="43,45 44.5,41 46,45 50,45 47,48 48,52 43,49 38,52 39,48 36,45 40,45" fill="#FFF" />
+
+            {/* Plaque Banner: "ACE" */}
+            <g transform="translate(0, 5)">
+              <rect x="20" y="74" width="46" height="13" rx="3" fill="#0C0F18" stroke="#F59E0B" strokeWidth="1.5" />
+              <rect x="22" y="76" width="42" height="9" rx="1.5" fill="#1E1408" />
+              <text x="43" y="83.5" textAnchor="middle" fill="#FEF08A" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                ACE
+              </text>
+            </g>
           </svg>
         );
 
       case 'KING':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="kingGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="kingShieldGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF9D2" />
                 <stop offset="30%" stopColor="#F59E0B" />
                 <stop offset="70%" stopColor="#B45309" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
+              <linearGradient id="kingRuby" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FDA4AF" />
+                <stop offset="50%" stopColor="#E11D48" />
+                <stop offset="100%" stopColor="#4C0519" />
+              </linearGradient>
             </defs>
-            {/* King Crown at Top */}
-            <polygon points="28,26 36,18 44,24 50,14 56,24 64,18 72,26" fill="#FDE047" stroke="#78350F" strokeWidth="1.2" />
+
+            {/* Crossed Golden King Scepters Behind Shield */}
+            <line x1="20" y1="20" x2="80" y2="80" stroke="url(#kingShieldGold)" strokeWidth="4" strokeLinecap="round" />
+            <circle cx="20" cy="20" r="5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="1" />
+            <line x1="80" y1="20" x2="20" y2="80" stroke="url(#kingShieldGold)" strokeWidth="4" strokeLinecap="round" />
+            <circle cx="80" cy="20" r="5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="1" />
+
+            {/* Royal King's Crest Shield */}
             <path
-              d="M26 26 L42 26 L42 50 L62 26 L80 26 L56 54 L82 86 L64 86 L44 60 L42 62 L42 86 L26 86 Z"
-              fill="url(#kingGold)"
-              stroke="#FFF"
+              d="M50 16 L76 26 C76 56 64 74 50 82 C36 74 24 56 24 26 Z"
+              fill="#1C0F08"
+              stroke="url(#kingShieldGold)"
               strokeWidth="2.5"
+            />
+            <path
+              d="M50 20 L72 28 C72 54 62 70 50 77 C38 70 28 54 28 28 Z"
+              fill="#4A0404"
+              stroke="#FDE047"
+              strokeWidth="1"
+            />
+
+            {/* Imperial 5-Point Crown Atop Shield */}
+            <path d="M36 28 L42 20 L50 26 L58 20 L64 28 Z" fill="url(#kingShieldGold)" stroke="#FFF" strokeWidth="0.8" />
+            <circle cx="50" cy="18" r="2.5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="0.6" />
+
+            {/* Bold Regal 3D 'K' */}
+            <path
+              d="M38 34 H44 V52 L56 34 H64 L52 53 L66 72 H57 L44 55 V72 H38 Z"
+              fill="url(#kingShieldGold)"
+              stroke="#FFF"
+              strokeWidth="1.2"
               strokeLinejoin="round"
             />
-            <circle cx="50" cy="14" r="2.8" fill="#EF4444" />
+
+            {/* Plaque Banner: "KING" */}
+            <g transform="translate(0, 6)">
+              <rect x="22" y="74" width="56" height="13" rx="3" fill="#0C0F18" stroke="#F59E0B" strokeWidth="1.5" />
+              <rect x="24" y="76" width="52" height="9" rx="1.5" fill="#1E1408" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#FEF08A" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                KING
+              </text>
+            </g>
           </svg>
         );
 
       case 'QUEEN':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="queenGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="queenGoldMedal" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
-                <stop offset="30%" stopColor="#FBBF24" />
-                <stop offset="75%" stopColor="#C084FC" />
-                <stop offset="100%" stopColor="#581C87" />
+                <stop offset="35%" stopColor="#FBBF24" />
+                <stop offset="70%" stopColor="#C084FC" />
+                <stop offset="100%" stopColor="#3B0764" />
+              </linearGradient>
+              <linearGradient id="queenVelvet" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#581C87" />
+                <stop offset="50%" stopColor="#2E1065" />
+                <stop offset="100%" stopColor="#0F031E" />
               </linearGradient>
             </defs>
-            {/* Queen Tiara */}
-            <polygon points="34,22 42,16 50,12 58,16 66,22" fill="#E9D5FF" stroke="#A855F7" strokeWidth="1" />
+
+            {/* Golden Radiating Sunburst / Laurel Ring */}
+            <circle cx="50" cy="48" r="32" fill="none" stroke="#FDE047" strokeWidth="1.5" strokeDasharray="2,3" />
+
+            {/* Royal Cameo Medallion Frame */}
+            <ellipse cx="50" cy="48" rx="27" ry="31" fill="url(#queenGoldMedal)" stroke="#FFF" strokeWidth="2" />
+            <ellipse cx="50" cy="48" rx="23" ry="27" fill="url(#queenVelvet)" stroke="#E9D5FF" strokeWidth="1" />
+
+            {/* Sparkling Queen's Diamond Tiara */}
             <path
-              d="M50 18 C32 18, 20 32, 20 52 C20 72, 32 86, 50 86 C58 86, 66 82, 72 76 L78 84 L84 78 L78 70 C80 64, 80 58, 80 52 C80 32, 68 18, 50 18 Z M50 34 C60 34, 66 42, 66 52 C66 62, 60 70, 50 70 C40 70, 34 62, 34 52 C34 42, 40 34, 50 34 Z"
-              fill="url(#queenGold)"
+              d="M34 26 L42 21 L50 15 L58 21 L66 26 L62 31 L38 31 Z"
+              fill="#E0F2FE"
               stroke="#FFF"
-              strokeWidth="2.5"
+              strokeWidth="1"
             />
-            <circle cx="50" cy="12" r="2.8" fill="#A855F7" />
+            <circle cx="50" cy="15" r="3" fill="#A855F7" stroke="#FFF" strokeWidth="0.8" />
+            <circle cx="42" cy="21" r="2" fill="#38BDF8" />
+            <circle cx="58" cy="21" r="2" fill="#38BDF8" />
+
+            {/* Elegant Royal 'Q' */}
+            <path
+              d="M50 32 C41 32 34 38 34 50 C34 61 40 67 48 68 L53 73 L58 73 L55 67 C61 64 65 58 65 50 C65 38 59 32 50 32 Z M50 40 C55 40 58 44 58 50 C58 56 55 60 50 60 C45 60 42 56 42 50 C42 44 45 40 50 40 Z"
+              fill="url(#queenGoldMedal)"
+              stroke="#FFF"
+              strokeWidth="1.2"
+            />
+
+            {/* Plaque Banner: "QUEEN" */}
+            <g transform="translate(0, 6)">
+              <rect x="20" y="74" width="60" height="13" rx="3" fill="#0C0F18" stroke="#A855F7" strokeWidth="1.5" />
+              <rect x="22" y="76" width="56" height="9" rx="1.5" fill="#1E0B36" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#E9D5FF" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                QUEEN
+              </text>
+            </g>
           </svg>
         );
 
       case 'JACK':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="jackGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="jackKeyGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#E0F2FE" />
                 <stop offset="30%" stopColor="#38BDF8" />
                 <stop offset="70%" stopColor="#0284C7" />
-                <stop offset="100%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#082F49" />
               </linearGradient>
             </defs>
+
+            {/* Dual Crossed Master Vault Keys */}
+            <g opacity="0.85">
+              <line x1="22" y1="22" x2="78" y2="78" stroke="url(#jackKeyGold)" strokeWidth="4.5" strokeLinecap="round" />
+              <circle cx="22" cy="22" r="7" fill="none" stroke="#38BDF8" strokeWidth="2.5" />
+              <line x1="78" y1="22" x2="22" y2="78" stroke="url(#jackKeyGold)" strokeWidth="4.5" strokeLinecap="round" />
+              <circle cx="78" cy="22" r="7" fill="none" stroke="#38BDF8" strokeWidth="2.5" />
+            </g>
+
+            {/* Vault Keycard / Armored Security Badge Body */}
             <path
-              d="M38 18 L76 18 L76 32 L60 32 L60 66 C60 76, 54 86, 40 86 C26 86, 20 76, 20 66 L36 66 C36 72, 38 74, 40 74 C42 74, 44 72, 44 66 L44 32 L38 32 Z"
-              fill="url(#jackGold)"
-              stroke="#FDE047"
-              strokeWidth="2.5"
+              d="M32 20 L68 20 L76 34 L68 76 L32 76 L24 34 Z"
+              fill="#0A1424"
+              stroke="url(#jackKeyGold)"
+              strokeWidth="2.2"
+            />
+            <path
+              d="M36 24 L64 24 L70 34 L64 72 L36 72 L30 34 Z"
+              fill="#0F172A"
+              stroke="#38BDF8"
+              strokeWidth="0.8"
+            />
+
+            {/* High-Roller Gold Microchip Pattern */}
+            <rect x="42" y="27" width="16" height="8" rx="1.5" fill="#F59E0B" stroke="#FEF08A" strokeWidth="0.8" />
+
+            {/* Bold Glowing 'J' */}
+            <path
+              d="M44 38 H62 V44 H54 V64 C54 69 50 72 44 72 C38 72 34 69 34 64 H41 C41 66 42 67 44 67 C46 67 47 66 47 63 V38 Z"
+              fill="url(#jackKeyGold)"
+              stroke="#FFF"
+              strokeWidth="1.2"
               strokeLinejoin="round"
             />
-            <polygon points="52,18 56,12 60,18" fill="#FBBF24" />
+
+            {/* Plaque Banner: "JACK" */}
+            <g transform="translate(0, 6)">
+              <rect x="22" y="74" width="56" height="13" rx="3" fill="#0C0F18" stroke="#0284C7" strokeWidth="1.5" />
+              <rect x="24" y="76" width="52" height="9" rx="1.5" fill="#082F49" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#BAE6FD" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                JACK
+              </text>
+            </g>
           </svg>
         );
 
@@ -1144,60 +1277,202 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'WOOD_A':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="woodAGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#10B981" />
-                <stop offset="50%" stopColor="#059669" />
-                <stop offset="100%" stopColor="#047857" />
+              <linearGradient id="oakArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#2E180E" />
+                <stop offset="50%" stopColor="#1E0F08" />
+                <stop offset="100%" stopColor="#0D0603" />
+              </linearGradient>
+              <linearGradient id="oakEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#6EE7B7" />
+                <stop offset="35%" stopColor="#10B981" />
+                <stop offset="80%" stopColor="#047857" />
+                <stop offset="100%" stopColor="#064E3B" />
               </linearGradient>
             </defs>
-            <path d="M50 14 L20 84 L38 84 L44 68 L56 68 L62 84 L80 84 Z M50 36 L54 54 L46 54 Z" fill="url(#woodAGrad)" stroke="#A7F3D0" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* Ivy vine leaf */}
-            <circle cx="28" cy="72" r="3.5" fill="#4ADE80" />
-            <circle cx="72" cy="72" r="3.5" fill="#4ADE80" />
+
+            {/* Hand-Chipped Oak Arrowhead Base Plaque */}
+            <path
+              d="M50 12 L78 36 L66 74 L50 68 L34 74 L22 36 Z"
+              fill="url(#oakArrowGrad)"
+              stroke="#B45309"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            {/* Chipped Flint Inner Texture */}
+            <path d="M50 16 L72 37 L62 70 L50 65 L38 70 L28 37 Z" fill="#3B1D0C" stroke="#78350F" strokeWidth="1" />
+
+            {/* Leather Twine Binding at Base */}
+            <line x1="42" y1="67" x2="58" y2="67" stroke="#D97706" strokeWidth="2" />
+            <line x1="44" y1="69" x2="56" y2="69" stroke="#78350F" strokeWidth="1.5" />
+
+            {/* Twin Evergreen Pine Needles */}
+            <path d="M26 34 Q16 28 20 22 Q26 28 30 32" fill="#22C55E" />
+            <path d="M74 34 Q84 28 80 22 Q74 28 70 32" fill="#22C55E" />
+
+            {/* Carved Emerald Oak 'A' */}
+            <path
+              d="M50 25 L64 61 L56 61 L53 53 L47 53 L44 61 L36 61 Z M50 35 L47 47 L53 47 Z"
+              fill="url(#oakEmerald)"
+              stroke="#A7F3D0"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+
+            {/* Plaque Banner: "ACE" */}
+            <g transform="translate(0, 5)">
+              <rect x="24" y="74" width="52" height="13" rx="3" fill="#180C06" stroke="#059669" strokeWidth="1.5" />
+              <rect x="26" y="76" width="48" height="9" rx="1.5" fill="#064E3B" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#A7F3D0" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                ACE
+              </text>
+            </g>
           </svg>
         );
 
       case 'WOOD_K':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="woodKGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#F59E0B" />
-                <stop offset="50%" stopColor="#D97706" />
-                <stop offset="100%" stopColor="#92400E" />
+              <linearGradient id="pineStagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FEF3C7" />
+                <stop offset="35%" stopColor="#F59E0B" />
+                <stop offset="75%" stopColor="#B45309" />
+                <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
             </defs>
-            <path d="M26 16 L42 16 L42 46 L64 16 L84 16 L56 50 L84 84 L64 84 L42 56 L42 84 L26 84 Z" fill="url(#woodKGrad)" stroke="#FDE68A" strokeWidth="2.5" strokeLinejoin="round" />
+
+            {/* Branching Cedar Stag Antlers Behind Shield */}
+            <g stroke="#92400E" strokeWidth="3" strokeLinecap="round" fill="none">
+              <path d="M42 28 Q30 14 16 16 M26 20 Q16 12 18 6 M34 18 Q28 8 32 4" />
+              <path d="M58 28 Q70 14 84 16 M74 20 Q84 12 82 6 M66 18 Q72 8 68 4" />
+            </g>
+
+            {/* Hand-Hewn Pine Log Shield */}
+            <path
+              d="M50 18 L76 26 C76 54 64 72 50 80 C36 72 24 54 24 26 Z"
+              fill="#2E180E"
+              stroke="#D97706"
+              strokeWidth="2.2"
+            />
+            <path
+              d="M50 22 L72 28 C72 50 62 68 50 75 C38 68 28 50 28 28 Z"
+              fill="#1A0C05"
+              stroke="#78350F"
+              strokeWidth="1"
+            />
+
+            {/* Golden Carved Rustic 'K' */}
+            <path
+              d="M38 32 H44 V50 L56 32 H64 L52 51 L66 70 H57 L44 53 V70 H38 Z"
+              fill="url(#pineStagGrad)"
+              stroke="#FEF3C7"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+
+            {/* Plaque Banner: "KING" */}
+            <g transform="translate(0, 5)">
+              <rect x="22" y="74" width="56" height="13" rx="3" fill="#180C06" stroke="#D97706" strokeWidth="1.5" />
+              <rect x="24" y="76" width="52" height="9" rx="1.5" fill="#451A03" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#FDE68A" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                KING
+              </text>
+            </g>
           </svg>
         );
 
       case 'WOOD_Q':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="woodQGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#8B5CF6" />
-                <stop offset="50%" stopColor="#7C3AED" />
-                <stop offset="100%" stopColor="#5B21B6" />
+              <linearGradient id="honeycombGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#DDD6FE" />
+                <stop offset="30%" stopColor="#A855F7" />
+                <stop offset="75%" stopColor="#7C3AED" />
+                <stop offset="100%" stopColor="#3B0764" />
               </linearGradient>
             </defs>
-            <path d="M50 16 Q28 16 28 48 Q28 80 50 80 Q62 80 70 72 L76 84 L84 78 L74 64 Q72 48 72 48 Q72 16 50 16 Z M50 32 Q58 32 58 48 Q58 64 50 64 Q42 64 42 48 Q42 32 50 32 Z" fill="url(#woodQGrad)" stroke="#DDD6FE" strokeWidth="2.5" strokeLinejoin="round" />
+
+            {/* Natural Hexagonal Honeycomb Frame */}
+            <g fill="#241208" stroke="#F59E0B" strokeWidth="1.2">
+              <polygon points="50,14 66,23 66,41 50,50 34,41 34,23" fill="#3B1D0C" />
+              <polygon points="26,30 38,37 38,51 26,58 14,51 14,37" opacity="0.75" />
+              <polygon points="74,30 86,37 86,51 74,58 62,51 62,37" opacity="0.75" />
+              <polygon points="50,50 66,59 66,73 50,82 34,73 34,59" opacity="0.8" />
+            </g>
+
+            {/* Mountain Wildflower Petals */}
+            <circle cx="50" cy="18" r="3.5" fill="#EC4899" />
+            <circle cx="47" cy="16" r="3" fill="#F472B6" />
+            <circle cx="53" cy="16" r="3" fill="#F472B6" />
+
+            {/* Carved Royal Amethyst 'Q' */}
+            <path
+              d="M50 30 C41 30 34 36 34 47 C34 57 40 63 48 64 L53 69 L58 69 L55 63 C61 60 65 55 65 47 C65 36 59 30 50 30 Z M50 37 C55 37 58 41 58 47 C58 53 55 56 50 56 C45 56 42 53 42 47 C42 41 45 37 50 37 Z"
+              fill="url(#honeycombGrad)"
+              stroke="#EDE9FE"
+              strokeWidth="1.2"
+            />
+
+            {/* Plaque Banner: "QUEEN" */}
+            <g transform="translate(0, 5)">
+              <rect x="20" y="74" width="60" height="13" rx="3" fill="#180C06" stroke="#7C3AED" strokeWidth="1.5" />
+              <rect x="22" y="76" width="56" height="9" rx="1.5" fill="#3B0764" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#DDD6FE" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                QUEEN
+              </text>
+            </g>
           </svg>
         );
 
       case 'WOOD_J':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="woodJGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#06B6D4" />
-                <stop offset="50%" stopColor="#0891B2" />
-                <stop offset="100%" stopColor="#0E7490" />
+              <linearGradient id="axeTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#A5F3FC" />
+                <stop offset="30%" stopColor="#06B6D4" />
+                <stop offset="70%" stopColor="#0891B2" />
+                <stop offset="100%" stopColor="#164E63" />
               </linearGradient>
             </defs>
-            <path d="M42 16 L76 16 L76 30 L60 30 L60 64 C60 76, 52 84, 38 84 C26 84, 22 76, 22 66 L38 66 C38 72, 40 72, 42 72 C44 72, 44 68, 44 62 L44 30 L42 30 Z" fill="url(#woodJGrad)" stroke="#A5F3FC" strokeWidth="2.5" strokeLinejoin="round" />
+
+            {/* Woodcutter's Double-Bit Axe in Cedar Stump */}
+            {/* Axe Handle */}
+            <line x1="72" y1="18" x2="32" y2="76" stroke="#78350F" strokeWidth="5" strokeLinecap="round" />
+            <line x1="72" y1="18" x2="32" y2="76" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" />
+
+            {/* Double Steel Axe Head */}
+            <path
+              d="M62 20 L80 14 C82 24 82 32 80 42 L62 36 L52 24 C50 30 50 36 52 42 Z"
+              fill="#94A3B8"
+              stroke="#F1F5F9"
+              strokeWidth="1.2"
+            />
+
+            {/* Mossy Tree Stump Round */}
+            <ellipse cx="48" cy="62" rx="32" ry="18" fill="#2E180E" stroke="#5C2B09" strokeWidth="2" />
+            <ellipse cx="48" cy="62" rx="28" ry="14" fill="#1C0D05" stroke="#16A34A" strokeWidth="1" />
+
+            {/* Carved Teal 'J' */}
+            <path
+              d="M44 38 H62 V44 H54 V60 C54 65 50 68 44 68 C38 68 34 65 34 60 H41 C41 62 42 63 44 63 C46 63 47 62 47 59 V38 Z"
+              fill="url(#axeTealGrad)"
+              stroke="#FFF"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+
+            {/* Plaque Banner: "JACK" */}
+            <g transform="translate(0, 5)">
+              <rect x="22" y="74" width="56" height="13" rx="3" fill="#180C06" stroke="#0891B2" strokeWidth="1.5" />
+              <rect x="24" y="76" width="52" height="9" rx="1.5" fill="#164E63" />
+              <text x="50" y="83.5" textAnchor="middle" fill="#A5F3FC" fontSize="7" fontWeight="900" fontFamily="sans-serif" letterSpacing="1.2">
+                JACK
+              </text>
+            </g>
           </svg>
         );
 
@@ -1556,129 +1831,208 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
       case 'PIXEL_A':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
-            {/* Stepped 8-Bit Pixel Font Letter 'A' */}
-            {/* 3D Black Drop-Shadow Extrusion */}
+            {/* 8-Bit Cyber Ace Starfighter & Power Shield */}
+            {/* Outer Drop Shadow */}
             <path
-              d="M40 18 H64 V28 H74 V46 H84 V88 H68 V66 H36 V88 H20 V46 H30 V28 H40 Z"
+              d="M44 8 H56 V16 H68 V28 H78 V44 H88 V64 H76 V72 H60 V64 H56 V56 H44 V56 H40 V64 H24 V72 H12 V64 H22 V44 H32 V28 H44 Z"
               fill="#05010B"
             />
-            {/* Crimson Neon 8-Bit Body */}
+            {/* Crimson Starfighter Hull */}
             <path
-              d="M36 14 H60 V24 H70 V42 H80 V84 H64 V62 H32 V84 H16 V42 H26 V24 H36 Z"
-              fill="#F43F5E"
+              d="M46 10 H54 V18 H66 V30 H76 V46 H84 V62 H74 V68 H58 V60 H54 V54 H46 V54 H42 V60 H26 V68 H16 V62 H24 V46 H34 V30 H46 Z"
+              fill="#E11D48"
             />
-            {/* Inner Pixel Hole */}
-            <rect x="36" y="34" width="24" height="14" fill="#0F0524" />
+            {/* Cyan Energy Plasma Wings */}
+            <rect x="14" y="50" width="8" height="8" fill="#06B6D4" />
+            <rect x="78" y="50" width="8" height="8" fill="#06B6D4" />
+            <rect x="16" y="52" width="4" height="4" fill="#CFFAFE" />
+            <rect x="80" y="52" width="4" height="4" fill="#CFFAFE" />
 
-            {/* 3D Specular Pixel Highlights */}
-            <rect x="36" y="14" width="24" height="4" fill="#FECDD3" />
-            <rect x="26" y="24" width="4" height="18" fill="#FECDD3" />
-            <rect x="16" y="42" width="4" height="42" fill="#FECDD3" />
-            {/* Shadow Bevel */}
-            <rect x="60" y="24" width="10" height="18" fill="#BE123C" />
-            <rect x="70" y="42" width="10" height="42" fill="#9F1239" />
+            {/* Cockpit Center Shield Plate */}
+            <rect x="36" y="24" width="28" height="34" fill="#0F0524" />
+            <rect x="38" y="26" width="24" height="30" fill="#BE123C" />
+
+            {/* Stepped Pixel 'A' Inside Starfighter */}
+            <path
+              d="M46 30 H54 V36 H58 V52 H52 V44 H48 V52 H42 V36 H46 Z M48 36 H52 V40 H48 Z"
+              fill="#FFF"
+            />
+
+            {/* Specular Highlights */}
+            <rect x="46" y="10" width="8" height="4" fill="#FDA4AF" />
+            <rect x="34" y="30" width="4" height="16" fill="#FDA4AF" />
+
+            {/* Stepped Plaque: "ACE" */}
+            <path d="M16 76 H84 V92 H16 Z" fill="#000" />
+            <path d="M18 78 H82 V90 H18 Z" fill="#F43F5E" />
+            <path d="M20 80 H80 V88 H20 Z" fill="#881337" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#FECDD3" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
+              ACE
+            </text>
           </svg>
         );
 
       case 'PIXEL_K':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
-            {/* Stepped 8-Bit Pixel Font Letter 'K' */}
-            {/* 3D Black Drop-Shadow */}
+            {/* 8-Bit Royal Arcade King Crown & Crest */}
+            {/* Black Drop Shadow */}
             <path
-              d="M24 18 H44 V46 H54 V34 H68 V18 H88 V36 H74 V48 H88 V66 H88 V88 H68 V68 H54 V68 H44 V88 H24 Z"
+              d="M16 24 H26 V14 H38 V24 H50 V10 H62 V24 H74 V14 H84 V64 H76 V72 H24 V64 H16 Z"
               fill="#05010B"
             />
-            {/* Electric Cyan 8-Bit Body */}
+            {/* Gold Crown Body */}
             <path
-              d="M20 14 H40 V42 H50 V30 H64 V14 H84 V32 H70 V44 H84 V62 H84 V84 H64 V64 H50 V64 H40 V84 H20 Z"
+              d="M18 26 H24 V16 H36 V26 H48 V12 H52 V26 H64 V16 H76 V26 H82 V62 H74 V70 H26 V62 H18 Z"
+              fill="#F59E0B"
+            />
+            {/* Specular Crown Rim */}
+            <rect x="22" y="58" width="56" height="8" fill="#FEF08A" />
+            <rect x="26" y="60" width="48" height="4" fill="#B45309" />
+
+            {/* Pixel Jewels on Crown Peaks */}
+            <rect x="26" y="18" width="8" height="8" fill="#EF4444" />
+            <rect x="46" y="14" width="8" height="8" fill="#06B6D4" />
+            <rect x="66" y="18" width="8" height="8" fill="#EF4444" />
+
+            {/* Stepped Electric Cyan 'K' Inside Crown */}
+            <path
+              d="M36 32 H42 V46 H48 V38 H56 V32 H64 V40 H56 V48 H66 V60 H58 V52 H48 V52 H42 V60 H36 Z"
               fill="#06B6D4"
             />
-            {/* Specular Top & Left Highlights */}
-            <rect x="20" y="14" width="20" height="4" fill="#CFFAFE" />
-            <rect x="20" y="18" width="4" height="66" fill="#CFFAFE" />
-            <rect x="64" y="14" width="20" height="4" fill="#CFFAFE" />
-            <rect x="70" y="48" width="14" height="4" fill="#CFFAFE" />
-            {/* Deep Shading */}
-            <rect x="36" y="18" width="4" height="66" fill="#0E7490" />
-            <rect x="74" y="22" width="10" height="10" fill="#0891B2" />
-            <rect x="74" y="64" width="10" height="20" fill="#155E75" />
+            <rect x="36" y="32" width="6" height="4" fill="#CFFAFE" />
+            <rect x="56" y="32" width="8" height="4" fill="#CFFAFE" />
+
+            {/* Stepped Plaque: "KING" */}
+            <path d="M16 76 H84 V92 H16 Z" fill="#000" />
+            <path d="M18 78 H82 V90 H18 Z" fill="#06B6D4" />
+            <path d="M20 80 H80 V88 H20 Z" fill="#164E63" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#CFFAFE" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
+              KING
+            </text>
           </svg>
         );
 
       case 'PIXEL_Q':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
-            {/* Stepped 8-Bit Pixel Font Letter 'Q' */}
-            {/* 3D Black Drop-Shadow */}
+            {/* 8-Bit Pixel Heart Crystal & Royal Tiara */}
+            {/* Outer Drop Shadow */}
             <path
-              d="M34 18 H70 V28 H82 V66 H74 V76 H88 V88 H72 V76 H66 V76 H34 V66 H22 V28 H34 Z"
+              d="M24 16 H44 V26 H56 V16 H76 V42 H84 V56 H74 V68 H50 V76 H26 V68 H16 V56 H24 Z"
               fill="#05010B"
             />
-            {/* Arcade Gold 8-Bit Body */}
+            {/* Stepped Gold Tiara & Heart Wings */}
             <path
-              d="M30 14 H66 V24 H78 V62 H70 V72 H84 V84 H68 V72 H62 V72 H30 V62 H18 V24 H30 Z"
+              d="M26 18 H42 V28 H58 V18 H74 V40 H82 V54 H72 V66 H50 V74 H28 V66 H18 V54 H26 Z"
               fill="#FBBF24"
             />
-            {/* Center Pixel Hole */}
-            <rect x="36" y="32" width="24" height="24" fill="#0F0524" />
+            {/* Inner Magenta Crystal Heart Core */}
+            <path
+              d="M34 26 H46 V34 H54 V26 H66 V44 H74 V52 H66 V62 H50 V68 H34 V62 H26 V52 H34 Z"
+              fill="#EC4899"
+            />
+            {/* Crystal Facet Highlight */}
+            <rect x="36" y="28" width="8" height="8" fill="#FCE7F3" />
+            <rect x="56" y="28" width="8" height="8" fill="#FCE7F3" />
+            <rect x="30" y="44" width="8" height="8" fill="#BE185D" />
+            <rect x="62" y="44" width="8" height="8" fill="#BE185D" />
 
-            {/* Specular Highlights */}
-            <rect x="30" y="14" width="36" height="4" fill="#FEF08A" />
-            <rect x="18" y="24" width="4" height="38" fill="#FEF08A" />
-            {/* Diagonal Kick-Tail Highlight */}
-            <rect x="70" y="72" width="14" height="4" fill="#FFF" />
-            {/* Shading */}
-            <rect x="66" y="24" width="12" height="38" fill="#D97706" />
-            <rect x="72" y="76" width="12" height="8" fill="#B45309" />
+            {/* Stepped Pixel 'Q' in Center */}
+            <path
+              d="M42 34 H58 V42 H62 V54 H58 V58 H64 V64 H56 V58 H54 V58 H42 V54 H38 V42 H42 Z M46 42 H54 V50 H46 Z"
+              fill="#FFF"
+            />
+
+            {/* Stepped Plaque: "QUEEN" */}
+            <path d="M16 76 H84 V92 H16 Z" fill="#000" />
+            <path d="M18 78 H82 V90 H18 Z" fill="#FBBF24" />
+            <path d="M20 80 H80 V88 H20 Z" fill="#78350F" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
+              QUEEN
+            </text>
           </svg>
         );
 
       case 'PIXEL_J':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
-            {/* Stepped 8-Bit Pixel Font Letter 'J' */}
-            {/* 3D Black Drop-Shadow */}
+            {/* 8-Bit Pixel Knight Broadsword & Iron Shield */}
+            {/* Diagonal Broadsword Behind Shield */}
+            <rect x="68" y="10" width="8" height="8" fill="#FEF08A" />
+            <rect x="60" y="18" width="8" height="8" fill="#CBD5E1" />
+            <rect x="52" y="26" width="8" height="8" fill="#94A3B8" />
+            <rect x="28" y="50" width="8" height="8" fill="#E2E8F0" />
+            <rect x="20" y="58" width="8" height="8" fill="#FFF" />
+
+            {/* Stepped Iron Buckler Shield Body */}
             <path
-              d="M44 18 H82 V32 H68 V68 H54 V78 H30 V68 H18 V56 H34 V64 H52 V28 H44 Z"
-              fill="#05010B"
+              d="M26 22 H74 V30 H82 V58 H74 V68 H50 V74 H26 V68 H18 V58 H26 Z"
+              fill="#0F172A"
             />
-            {/* Vivid Phosphor Green 8-Bit Body */}
             <path
-              d="M40 14 H78 V28 H64 V64 H50 V74 H26 V64 H14 V52 H30 V60 H48 V24 H40 Z"
+              d="M28 24 H72 V32 H80 V56 H72 V66 H50 V72 H28 V66 H20 V56 H28 Z"
+              fill="#1E293B"
+            />
+            {/* Shield Rivet Pixels */}
+            <rect x="30" y="26" width="4" height="4" fill="#38BDF8" />
+            <rect x="66" y="26" width="4" height="4" fill="#38BDF8" />
+
+            {/* Stepped Phosphor Green 'J' on Shield */}
+            <path
+              d="M44 32 H66 V40 H56 V58 H46 V62 H32 V54 H24 V46 H36 V52 H46 V32 Z"
               fill="#22C55E"
             />
-            {/* Specular Highlights */}
-            <rect x="40" y="14" width="38" height="4" fill="#BBF7D0" />
-            <rect x="48" y="24" width="4" height="40" fill="#BBF7D0" />
-            <rect x="14" y="52" width="4" height="12" fill="#BBF7D0" />
-            {/* Shading */}
-            <rect x="64" y="28" width="14" height="36" fill="#15803D" />
-            <rect x="26" y="64" width="24" height="10" fill="#166534" />
+            <rect x="44" y="32" width="22" height="4" fill="#86EFAC" />
+
+            {/* Stepped Plaque: "JACK" */}
+            <path d="M16 76 H84 V92 H16 Z" fill="#000" />
+            <path d="M18 78 H82 V90 H18 Z" fill="#22C55E" />
+            <path d="M20 80 H80 V88 H20 Z" fill="#14532D" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#BBF7D0" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
+              JACK
+            </text>
           </svg>
         );
 
       case 'PIXEL_10':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
-            {/* Stepped 8-Bit Pixel Font Digits '1' and '0' */}
-            {/* Digit '1' Black Shadow */}
-            <path d="M16 28 H30 V18 H44 V88 H22 V76 H30 V32 H16 Z" fill="#05010B" />
-            {/* Digit '1' Ultraviolet Body */}
-            <path d="M12 24 H26 V14 H40 V84 H18 V72 H26 V28 H12 Z" fill="#A855F7" />
-            <rect x="26" y="14" width="14" height="4" fill="#E9D5FF" />
-            <rect x="26" y="18" width="4" height="66" fill="#E9D5FF" />
+            {/* 8-Bit Pixel High-Voltage Bomb / Power-Up Cell */}
+            {/* Pixel Fuse & Spark */}
+            <rect x="48" y="6" width="6" height="4" fill="#EF4444" />
+            <rect x="44" y="10" width="4" height="4" fill="#F59E0B" />
+            <rect x="52" y="10" width="4" height="4" fill="#F59E0B" />
+            <rect x="48" y="14" width="6" height="8" fill="#78350F" />
 
-            {/* Digit '0' Black Shadow */}
-            <path d="M54 18 H86 V28 H94 V74 H86 V88 H54 V74 H46 V28 H54 Z" fill="#05010B" />
-            {/* Digit '0' Ultraviolet Body */}
-            <path d="M50 14 H82 V24 H90 V70 H82 V84 H50 V70 H42 V24 H50 Z" fill="#A855F7" />
-            {/* Center Hole */}
-            <rect x="56" y="32" width="20" height="34" fill="#0F0524" />
-            {/* Highlights */}
-            <rect x="50" y="14" width="32" height="4" fill="#E9D5FF" />
-            <rect x="42" y="24" width="4" height="46" fill="#E9D5FF" />
-            <rect x="76" y="24" width="14" height="46" fill="#7E22CE" />
+            {/* Bomb / Crate Outer Shadow */}
+            <path
+              d="M22 22 H78 V30 H86 V64 H78 V72 H22 V64 H14 V30 H22 Z"
+              fill="#05010B"
+            />
+            {/* Ultraviolet Power Crate Body */}
+            <path
+              d="M24 24 H76 V32 H84 V62 H76 V70 H24 V62 H16 V32 H24 Z"
+              fill="#7E22CE"
+            />
+            {/* Top Bevel Highlight */}
+            <rect x="24" y="24" width="52" height="4" fill="#E9D5FF" />
+            <rect x="16" y="32" width="4" height="30" fill="#E9D5FF" />
+            <rect x="76" y="32" width="8" height="30" fill="#3B0764" />
+
+            {/* Stepped Pixel '10' on Crate Face */}
+            {/* Digit '1' */}
+            <path d="M28 34 H38 V30 H46 V62 H38 V54 H38 V38 H28 Z" fill="#FFF" />
+            {/* Digit '0' */}
+            <path d="M52 30 H72 V38 H76 V56 H72 V62 H52 V56 H48 V38 H52 Z M56 38 H64 V54 H56 Z" fill="#FFF" />
+
+            {/* Stepped Plaque: "10 PTS" */}
+            <path d="M16 76 H84 V92 H16 Z" fill="#000" />
+            <path d="M18 78 H82 V90 H18 Z" fill="#A855F7" />
+            <path d="M20 80 H80 V88 H20 Z" fill="#3B0764" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#F3E8FF" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1.2">
+              10 PTS
+            </text>
           </svg>
         );
 
