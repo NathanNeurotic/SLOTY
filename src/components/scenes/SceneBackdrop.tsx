@@ -10,15 +10,15 @@ interface SceneBackdropProps {
 export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGameId = 'vault-24k' }) => {
   const isTimber = activeGameId === 'timber-critters';
 
-  // 28 animated ambient particles (fireflies, gold dust, diamond glints)
+  // 32 animated ambient particles (fireflies, gold dust motes, diamond glints)
   const particles = useMemo(() => {
-    return Array.from({ length: 28 }).map((_, i) => ({
+    return Array.from({ length: 32 }).map((_, i) => ({
       id: i,
-      left: `${(i * 3.7 + 2) % 96}%`,
-      top: `${(i * 4.1 + 8) % 88}%`,
+      left: `${(i * 3.1 + 2) % 96}%`,
+      top: `${(i * 3.7 + 6) % 90}%`,
       size: isTimber ? 2.5 + (i % 3) * 1.5 : 2 + (i % 3) * 1.5,
-      delay: `${(i * 0.28) % 3.6}s`,
-      duration: `${3.5 + (i % 4) * 0.8}s`,
+      delay: `${(i * 0.25) % 3.5}s`,
+      duration: `${3.2 + (i % 4) * 0.9}s`,
       color: isTimber
         ? i % 4 === 0
           ? '#F59E0B' // Golden Firefly
@@ -47,7 +47,7 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
     }));
   }, [sceneId, isTimber]);
 
-  // 24 twinkling night sky stars for Timberland
+  // 26 twinkling night sky stars for Timberland
   const stars = useMemo(() => {
     return Array.from({ length: 26 }).map((_, i) => ({
       id: i,
@@ -93,13 +93,12 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
 
           {/* Luminous Full Forest Moon with Atmospheric Pulse */}
           <div className="absolute top-5 right-12 sm:right-28 w-28 sm:w-36 h-28 sm:h-36 rounded-full bg-gradient-to-br from-[#FFFBEB] via-[#FEF08A] to-[#F59E0B] shadow-[0_0_70px_rgba(254,240,138,0.7),0_0_140px_rgba(245,158,11,0.4)] pointer-events-none opacity-90 animate-pulse" style={{ animationDuration: '6s' }}>
-            {/* Lunar craters */}
             <div className="absolute top-5 left-7 w-6 h-6 rounded-full bg-[#EAB308]/20" />
             <div className="absolute top-12 left-14 w-8 h-8 rounded-full bg-[#EAB308]/25" />
             <div className="absolute top-18 left-8 w-5 h-5 rounded-full bg-[#EAB308]/15" />
           </div>
 
-          {/* Drifting Translucent Moonlit Clouds Across Lunar Face */}
+          {/* Drifting Translucent Moonlit Clouds */}
           <div className="absolute top-8 right-8 sm:right-20 w-44 sm:w-56 h-16 pointer-events-none opacity-45 animate-cloud-drift">
             <div className="w-full h-full bg-gradient-to-r from-transparent via-emerald-100/30 to-transparent blur-md rounded-full" />
           </div>
@@ -107,7 +106,7 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
             <div className="w-full h-full bg-gradient-to-r from-transparent via-teal-200/25 to-transparent blur-md rounded-full" />
           </div>
 
-          {/* Moonlight Volumetric Light Shafts Slicing Through Canopy */}
+          {/* Moonlight Volumetric Light Shafts */}
           <div
             className="absolute -top-12 right-16 sm:right-36 w-[620px] h-[850px] pointer-events-none opacity-30 transform rotate-25 animate-pulse"
             style={{
@@ -119,17 +118,14 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
           {/* Distant Mountain Ridges & Dense Pine Silhouettes */}
           <div className="absolute bottom-0 left-0 right-0 h-[420px] opacity-65 pointer-events-none">
             <svg viewBox="0 0 1440 420" className="w-full h-full object-cover" preserveAspectRatio="none">
-              {/* Mountain Ridge with Misty Valleys */}
               <path
                 d="M0 240 Q180 140 380 230 Q600 110 840 210 Q1060 120 1260 220 L1440 160 L1440 420 L0 420 Z"
                 fill="#072417"
               />
-              {/* Mid Pine Tree Silhouettes Layer */}
               <path
                 d="M0 290 L30 250 L60 295 L100 240 L140 290 L180 235 L220 295 L270 245 L320 300 L370 230 L420 290 L480 240 L540 300 L600 235 L660 295 L720 240 L780 300 L840 230 L900 295 L960 245 L1020 300 L1080 235 L1140 290 L1200 240 L1260 300 L1320 235 L1380 290 L1440 240 L1440 420 L0 420 Z"
                 fill="#04180d"
               />
-              {/* Foreground Dense Evergreen Crowns */}
               <path
                 d="M0 340 L40 290 L80 345 L130 280 L180 340 L240 285 L300 350 L360 275 L420 345 L490 280 L560 350 L630 270 L700 345 L770 285 L840 350 L910 275 L980 345 L1050 280 L1120 350 L1190 270 L1260 345 L1330 285 L1400 345 L1440 295 L1440 420 L0 420 Z"
                 fill="#020c05"
@@ -137,29 +133,75 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
             </svg>
           </div>
 
-          {/* Towering Ancient Redwood Trunks Framing Left & Right Borders with Swaying Pine Boughs */}
-          {/* Left Trunk & Swaying Boughs */}
-          <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-36 pointer-events-none z-10 opacity-80 sm:opacity-90">
+          {/* Cozy Mountain Log Cabin on Left Ridge with Glowing Windows and Chimney Smoke */}
+          <div className="absolute bottom-28 left-4 sm:left-14 w-28 sm:w-36 h-28 pointer-events-none opacity-85 z-10 hidden md:block">
+            {/* Cabin Structure */}
+            <div className="relative w-full h-full">
+              {/* Chimney with rising animated woodsmoke */}
+              <div className="absolute -top-6 right-6 w-3 h-8 bg-[#2d1b10] border-t border-amber-800/80 rounded-t" />
+              <div className="absolute -top-12 right-6 w-4 h-6 rounded-full bg-amber-100/30 blur-xs animate-smoke-curl" />
+              <div className="absolute -top-16 right-5 w-6 h-8 rounded-full bg-slate-200/20 blur-sm animate-smoke-curl" style={{ animationDelay: '1.2s' }} />
+
+              {/* Cabin Roof */}
+              <div className="w-0 h-0 border-l-[56px] border-l-transparent border-r-[56px] border-r-transparent border-b-[36px] border-b-[#3e1d0b] drop-shadow-lg mx-auto" />
+              {/* Cabin Body */}
+              <div className="w-24 h-16 bg-[#261207] border-2 border-[#54280f] rounded-b-md mx-auto relative p-1">
+                {/* Glowing Lantern Windows */}
+                <div className="flex justify-around items-center pt-2">
+                  <div className="w-5 h-6 rounded bg-gradient-to-b from-amber-200 to-yellow-500 shadow-[0_0_15px_rgba(251,191,36,0.9)] animate-pulse" style={{ animationDuration: '3s' }} />
+                  <div className="w-5 h-6 rounded bg-gradient-to-b from-amber-200 to-yellow-500 shadow-[0_0_15px_rgba(251,191,36,0.9)] animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Campfire on Right Ridge with Glowing Embers */}
+          <div className="absolute bottom-28 right-6 sm:right-16 w-20 h-20 pointer-events-none opacity-85 z-10 hidden md:block">
+            <div className="relative w-full h-full flex flex-col items-center justify-end">
+              {/* Fire Flame */}
+              <div className="w-8 h-10 rounded-full bg-gradient-to-t from-red-600 via-amber-500 to-yellow-200 blur-[1px] animate-pulse shadow-[0_0_20px_rgba(245,158,11,0.9)]" style={{ animationDuration: '1.5s' }} />
+              {/* Logs */}
+              <div className="w-12 h-3 bg-[#3e1d0b] rounded-full border border-black -mt-1" />
+              {/* Sparks rising */}
+              <div className="absolute -top-4 w-1.5 h-1.5 rounded-full bg-yellow-300 shadow-[0_0_8px_#FDE047] animate-float-sparkle" />
+              <div className="absolute -top-8 right-4 w-1 h-1 rounded-full bg-amber-400 shadow-[0_0_6px_#F59E0B] animate-float-sparkle" style={{ animationDelay: '0.8s' }} />
+            </div>
+          </div>
+
+          {/* Ancient Redwood Trunks Framing Borders with Swaying Pine Boughs and Hanging Lanterns */}
+          {/* Left Trunk & Hanging Lantern */}
+          <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-40 pointer-events-none z-10 opacity-90">
             <div className="w-full h-full bg-gradient-to-r from-[#170a04] via-[#2c1308] to-transparent border-r border-[#451a03]/40 shadow-[10px_0_30px_rgba(0,0,0,0.85)] relative">
               <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_8px,rgba(0,0,0,0.6)_8px,rgba(0,0,0,0.6)_14px)]" />
+
               {/* Overhanging Swaying Pine Branches from Left */}
               <div className="absolute top-6 -right-20 w-36 h-72 animate-branch-sway-left overflow-visible">
                 <svg viewBox="0 0 120 240" className="w-full h-full overflow-visible opacity-90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
                   <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#041a0d" strokeWidth="10" strokeLinecap="round" />
                   <path d="M0 40 Q50 60 90 90 Q60 85 40 100 Q80 115 110 140 Q70 135 50 150 Q90 170 120 200" fill="none" stroke="#15803d" strokeWidth="5" strokeLinecap="round" />
-                  {/* Pine needle clusters */}
                   <circle cx="90" cy="90" r="14" fill="#14532d" opacity="0.8" />
                   <circle cx="110" cy="140" r="16" fill="#166534" opacity="0.8" />
                   <circle cx="120" cy="200" r="18" fill="#14532d" opacity="0.8" />
                 </svg>
+
+                {/* Hanging Rustic Iron Lantern from branch */}
+                <div className="absolute top-36 left-24 w-8 h-12 flex flex-col items-center">
+                  {/* Iron chain */}
+                  <div className="w-[1.5px] h-6 bg-stone-700 shadow-sm" />
+                  {/* Lantern Housing */}
+                  <div className="w-6 h-8 rounded-md bg-[#261207] border-2 border-amber-600/80 shadow-[0_0_20px_rgba(245,158,11,0.9)] flex items-center justify-center relative overflow-hidden animate-lantern-flicker">
+                    <div className="w-3 h-4 rounded-full bg-gradient-to-t from-red-500 via-amber-400 to-yellow-200 shadow-[0_0_12px_#FBBF24]" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Trunk & Swaying Boughs */}
-          <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-36 pointer-events-none z-10 opacity-80 sm:opacity-90">
+          {/* Right Trunk & Hanging Lantern */}
+          <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-40 pointer-events-none z-10 opacity-90">
             <div className="w-full h-full bg-gradient-to-l from-[#170a04] via-[#2c1308] to-transparent border-l border-[#451a03]/40 shadow-[-10px_0_30px_rgba(0,0,0,0.85)] relative">
               <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(90deg,transparent,transparent_8px,rgba(0,0,0,0.6)_8px,rgba(0,0,0,0.6)_14px)]" />
+
               {/* Overhanging Swaying Pine Branches from Right */}
               <div className="absolute top-16 -left-20 w-36 h-72 animate-branch-sway-right overflow-visible transform -scale-x-100">
                 <svg viewBox="0 0 120 240" className="w-full h-full overflow-visible opacity-90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
@@ -169,6 +211,14 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
                   <circle cx="110" cy="140" r="16" fill="#166534" opacity="0.8" />
                   <circle cx="120" cy="200" r="18" fill="#14532d" opacity="0.8" />
                 </svg>
+
+                {/* Hanging Rustic Iron Lantern */}
+                <div className="absolute top-36 left-24 w-8 h-12 flex flex-col items-center">
+                  <div className="w-[1.5px] h-6 bg-stone-700 shadow-sm" />
+                  <div className="w-6 h-8 rounded-md bg-[#261207] border-2 border-amber-600/80 shadow-[0_0_20px_rgba(245,158,11,0.9)] flex items-center justify-center relative overflow-hidden animate-lantern-flicker">
+                    <div className="w-3 h-4 rounded-full bg-gradient-to-t from-red-500 via-amber-400 to-yellow-200 shadow-[0_0_12px_#FBBF24]" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -189,147 +239,323 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
         </>
       ) : (
         <>
-          {/* ========================================================= */}
-          {/* --- SCENE 1: THE FORT KNOX GOLD VAULT (DYNAMIC HIGH ROLLER) --- */}
-          {/* ========================================================= */}
+          {/* ========================================================================= */}
+          {/* --- SCENE 1: THE FORT KNOX GOLD VAULT (FORTIFIED BULLION DEPOSITORY) --- */}
+          {/* ========================================================================= */}
           {sceneId === 'VAULT' && (
             <>
-              {/* Deep Obsidian Marble & Velvet Base */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#020d08] via-[#040e14] to-[#010507]" />
+              {/* Deep Industrial Titanium Steel & Obsidian Vault Chamber Base */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#050b11] via-[#09131d] to-[#020508]" />
 
-              {/* Sweeping Dual High-Intensity Volumetric Spotlights */}
-              <div className="absolute -bottom-20 left-[10%] w-[420px] h-[900px] pointer-events-none opacity-20 transform origin-bottom animate-spotlight-left"
-                style={{
-                  background: 'linear-gradient(to top, rgba(245, 158, 11, 0.5) 0%, rgba(254, 240, 138, 0.25) 40%, transparent 80%)',
-                }}
-              />
-              <div className="absolute -bottom-20 right-[10%] w-[420px] h-[900px] pointer-events-none opacity-20 transform origin-bottom animate-spotlight-right"
-                style={{
-                  background: 'linear-gradient(to top, rgba(245, 158, 11, 0.5) 0%, rgba(254, 240, 138, 0.25) 40%, transparent 80%)',
-                }}
-              />
-
-              {/* Towering Background Bullion Stacks Silhouettes with Shimmering Edges */}
-              <div className="absolute bottom-0 left-0 right-0 h-64 opacity-35 flex justify-between items-end px-4 pointer-events-none">
-                <div className="w-48 h-56 bg-gradient-to-t from-amber-600/50 via-amber-800/30 to-transparent rounded-t-lg border-t-2 border-x border-yellow-400/40 relative overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-shimmer-sweep" />
+              {/* Overhead Industrial Steel Ceiling Girder with Caution Striping */}
+              <div className="absolute top-0 inset-x-0 h-9 bg-gradient-to-b from-stone-900 via-slate-900 to-black border-b-2 border-yellow-600/50 shadow-2xl flex items-center justify-between px-6 z-10">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34D399] animate-pulse" />
+                  <span className="text-[10px] font-mono font-black text-amber-300 tracking-widest uppercase">
+                    SLOTY 24K IMPERIAL DEPOSITORY • MAXIMUM SECURITY
+                  </span>
                 </div>
-                <div className="w-72 h-44 bg-gradient-to-t from-amber-600/40 via-amber-800/20 to-transparent rounded-t-lg border-t-2 border-x border-yellow-400/30 hidden sm:block relative overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-shimmer-sweep" style={{ animationDelay: '2s' }} />
-                </div>
-                <div className="w-56 h-60 bg-gradient-to-t from-amber-600/50 via-amber-800/30 to-transparent rounded-t-lg border-t-2 border-x border-yellow-400/40 relative overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1s' }} />
+                <div className="hidden sm:flex items-center space-x-4 text-[9px] font-mono text-cyan-300/80">
+                  <span>VAULT INTEGRITY: 100%</span>
+                  <span>•</span>
+                  <span>SURVEILLANCE: ONLINE</span>
                 </div>
               </div>
 
-              {/* Biometric Security Scanning Laser Grid (Sweeping Vertically) */}
-              <div className="absolute top-1/4 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60 shadow-[0_0_15px_#00F0FF] animate-laser-scan-vert pointer-events-none flex items-center justify-center">
+              {/* Motorized Security Surveillance Cameras on Left & Right */}
+              <div className="absolute top-9 left-12 w-8 h-10 pointer-events-none z-10 hidden sm:block">
+                <div className="w-full h-full flex flex-col items-center animate-camera-pan">
+                  <div className="w-1 h-3 bg-slate-600" />
+                  <div className="w-7 h-4 bg-slate-900 border border-slate-500 rounded-sm flex items-center justify-end px-1 shadow-lg">
+                    <div className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_#EF4444] animate-ping" />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-9 right-12 w-8 h-10 pointer-events-none z-10 hidden sm:block">
+                <div className="w-full h-full flex flex-col items-center animate-camera-pan" style={{ animationDelay: '2.5s' }}>
+                  <div className="w-1 h-3 bg-slate-600" />
+                  <div className="w-7 h-4 bg-slate-900 border border-slate-500 rounded-sm flex items-center justify-start px-1 shadow-lg">
+                    <div className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_#EF4444] animate-ping" />
+                  </div>
+                </div>
+              </div>
+
+              {/* ===================================================================== */}
+              {/* --- GIGANTIC FORT KNOX CIRCULAR VAULT DOOR (UPPER CENTER BACKDROP) --- */}
+              {/* ===================================================================== */}
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[480px] sm:w-[680px] h-[480px] sm:h-[680px] pointer-events-none opacity-40 z-0">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {/* Outer Armored Titanium Ring with 24 Radial Steel Locking Bolts */}
+                  <div className="absolute inset-0 rounded-full border-[18px] border-slate-700/80 shadow-[0_0_60px_rgba(0,240,255,0.25),inset_0_0_50px_rgba(0,0,0,0.9)] bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+                    {/* Radial Hex Bolts around the circumference */}
+                    {[...Array(16)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-3.5 h-3.5 rounded-full bg-gradient-to-b from-slate-300 to-slate-600 border border-slate-400 shadow-md"
+                        style={{
+                          top: `${50 - 46 * Math.cos((i * 2 * Math.PI) / 16)}%`,
+                          left: `${50 + 46 * Math.sin((i * 2 * Math.PI) / 16)}%`,
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Outer Geared Locking Ring (Rotates Slow Clockwise) */}
+                  <div className="absolute inset-10 rounded-full border-4 border-dashed border-yellow-500/40 animate-gear-spin-slow opacity-60" />
+
+                  {/* Inner Counter-Rotating Geared Ring (Rotates Counter-Clockwise) */}
+                  <div className="absolute inset-20 rounded-full border-4 border-dashed border-cyan-400/35 animate-gear-spin-reverse opacity-70" />
+
+                  {/* Central Heavy Brass 6-Spoke Vault Wheel */}
+                  <div className="relative w-40 sm:w-56 h-40 sm:h-56 rounded-full border-8 border-yellow-500 bg-gradient-to-tr from-amber-800 via-yellow-600 to-amber-700 shadow-[0_0_40px_rgba(245,158,11,0.6)] flex items-center justify-center animate-gear-spin-slow">
+                    {/* 6 Radial Brass Spokes */}
+                    {[...Array(6)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-full h-3 bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-400 rounded-sm shadow-md"
+                        style={{ transform: `rotate(${i * 60}deg)` }}
+                      />
+                    ))}
+                    {/* Center Hub */}
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-yellow-200 via-amber-500 to-amber-900 border-4 border-yellow-100 shadow-2xl flex items-center justify-center z-10">
+                      <div className="w-5 h-5 rounded-full bg-slate-950 border border-yellow-300 shadow-inner" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ================================================================= */}
+              {/* --- TOWERING SAFE DEPOSIT LOCKBOX WALLS (LEFT & RIGHT FLANKS) --- */}
+              {/* ================================================================= */}
+              {/* Left Wall of Brushed Steel Safe Deposit Boxes */}
+              <div className="absolute top-9 bottom-0 left-0 w-24 sm:w-44 md:w-56 pointer-events-none z-10 opacity-70 hidden sm:block">
+                <div className="w-full h-full bg-gradient-to-r from-slate-900 via-slate-950 to-transparent border-r border-slate-700/60 p-2 relative shadow-2xl">
+                  {/* Grid of stainless steel deposit boxes with keyholes & handles */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 pt-2">
+                    {[...Array(18)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-10 bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 border border-slate-600/70 rounded-xs flex flex-col justify-between p-1 shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex justify-between items-center text-[7px] font-mono text-amber-300/80">
+                          <span>BOX</span>
+                          <span className="font-bold">{700 + i * 15}</span>
+                        </div>
+                        <div className="flex justify-between items-center px-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-950 border border-yellow-500/60" />
+                          <div className="w-3 h-1 bg-amber-400/80 rounded-xs shadow-[0_0_4px_#F59E0B]" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Ambient Amber Downlight Wash */}
+                  <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-amber-500/20 to-transparent blur-md" />
+                </div>
+              </div>
+
+              {/* Right Wall of Brushed Steel Safe Deposit Boxes */}
+              <div className="absolute top-9 bottom-0 right-0 w-24 sm:w-44 md:w-56 pointer-events-none z-10 opacity-70 hidden sm:block">
+                <div className="w-full h-full bg-gradient-to-l from-slate-900 via-slate-950 to-transparent border-l border-slate-700/60 p-2 relative shadow-2xl">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 pt-2">
+                    {[...Array(18)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-10 bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 border border-slate-600/70 rounded-xs flex flex-col justify-between p-1 shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex justify-between items-center text-[7px] font-mono text-amber-300/80">
+                          <span>BOX</span>
+                          <span className="font-bold">{800 + i * 15}</span>
+                        </div>
+                        <div className="flex justify-between items-center px-1">
+                          <div className="w-3 h-1 bg-amber-400/80 rounded-xs shadow-[0_0_4px_#F59E0B]" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-950 border border-yellow-500/60" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-amber-500/20 to-transparent blur-md" />
+                </div>
+              </div>
+
+              {/* Sweeping Dual High-Intensity Volumetric Spotlights */}
+              <div
+                className="absolute -bottom-20 left-[15%] w-[420px] h-[900px] pointer-events-none opacity-25 transform origin-bottom animate-spotlight-left"
+                style={{
+                  background: 'linear-gradient(to top, rgba(245, 158, 11, 0.5) 0%, rgba(254, 240, 138, 0.25) 40%, transparent 80%)',
+                }}
+              />
+              <div
+                className="absolute -bottom-20 right-[15%] w-[420px] h-[900px] pointer-events-none opacity-25 transform origin-bottom animate-spotlight-right"
+                style={{
+                  background: 'linear-gradient(to top, rgba(0, 240, 255, 0.4) 0%, rgba(56, 189, 248, 0.2) 40%, transparent 80%)',
+                }}
+              />
+
+              {/* Stacks of 24K Gold Bullion on Heavy Pallets Flanking the Floor */}
+              <div className="absolute bottom-6 left-6 sm:left-48 w-36 sm:w-48 h-32 pointer-events-none z-10 opacity-80 hidden md:block">
+                <div className="relative w-full h-full flex flex-col justify-end">
+                  {/* Bullion stack pyramid */}
+                  <div className="w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_15px_rgba(251,191,36,0.8)] mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" />
+                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-mono font-black text-amber-950">999.9 FINE GOLD</span>
+                  </div>
+                  <div className="w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1s' }} />
+                  </div>
+                  <div className="w-44 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
+                  {/* Steel pallet */}
+                  <div className="w-48 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
+                </div>
+              </div>
+
+              <div className="absolute bottom-6 right-6 sm:right-48 w-36 sm:w-48 h-32 pointer-events-none z-10 opacity-80 hidden md:block">
+                <div className="relative w-full h-full flex flex-col justify-end">
+                  <div className="w-28 h-6 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-600 rounded-xs border border-yellow-100 shadow-[0_0_15px_rgba(251,191,36,0.8)] mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-sweep" style={{ animationDelay: '1.5s' }} />
+                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-mono font-black text-amber-950">24K FORT KNOX</span>
+                  </div>
+                  <div className="w-36 h-6 bg-gradient-to-r from-amber-600 via-yellow-300 to-amber-700 rounded-xs border border-yellow-200 shadow-lg mx-auto relative overflow-hidden -mt-1">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-sweep" style={{ animationDelay: '2.5s' }} />
+                  </div>
+                  <div className="w-44 h-6 bg-gradient-to-r from-amber-700 via-yellow-400 to-amber-800 rounded-xs border border-yellow-300 shadow-xl mx-auto -mt-1" />
+                  <div className="w-48 h-3 bg-slate-800 border-t border-slate-600 rounded-xs" />
+                </div>
+              </div>
+
+              {/* Biometric Security Laser Grid (Sweeping Vertically) */}
+              <div className="absolute top-1/4 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-65 shadow-[0_0_15px_#00F0FF] animate-laser-scan-vert pointer-events-none flex items-center justify-center">
                 <div className="w-3 h-3 rounded-full bg-cyan-300 shadow-[0_0_10px_#00F0FF] animate-ping" />
               </div>
 
               {/* Secondary Amber Security Laser Beam */}
-              <div className="absolute top-2/3 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-45 shadow-[0_0_12px_#F59E0B] pointer-events-none" />
+              <div className="absolute top-2/3 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-50 shadow-[0_0_12px_#F59E0B] pointer-events-none" />
 
               {/* Central Opulent Gold Ambient Corona */}
               <div
-                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none opacity-40 animate-pulse"
+                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none opacity-45 animate-pulse"
                 style={{
-                  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(16, 185, 129, 0.08) 50%, transparent 75%)',
+                  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(16, 185, 129, 0.08) 50%, transparent 75%)',
                   animationDuration: '7s',
                 }}
               />
             </>
           )}
 
-          {/* --- SCENE 2: MIDNIGHT CASH PENTHOUSE --- */}
+          {/* ========================================================================= */}
+          {/* --- SCENE 2: MIDNIGHT CASH PENTHOUSE (VIP CASINO STRIP SKYLINE) ---       */}
+          {/* ========================================================================= */}
           {sceneId === 'PENTHOUSE' && (
             <>
               {/* Midnight Skyline Gradient */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#0f0728] via-[#0c091f] to-[#04020a]" />
 
               {/* Sweeping Sky Searchlights */}
-              <div className="absolute -bottom-10 left-[20%] w-[350px] h-[800px] pointer-events-none opacity-25 transform origin-bottom animate-spotlight-left"
-                style={{ background: 'linear-gradient(to top, rgba(168, 85, 247, 0.4) 0%, transparent 80%)' }}
+              <div
+                className="absolute -bottom-10 left-[20%] w-[380px] h-[850px] pointer-events-none opacity-30 transform origin-bottom animate-spotlight-left"
+                style={{ background: 'linear-gradient(to top, rgba(168, 85, 247, 0.5) 0%, transparent 80%)' }}
               />
-              <div className="absolute -bottom-10 right-[20%] w-[350px] h-[800px] pointer-events-none opacity-25 transform origin-bottom animate-spotlight-right"
-                style={{ background: 'linear-gradient(to top, rgba(56, 189, 248, 0.4) 0%, transparent 80%)' }}
+              <div
+                className="absolute -bottom-10 right-[20%] w-[380px] h-[850px] pointer-events-none opacity-30 transform origin-bottom animate-spotlight-right"
+                style={{ background: 'linear-gradient(to top, rgba(56, 189, 248, 0.5) 0%, transparent 80%)' }}
               />
 
+              {/* High-Roller Velvet Curtains with Gold Tassels Framing Left & Right Borders */}
+              <div className="absolute top-0 bottom-0 left-0 w-20 sm:w-36 pointer-events-none z-10 opacity-80">
+                <div className="w-full h-full bg-gradient-to-r from-[#3b0716] via-[#1f030a] to-transparent border-r-2 border-yellow-500/40 shadow-2xl relative">
+                  <div className="absolute top-12 right-2 text-2xl select-none">🎗️</div>
+                </div>
+              </div>
+              <div className="absolute top-0 bottom-0 right-0 w-20 sm:w-36 pointer-events-none z-10 opacity-80">
+                <div className="w-full h-full bg-gradient-to-l from-[#3b0716] via-[#1f030a] to-transparent border-l-2 border-yellow-500/40 shadow-2xl relative">
+                  <div className="absolute top-12 left-2 text-2xl select-none">🎗️</div>
+                </div>
+              </div>
+
               {/* Las Vegas Strip Casino Skyline Silhouette with Glowing Windows */}
-              <div className="absolute bottom-0 left-0 right-0 h-72 opacity-40 flex items-end justify-around px-2 pointer-events-none">
-                <div className="w-16 h-52 bg-slate-900 border-t-2 border-purple-400/60 relative shadow-2xl">
-                  <div className="w-1 h-14 bg-amber-400/80 mx-auto -mt-14 shadow-[0_0_10px_#FBBF24]" />
-                  <div className="grid grid-cols-2 gap-1 p-1 opacity-70">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="w-2 h-2 rounded-xs bg-yellow-300 animate-pulse" style={{ animationDelay: `${i * 300}ms` }} />
+              <div className="absolute bottom-0 left-0 right-0 h-80 opacity-55 flex items-end justify-around px-4 pointer-events-none">
+                <div className="w-20 h-64 bg-slate-900 border-t-2 border-purple-400/80 relative shadow-2xl">
+                  <div className="w-1.5 h-16 bg-amber-400 mx-auto -mt-16 shadow-[0_0_12px_#FBBF24]" />
+                  <div className="grid grid-cols-2 gap-1.5 p-1.5 opacity-80">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="w-2 h-2 rounded-xs bg-yellow-300 animate-pulse" style={{ animationDelay: `${i * 250}ms` }} />
                     ))}
                   </div>
                 </div>
-                <div className="w-24 h-64 bg-slate-950 border-t-2 border-cyan-400/60 shadow-2xl relative">
-                  <div className="grid grid-cols-3 gap-1 p-2 opacity-60">
-                    {[...Array(9)].map((_, i) => (
-                      <div key={i} className="w-2 h-2 rounded-xs bg-cyan-300 animate-pulse" style={{ animationDelay: `${i * 250}ms` }} />
+                <div className="w-32 h-72 bg-slate-950 border-t-2 border-cyan-400/80 shadow-2xl relative">
+                  <div className="text-center pt-1 text-[8px] font-mono font-black text-cyan-300">CASINO VIP</div>
+                  <div className="grid grid-cols-3 gap-1.5 p-2 opacity-75">
+                    {[...Array(12)].map((_, i) => (
+                      <div key={i} className="w-2 h-2 rounded-xs bg-cyan-300 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
                     ))}
                   </div>
                 </div>
-                <div className="w-32 h-44 bg-slate-900 border-t-2 border-pink-400/60" />
-                <div className="w-20 h-60 bg-slate-950 border-t-2 border-yellow-400/60" />
-                <div className="w-28 h-48 bg-slate-900 border-t-2 border-purple-400/60 hidden sm:block" />
+                <div className="w-28 h-52 bg-slate-900 border-t-2 border-pink-400/80" />
+                <div className="w-24 h-68 bg-slate-950 border-t-2 border-yellow-400/80" />
+                <div className="w-36 h-56 bg-slate-900 border-t-2 border-purple-400/80 hidden sm:block" />
               </div>
 
               {/* Radial Penthouse Ambient Glow */}
               <div
-                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[400px] pointer-events-none opacity-45"
+                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[420px] pointer-events-none opacity-50"
                 style={{
-                  background: 'radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, rgba(245, 158, 11, 0.12) 50%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(245, 158, 11, 0.15) 50%, transparent 70%)',
                 }}
               />
             </>
           )}
 
-          {/* --- SCENE 3: THE FEDERAL CURRENCY MINT --- */}
+          {/* ========================================================================= */}
+          {/* --- SCENE 3: THE FEDERAL CURRENCY MINT (INDUSTRIAL COIN FOUNDRY) ---     */}
+          {/* ========================================================================= */}
           {sceneId === 'MINT' && (
             <>
               {/* Molten Metal Forge Gradient */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#1a0505] via-[#140807] to-[#0a0302]" />
 
-              {/* Industrial Gear Wheels Silhouette in Background */}
-              <div className="absolute top-12 left-10 w-48 h-48 rounded-full border-2 border-dashed border-red-500/25 animate-spin opacity-40 hidden sm:block" style={{ animationDuration: '40s' }} />
-              <div className="absolute top-28 right-14 w-36 h-36 rounded-full border-2 border-dashed border-amber-500/20 animate-spin opacity-35 hidden sm:block transform -scale-x-100" style={{ animationDuration: '30s' }} />
+              {/* Massive Industrial Gear Wheels Silhouette in Background */}
+              <div className="absolute top-12 left-10 w-56 h-56 rounded-full border-4 border-dashed border-red-500/35 animate-gear-spin-slow opacity-50 hidden sm:block" />
+              <div className="absolute top-28 right-14 w-44 h-44 rounded-full border-4 border-dashed border-amber-500/30 animate-gear-spin-reverse opacity-45 hidden sm:block" />
 
               {/* Molten Gold River Heat Reflection at Bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-red-600/35 via-amber-600/20 to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
+              <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-red-600/40 via-amber-600/25 to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
 
               {/* Forge Glow */}
               <div
-                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[380px] pointer-events-none opacity-45"
+                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none opacity-50"
                 style={{
-                  background: 'radial-gradient(circle, rgba(239, 68, 68, 0.28) 0%, rgba(245, 158, 11, 0.18) 50%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(239, 68, 68, 0.32) 0%, rgba(245, 158, 11, 0.22) 50%, transparent 70%)',
                 }}
               />
             </>
           )}
 
-          {/* --- SCENE 4: HIGH STAKES HEIST --- */}
+          {/* ========================================================================= */}
+          {/* --- SCENE 4: HIGH STAKES HEIST (MIDNIGHT LASER TRIPWIRE BREACH) ---      */}
+          {/* ========================================================================= */}
           {sceneId === 'HEIST' && (
             <>
               {/* Crimson & Electric Cyan Midnight Heist */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#020b18] via-[#0f0408] to-[#040103]" />
 
-              {/* Security Laser Crosshairs */}
-              <div className="absolute top-1/3 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60 shadow-[0_0_12px_#00F0FF] animate-pulse" />
-              <div className="absolute top-2/3 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60 shadow-[0_0_12px_#EF4444] animate-pulse" style={{ animationDelay: '1s' }} />
+              {/* Intersecting Security Laser Crosshairs */}
+              <div className="absolute top-1/3 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-75 shadow-[0_0_15px_#00F0FF] animate-pulse" />
+              <div className="absolute top-2/3 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-75 shadow-[0_0_15px_#EF4444] animate-pulse" style={{ animationDelay: '1s' }} />
+
+              {/* Diagonal Alert Laser */}
+              <div className="absolute top-0 left-1/4 w-[2px] h-full bg-gradient-to-b from-transparent via-red-500/60 to-transparent shadow-[0_0_12px_#EF4444]" />
 
               {/* Sweeping Blue Alarm Beacon */}
-              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[500px] h-[800px] pointer-events-none opacity-20 transform origin-bottom animate-spotlight-left"
-                style={{ background: 'linear-gradient(to top, rgba(0, 240, 255, 0.35) 0%, transparent 75%)' }}
+              <div
+                className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[550px] h-[850px] pointer-events-none opacity-25 transform origin-bottom animate-spotlight-left"
+                style={{ background: 'linear-gradient(to top, rgba(0, 240, 255, 0.45) 0%, transparent 75%)' }}
               />
 
               {/* Ambient Glow */}
               <div
-                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[650px] h-[380px] pointer-events-none opacity-45"
+                className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none opacity-50"
                 style={{
-                  background: 'radial-gradient(circle, rgba(0, 240, 255, 0.22) 0%, rgba(239, 68, 68, 0.2) 50%, transparent 70%)',
+                  background: 'radial-gradient(circle, rgba(0, 240, 255, 0.25) 0%, rgba(239, 68, 68, 0.25) 50%, transparent 70%)',
                 }}
               />
             </>
@@ -344,23 +570,18 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
         {isTimber ? (
           // Timberland Hand-Hewn Rustic Boardwalk Floor
           <div className="w-full h-full bg-gradient-to-t from-[#0e0602] via-[#1b0d06] to-transparent relative border-t border-[#78350f]/40">
-            {/* Horizontal cedar plank seams */}
             <div className="absolute inset-0 opacity-30 bg-[repeating-linear-gradient(0deg,transparent,transparent_22px,#0a0401_22px,#0a0401_24px)]" />
-            {/* Subtle wood grain texture */}
             <div className="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(90deg,transparent,transparent_60px,#2e1408_60px,#2e1408_62px)]" />
-            {/* Scattered fallen autumn leaves on the boards */}
             <div className="absolute bottom-10 left-[12%] text-sm select-none opacity-85 animate-float-sparkle">🍂</div>
             <div className="absolute bottom-16 left-[28%] text-sm select-none opacity-85">🍁</div>
             <div className="absolute bottom-12 right-[25%] text-sm select-none opacity-85 animate-float-sparkle">🍂</div>
             <div className="absolute bottom-8 right-[10%] text-sm select-none opacity-85">🍁</div>
-            {/* Mossy baseline wash */}
             <div className="absolute bottom-0 inset-x-0 h-3 bg-gradient-to-r from-emerald-950 via-emerald-800/40 to-emerald-950" />
           </div>
         ) : (
           // 24K Vault Luxury Las Vegas Red Velvet Diamond Trellis Carpet
           <div className="w-full h-full bg-gradient-to-t from-[#140202] via-[#240404] to-transparent relative border-t border-yellow-500/25">
-            {/* Velvet diamond lattice pattern */}
-            <svg viewBox="0 0 100 100" className="w-full h-full object-repeat opacity-25">
+            <svg viewBox="0 0 100 100" className="w-full h-full object-repeat opacity-30">
               <defs>
                 <pattern id="carpetTrellis" width="24" height="24" patternUnits="userSpaceOnUse">
                   <path d="M 0 12 L 12 0 L 24 12 L 12 24 Z" fill="none" stroke="#FBBF24" strokeWidth="0.6" />
@@ -369,13 +590,12 @@ export const SceneBackdrop: React.FC<SceneBackdropProps> = ({ sceneId, activeGam
               </defs>
               <rect width="100%" height="100%" fill="url(#carpetTrellis)" />
             </svg>
-            {/* Warm casino floor ambient pools */}
             <div className="absolute bottom-0 inset-x-0 h-4 bg-gradient-to-r from-amber-600/30 via-yellow-400/40 to-amber-600/30" />
           </div>
         )}
       </div>
 
-      {/* Living Atmospheric Floating Particles (Fireflies / Stardust) */}
+      {/* Living Atmospheric Floating Particles (Fireflies / Stardust / Gold Dust) */}
       <div className="block">
         {particles.map((p) => (
           <div

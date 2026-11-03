@@ -50,7 +50,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
 
         {/* Center: Live VIP Hostess / Mascot Companion */}
         {companionNode && (
-          <div className="flex-1 max-w-md mx-3">
+          <div className={`flex-1 max-w-md mx-3 ${!isFloorMode && flankCompanion ? 'lg:hidden' : ''}`}>
             {companionNode}
           </div>
         )}

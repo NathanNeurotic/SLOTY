@@ -139,7 +139,7 @@ export const App: React.FC = () => {
   // --- Discord Activity & Multiplayer State ---
   const [discordProfile, setDiscordProfile] = useState<DiscordUserProfile | null>(null);
   const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
-  const [isFloorMode, setIsFloorMode] = useState<boolean>(() => storage.getItem('sloty_floor_mode') === 'true');
+  const [isFloorMode, setIsFloorMode] = useState<boolean>(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 167075));
   const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
@@ -530,6 +530,42 @@ export const App: React.FC = () => {
     setBetPerLine(bestStep);
   }, [balance, progression.maxBet, activeGameDef.defaultLines]);
 
+  const handleSelectLines = useCallback(
+    (lines: number) => {
+      setSelectedLines(lines);
+      storage.setItem('sloty_lines', lines.toString());
+      if (balance > 0 && lines * betPerLine > balance) {
+        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
+        const affordable = steps.find((s) => s * lines <= balance) || 1;
+        setBetPerLine(affordable);
+        storage.setItem('sloty_bet_per_line', affordable.toString());
+      }
+    },
+    [balance, betPerLine]
+  );
+
+  const handleSelectBetPerLine = useCallback(
+    (bet: number) => {
+      const maxAllowed = Math.min(balance, progression.maxBet);
+      if (balance > 0 && bet * selectedLines > maxAllowed) {
+        const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
+        const affordable = steps.find((s) => s * selectedLines <= maxAllowed) || 1;
+        setBetPerLine(affordable);
+        storage.setItem('sloty_bet_per_line', affordable.toString());
+      } else {
+        setBetPerLine(bet);
+        storage.setItem('sloty_bet_per_line', bet.toString());
+      }
+    },
+    [balance, progression.maxBet, selectedLines]
+  );
+
+  const handleStartFreeSpins = useCallback(() => {
+    setShowFreeSpinsModal(false);
+    setFreeSpinsRemaining((prev) => prev + 10);
+    soundManager.playButtonClick();
+  }, []);
+
   // Ensure bet never exceeds balance when balance drops
   useEffect(() => {
     if (freeSpinsRemaining > 0 || isSpinning) return;
@@ -632,8 +668,7 @@ export const App: React.FC = () => {
         }
         // Start free spins if modal is active
         if (showFreeSpinsModalRef.current) {
-          setShowFreeSpinsModal(false);
-          soundManager.playButtonClick();
+          handleStartFreeSpins();
           return;
         }
         if (celebration !== null || showHoldAndSpinModal || showGambleModal) {
@@ -722,7 +757,7 @@ export const App: React.FC = () => {
   const isTimber = activeGameId === 'timber-critters';
 
   return (
-    <div className={`h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-between selection:bg-gold selection:text-black relative overflow-hidden transition-colors duration-300 ${
+    <div className={`h-[100dvh] max-h-[100dvh] w-screen text-slate-100 flex flex-col justify-start selection:bg-gold selection:text-black relative overflow-hidden transition-colors duration-300 ${
       isTimber ? 'bg-[#020d06]' : 'bg-casino-950'
     }`}>
       {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
@@ -765,7 +800,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
-      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-between w-full px-1 sm:px-2 py-0.5 overflow-hidden">
+      <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start sm:justify-center gap-1 sm:gap-1.5 w-full px-1 sm:px-2 py-0.5 overflow-y-auto sm:overflow-hidden">
         {/* 4-Tier Deluxe Progressive Jackpots */}
         <JackpotMarquee totalBet={totalBet} activeGameId={activeGameId} />
 
@@ -835,12 +870,12 @@ export const App: React.FC = () => {
                 spinResult={spinResult}
                 isTurbo={isTurbo}
                 selectedLines={selectedLines}
-                onSelectLines={(lines) => setSelectedLines(lines)}
+                onSelectLines={handleSelectLines}
                 onAllReelsStopped={handleAllReelsStopped}
                 onQuickStop={handleQuickStop}
                 freeSpinsRemaining={freeSpinsRemaining}
                 onSpin={executeSpin}
-                canSpin={balance >= totalBet || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
+                canSpin={(balance >= totalBet && balance > 0) || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
                 isFeverMode={feverSpinsLeft > 0}
                 currentSceneId={currentSceneId}
                 onRewardCoins={(amount) => {
@@ -874,8 +909,8 @@ export const App: React.FC = () => {
           freeSpinsRemaining={freeSpinsRemaining}
           onSpin={executeSpin}
           onQuickStop={handleQuickStop}
-          onLinesChange={(lines) => setSelectedLines(lines)}
-          onBetPerLineChange={(bet) => setBetPerLine(bet)}
+          onLinesChange={handleSelectLines}
+          onBetPerLineChange={handleSelectBetPerLine}
           onMaxBet={handleMaxBet}
           onTurboToggle={() => setIsTurbo((prev) => !prev)}
           onAutoSpinStart={(count) => {
@@ -954,10 +989,7 @@ export const App: React.FC = () => {
         <FreeSpinsModal
           freeSpinsAwarded={10}
           multiplier={3}
-          onStart={() => {
-            setShowFreeSpinsModal(false);
-            setFreeSpinsRemaining((prev) => prev + 10);
-          }}
+          onStart={handleStartFreeSpins}
         />
       )}
 
