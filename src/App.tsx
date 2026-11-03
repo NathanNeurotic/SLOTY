@@ -148,6 +148,14 @@ export const App: React.FC = () => {
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
     storage.getBoolean('sloty_turbo', false)
   );
+
+  // Synchronous refs for rapid keydown throttling and rate-limiting
+  const isSpinningRef = useRef(isSpinning);
+  isSpinningRef.current = isSpinning;
+  const isTurboRef = useRef(isTurbo);
+  isTurboRef.current = isTurbo;
+  const lastSpinStartTimeRef = useRef(0);
+  const lastSpinEndTimeRef = useRef(0);
   const [winAmount, setWinAmount] = useState(0);
   const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
@@ -362,6 +370,13 @@ export const App: React.FC = () => {
 
   // --- Main Spin Logic ---
   const executeSpin = useCallback(() => {
+    if (isSpinningRef.current) return;
+    const now = performance.now();
+    // Guard against rapid-fire spin spam (minimum 350ms between spin starts)
+    if (now - lastSpinStartTimeRef.current < 350) return;
+    lastSpinStartTimeRef.current = now;
+    isSpinningRef.current = true;
+
     const isFreeSpin = freeSpinsRemaining > 0;
 
     // Strict balance check: Never allow betting more than player has
@@ -415,6 +430,8 @@ export const App: React.FC = () => {
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
     setIsSpinning(false);
+    isSpinningRef.current = false;
+    lastSpinEndTimeRef.current = performance.now();
     const result = pendingResultRef.current;
     if (!result) return;
 
@@ -540,11 +557,13 @@ export const App: React.FC = () => {
     }
   }, [totalXp, freeSpinsRemaining, feverSpinsLeft, totalBet, handleSelectScene]);
 
-  // Quick Stop Handler
+  // Quick Stop Handler with minimum spin duration before stopping is permitted
   const handleQuickStop = useCallback(() => {
-    if (!isSpinning) return;
+    if (!isSpinningRef.current) return;
+    const elapsed = performance.now() - lastSpinStartTimeRef.current;
+    if (elapsed < 300) return;
     handleAllReelsStopped();
-  }, [isSpinning, handleAllReelsStopped]);
+  }, [handleAllReelsStopped]);
 
   // Max Bet Handler - capped by game max bet rules, balance and progression maxBet
   const handleMaxBet = useCallback(() => {
@@ -708,7 +727,28 @@ export const App: React.FC = () => {
         if (celebration !== null || showHoldAndSpinModal || showGambleModal) {
           return;
         }
-        if (isSpinning) {
+        const now = performance.now();
+
+        // Holding down space/enter triggers repeated keydown events with e.repeat = true
+        if (e.repeat) {
+          // Rule 1: Never quick-stop on key repeat. Quick-stop requires an intentional manual key press.
+          if (isSpinningRef.current) {
+            return;
+          }
+          // Rule 2: If reels have settled, pace continuous auto-spinning at a controlled, enjoyable rate.
+          // Enforce rest delay to let the player view payouts, win lines, and celebratory tallies (350ms in Turbo, 600ms in normal).
+          const minRestDelay = isTurboRef.current ? 350 : 600;
+          if (now - lastSpinEndTimeRef.current < minRestDelay) {
+            return;
+          }
+          if (freeSpinsRemainingRef.current > 0 || balanceRef.current >= totalBetRef.current) {
+            executeSpin();
+          }
+          return;
+        }
+
+        // Fresh, intentional key press (not an auto-repeat):
+        if (isSpinningRef.current) {
           handleQuickStop();
         } else if (freeSpinsRemainingRef.current > 0 || balanceRef.current >= totalBetRef.current) {
           executeSpin();
