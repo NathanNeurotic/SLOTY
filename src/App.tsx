@@ -22,6 +22,7 @@ import { SceneBackdrop } from './components/scenes/SceneBackdrop';
 import { VaultBlastDoors } from './components/scenes/VaultBlastDoors';
 import { CASINO_SCENES, type CasinoScene, type CasinoSceneId } from './components/scenes/SceneTypes';
 import { CashRainCanvas } from './fx/CashRainCanvas';
+import { ThemedCursorFX } from './fx/ThemedCursorFX';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
 import { launchCoinFountain } from './fx/celebrations';
@@ -771,6 +772,9 @@ export const App: React.FC = () => {
           celebration ? 'jackpot' : freeSpinsRemaining > 0 ? 'heavy' : winAmount > 0 ? 'light' : 'idle'
         }
       />
+
+      {/* 2b. Interactive Themed Particle Cursor & Radial Tap Bursts */}
+      <ThemedCursorFX activeGameId={activeGameId} />
 
       {/* 3. Motorized Armored Vault Blast Doors Full Slide Transitions */}
       <VaultBlastDoors

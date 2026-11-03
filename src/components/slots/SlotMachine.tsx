@@ -7,6 +7,7 @@ import { PaylineSideTabs } from './PaylineSideTabs';
 import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
+import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
 import { soundManager } from '../../audio/soundManager';
 import { ChevronLeft, ChevronRight, Award, Film } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
@@ -379,6 +380,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
           </div>
 
+          {/* Special Effects: Hydraulic Steam Vents / Living Woodland Canopy & Critter Eyes */}
+          <CabinetVentsAndWoodsFX
+            activeGameId={activeGameId}
+            isSpinning={isAnyReelSpinning}
+            isCabinetSlamming={isCabinetSlamming}
+            hasActiveWin={!!activeWin}
+            isAnticipating={isAnticipating}
+          />
+
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
         <div className="flex items-center justify-between h-8 sm:h-11 px-1.5 sm:px-2 border-b border-white/10 mb-1 sm:mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
@@ -568,6 +578,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               previewLineIndex={hoveredLineIndex}
               rowCount={rowCount}
               paylines={gameDef.paylines}
+              isTimber={isTimber}
             />
 
             {/* Floating Win Badges on Active Winning Paylines */}

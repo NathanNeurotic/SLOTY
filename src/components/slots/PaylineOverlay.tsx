@@ -9,6 +9,7 @@ interface PaylineOverlayProps {
   rowCount?: number;
   paylines?: Payline[];
   paylineColors?: string[];
+  isTimber?: boolean;
 }
 
 export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
@@ -18,6 +19,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   rowCount = 4,
   paylines = PAYLINES,
   paylineColors = PAYLINE_COLORS,
+  isTimber = false,
 }) => {
   // If no winning lines and no previewed line, render nothing
   if (winningLines.length === 0 && previewLineIndex === null) {
@@ -122,83 +124,168 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
 
           return (
             <g key={win.lineIndex} className="transition-opacity duration-300">
-              {/* 1. Deep Neon Ambient Aura */}
-              <path
-                d={pathData}
-                fill="none"
-                stroke={color}
-                strokeWidth={isHighlighted ? '4.5' : '1.8'}
-                strokeOpacity={isHighlighted ? 0.75 : 0.2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                filter="url(#superNeonGlow)"
-              />
+              {isTimber ? (
+                <>
+                  {/* Timberland: Organic Living Bramble Vine with Golden Sap */}
+                  {/* 1. Deep Forest Moss Halo */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth={isHighlighted ? '6.0' : '2.2'}
+                    strokeOpacity={isHighlighted ? 0.65 : 0.25}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    filter="url(#superNeonGlow)"
+                  />
+                  {/* 2. Heavy Twisted Briar Bark Stem */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#042F1A"
+                    strokeWidth={isHighlighted ? '4.0' : '1.8'}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* 3. Glowing Golden Honey Sap Vein */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#F59E0B"
+                    strokeWidth={isHighlighted ? '2.4' : '1.0'}
+                    strokeDasharray={isHighlighted ? '6,3' : undefined}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={isHighlighted ? 'animate-laser-stream' : undefined}
+                  />
+                  {/* 4. White-Hot Pollen Thread */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#FEF08A"
+                    strokeWidth={isHighlighted ? '1.0' : '0.4'}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* 5. Blooming Flower & Acorn Nodes */}
+                  {points.map(([x, y], pIdx) => (
+                    <g key={pIdx}>
+                      {isHighlighted && (
+                        <circle
+                          cx={x}
+                          cy={y}
+                          fill="none"
+                          stroke="#34D399"
+                          strokeWidth="1.2"
+                          className="animate-node-shockwave"
+                        />
+                      )}
+                      {/* Leaf Petals around node */}
+                      {isHighlighted && (
+                        <>
+                          <circle cx={x - 2} cy={y - 2} r={1.6} fill="#059669" opacity="0.8" />
+                          <circle cx={x + 2} cy={y - 2} r={1.6} fill="#059669" opacity="0.8" />
+                          <circle cx={x} cy={y + 2.5} r={1.6} fill="#10B981" opacity="0.8" />
+                        </>
+                      )}
+                      {/* Central Golden Honey Node */}
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={isHighlighted ? 3.6 : 1.8}
+                        fill="#F59E0B"
+                        stroke="#FEF08A"
+                        strokeWidth={isHighlighted ? 1.2 : 0.6}
+                        filter="url(#lineNeonGlow)"
+                      />
+                      {isHighlighted && (
+                        <circle cx={x} cy={y} r={1.3} fill="#FFFFFF" />
+                      )}
+                    </g>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {/* 24K Vault: High-Voltage Lasers & Diamond Refractors */}
+                  {/* 1. Deep Neon Ambient Aura */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={isHighlighted ? '4.5' : '1.8'}
+                    strokeOpacity={isHighlighted ? 0.75 : 0.2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    filter="url(#superNeonGlow)"
+                  />
 
-              {/* 2. Primary Vibrant Laser Beam */}
-              <path
-                d={pathData}
-                fill="none"
-                stroke={color}
-                strokeWidth={isHighlighted ? '2.8' : '1.2'}
-                strokeOpacity={isHighlighted ? 0.95 : 0.3}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                filter="url(#lineNeonGlow)"
-              />
-
-              {/* 3. High-Voltage Traveling Laser Stream */}
-              {isHighlighted && (
-                <path
-                  d={pathData}
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="animate-laser-stream"
-                />
-              )}
-
-              {/* 4. White-Hot Core Laser Thread */}
-              <path
-                d={pathData}
-                fill="none"
-                stroke="#FFFFFF"
-                strokeWidth={isHighlighted ? '0.9' : '0.4'}
-                strokeOpacity={isHighlighted ? 1 : 0.4}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              {/* 5. Concentric Shockwave Ripples & Glowing Nodes on Symbols */}
-              {points.map(([x, y], pIdx) => (
-                <g key={pIdx}>
-                  {isHighlighted && (
-                    <circle
-                      cx={x}
-                      cy={y}
-                      fill="none"
-                      stroke={color}
-                      strokeWidth="1.2"
-                      className="animate-node-shockwave"
-                    />
-                  )}
-                  {/* Glowing Node Base */}
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={isHighlighted ? 3.4 : 1.8}
-                    fill={color}
-                    stroke="#FFF"
-                    strokeWidth={isHighlighted ? 1 : 0.6}
+                  {/* 2. Primary Vibrant Laser Beam */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={isHighlighted ? '2.8' : '1.2'}
+                    strokeOpacity={isHighlighted ? 0.95 : 0.3}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     filter="url(#lineNeonGlow)"
                   />
-                  {/* White Center Flare Core */}
+
+                  {/* 3. High-Voltage Traveling Laser Stream */}
                   {isHighlighted && (
-                    <circle cx={x} cy={y} r={1.2} fill="#FFFFFF" />
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="animate-laser-stream"
+                    />
                   )}
-                </g>
-              ))}
+
+                  {/* 4. White-Hot Core Laser Thread */}
+                  <path
+                    d={pathData}
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth={isHighlighted ? '0.9' : '0.4'}
+                    strokeOpacity={isHighlighted ? 1 : 0.4}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  {/* 5. Concentric Shockwave Ripples & Glowing Nodes on Symbols */}
+                  {points.map(([x, y], pIdx) => (
+                    <g key={pIdx}>
+                      {isHighlighted && (
+                        <circle
+                          cx={x}
+                          cy={y}
+                          fill="none"
+                          stroke={color}
+                          strokeWidth="1.2"
+                          className="animate-node-shockwave"
+                        />
+                      )}
+                      {/* Glowing Node Base */}
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={isHighlighted ? 3.4 : 1.8}
+                        fill={color}
+                        stroke="#FFF"
+                        strokeWidth={isHighlighted ? 1 : 0.6}
+                        filter="url(#lineNeonGlow)"
+                      />
+                      {/* White Center Flare Core */}
+                      {isHighlighted && (
+                        <circle cx={x} cy={y} r={1.2} fill="#FFFFFF" />
+                      )}
+                    </g>
+                  ))}
+                </>
+              )}
             </g>
           );
         })}

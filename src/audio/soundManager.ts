@@ -958,6 +958,66 @@ class SoundManager {
     chirpOsc.stop(chirpTime + 0.09);
   }
 
+  // Pneumatic hydraulic high-pressure steam vent release for 24K Vault
+  public playSteamHiss() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+    const duration = 0.38;
+    const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.12));
+    }
+    const noiseSrc = this.ctx.createBufferSource();
+    noiseSrc.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(3200, now);
+    filter.frequency.exponentialRampToValueAtTime(1100, now + duration);
+    filter.Q.setValueAtTime(3.0, now);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.4 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    noiseSrc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    noiseSrc.start(now);
+  }
+
+  // Rustling pine needles and cedar twigs falling for Timberland
+  public playPineNeedleRustle() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+    const duration = 0.45;
+    const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI) * Math.exp(-i / (this.ctx.sampleRate * 0.2));
+    }
+    const noiseSrc = this.ctx.createBufferSource();
+    noiseSrc.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.setValueAtTime(1800, now);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    noiseSrc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    noiseSrc.start(now);
+  }
+
   // Continuous stimulating Deluxe Casino spin arpeggio & mechanical ratchet ticker
   public startSpinRollLoop(isFever: boolean = false) {
     this.initContext();
