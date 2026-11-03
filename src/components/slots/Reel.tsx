@@ -23,6 +23,10 @@ const VAULT_STRIP_B: SymbolId[] = ['SEVEN', 'COIN', 'KING', 'ACE', 'SEVEN', 'COI
 const TIMBER_STRIP_A: SymbolId[] = ['BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A', 'BEAR', 'WOLF', 'MUSHROOM', 'WOOD_A'];
 const TIMBER_STRIP_B: SymbolId[] = ['OWL', 'ACORN', 'FOX', 'WOOD_K', 'OWL', 'ACORN', 'FOX', 'WOOD_K'];
 
+// Pixel Arcade rolling filler strips
+const PIXEL_STRIP_A: SymbolId[] = ['CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A', 'CYBER_WILD', 'BOSS_DRAGON', 'GAMEPAD', 'PIXEL_A'];
+const PIXEL_STRIP_B: SymbolId[] = ['PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K', 'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'HERO_KNIGHT', 'PIXEL_K'];
+
 export const Reel: React.FC<ReelProps> = ({
   reelIndex,
   symbols,
@@ -45,8 +49,11 @@ export const Reel: React.FC<ReelProps> = ({
 
   // Stagger slightly different filler strips across adjacent reels depending on active game
   const isTimber = gameId === 'timber-critters';
+  const isPixel = gameId === 'pixel-arcade';
   const rollingStrip = isTimber
     ? (reelIndex % 2 === 0 ? TIMBER_STRIP_A : TIMBER_STRIP_B)
+    : isPixel
+    ? (reelIndex % 2 === 0 ? PIXEL_STRIP_A : PIXEL_STRIP_B)
     : (reelIndex % 2 === 0 ? VAULT_STRIP_A : VAULT_STRIP_B);
 
   useEffect(() => {
@@ -76,14 +83,20 @@ export const Reel: React.FC<ReelProps> = ({
       } ${
         isTimber
           ? 'bg-gradient-to-b from-[#142419] via-[#0c1810] to-[#050e08]'
+          : isPixel
+          ? 'bg-gradient-to-b from-[#180938] via-[#0e0422] to-[#070114]'
           : 'bg-gradient-to-b from-casino-950 via-casino-900 to-casino-950'
       } ${
         isAnticipating
           ? isTimber
             ? 'border-2 border-emerald-400 animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(52,211,153,0.9)]'
+            : isPixel
+            ? 'border-2 border-pink-400 animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(236,72,153,0.9)]'
             : 'border-2 border-neon-cyan animate-lightning-border z-10 scale-[1.03] shadow-[0_0_35px_rgba(0,240,255,0.9)]'
           : isTimber
           ? 'border-emerald-800/40'
+          : isPixel
+          ? 'border-purple-600/40'
           : 'border-white/10'
       }`}
     >
@@ -92,14 +105,18 @@ export const Reel: React.FC<ReelProps> = ({
         <div className={`absolute inset-0 pointer-events-none z-30 flex flex-col justify-between p-1 ${
           isTimber
             ? 'bg-gradient-to-b from-emerald-500/20 via-amber-400/10 to-emerald-500/20 shadow-[inset_0_0_30px_rgba(52,211,153,0.7)]'
+            : isPixel
+            ? 'bg-gradient-to-b from-purple-500/20 via-pink-400/10 to-cyan-500/20 shadow-[inset_0_0_30px_rgba(236,72,153,0.7)]'
             : 'bg-gradient-to-b from-cyan-500/20 via-yellow-400/10 to-cyan-500/20 shadow-[inset_0_0_30px_rgba(0,240,255,0.7)]'
         }`}>
           <div className={`w-full text-center text-[8px] font-black tracking-widest rounded py-0.5 animate-pulse uppercase border ${
             isTimber
               ? 'text-emerald-200 bg-emerald-950/80 border-emerald-400/50'
+              : isPixel
+              ? 'text-pink-200 bg-purple-950/80 border-pink-400/50'
               : 'text-cyan-200 bg-cyan-950/80 border-cyan-400/50'
           }`}>
-            {isTimber ? '🍃 OWL SCATTER LOCK 🍃' : '⚡ SCATTER LOCK ⚡'}
+            {isTimber ? '🍃 OWL SCATTER LOCK 🍃' : isPixel ? '👾 CARTRIDGE LOCK 👾' : '⚡ SCATTER LOCK ⚡'}
           </div>
           <div className="w-full text-center text-[8px] font-black tracking-widest text-amber-300 bg-amber-950/80 rounded py-0.5 animate-ping uppercase border border-amber-400/50">
             ★ 1 MORE TO WIN ★

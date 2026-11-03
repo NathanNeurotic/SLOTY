@@ -1,4 +1,5 @@
 import { storage } from '../utils/storage';
+import type { GameId } from '../games/types';
 
 class SoundManager {
   private ctx: AudioContext | null = null;
@@ -14,7 +15,7 @@ class SoundManager {
   private musicTempo: number = 116; // BPM for Vegas VIP Lounge Funk
   private isOverdriveMusic: boolean = false;
   private ratchetBuffer: AudioBuffer | null = null;
-  private activeGameTheme: 'vault-24k' | 'timber-critters' = 'vault-24k';
+  private activeGameTheme: GameId = 'vault-24k';
 
   constructor() {
     this.isMuted = storage.getBoolean('sloty_muted', false);
@@ -1152,11 +1153,11 @@ class SoundManager {
     }
   }
 
-  public setGameTheme(theme: 'vault-24k' | 'timber-critters') {
+  public setGameTheme(theme: GameId) {
     this.activeGameTheme = theme;
   }
 
-  public getGameTheme(): 'vault-24k' | 'timber-critters' {
+  public getGameTheme(): GameId {
     return this.activeGameTheme;
   }
 

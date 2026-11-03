@@ -29,22 +29,36 @@ export type SymbolId =
   | 'WOOD_A'
   | 'WOOD_K'
   | 'WOOD_Q'
-  | 'WOOD_J';
+  | 'WOOD_J'
+  // Pixel Arcade 8-Bit Retro Video Game Symbols
+  | 'CYBER_WILD'
+  | 'PIXEL_CARTRIDGE'
+  | 'RETRO_TOKEN'
+  | 'BOSS_DRAGON'
+  | 'HERO_KNIGHT'
+  | 'GAMEPAD'
+  | 'JOYSTICK'
+  | 'POTION_HEAL'
+  | 'PIXEL_A'
+  | 'PIXEL_K'
+  | 'PIXEL_Q'
+  | 'PIXEL_J'
+  | 'PIXEL_10';
 
 export type SymbolTier = 'special' | 'high' | 'mid' | 'low';
 
 export interface SlotSymbol {
   id: SymbolId;
   name: string;
-  payouts: { 2?: number; 3: number; 4: number; 5: number };
+  payouts: { 2?: number; 3: number; 4: number; 5: number; 6?: number };
   weight: number;
   color: string;
   tier: SymbolTier;
 }
 
-export type Payline = number[]; // 5 elements corresponding to row index (0..3) on each of the 5 reels
+export type Payline = number[]; // Row index for each reel (e.g. 5 or 6 reels)
 
-export type SymbolGrid = SymbolId[][]; // 5 reels x 4 rows: grid[reelIdx][rowIdx]
+export type SymbolGrid = SymbolId[][]; // grid[reelIdx][rowIdx] (e.g. 5x4, 5x3, or 6x5)
 
 export interface WinningLine {
   lineIndex: number;

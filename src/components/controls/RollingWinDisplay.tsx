@@ -15,6 +15,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
   const [displayedAmount, setDisplayedAmount] = useState(targetAmount);
   const animRef = useRef<number | null>(null);
   const prevTargetRef = useRef(targetAmount);
@@ -71,9 +72,13 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
         hasWin
           ? isTimber
             ? 'bg-gradient-to-b from-[#1b3323] via-[#0d1f14] to-[#061009] border-2 border-emerald-400 shadow-[0_0_25px_rgba(52,211,153,0.8),inset_0_0_15px_rgba(52,211,153,0.3)] animate-pulse'
+            : isPixel
+            ? 'bg-gradient-to-b from-[#1a0630] via-black to-[#0d021c] border-2 border-pink-400 shadow-[0_0_25px_rgba(236,72,153,0.85),inset_0_0_15px_rgba(6,182,212,0.3)] animate-pulse'
             : 'bg-gradient-to-b from-amber-950 via-slate-950 to-black border-2 border-yellow-300 shadow-[0_0_25px_rgba(253,224,71,0.85),inset_0_0_15px_rgba(245,158,11,0.3)] animate-pulse'
           : isTimber
           ? 'bg-gradient-to-b from-[#142318] to-[#0a140e] border-emerald-700/40 shadow-inner'
+          : isPixel
+          ? 'bg-gradient-to-b from-[#130722] to-black border-pink-900/40 shadow-inner'
           : 'bg-gradient-to-b from-casino-950 to-casino-900 border-white/15 shadow-inner'
       }`}
     >
@@ -82,6 +87,8 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
         {hasWin ? (
           isTimber ? (
             <Trees className="w-3 h-3 text-emerald-400 animate-bounce" />
+          ) : isPixel ? (
+            <span className="text-xs animate-bounce">🕹️</span>
           ) : (
             <Trophy className="w-3 h-3 text-yellow-300 fill-yellow-400 animate-bounce" />
           )
@@ -91,6 +98,8 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
             hasWin
               ? isTimber
                 ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(52,211,153,0.9)]'
+                : isPixel
+                ? 'text-pink-300 drop-shadow-[0_0_6px_rgba(236,72,153,0.9)] font-mono'
                 : 'text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.9)]'
               : 'text-slate-400'
           }`}
@@ -98,6 +107,8 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
           {hasWin
             ? isFreeSpins
               ? '★ FREE SPIN WIN ★'
+              : isPixel
+              ? '★ HIGH SCORE WIN ★'
               : '★ TOTAL WIN ★'
             : 'WIN PAYOUT'}
         </span>
@@ -108,7 +119,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
         {hasWin && (
           <Coins
             className={`w-4 h-4 sm:w-5 sm:h-5 ${
-              isTimber ? 'text-emerald-300 fill-emerald-400 animate-spin' : 'text-yellow-300 fill-yellow-400 animate-spin'
+              isTimber ? 'text-emerald-300 fill-emerald-400 animate-spin' : isPixel ? 'text-pink-300 fill-pink-400 animate-spin' : 'text-yellow-300 fill-yellow-400 animate-spin'
             }`}
           />
         )}
@@ -117,6 +128,8 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
             hasWin
               ? isTimber
                 ? 'text-xl sm:text-2xl xl:text-3xl text-emerald-200 drop-shadow-[0_0_15px_rgba(52,211,153,1)]'
+                : isPixel
+                ? 'text-xl sm:text-2xl xl:text-3xl text-pink-300 drop-shadow-[0_0_15px_rgba(236,72,153,1)]'
                 : 'text-xl sm:text-2xl xl:text-3xl text-yellow-300 drop-shadow-[0_0_15px_rgba(253,224,71,1)]'
               : 'text-base sm:text-lg text-slate-500'
           }`}

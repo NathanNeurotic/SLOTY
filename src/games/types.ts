@@ -1,6 +1,6 @@
 import type { SymbolId, Payline, SlotSymbol } from '../engine/types';
 
-export type GameId = 'vault-24k' | 'timber-critters';
+export type GameId = 'vault-24k' | 'timber-critters' | 'pixel-arcade';
 
 export interface GameTheme {
   primaryColor: string;

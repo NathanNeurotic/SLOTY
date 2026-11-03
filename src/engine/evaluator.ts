@@ -14,15 +14,16 @@ import { VAULT_REEL_STRIPS } from '../games/vault24k/vaultDefinition';
 // Calibrated 50-stop reel strips with authentic Oregon Lottery VLT distribution
 const REEL_STRIPS: SymbolId[][] = VAULT_REEL_STRIPS;
 
-// 5 reels x dynamic rows (4 for 24K Vault, 3 for Timberland Critters)
+// Dynamic reels x dynamic rows (5x4 Vault, 5x3 Timberland, 6x5 Pixel Arcade)
 export function generateRandomGrid(gameDef?: GameDefinition): SymbolGrid {
   const activeDef = gameDef || getGame(DEFAULT_GAME_ID);
   const rows = activeDef.rows;
+  const numReels = activeDef.reels || 5;
   const strips = activeDef.reelStrips;
   const grid: SymbolGrid = [];
 
-  for (let reel = 0; reel < 5; reel++) {
-    const strip = strips[reel] || REEL_STRIPS[reel];
+  for (let reel = 0; reel < numReels; reel++) {
+    const strip = strips[reel] || REEL_STRIPS[reel % REEL_STRIPS.length];
     const stopIndex = Math.floor(Math.random() * strip.length);
     const reelSymbols: SymbolId[] = [];
     for (let row = 0; row < rows; row++) {
@@ -130,13 +131,14 @@ export function evaluateSpin(
   const symbolsMap = activeDef.symbols;
   const rowCount = activeDef.rows;
 
-  const isWild = (sym: SymbolId) => sym === 'WILD' || sym === 'BEAR';
-  const isScatter = (sym: SymbolId) => sym === 'SCATTER' || sym === 'OWL';
-  const isCoin = (sym: SymbolId) => sym === 'COIN' || sym === 'ACORN';
+  const isWild = (sym: SymbolId) => sym === 'WILD' || sym === 'BEAR' || sym === 'CYBER_WILD';
+  const isScatter = (sym: SymbolId) => sym === 'SCATTER' || sym === 'OWL' || sym === 'PIXEL_CARTRIDGE';
+  const isCoin = (sym: SymbolId) => sym === 'COIN' || sym === 'ACORN' || sym === 'RETRO_TOKEN';
 
   const lineBet = Math.max(1, Math.floor(totalBet / activePaylinesCount));
   const winningLines: WinningLine[] = [];
   let totalPayout = 0;
+  const numReels = activeDef.reels || 5;
 
   // 1. Evaluate Line Wins (Left to Right)
   for (let lineIdx = 0; lineIdx < Math.min(activePaylinesCount, paylines.length); lineIdx++) {
@@ -150,7 +152,7 @@ export function evaluateSpin(
 
     // Determine target symbol: first non-wild from left
     let targetSymbol: SymbolId = lineSymbols[0];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < payline.length; i++) {
       if (!isWild(lineSymbols[i])) {
         targetSymbol = lineSymbols[i];
         break;
@@ -165,7 +167,7 @@ export function evaluateSpin(
     let matchCount = 0;
     const coords: [number, number][] = [];
 
-    for (let reel = 0; reel < 5; reel++) {
+    for (let reel = 0; reel < payline.length; reel++) {
       const currentSym = lineSymbols[reel];
       if (currentSym === targetSymbol || isWild(currentSym)) {
         matchCount++;
@@ -198,7 +200,7 @@ export function evaluateSpin(
   // 2. Evaluate Scatters (Free Spins)
   let scatterCount = 0;
   const scatterCoords: [number, number][] = [];
-  for (let reel = 0; reel < 5; reel++) {
+  for (let reel = 0; reel < numReels; reel++) {
     for (let row = 0; row < rowCount; row++) {
       const sym = grid[reel]?.[row];
       if (sym && isScatter(sym)) {
@@ -210,8 +212,8 @@ export function evaluateSpin(
 
   const isFreeSpinsTriggered = scatterCount >= 3;
   if (isFreeSpinsTriggered) {
-    const scatterDef = symbolsMap['SCATTER'] || symbolsMap['OWL'];
-    const scatterMultiplier = scatterDef?.payouts[Math.min(5, scatterCount) as 3 | 4 | 5] || 50;
+    const scatterDef = symbolsMap['SCATTER'] || symbolsMap['OWL'] || symbolsMap['PIXEL_CARTRIDGE'];
+    const scatterMultiplier = (scatterDef?.payouts as Record<number, number>)?.[Math.min(numReels, scatterCount)] || 50;
     const scatterPayout = totalBet * (scatterMultiplier / 10) * winMultiplier;
     totalPayout += scatterPayout;
   }
@@ -219,7 +221,7 @@ export function evaluateSpin(
   // 3. Evaluate Cash Orbs / Coins (Hold & Spin)
   let coinCount = 0;
   const coinCoords: [number, number][] = [];
-  for (let reel = 0; reel < 5; reel++) {
+  for (let reel = 0; reel < numReels; reel++) {
     for (let row = 0; row < rowCount; row++) {
       const sym = grid[reel]?.[row];
       if (sym && isCoin(sym)) {

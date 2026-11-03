@@ -1,10 +1,12 @@
 import type { GameDefinition, GameId } from './types';
 import { VAULT_24K_GAME } from './vault24k/vaultDefinition';
 import { TIMBER_CRITTERS_GAME } from './timberland/timberDefinition';
+import { PIXEL_ARCADE_GAME } from './pixelArcade/pixelDefinition';
 
 export const GAMES: Record<GameId, GameDefinition> = {
   'vault-24k': VAULT_24K_GAME,
   'timber-critters': TIMBER_CRITTERS_GAME,
+  'pixel-arcade': PIXEL_ARCADE_GAME,
 };
 
 export const DEFAULT_GAME_ID: GameId = 'vault-24k';

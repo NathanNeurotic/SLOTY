@@ -1,16 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { GameId } from '../../games/types';
 import { soundManager } from '../../audio/soundManager';
+import { X } from 'lucide-react';
 import { quotaManager, type QuotaState, type QuotaTier } from '../../engine/quotaSystem';
+import baronImg from '../../assets/baron_sterling.jpg';
+import gusImg from '../../assets/grizzly_gus.jpg';
 
 interface PuppetCharacterPopupProps {
   activeGameId?: GameId;
   isSpinning?: boolean;
   isAnticipating?: boolean;
+  isNearMiss?: boolean;
+  isMaxBet?: boolean;
+  consecutiveWins?: number;
   winAmount?: number;
   unlockedTier?: QuotaTier | null;
   onRewardCoins?: (coins: number) => void;
+  onClearUnlockedTier?: () => void;
 }
 
 interface CharacterLineMap {
@@ -18,6 +24,10 @@ interface CharacterLineMap {
   win: string[];
   bigWin: string[];
   anticipating: string[];
+  coldStreak: string[];
+  nearMiss: string[];
+  maxBet: string[];
+  streakWin: string[];
   quota?: string[];
 }
 
@@ -44,6 +54,22 @@ const BARON_LINES: CharacterLineMap = {
     'Hold your wrenches! Two vault scatters locked! Don’t tease an old tycoon, my ticker can’t take it!',
     'One more tumbler and the main vault opens! Great gears of Birmingham, come to papa!',
   ],
+  nearMiss: [
+    'ARGH! Two vault bolts clicked and the third jammed! Don’t tease an old tycoon!',
+    'By the Queen’s corgis! One tumbler away from the gold bars! Spin again, immediately!',
+  ],
+  maxBet: [
+    'Now THAT is executive decision making! Bartholomew likes a fearless high-roller!',
+    'MAX STEAM PRESSURE! You’re swinging for the Fort Knox fences, lad!',
+  ],
+  streakWin: [
+    'Three consecutive paylines! The mint is singing like a brass steam organ!',
+    'Triple dividend on the ledger! Keep this up and I might give you stock options!',
+  ],
+  coldStreak: [
+    'Five dry spins in a row? Bah! Put some grease on those bearings and pull harder!',
+    'The furnace is losing pressure! Don’t just sit there, feed another gold coin to the hopper!',
+  ],
 };
 
 const GUS_LINES: CharacterLineMap = {
@@ -66,24 +92,90 @@ const GUS_LINES: CharacterLineMap = {
     'HOO HOO! Two moonlit owls on the high branch! One more hoot and the whole forest parties!',
     'Hold your breath, explorer! The canopy is shakin’ for that third scatter!',
   ],
+  nearMiss: [
+    'HOO-WEE! Two moonlit owls in a row! One more feather and the timber bonus was ours!',
+    'Gus almost dropped his flapjack! Two scatters lined up! Keep sawin’ that cedar!',
+  ],
+  maxBet: [
+    'WHOLE HOG WOODCUTTER! Maximum cords on the line! Let’s fell a giant redwood!',
+    'Hot maple syrup! Gus tips his beaver cap to a brave high-roller!',
+  ],
+  streakWin: [
+    'THREE IN A ROW! The camp dinner bell is ringin’ for fresh river trout!',
+    'A woodland hat trick! Gus is whistlin’ all the way to the sawmill!',
+  ],
+  coldStreak: [
+    'Just a dry breeze through the hemlocks! Keep sawdust in your boots, the next spin is ripe!',
+    'Don’t let a dry run spook ya! Even the grizzly has to sniff a few empty logs before the honey!',
+  ],
 };
+
+const ARCADE_LINES: CharacterLineMap = {
+  idle: [
+    'INSERT COIN, PLAYER 1! Don’t let your combo meter drop to zero on my watch!',
+    'That balltop joystick isn’t gonna wiggle itself! Pull for the 8-Bit Boss Stage!',
+    'Two years in this arcade and you might discover the secret warp pipe behind the coin door!',
+    'High score table is waiting! Put your three initials AAA right at the top!',
+    'Hey kid, the CRT phosphor is burning in! Spin those 6 mega-reels!',
+  ],
+  win: [
+    'COMBO STRIKE! +1,000 EXP points straight to your neighborhood arcade ledger!',
+    'Sweet 8-bit chimes! That payline hit harder than an invincibility power star!',
+    '1-UP! The token hopper is spitting sweet brass tokens into your cup!',
+  ],
+  bigWin: [
+    'STAGE CLEAR! BOSS DEFEATED! THE COIN HOPPER IS OVERFLOWING ONTO THE CARPET!',
+    'MAXIMUM OVERDRIVE! Holy pixel dust, that is an all-time tournament high score record!',
+  ],
+  anticipating: [
+    'WARNING! BOSS DETECTED! Two ROM cartridges locked in the slot! ONE MORE FOR BONUS STAGE!',
+    'CHIPTUNE INTENSIFIES! That 6th reel is spinning for the final cartridge strike!',
+  ],
+  nearMiss: [
+    'ALMOST HIT THE BONUS STAGE! 2 ROM Cartridges inserted, one more for extra lives!',
+    'WARNING! Boss stage almost unlocked! Don’t let your combo drop now!',
+  ],
+  maxBet: [
+    'TURBO OVERCLOCK ACTIVE! Max credits inserted! Going for the #1 tournament record!',
+    'MAXIMUM POWER-UP! That CRT tube is glowing with raw 8-bit energy!',
+  ],
+  streakWin: [
+    'TRIPLE COMBO STRIKE! +300% Multiplier bonus surging through the board!',
+    'CANNOT BE STOPPED! Three straight victories! Player 1 is on fire!',
+  ],
+  coldStreak: [
+    'Out of continues? No way! Tap that button rapid-fire, your streak is coming right back!',
+    'A few blank pixels never stopped a true arcade champion! Insert another coin and roll!',
+  ],
+};
+
+type SpeechCategory = 'idle' | 'win' | 'bigWin' | 'anticipating' | 'nearMiss' | 'maxBet' | 'streakWin' | 'quota' | 'coldStreak';
 
 export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
   activeGameId = 'vault-24k',
   isSpinning = false,
   isAnticipating = false,
+  isNearMiss = false,
+  isMaxBet = false,
+  consecutiveWins = 0,
   winAmount = 0,
   unlockedTier = null,
   onRewardCoins,
+  onClearUnlockedTier,
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
+
   const [isVisible, setIsVisible] = useState(false);
   const [speechText, setSpeechText] = useState('');
-  const [speechCategory, setSpeechCategory] = useState<'idle' | 'win' | 'bigWin' | 'anticipating' | 'quota'>('idle');
+  const [speechCategory, setSpeechCategory] = useState<SpeechCategory>('idle');
   const [quotaState, setQuotaState] = useState<QuotaState>(() => quotaManager.getState(activeGameId));
   const [isJiggling, setIsJiggling] = useState(false);
+
   const hideTimerRef = useRef<number | null>(null);
   const lastSpinTimeRef = useRef<number>(Date.now());
+  const lastPopupTimeRef = useRef<number>(0);
+  const consecutiveLossesRef = useRef<number>(0);
 
   // Listen to quota updates
   useEffect(() => {
@@ -95,33 +187,62 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
     return unsub;
   }, [activeGameId]);
 
-  // Track user inactivity (Idle Quota Nagging)
+  // Track user inactivity (Idle Quota Nagging - balanced to once every 50s)
   useEffect(() => {
     const checkIdle = setInterval(() => {
-      if (!isSpinning && !isVisible && Date.now() - lastSpinTimeRef.current > 25000) {
+      const now = Date.now();
+      if (!isSpinning && !isVisible && now - lastSpinTimeRef.current > 45000 && now - lastPopupTimeRef.current > 35000) {
         triggerPopup('idle');
-        lastSpinTimeRef.current = Date.now();
       }
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(checkIdle);
   }, [isSpinning, isVisible]);
 
-  // Handle spin events
+  // Handle spin events with balanced trigger filtering
   useEffect(() => {
+    const now = Date.now();
     if (isSpinning) {
-      lastSpinTimeRef.current = Date.now();
-      if (isAnticipating) {
+      lastSpinTimeRef.current = now;
+      if (isAnticipating && now - lastPopupTimeRef.current > 30000) {
         triggerPopup('anticipating');
       }
-    } else if (winAmount > 0) {
-      if (winAmount >= 500) {
-        triggerPopup('bigWin');
+    } else {
+      if (winAmount > 0) {
+        consecutiveLossesRef.current = 0;
+        // Big Wins trigger immediately
+        if (winAmount >= 1000) {
+          triggerPopup('bigWin');
+        } else if (consecutiveWins >= 3 && now - lastPopupTimeRef.current > 20000) {
+          triggerPopup('streakWin');
+        } else if (winAmount >= 300 && now - lastPopupTimeRef.current > 30000) {
+          triggerPopup('win');
+        }
       } else {
-        triggerPopup('win');
+        // Track near misses
+        if (isNearMiss && now - lastPopupTimeRef.current > 25000) {
+          triggerPopup('nearMiss');
+        } else {
+          // Track cold streaks (5 dry spins)
+          consecutiveLossesRef.current += 1;
+          if (consecutiveLossesRef.current >= 5 && now - lastPopupTimeRef.current > 35000) {
+            triggerPopup('coldStreak');
+            consecutiveLossesRef.current = 0;
+          }
+        }
       }
     }
-  }, [isSpinning, isAnticipating, winAmount]);
+  }, [isSpinning, isAnticipating, isNearMiss, winAmount, consecutiveWins]);
+
+  // Max bet trigger
+  useEffect(() => {
+    if (isMaxBet) {
+      const now = Date.now();
+      if (now - lastPopupTimeRef.current > 35000) {
+        triggerPopup('maxBet');
+      }
+    }
+  }, [isMaxBet]);
 
   // Handle newly unlocked tier celebration
   useEffect(() => {
@@ -130,13 +251,17 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
       if (onRewardCoins) {
         onRewardCoins(unlockedTier.coinReward);
       }
+      if (onClearUnlockedTier) {
+        onClearUnlockedTier();
+      }
     }
   }, [unlockedTier]);
 
-  const triggerPopup = (category: 'idle' | 'win' | 'bigWin' | 'anticipating' | 'quota', customText?: string) => {
+  const triggerPopup = (category: SpeechCategory, customText?: string) => {
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    lastPopupTimeRef.current = Date.now();
 
-    const pool = isTimber ? GUS_LINES : BARON_LINES;
+    const pool = isTimber ? GUS_LINES : isPixel ? ARCADE_LINES : BARON_LINES;
     const list = (category !== 'quota' ? pool[category] : undefined) || pool.idle;
     const text = customText || list[Math.floor(Math.random() * list.length)] || pool.idle[0];
 
@@ -144,24 +269,24 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
     setSpeechCategory(category);
     setIsVisible(true);
     setIsJiggling(true);
-    setTimeout(() => setIsJiggling(false), 800);
+    setTimeout(() => setIsJiggling(false), 700);
 
     // Audio cue
     soundManager.playPuppetBoing();
     setTimeout(() => {
       soundManager.playPuppetQuip();
-    }, 180);
+    }, 160);
 
     // Auto hide after 8 seconds
     hideTimerRef.current = window.setTimeout(() => {
       setIsVisible(false);
-    }, 8500);
+    }, 8000);
   };
 
   const handleCharacterClick = () => {
     soundManager.playPuppetBoing();
     setIsJiggling(true);
-    setTimeout(() => setIsJiggling(false), 600);
+    setTimeout(() => setIsJiggling(false), 500);
     triggerPopup('idle');
   };
 
@@ -177,144 +302,158 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-14 sm:bottom-16 left-2 sm:left-6 z-50 pointer-events-auto flex items-end space-x-2 select-none animate-slide-in-up">
-      {/* 1. Pin-Joint Articulated Puppet Bust Sprite */}
+    <div className="fixed bottom-16 sm:bottom-20 right-2 sm:right-6 md:right-8 z-40 pointer-events-auto flex flex-row-reverse items-end space-x-reverse space-x-2 select-none animate-slide-in-up max-w-[92vw] sm:max-w-md">
+      {/* 1. Pin-Joint Articulated Boss Standee Sprite (Anchored to Bottom-Right Corner) */}
       <div
         onClick={handleCharacterClick}
-        className={`relative cursor-pointer group transition-transform duration-300 ${
+        className={`relative cursor-pointer group transition-transform duration-300 flex-shrink-0 ${
           isJiggling ? 'animate-bounce' : 'hover:scale-105'
         }`}
         title="Click to interact with the Boss!"
       >
         {/* Grungy Brass Pin-Joint Rivets Overlay */}
-        <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 to-amber-700 border border-black shadow z-30 flex items-center justify-center">
+        <div className="absolute -top-1 -left-1 w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 to-amber-700 border border-black shadow z-30 flex items-center justify-center">
           <div className="w-1 h-1 rounded-full bg-amber-950" />
         </div>
-        <div className="absolute top-1/2 -left-1 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-700 border border-black shadow z-30 flex items-center justify-center">
+        <div className="absolute top-1/2 -right-1 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-700 border border-black shadow z-30 flex items-center justify-center">
           <div className="w-0.5 h-0.5 rounded-full bg-amber-950" />
         </div>
 
-        {/* Steampunk Cigar Smoke Plume (Baron Only) */}
-        {!isTimber && (
-          <div className="absolute -top-6 right-3 pointer-events-none z-20 flex flex-col items-center">
-            <span className="w-2.5 h-2.5 rounded-full bg-white/40 filter blur-xs animate-ping" />
-            <span className="w-3.5 h-3.5 rounded-full bg-cyan-200/30 filter blur-sm animate-pulse -mt-1" />
-          </div>
-        )}
-
         {/* Character Puppet Frame Card */}
         <div
-          className={`w-24 h-28 sm:w-28 sm:h-32 rounded-2xl overflow-hidden border-2 shadow-2xl relative p-1 ${
+          className={`w-20 h-24 sm:w-24 sm:h-28 rounded-2xl overflow-hidden border-2 shadow-2xl relative p-0.5 ${
             isTimber
               ? 'bg-gradient-to-b from-[#3d1e0b] via-[#1f0f05] to-black border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.5)]'
+              : isPixel
+              ? 'bg-gradient-to-b from-purple-950 via-slate-950 to-black border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.6)]'
               : 'bg-gradient-to-b from-amber-950 via-slate-900 to-black border-yellow-400 shadow-[0_0_25px_rgba(245,158,11,0.7)]'
           }`}
         >
           {/* Authentic Cutout Puppet Illustration */}
-          <img
-            src={isTimber ? './assets/grizzly_gus.jpg' : './baron_sterling.jpg'}
-            alt={isTimber ? 'Grizzly Gus' : 'Baron Bartholomew Sterling'}
-            className="w-full h-full object-cover object-top rounded-xl filter drop-shadow-md"
-            onError={(e) => {
-              // Fallback if image path differences occur
-              (e.target as HTMLImageElement).src = isTimber ? '/assets/grizzly_gus.jpg' : '/baron_sterling.jpg';
-            }}
-          />
+          {isPixel ? (
+            <div className="w-full h-full bg-gradient-to-b from-purple-900 via-indigo-950 to-black rounded-xl flex flex-col items-center justify-center p-1 text-center border border-pink-500/40">
+              <span className="text-3xl filter drop-shadow animate-pulse">👾</span>
+              <span className="text-[7px] font-black uppercase tracking-wider text-pink-300 mt-1 font-mono">
+                ARCADE BOSS
+              </span>
+            </div>
+          ) : (
+            <img
+              src={isTimber ? gusImg : baronImg}
+              alt={isTimber ? 'Grizzly Gus' : 'Baron Bartholomew Sterling'}
+              className="w-full h-full object-cover object-top rounded-xl filter drop-shadow-md"
+            />
+          )}
 
           {/* Nameplate Pill */}
           <div
-            className={`absolute bottom-1 inset-x-1.5 py-0.5 rounded-md text-[7.5px] font-black uppercase text-center border shadow-md ${
+            className={`absolute bottom-0.5 inset-x-0.5 py-0.5 rounded-md text-[6.5px] font-black uppercase text-center border shadow-md truncate ${
               isTimber
                 ? 'bg-[#2b1407]/95 text-amber-200 border-amber-600/60'
+                : isPixel
+                ? 'bg-purple-950/95 text-pink-300 border-pink-500/70'
                 : 'bg-casino-950/95 text-yellow-300 border-yellow-500/70'
             }`}
           >
-            {isTimber ? '🌲 GRIZZLY GUS' : '⚙️ BARON STERLING'}
+            {isTimber ? '🌲 GRIZZLY GUS' : isPixel ? '👾 BIT-CRUSHER' : '⚙️ BARON STERLING'}
           </div>
         </div>
       </div>
 
       {/* 2. Comic Speech Bubble & Unreasonable Quota Progress */}
-      <div className="relative max-w-xs sm:max-w-sm mb-4">
-        {/* Comic Pointer Triangle */}
+      <div className="relative flex-1 min-w-0 max-w-xs sm:max-w-sm mb-1">
+        {/* Comic Pointer Triangle (Pointing to the right toward the Boss) */}
         <div
-          className={`absolute -left-2 bottom-4 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-b-8 border-b-transparent ${
-            isTimber ? 'border-r-[#1e1008]' : 'border-r-slate-900'
+          className={`absolute -right-2 bottom-4 w-0 h-0 border-t-8 border-t-transparent border-l-8 border-b-8 border-b-transparent ${
+            isTimber ? 'border-l-[#1e1008]' : isPixel ? 'border-l-[#1a0836]' : 'border-l-slate-900'
           }`}
         />
 
         {/* Main Dialogue Speech Box */}
         <div
-          className={`p-3 rounded-2xl border-2 shadow-2xl relative backdrop-blur-md ${
+          className={`p-2.5 sm:p-3 rounded-2xl border-2 shadow-2xl relative backdrop-blur-md ${
             isTimber
               ? 'bg-[#180d06]/95 border-amber-500/80 shadow-[0_4px_25px_rgba(0,0,0,0.95)]'
+              : isPixel
+              ? 'bg-[#120524]/95 border-pink-500/80 shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
               : 'bg-slate-950/95 border-yellow-400/90 shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
           }`}
         >
           {/* Header Bar with Category Tag & Dismiss X */}
-          <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/10">
-            <div className="flex items-center space-x-1">
-              <span className="text-xs">
-                {speechCategory === 'quota' ? '🏆' : speechCategory === 'bigWin' ? '🔥' : '💬'}
+          <div className="flex items-center justify-between pb-1 mb-1 border-b border-white/10">
+            <div className="flex items-center space-x-1 truncate">
+              <span className="text-xs flex-shrink-0">
+                {speechCategory === 'quota'
+                  ? '🏆'
+                  : speechCategory === 'bigWin' || speechCategory === 'streakWin'
+                  ? '🔥'
+                  : speechCategory === 'nearMiss'
+                  ? '⚡'
+                  : '💬'}
               </span>
               <span
-                className={`text-[8.5px] font-black uppercase tracking-wider ${
-                  isTimber ? 'text-emerald-300' : 'text-amber-300'
+                className={`text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider truncate ${
+                  speechCategory === 'quota'
+                    ? 'text-yellow-400 animate-pulse font-bold'
+                    : isTimber
+                    ? 'text-amber-300'
+                    : isPixel
+                    ? 'text-pink-300'
+                    : 'text-yellow-300'
                 }`}
               >
                 {speechCategory === 'quota'
                   ? 'QUOTA MILESTONE UNLOCKED!'
                   : speechCategory === 'bigWin'
-                  ? 'JACKPOT REACTION'
-                  : speechCategory === 'anticipating'
-                  ? 'HIGH TENSION LOCK'
-                  : 'BOSS COMMENTARY'}
+                  ? 'JACKPOT ALERT!'
+                  : speechCategory === 'streakWin'
+                  ? 'WINNING STREAK!'
+                  : speechCategory === 'nearMiss'
+                  ? 'NEAR MISS ALERT!'
+                  : isTimber
+                  ? 'GUS SHOUTS'
+                  : isPixel
+                  ? 'ARCADE OPERATOR'
+                  : 'BARON STERLING'}
               </span>
             </div>
 
             <button
               onClick={handleDismiss}
-              className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-              title="Dismiss dialogue"
+              className="w-4 h-4 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors flex-shrink-0 ml-1"
+              title="Dismiss"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-2.5 h-2.5" />
             </button>
           </div>
 
-          {/* Speech Text */}
-          <p className="text-[11px] sm:text-xs font-bold leading-snug text-slate-100 font-sans tracking-wide">
-            “{speechText}”
+          {/* Dialogue Text */}
+          <p className="text-[10px] sm:text-[11px] font-bold leading-snug text-white/95 mb-1.5 font-sans italic">
+            "{speechText}"
           </p>
 
-          {/* Unreasonable Quota Progress Tracker */}
-          <div className="mt-2.5 pt-2 border-t border-white/10 flex flex-col space-y-1">
-            <div className="flex items-center justify-between text-[8px] font-mono font-bold">
-              <span className="text-amber-300 uppercase truncate">
-                QUOTA TIER {quotaState.currentTierIndex + 1}: {curTier.name}
+          {/* Unreasonable Quota Progress Bar */}
+          <div className="pt-1 border-t border-white/10">
+            <div className="flex items-center justify-between text-[7px] sm:text-[7.5px] font-mono text-white/70 mb-0.5">
+              <span className="truncate uppercase font-bold text-amber-300 max-w-[170px] sm:max-w-[210px]">
+                TIER {curTier.tier}: {curTier.name}
               </span>
-              <span className="text-slate-300 ml-1 flex-shrink-0 font-black">
-                {progressPercent}%
+              <span className="font-bold text-yellow-300 ml-1 flex-shrink-0">
+                {quotaState.currentPoints.toLocaleString()} / {curTier.targetPoints.toLocaleString()} pts
               </span>
             </div>
 
-            {/* Quota Progress Bar */}
-            <div className="w-full h-1.5 rounded-full bg-black/80 border border-white/10 overflow-hidden">
+            <div className="w-full bg-black/60 h-1.5 sm:h-2 rounded-full overflow-hidden p-0.5 border border-white/20">
               <div
-                className={`h-full rounded-full transition-all duration-300 shadow-sm ${
+                className={`h-full rounded-full transition-all duration-500 shadow-sm ${
                   isTimber
-                    ? 'bg-gradient-to-r from-emerald-500 to-amber-400'
-                    : 'bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500'
+                    ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-300'
+                    : isPixel
+                    ? 'bg-gradient-to-r from-purple-500 via-pink-400 to-cyan-300'
+                    : 'bg-gradient-to-r from-amber-600 via-yellow-400 to-yellow-200'
                 }`}
                 style={{ width: `${progressPercent}%` }}
               />
-            </div>
-
-            {/* Next Perk Reward */}
-            <div className="text-[7.5px] font-mono text-slate-400 flex items-center justify-between">
-              <span className="truncate">Reward: +{curTier.coinReward.toLocaleString()} coins</span>
-              <span className="text-amber-400 font-black flex-shrink-0">
-                {quotaState.currentPoints.toLocaleString()} / {curTier.targetPoints.toLocaleString()} pts
-              </span>
             </div>
           </div>
         </div>

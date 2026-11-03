@@ -47,6 +47,7 @@ const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export const App: React.FC = () => {
   const [unlockedQuotaTier, setUnlockedQuotaTier] = useState<QuotaTier | null>(null);
+  const [consecutiveWins, setConsecutiveWins] = useState<number>(0);
   // --- Persistent Storage State (Dual LocalStorage + Cookie Mirroring) ---
   const [balance, setBalance] = useState<number>(() =>
     storage.getNumber('sloty_balance', 50000)
@@ -408,6 +409,7 @@ export const App: React.FC = () => {
     // Reliably credit win amount to player's balance!
     const nextBalance = balance + totalPayout;
     if (totalPayout > 0) {
+      setConsecutiveWins((w) => w + 1);
       setBalance((b) => b + totalPayout);
       setWinAmount(totalPayout);
       setStats((s) => ({
@@ -434,6 +436,8 @@ export const App: React.FC = () => {
           launchCoinFountain('big');
         }
       }
+    } else {
+      setConsecutiveWins(0);
     }
 
     // Update Unreasonable Boss / Camp Quota System
@@ -935,21 +939,25 @@ export const App: React.FC = () => {
         </footer>
       </div>
 
-      {/* Corny Pin-Joint Puppet Character Pop-Up (Baron Bartholomew Sterling & Grizzly Gus) */}
+      {/* Corny Pin-Joint Puppet Character Pop-Up (Baron Bartholomew Sterling, Grizzly Gus & Bit-Crusher) */}
       <PuppetCharacterPopup
         activeGameId={activeGameId}
         isSpinning={isSpinning}
         isAnticipating={
           isSpinning &&
-          !!currentGrid[0]?.includes(activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER') &&
-          !!currentGrid[1]?.includes(activeGameId === 'timber-critters' ? 'OWL' : 'SCATTER')
+          !!currentGrid[0]?.includes(activeGameId === 'timber-critters' ? 'OWL' : activeGameId === 'pixel-arcade' ? 'PIXEL_CARTRIDGE' : 'SCATTER') &&
+          !!currentGrid[1]?.includes(activeGameId === 'timber-critters' ? 'OWL' : activeGameId === 'pixel-arcade' ? 'PIXEL_CARTRIDGE' : 'SCATTER')
         }
+        isNearMiss={!isSpinning && !!spinResult && spinResult.scatterCount === 2}
+        isMaxBet={totalBet >= progression.maxBet}
+        consecutiveWins={consecutiveWins}
         winAmount={spinResult?.totalPayout || 0}
         unlockedTier={unlockedQuotaTier}
         onRewardCoins={(amount) => {
           setBalance((b) => b + amount);
           soundManager.playCoinTally();
         }}
+        onClearUnlockedTier={() => setUnlockedQuotaTier(null)}
       />
 
       {/* --- Modals & Overlays --- */}

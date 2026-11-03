@@ -9,6 +9,8 @@ import { SlotLever } from './SlotLever';
 import { ColossalSceneSlide } from '../scenes/ColossalSceneSlide';
 import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
 import { HeroWinCelebration } from './HeroWinCelebration';
+import { CabinetFrameOverlay } from './CabinetFrameOverlay';
+import { CabinetGlassOverlay } from './CabinetGlassOverlay';
 import { soundManager } from '../../audio/soundManager';
 import { ChevronLeft, ChevronRight, Award, Film, Trophy } from 'lucide-react';
 import { SYMBOLS } from '../../engine/symbols';
@@ -56,10 +58,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 }) => {
   const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
   const rowCount = gameDef.rows;
+  const numReels = gameDef.reels || 5;
   const totalLines = gameDef.defaultLines;
-  // Track spinning state per reel [0..4]
-  const [reelSpinning, setReelSpinning] = useState<boolean[]>([false, false, false, false, false]);
+
+  // Track spinning state per reel dynamically
+  const [reelSpinning, setReelSpinning] = useState<boolean[]>(() => Array(numReels).fill(false));
   const [activeWinningLineIdx, setActiveWinningLineIdx] = useState<number | null>(null);
   const [hoveredLineIndex, setHoveredLineIndex] = useState<number | null>(null);
   const [isColossalSlideOpen, setIsColossalSlideOpen] = useState(false);
@@ -82,20 +87,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     timersRef.current = [];
 
     soundManager.stopSpinRollLoop();
-    setReelSpinning([false, false, false, false, false]);
-    soundManager.playReelStop(4);
+    setReelSpinning(Array(numReels).fill(false));
+    soundManager.playReelStop(numReels - 1);
     setIsCabinetSlamming(true);
     setTimeout(() => setIsCabinetSlamming(false), 380);
 
     if (onAllReelsStoppedRef.current) {
       onAllReelsStoppedRef.current();
     }
-  }, []);
+  }, [numReels]);
 
-  // Handle spin start and staggered stopping schedule
+  // Handle spin start and staggered stopping schedule with longer, more satisfying spin duration
   useEffect(() => {
     if (isSpinning) {
-      setReelSpinning([true, true, true, true, true]);
+      setReelSpinning(Array(numReels).fill(true));
       setActiveWinningLineIdx(null);
       setHoveredLineIndex(null);
 
@@ -106,17 +111,23 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       timersRef.current = [];
 
       // Check if reels hit scatters for suspense anticipation excitement
-      const scatterSym = isTimber ? 'OWL' : 'SCATTER';
+      const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : 'SCATTER';
       const hasScatter0 = currentGrid[0]?.includes(scatterSym);
       const hasScatter1 = currentGrid[1]?.includes(scatterSym);
       const anticipation = hasScatter0 && hasScatter1;
 
-      // Realistic casino spin durations: ~2s total for watchable, dramatic roll
-      const baseDelays = isTurbo
-        ? [180, 320, 460, 600, 750]
-        : anticipation
-        ? [800, 1150, 2000, 2550, 3100] // Extended suspense build-up
-        : [800, 1150, 1450, 1750, 2050];
+      // Realistic casino spin durations: satisfying 2.8s - 3.8s total roll for dramatic gameplay
+      const baseDelays = Array.from({ length: numReels }, (_, i) => {
+        if (isTurbo) {
+          return 350 + i * 180;
+        }
+        if (anticipation && i >= 2) {
+          // Extended suspense build-up when 2 scatters hit
+          return 1900 + (i - 1) * 750;
+        }
+        // Satisfying mechanical deceleration: Reel 0 rolls for 1,400ms, then +450ms per reel
+        return 1400 + i * 450;
+      });
 
       baseDelays.forEach((delay, reelIdx) => {
         const timerId = window.setTimeout(() => {
@@ -358,30 +369,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 : 'bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 shadow-[0_0_50px_rgba(245,158,11,0.6)] border-2 border-yellow-400'
               : isTimber
               ? 'bg-gradient-to-b from-[#182a1d] via-[#0d1810] to-[#050a06] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-emerald-700/60'
+              : isPixel
+              ? 'bg-gradient-to-b from-[#16062c] via-[#0c031a] to-[#05010b] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-purple-500/80 shadow-[0_0_35px_rgba(139,92,246,0.5)]'
               : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
           }`}
         >
-          {/* 4 Ornate Corner Brackets: Forged Iron for Timber, Polished Gold for Vault */}
-          <div className={`absolute top-1.5 left-1.5 w-6 h-6 border-t-3 border-l-3 rounded-tl pointer-events-none z-30 flex items-start justify-start p-0.5 ${
-            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
-          </div>
-          <div className={`absolute top-1.5 right-1.5 w-6 h-6 border-t-3 border-r-3 rounded-tr pointer-events-none z-30 flex items-start justify-end p-0.5 ${
-            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
-          </div>
-          <div className={`absolute bottom-1.5 left-1.5 w-6 h-6 border-b-3 border-l-3 rounded-bl pointer-events-none z-30 flex items-end justify-start p-0.5 ${
-            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
-          </div>
-          <div className={`absolute bottom-1.5 right-1.5 w-6 h-6 border-b-3 border-r-3 rounded-br pointer-events-none z-30 flex items-end justify-end p-0.5 ${
-            isTimber ? 'border-[#b45309]' : 'border-yellow-300'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${isTimber ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B]' : 'bg-yellow-200 shadow-[0_0_6px_#FEF08A]'}`} />
-          </div>
+          {/* Authentic Physical Cabinet Hardware Overlay (Hand-forged brackets / Art-deco brass / Neon cyber corners) */}
+          <CabinetFrameOverlay
+            activeGameId={activeGameId}
+            isSpinning={isAnyReelSpinning}
+            isFeverMode={isFeverMode}
+          />
 
           {/* Special Effects: Hydraulic Steam Vents / Living Woodland Canopy & Critter Eyes */}
           <CabinetVentsAndWoodsFX
@@ -558,11 +556,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             isTimber={isTimber}
           />
 
-          {/* The 5 Animated Reels with SVG Payline Canvas */}
+          {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(240px,50vh,460px)] sm:h-[clamp(360px,62vh,680px)] md:h-[clamp(410px,66vh,740px)] xl:h-[clamp(450px,70vh,820px)] 2xl:h-[clamp(490px,74vh,880px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(280px,56vh,520px)] sm:h-[clamp(360px,62vh,680px)] md:h-[clamp(410px,66vh,740px)] xl:h-[clamp(450px,70vh,820px)] 2xl:h-[clamp(490px,74vh,880px)] ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
+                : isPixel
+                ? 'bg-[#0f0524] border-2 border-purple-500/70 shadow-[inset_0_0_35px_rgba(0,0,0,0.98)]'
                 : 'bg-casino-950/95 border-white/10'
             }`}
             style={
@@ -580,9 +580,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               activeLineIndex={!isAnyReelSpinning ? activeWinningLineIdx : null}
               previewLineIndex={hoveredLineIndex}
               rowCount={rowCount}
+              reelsCount={numReels}
               paylines={gameDef.paylines}
               isTimber={isTimber}
             />
+
+            {/* Physical Cabinet Glass Depth Overlay (Cylindrical softbox reflection, studio streak & divider mullions) */}
+            <CabinetGlassOverlay activeGameId={activeGameId} reelsCount={numReels} />
 
             {/* Floating Win Badges on Active Winning Paylines */}
             {!isAnyReelSpinning && activeWin && (
@@ -600,7 +604,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               />
             )}
 
-            {/* Full Slot Panoramic Scene Slide (Middle 3 Reels Merge) */}
+            {/* Full Slot Panoramic Scene Slide (Middle Reels Merge) */}
             {isColossalSlideOpen && !isAnyReelSpinning && (
               <div className="absolute inset-x-16 sm:inset-x-24 inset-y-2 z-25">
                 <ColossalSceneSlide
@@ -611,12 +615,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
             )}
 
-            {/* 5 Reels */}
-            {[0, 1, 2, 3, 4].map((reelIdx) => (
+            {/* Dynamic Reels (5 Reels for Vault & Timberland, 6 Reels for Pixel Arcade) */}
+            {Array.from({ length: numReels }, (_, reelIdx) => (
               <Reel
                 key={reelIdx}
                 reelIndex={reelIdx}
-                symbols={currentGrid[reelIdx]}
+                symbols={currentGrid[reelIdx] || []}
                 isSpinning={reelSpinning[reelIdx]}
                 isAnticipating={isAnticipating && reelIdx >= 2 && reelSpinning[reelIdx]}
                 isDimmed={isAnticipating && isAnyReelSpinning && !reelSpinning[reelIdx]}

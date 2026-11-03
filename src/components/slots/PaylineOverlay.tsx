@@ -7,6 +7,7 @@ interface PaylineOverlayProps {
   activeLineIndex: number | null; // null means show all winning lines softly or cycle
   previewLineIndex: number | null; // preview a payline when player hovers a side tab
   rowCount?: number;
+  reelsCount?: number;
   paylines?: Payline[];
   paylineColors?: string[];
   isTimber?: boolean;
@@ -17,6 +18,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   activeLineIndex,
   previewLineIndex,
   rowCount = 4,
+  reelsCount = 5,
   paylines = PAYLINES,
   paylineColors = PAYLINE_COLORS,
   isTimber = false,
@@ -26,9 +28,9 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
     return null;
   }
 
-  // 5 reels (columns 0..4 = 20% each), dynamic rows (3 rows = 33.33% each, 4 rows = 25% each)
+  // Dynamic reels (100 / reelsCount) and dynamic rows (100 / rowCount)
   const getCellCenterPercent = (reel: number, row: number): [number, number] => {
-    const x = (reel + 0.5) * 20;
+    const x = (reel + 0.5) * (100 / reelsCount);
     const y = (row + 0.5) * (100 / rowCount);
     return [x, y];
   };

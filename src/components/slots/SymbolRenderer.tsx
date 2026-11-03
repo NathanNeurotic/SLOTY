@@ -385,27 +385,44 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Bottom Left Bullion Bar */}
-            <polygon points="10,64 54,64 44,86 2,86" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
-            <polygon points="54,64 64,69 54,91 44,86" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
+            <polygon points="10,60 54,60 44,80 2,80" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
+            <polygon points="54,60 64,65 54,85 44,80" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
 
             {/* Bottom Right Bullion Bar */}
-            <polygon points="46,64 90,64 80,86 36,86" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
-            <polygon points="90,64 98,69 88,91 80,86" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
+            <polygon points="46,60 90,60 80,80 36,80" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
+            <polygon points="90,60 98,65 88,85 80,80" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
 
             {/* Center Pyramid Top Bullion Bar */}
-            <polygon points="26,30 74,30 62,56 14,56" fill="url(#bullionGoldB)" stroke="#FFF" strokeWidth="2" />
-            <polygon points="74,30 86,37 74,63 62,56" fill="#78350F" stroke="#FEF08A" strokeWidth="1.2" />
+            <polygon points="26,24 74,24 62,52 14,52" fill="url(#bullionGoldB)" stroke="#FFF" strokeWidth="2" />
+            <polygon points="74,24 86,31 74,59 62,52" fill="#78350F" stroke="#FEF08A" strokeWidth="1.2" />
 
-            {/* Top Bar Stamped 24K Bullion Hallmark */}
-            <ellipse cx="44" cy="43" rx="16" ry="7" fill="#78350F" opacity="0.35" />
-            <ellipse cx="44" cy="43" rx="14" ry="5.5" fill="none" stroke="#FEF08A" strokeWidth="0.8" />
-            <text x="44" y="46" textAnchor="middle" fill="#FFFBEB" stroke="#451A03" strokeWidth="0.6" fontWeight="900" fontSize="8" fontFamily="sans-serif" letterSpacing="1" style={{ paintOrder: 'stroke fill' }}>
+            {/* Top Bar Embossed Mint Seal Medallion */}
+            <ellipse cx="44" cy="38" rx="14" ry="7.5" fill="#78350F" opacity="0.35" />
+            <ellipse cx="44" cy="38" rx="12" ry="6" fill="none" stroke="#FEF08A" strokeWidth="0.8" />
+            <polygon points="44,34 45.5,37 48.5,37 46,38.5 47,41.5 44,39.5 41,41.5 42,38.5 39.5,37 42.5,37" fill="#FEF08A" />
+
+            {/* Base Horizontal 24K Gold Cartouche Plaque (Text strictly contained inside frame) */}
+            <rect x="16" y="74" width="68" height="20" rx="5" fill="#1C1408" stroke="#F59E0B" strokeWidth="2" />
+            <rect x="18" y="76" width="64" height="16" rx="3.5" fill="#2E180E" stroke="#FEF08A" strokeWidth="0.8" />
+            <text
+              x="50"
+              y="88"
+              textAnchor="middle"
+              fill="#FDE047"
+              stroke="#451A03"
+              strokeWidth="0.6"
+              fontWeight="900"
+              fontSize="9.5"
+              fontFamily="sans-serif"
+              letterSpacing="1.8"
+              style={{ paintOrder: 'stroke fill' }}
+            >
               24K GOLD
             </text>
 
             {/* Specular Starbursts */}
-            <polygon points="26,30 28,34 33,35 28,36 26,41 24,36 19,35 24,34" fill="#FFFFFF" />
-            <polygon points="74,30 76,34 81,35 76,36 74,41 72,36 67,35 72,34" fill="#FFFFFF" />
+            <polygon points="26,24 28,28 33,29 28,30 26,35 24,30 19,29 24,28" fill="#FFFFFF" />
+            <polygon points="74,24 76,28 81,29 76,30 74,35 72,30 67,29 72,28" fill="#FFFFFF" />
           </svg>
         );
 
@@ -481,9 +498,16 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="20,26 86,26 74,50 8,50" fill="url(#brickGreenA)" stroke="#FFF" strokeWidth="2" />
             <polygon points="86,26 98,33 86,57 74,50" fill="#14532D" stroke="#15803D" strokeWidth="1.2" />
 
-            {/* Federal Reserve Security Band */}
+            {/* Federal Reserve Security Band & Embossed Reserve Seal */}
             <polygon points="44,26 62,26 52,50 34,50" fill="url(#fedBandBlue)" stroke="#FEF08A" strokeWidth="1.4" />
-            <text x="48" y="40.5" textAnchor="middle" fill="#FEF08A" stroke="#0F172A" strokeWidth="0.8" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="0.8" style={{ paintOrder: 'stroke fill' }}>
+            <circle cx="48" cy="38" r="7" fill="#0C4A6E" stroke="#FEF08A" strokeWidth="1.2" />
+            <text x="48" y="41" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="7.5" fontFamily="sans-serif">
+              $
+            </text>
+
+            {/* Base Horizontal Stamped Plaque (Strictly bounded) */}
+            <rect x="20" y="72" width="60" height="18" rx="4" fill="#0C4A6E" stroke="#38BDF8" strokeWidth="1.5" />
+            <text x="50" y="84.5" textAnchor="middle" fill="#BAE6FD" fontWeight="900" fontSize="8.5" fontFamily="sans-serif" letterSpacing="1">
               $10,000
             </text>
           </svg>
@@ -551,10 +575,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Ingot 3 (Top) */}
             <polygon points="26,22 74,22 64,40 16,40" fill="url(#ingotBarA)" stroke="#FFF" strokeWidth="1.8" />
 
-            {/* Top Bar Engraved Seal */}
-            <ellipse cx="45" cy="31" rx="14" ry="5" fill="#78350F" opacity="0.3" />
-            <text x="45" y="33.5" textAnchor="middle" fill="#FFFBEB" stroke="#78350F" strokeWidth="0.5" fontWeight="900" fontSize="6.5" fontFamily="sans-serif" letterSpacing="1" style={{ paintOrder: 'stroke fill' }}>
-              24K FINE
+            {/* Top Bar Embossed Mint Seal */}
+            <ellipse cx="45" cy="31" rx="14" ry="5.5" fill="#78350F" opacity="0.35" />
+            <ellipse cx="45" cy="31" rx="11" ry="4" fill="none" stroke="#FEF08A" strokeWidth="0.8" />
+            <circle cx="45" cy="31" r="2.5" fill="#FEF08A" />
+
+            {/* Base Horizontal Ingot Inscription Plaque */}
+            <rect x="22" y="72" width="56" height="16" rx="4" fill="#1C1408" stroke="#F59E0B" strokeWidth="1.2" />
+            <text x="50" y="83" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1">
+              FINE GOLD
             </text>
 
             <polygon points="70,24 72,28 77,29 72,30 70,35 68,30 63,29 68,28" fill="#FFFFFF" />
@@ -1168,6 +1197,255 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           </svg>
         );
 
+      // =========================================================================
+      // --- PIXEL ARCADE 8-BIT RETRO VIDEO GAME SYMBOLS ---
+      // =========================================================================
+      case 'CYBER_WILD':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="starPixelGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="25%" stopColor="#FDE047" />
+                <stop offset="65%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#B45309" />
+              </linearGradient>
+            </defs>
+            {/* 8-Bit Pixelated Star Outline & Body */}
+            <path
+              d="M50 10 L58 30 L80 30 L62 44 L68 66 L50 52 L32 66 L38 44 L20 30 L42 30 Z"
+              fill="url(#starPixelGold)"
+              stroke="#FFF"
+              strokeWidth="2.5"
+              strokeLinejoin="miter"
+            />
+            {/* 8-Bit Pixel Eyes */}
+            <rect x="42" y="34" width="4" height="9" fill="#000" />
+            <rect x="42" y="34" width="4" height="3" fill="#FFF" />
+            <rect x="54" y="34" width="4" height="9" fill="#000" />
+            <rect x="54" y="34" width="4" height="3" fill="#FFF" />
+            {/* Scanline CRT Highlights */}
+            <line x1="30" y1="36" x2="70" y2="36" stroke="#FEF08A" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+            {/* WILD Plaque Badge */}
+            <rect x="15" y="72" width="70" height="20" rx="4" fill="#0B031C" stroke="#F59E0B" strokeWidth="2" />
+            <rect x="17" y="74" width="66" height="16" rx="2.5" fill="#2E1065" stroke="#FDE047" strokeWidth="0.8" />
+            <text x="50" y="86.5" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="11" fontFamily="'Courier New', monospace" letterSpacing="2.5">
+              WILD
+            </text>
+          </svg>
+        );
+
+      case 'PIXEL_CARTRIDGE':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="cartridgeGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FDE047" />
+                <stop offset="50%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#78350F" />
+              </linearGradient>
+            </defs>
+            {/* Golden 8-Bit Cartridge Body */}
+            <rect x="20" y="14" width="60" height="60" rx="5" fill="url(#cartridgeGold)" stroke="#FFF" strokeWidth="2" />
+            {/* Cartridge Top Grip Ridges */}
+            <line x1="28" y1="20" x2="72" y2="20" stroke="#78350F" strokeWidth="2" />
+            <line x1="28" y1="24" x2="72" y2="24" stroke="#78350F" strokeWidth="2" />
+            <line x1="28" y1="28" x2="72" y2="28" stroke="#78350F" strokeWidth="2" />
+            {/* Holographic Label */}
+            <rect x="26" y="32" width="48" height="34" rx="2" fill="#090514" stroke="#06B6D4" strokeWidth="1.5" />
+            <text x="50" y="47" textAnchor="middle" fill="#06B6D4" fontWeight="900" fontSize="8" fontFamily="'Courier New', monospace" letterSpacing="1">
+              BONUS
+            </text>
+            <text x="50" y="58" textAnchor="middle" fill="#F43F5E" fontWeight="900" fontSize="7" fontFamily="'Courier New', monospace">
+              STAGE
+            </text>
+            {/* Bottom Connector Pins */}
+            <rect x="30" y="74" width="40" height="4" fill="#E2E8F0" stroke="#475569" strokeWidth="0.8" />
+            {/* SCATTER Base Badge */}
+            <rect x="12" y="74" width="76" height="19" rx="4" fill="#020617" stroke="#06B6D4" strokeWidth="1.8" />
+            <text x="50" y="87.5" textAnchor="middle" fill="#38BDF8" fontWeight="900" fontSize="10" fontFamily="'Courier New', monospace" letterSpacing="2">
+              SCATTER
+            </text>
+          </svg>
+        );
+
+      case 'RETRO_TOKEN':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="tokenBrass" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="30%" stopColor="#FBBF24" />
+                <stop offset="70%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#78350F" />
+              </linearGradient>
+            </defs>
+            {/* Heavy Ribbed Arcade Token */}
+            <circle cx="50" cy="46" r="38" fill="url(#tokenBrass)" stroke="#FEF08A" strokeWidth="2.5" />
+            <circle cx="50" cy="46" r="32" fill="#92400E" stroke="#FEF08A" strokeWidth="1" strokeDasharray="4 2" />
+            <circle cx="50" cy="46" r="26" fill="url(#tokenBrass)" stroke="#FEF08A" strokeWidth="1.5" />
+            {/* 1UP Star Emblem */}
+            <polygon points="50,32 54,40 62,40 56,45 58,54 50,49 42,54 44,45 38,40 46,40" fill="#FFF" />
+            {/* Base Plaque Badge */}
+            <rect x="16" y="74" width="68" height="19" rx="4" fill="#1C1408" stroke="#F59E0B" strokeWidth="2" />
+            <text x="50" y="87.5" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="10.5" fontFamily="'Courier New', monospace" letterSpacing="2">
+              1-UP TOKEN
+            </text>
+          </svg>
+        );
+
+      case 'BOSS_DRAGON':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="dragonRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#F87171" />
+                <stop offset="50%" stopColor="#DC2626" />
+                <stop offset="100%" stopColor="#7F1D1D" />
+              </linearGradient>
+            </defs>
+            {/* Mecha Horns */}
+            <polygon points="28,24 16,6 38,18" fill="#F59E0B" stroke="#000" strokeWidth="1.5" />
+            <polygon points="72,24 84,6 62,18" fill="#F59E0B" stroke="#000" strokeWidth="1.5" />
+            {/* Dragon Head */}
+            <polygon points="26,24 74,24 82,52 64,80 36,80 18,52" fill="url(#dragonRed)" stroke="#FFF" strokeWidth="2" />
+            {/* Glowing Cybernetic Eye */}
+            <rect x="30" y="38" width="14" height="8" rx="2" fill="#00F0FF" stroke="#FFF" strokeWidth="1" />
+            <rect x="56" y="38" width="14" height="8" rx="2" fill="#00F0FF" stroke="#FFF" strokeWidth="1" />
+            {/* Cyber Visor & Pixel Teeth */}
+            <polygon points="36,66 40,58 44,66 48,58 52,66 56,58 60,66 64,58" fill="#FFF" />
+            {/* Boss Header Plaque */}
+            <rect x="18" y="78" width="64" height="16" rx="3" fill="#450A0A" stroke="#EF4444" strokeWidth="1.5" />
+            <text x="50" y="89.5" textAnchor="middle" fill="#FCA5A5" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+              BOSS 1500X
+            </text>
+          </svg>
+        );
+
+      case 'HERO_KNIGHT':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <defs>
+              <linearGradient id="knightBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#60A5FA" />
+                <stop offset="50%" stopColor="#2563EB" />
+                <stop offset="100%" stopColor="#1E3A8A" />
+              </linearGradient>
+            </defs>
+            {/* Golden Helm Crest & Plume */}
+            <polygon points="46,6 54,6 56,22 44,22" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
+            {/* Helmet Body */}
+            <polygon points="24,24 76,24 80,60 50,78 20,60" fill="url(#knightBlue)" stroke="#FFF" strokeWidth="2" />
+            {/* Cyan Energy Visor */}
+            <rect x="28" y="38" width="44" height="12" rx="2" fill="#22D3EE" stroke="#A5F3FC" strokeWidth="1.2" />
+            {/* Buster Sword Tip */}
+            <polygon points="80,14 88,22 72,50 66,44" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
+            {/* Hero Plaque */}
+            <rect x="20" y="78" width="60" height="16" rx="3" fill="#172554" stroke="#3B82F6" strokeWidth="1.5" />
+            <text x="50" y="89.5" textAnchor="middle" fill="#93C5FD" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1.5">
+              HERO 900X
+            </text>
+          </svg>
+        );
+
+      case 'GAMEPAD':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Retro 8-Bit Controller Body */}
+            <rect x="14" y="24" width="72" height="48" rx="8" fill="#1E293B" stroke="#94A3B8" strokeWidth="2" />
+            {/* D-Pad Cross */}
+            <polygon points="28,42 34,42 34,36 40,36 40,42 46,42 46,48 40,48 40,54 34,54 34,48 28,48" fill="#F8FAFC" />
+            {/* Select / Start */}
+            <rect x="44" y="44" width="5" height="3" rx="1" fill="#64748B" />
+            <rect x="51" y="44" width="5" height="3" rx="1" fill="#64748B" />
+            {/* Action Red Buttons A & B */}
+            <circle cx="66" cy="46" r="4.5" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
+            <circle cx="76" cy="42" r="4.5" fill="#EF4444" stroke="#FFF" strokeWidth="1" />
+            {/* Plaque */}
+            <rect x="22" y="76" width="56" height="16" rx="3" fill="#0F172A" stroke="#10B981" strokeWidth="1.5" />
+            <text x="50" y="87.5" textAnchor="middle" fill="#34D399" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1">
+              GAMEPAD
+            </text>
+          </svg>
+        );
+
+      case 'JOYSTICK':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Arcade Cabinet Base Plate */}
+            <rect x="20" y="62" width="60" height="18" rx="4" fill="#334155" stroke="#94A3B8" strokeWidth="1.8" />
+            {/* Steel Shaft */}
+            <rect x="47" y="32" width="6" height="32" fill="#E2E8F0" stroke="#475569" strokeWidth="1" />
+            {/* Dust Washer */}
+            <ellipse cx="50" cy="62" rx="14" ry="4" fill="#0F172A" />
+            {/* Big Red Balltop Knob */}
+            <circle cx="50" cy="26" r="16" fill="#DC2626" stroke="#FEF2F2" strokeWidth="2" />
+            <circle cx="45" cy="22" r="4.5" fill="#FFF" opacity="0.8" />
+            {/* Plaque */}
+            <rect x="22" y="78" width="56" height="16" rx="3" fill="#0F172A" stroke="#F97316" strokeWidth="1.5" />
+            <text x="50" y="89.5" textAnchor="middle" fill="#FDBA74" fontWeight="900" fontSize="8.5" fontFamily="'Courier New', monospace" letterSpacing="1">
+              JOYSTICK
+            </text>
+          </svg>
+        );
+
+      case 'POTION_HEAL':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            {/* Bottle Stopper / Cork */}
+            <rect x="42" y="16" width="16" height="8" rx="2" fill="#B45309" stroke="#FEF08A" strokeWidth="1" />
+            {/* Bottle Neck */}
+            <rect x="45" y="24" width="10" height="12" fill="#E0E7FF" opacity="0.7" stroke="#818CF8" strokeWidth="1" />
+            {/* Bottle Body */}
+            <circle cx="50" cy="54" r="24" fill="#1E1B4B" stroke="#C084FC" strokeWidth="2.5" />
+            {/* Glowing Magic Fluid */}
+            <path d="M28 54 Q50 62 72 54 A24 24 0 0 1 28 54 Z" fill="#A855F7" />
+            {/* Bubbles */}
+            <circle cx="44" cy="58" r="3" fill="#FFF" opacity="0.8" />
+            <circle cx="56" cy="62" r="2" fill="#FFF" opacity="0.8" />
+            {/* Plaque */}
+            <rect x="22" y="78" width="56" height="16" rx="3" fill="#1E1B4B" stroke="#A855F7" strokeWidth="1.5" />
+            <text x="50" y="89.5" textAnchor="middle" fill="#E9D5FF" fontWeight="900" fontSize="9" fontFamily="'Courier New', monospace" letterSpacing="1">
+              POTION
+            </text>
+          </svg>
+        );
+
+      case 'PIXEL_A':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <path d="M42 16 L58 16 L76 84 L58 84 L52 62 L48 62 L42 84 L24 84 Z M48 34 L44 50 L56 50 Z" fill="#F43F5E" stroke="#FECDD3" strokeWidth="2.5" strokeLinejoin="miter" />
+          </svg>
+        );
+
+      case 'PIXEL_K':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <path d="M26 16 L44 16 L44 44 L66 16 L86 16 L58 50 L86 84 L66 84 L44 56 L44 84 L26 84 Z" fill="#06B6D4" stroke="#CFFAFE" strokeWidth="2.5" strokeLinejoin="miter" />
+          </svg>
+        );
+
+      case 'PIXEL_Q':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <path d="M50 16 Q28 16 28 50 Q28 84 50 84 Q62 84 70 76 L76 84 L84 78 L74 64 Q72 50 72 50 Q72 16 50 16 Z M50 32 Q58 32 58 50 Q58 68 50 68 Q42 68 42 50 Q42 32 50 32 Z" fill="#FBBF24" stroke="#FEF08A" strokeWidth="2.5" strokeLinejoin="miter" />
+          </svg>
+        );
+
+      case 'PIXEL_J':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <path d="M44 16 L76 16 L76 30 L62 30 L62 64 C62 76, 54 84, 40 84 C28 84, 22 76, 22 66 L38 66 C38 72, 40 72, 42 72 C44 72, 46 68, 46 62 L46 30 L44 30 Z" fill="#22C55E" stroke="#BBF7D0" strokeWidth="2.5" strokeLinejoin="miter" />
+          </svg>
+        );
+
+      case 'PIXEL_10':
+        return (
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+            <path d="M20 26 L34 16 L34 84 L20 84 Z M60 16 Q44 16 44 50 Q44 84 60 84 Q76 84 76 50 Q76 16 60 16 Z M60 30 Q66 30 66 50 Q66 70 60 70 Q54 70 54 50 Q54 30 60 30 Z" fill="#8B5CF6" stroke="#DDD6FE" strokeWidth="2.5" strokeLinejoin="miter" />
+          </svg>
+        );
+
       default:
         return null;
     }
@@ -1178,9 +1456,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
     'PINECONE', 'BERRIES', 'MUSHROOM', 'WOOD_A', 'WOOD_K', 'WOOD_Q', 'WOOD_J'
   ].includes(id);
 
+  const isPixelSymbol = [
+    'CYBER_WILD', 'PIXEL_CARTRIDGE', 'RETRO_TOKEN', 'BOSS_DRAGON', 'HERO_KNIGHT',
+    'GAMEPAD', 'JOYSTICK', 'POTION_HEAL', 'PIXEL_A', 'PIXEL_K', 'PIXEL_Q', 'PIXEL_J', 'PIXEL_10'
+  ].includes(id);
+
   const getWinningAnimationClass = () => {
     if (!isWinning && !isScatterHighlight) return '';
     switch (id) {
+      case 'CYBER_WILD':
+      case 'PIXEL_CARTRIDGE':
+      case 'RETRO_TOKEN':
+      case 'BOSS_DRAGON':
+        return 'animate-win-symbol-juice scale-105';
       case 'BEAR':
         return 'animate-bear-roar';
       case 'OWL':
@@ -1221,6 +1509,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           className={`absolute inset-0 rounded-xl pointer-events-none z-0 animate-pulse filter blur-sm ${
             isTimberSymbol
               ? 'bg-gradient-to-r from-emerald-400/40 via-amber-400/40 to-emerald-400/40 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
+              : isPixelSymbol
+              ? 'bg-gradient-to-r from-purple-500/40 via-pink-500/40 to-cyan-400/40 shadow-[0_0_25px_rgba(236,72,153,0.9)]'
               : 'bg-gold-400/40 shadow-[0_0_25px_rgba(251,191,36,0.9)]'
           }`}
         />
@@ -1231,6 +1521,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
           className={`absolute inset-0 rounded-xl pointer-events-none z-0 animate-pulse filter blur-sm ${
             id === 'OWL'
               ? 'bg-emerald-400/45 shadow-[0_0_25px_rgba(52,211,153,0.9)]'
+              : id === 'PIXEL_CARTRIDGE'
+              ? 'bg-purple-400/45 shadow-[0_0_25px_rgba(168,85,247,0.9)]'
               : 'bg-cyan-400/40 shadow-[0_0_25px_rgba(0,240,255,0.8)]'
           }`}
         />
