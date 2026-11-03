@@ -510,8 +510,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </text>
 
             {/* Base Horizontal Stamped Plaque (Strictly bounded) */}
-            <rect x="20" y="72" width="60" height="18" rx="4" fill="#0C4A6E" stroke="#38BDF8" strokeWidth="1.5" />
-            <text x="50" y="84.5" textAnchor="middle" fill="#BAE6FD" fontWeight="900" fontSize="8.5" fontFamily="sans-serif" letterSpacing="1">
+            <rect x="16" y="72" width="68" height="18" rx="4" fill="#0C4A6E" stroke="#38BDF8" strokeWidth="1.5" />
+            <text x="50" y="84.5" textAnchor="middle" fill="#BAE6FD" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="0.8">
               $10,000
             </text>
           </svg>
@@ -585,8 +585,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="45" cy="31" r="2.5" fill="#FEF08A" />
 
             {/* Base Horizontal Ingot Inscription Plaque */}
-            <rect x="22" y="72" width="56" height="16" rx="4" fill="#1C1408" stroke="#F59E0B" strokeWidth="1.2" />
-            <text x="50" y="83" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="7.5" fontFamily="sans-serif" letterSpacing="1">
+            <rect x="16" y="72" width="68" height="16" rx="4" fill="#1C1408" stroke="#F59E0B" strokeWidth="1.2" />
+            <text x="50" y="83" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="7" fontFamily="sans-serif" letterSpacing="0.8">
               FINE GOLD
             </text>
 
@@ -944,15 +944,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="16" y="68" width="68" height="18" rx="5" fill="#2E1005" stroke="#F59E0B" strokeWidth="1" />
             <text
               x="50"
-              y="82"
+              y="81.5"
               textAnchor="middle"
               fill="#FEF08A"
               stroke="#451A03"
               strokeWidth="0.8"
-              fontSize="12.5"
+              fontSize="11"
               fontWeight="900"
               fontFamily="sans-serif"
-              letterSpacing="2.5"
+              letterSpacing="1.5"
               style={{ paintOrder: 'stroke fill' }}
             >
               WILD
@@ -1540,13 +1540,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <rect x="28" y="29" width="44" height="3" fill="#1E293B" />
 
             {/* Stepped Holographic Game Label */}
-            <rect x="26" y="35" width="48" height="32" fill="#0D031F" stroke="#00F0FF" strokeWidth="1.5" />
+            <rect x="23" y="35" width="54" height="32" fill="#0D031F" stroke="#00F0FF" strokeWidth="1.5" />
             {/* 8-Bit Pixel Skull / Lightning Emblem */}
             <rect x="44" y="39" width="12" height="4" fill="#FF007F" />
             <rect x="42" y="43" width="16" height="4" fill="#FF007F" />
             <rect x="46" y="47" width="8" height="4" fill="#FFE600" />
             <rect x="48" y="51" width="4" height="4" fill="#FFE600" />
-            <text x="50" y="62" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="7" fontFamily="'Courier New', monospace" letterSpacing="1">
+            <text x="50" y="62" textAnchor="middle" fill="#00F0FF" fontWeight="900" fontSize="6.5" fontFamily="sans-serif" letterSpacing="0.8">
               FREE SPINS
             </text>
 
@@ -2081,8 +2081,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </text>
 
             {/* Badge: EMOTION ENGINE • 128-BIT */}
-            <rect x="14" y="64" width="72" height="12" rx="2" fill="#003791" stroke="#38BDF8" strokeWidth="1" />
-            <text x="50" y="72.5" textAnchor="middle" fill="#FFFFFF" fontWeight="900" fontSize="6.5" fontFamily="monospace" letterSpacing="1.2">
+            <rect x="10" y="64" width="80" height="12" rx="2" fill="#003791" stroke="#38BDF8" strokeWidth="1" />
+            <text x="50" y="72.5" textAnchor="middle" fill="#FFFFFF" fontWeight="900" fontSize="6" fontFamily="sans-serif" letterSpacing="0.8">
               ★ EMOTION WILD ★
             </text>
           </svg>
@@ -2126,9 +2126,9 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="50" cy="50" r="40" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="3,2" opacity="0.8" />
 
             {/* Banner: FREE SPINS SCATTER */}
-            <rect x="10" y="74" width="80" height="15" rx="3" fill="#000" stroke="#38BDF8" strokeWidth="1.5" />
-            <rect x="12" y="76" width="76" height="11" rx="2" fill="#003791" />
-            <text x="50" y="84" textAnchor="middle" fill="#E0F2FE" fontWeight="900" fontSize="7" fontFamily="monospace" letterSpacing="1.2">
+            <rect x="8" y="74" width="84" height="15" rx="3" fill="#000" stroke="#38BDF8" strokeWidth="1.5" />
+            <rect x="10" y="76" width="80" height="11" rx="2" fill="#003791" />
+            <text x="50" y="84" textAnchor="middle" fill="#E0F2FE" fontWeight="900" fontSize="6.5" fontFamily="sans-serif" letterSpacing="0.8">
               💿 DVD SCATTER 💿
             </text>
           </svg>

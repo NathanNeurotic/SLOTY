@@ -261,11 +261,11 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
               <circle cx="84" cy="50" r="3.2" fill="none" stroke="#EF4444" strokeWidth="1.2" />
 
               {/* Emotion Engine Core on Chest */}
-              <rect x="40" y="65" width="20" height="16" rx="2" fill="#030814" stroke="#38BDF8" strokeWidth="1.5" />
+              <rect x="38" y="65" width="24" height="16" rx="2" fill="#030814" stroke="#38BDF8" strokeWidth="1.5" />
               <text x="50" y="73" textAnchor="middle" fill="#00F0FF" fontSize="5" fontFamily="monospace" fontWeight="900">
                 EE
               </text>
-              <text x="50" y="78" textAnchor="middle" fill="#38BDF8" fontSize="4" fontFamily="monospace">
+              <text x="50" y="78" textAnchor="middle" fill="#38BDF8" fontSize="3.5" fontFamily="monospace">
                 294 MHz
               </text>
             </svg>
