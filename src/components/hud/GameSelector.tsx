@@ -26,44 +26,121 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
   const isTimberActive = activeGameId === 'timber-critters';
   const isPixelActive = activeGameId === 'pixel-arcade';
 
+  // 1. PIXEL ARCADE: 8-BIT ROM CARTRIDGE LOADER
+  if (isPixelActive) {
+    return (
+      <div
+        className="flex items-center space-x-1 p-0.5 sm:p-1 bg-black border-2 border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.6)] select-none"
+        style={{
+          clipPath:
+            'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))',
+        }}
+      >
+        <span className="hidden md:inline text-[7.5px] font-mono font-black text-pink-400 uppercase tracking-widest pl-1 pr-0.5">
+          ROM CART:
+        </span>
+        {games.map((g) => {
+          const isActive = g.id === activeGameId;
+          return (
+            <button
+              key={g.id}
+              onClick={() => handleSelect(g.id)}
+              disabled={disabled}
+              title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-0.5 sm:py-1 font-mono text-[9px] sm:text-[10px] font-black uppercase transition-all ${
+                isActive
+                  ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 text-white border border-cyan-300 shadow-[0_0_12px_#06B6D4] scale-[1.02]'
+                  : 'bg-slate-950 text-slate-400 hover:text-cyan-300 hover:bg-slate-900 border border-slate-700'
+              }`}
+              style={{
+                clipPath:
+                  'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 0 100%)',
+              }}
+            >
+              <span className="text-xs">{g.icon}</span>
+              <span className="leading-none">{g.shortName}</span>
+              {isActive && (
+                <span className="w-1.5 h-1.5 bg-cyan-300 animate-ping ml-0.5" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // 2. TIMBERLAND CRITTERS: HAND-CARVED RUSTIC TRAIL SIGNS
+  if (isTimberActive) {
+    return (
+      <div
+        className="flex items-center space-x-1 p-0.5 sm:p-1 bg-[#200e04] border-2 border-[#854d0e] shadow-[0_4px_15px_rgba(0,0,0,0.9)] select-none font-serif"
+        style={{
+          clipPath:
+            'polygon(0% 15%, 2% 0%, 98% 0%, 100% 15%, 98% 50%, 100% 85%, 98% 100%, 2% 100%, 0% 85%, 2% 50%)',
+        }}
+      >
+        <span className="hidden md:inline text-[7.5px] font-black text-amber-400 uppercase tracking-widest pl-1.5 pr-0.5">
+          TRAILHEAD:
+        </span>
+        {games.map((g) => {
+          const isActive = g.id === activeGameId;
+          return (
+            <button
+              key={g.id}
+              onClick={() => handleSelect(g.id)}
+              disabled={disabled}
+              title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-black uppercase transition-all ${
+                isActive
+                  ? 'bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-900 text-amber-100 border-2 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.7)] scale-[1.02]'
+                  : 'bg-[#140803] text-stone-400 hover:text-amber-200 border border-[#78350f]'
+              }`}
+              style={{
+                clipPath:
+                  'polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%, 5% 50%)',
+              }}
+            >
+              <span className="text-xs">{g.icon}</span>
+              <span className="leading-none tracking-wide">{g.shortName}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // 3. 24K GOLD VAULT: FORT KNOX BULLION INGOT SELECTOR
   return (
-    <div className={`flex items-center space-x-0.5 sm:space-x-1 xl:space-x-1.5 p-0.5 sm:p-1 rounded-2xl border shadow-inner select-none transition-colors duration-300 ${
-      isTimberActive
-        ? 'bg-gradient-to-b from-[#241208] via-[#120703] to-[#241208] border-[#854d0e] shadow-[inset_0_2px_8px_rgba(0,0,0,0.95)]'
-        : isPixelActive
-        ? 'bg-gradient-to-b from-[#18042c] via-[#090117] to-[#18042c] border-pink-500/80 shadow-[0_0_12px_rgba(236,72,153,0.4)]'
-        : 'bg-gradient-to-b from-black via-slate-950 to-black border-yellow-400/80 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
-    }`}>
+    <div
+      className="flex items-center space-x-1 p-0.5 sm:p-1 bg-gradient-to-r from-slate-950 via-casino-950 to-slate-950 border-2 border-yellow-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] select-none"
+      style={{
+        clipPath:
+          'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)',
+      }}
+    >
+      <span className="hidden md:inline text-[7.5px] font-mono font-black text-yellow-300 uppercase tracking-widest pl-1.5 pr-0.5">
+        DEPOSITORY:
+      </span>
       {games.map((g) => {
         const isActive = g.id === activeGameId;
-        const isTimber = g.id === 'timber-critters';
-        const isPixel = g.id === 'pixel-arcade';
-
         return (
           <button
             key={g.id}
             onClick={() => handleSelect(g.id)}
             disabled={disabled}
             title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2 xl:px-3 py-0.5 xl:py-1 rounded-xl text-xs font-black transition-all ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-black uppercase font-mono transition-all ${
               isActive
-                ? isTimber
-                  ? 'bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-900 text-white border sm:border-2 border-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.7)] scale-[1.02]'
-                  : isPixel
-                  ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-900 text-white border sm:border-2 border-pink-300 shadow-[0_0_15px_rgba(236,72,153,0.8)] scale-[1.02]'
-                  : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-amber-950 border sm:border-2 border-yellow-200 shadow-[0_0_15px_rgba(245,158,11,0.7)] scale-[1.02]'
-                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                ? 'bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-amber-950 border border-yellow-100 shadow-[0_0_15px_rgba(245,158,11,0.9)] scale-[1.02]'
+                : 'bg-black/90 text-yellow-500/70 hover:text-yellow-200 border border-yellow-500/30'
             }`}
+            style={{
+              clipPath:
+                'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+            }}
           >
-            <span className="text-xs sm:text-sm xl:text-base leading-none">{g.icon}</span>
-            <div className="flex flex-col text-left">
-              <span className="text-[8px] sm:text-[9.5px] xl:text-[10.5px] font-black uppercase tracking-wider leading-none">
-                {g.shortName}
-              </span>
-              <span className="hidden xl:inline text-[6.5px] sm:text-[7.5px] font-mono font-bold text-slate-300/80 leading-none mt-0.5">
-                {g.reels}x{g.rows} • {g.defaultLines}L
-              </span>
-            </div>
+            <span className="text-xs">{g.icon}</span>
+            <span className="leading-none tracking-wide">{g.shortName}</span>
           </button>
         );
       })}

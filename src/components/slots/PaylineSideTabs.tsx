@@ -62,12 +62,13 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
           }
         };
 
-        const leafShape =
-          side === 'left'
-            ? 'rounded-tl-lg rounded-br-lg rounded-tr-none rounded-bl-none'
-            : 'rounded-tr-lg rounded-bl-lg rounded-tl-none rounded-br-none';
-
-        const pixelShape = 'rounded-none border';
+        const clipPathStyle = isPixel
+          ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% 100%, 0 100%)'
+          : isTimber
+          ? side === 'left'
+            ? 'polygon(0% 0%, 82% 0%, 100% 50%, 82% 100%, 0% 100%, 12% 50%)'
+            : 'polygon(18% 0%, 100% 0%, 88% 50%, 100% 100%, 18% 100%, 0% 50%)'
+          : 'polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px)';
 
         return (
           <button
@@ -83,6 +84,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                 : ' (Active)'
             }`}
             style={{
+              clipPath: clipPathStyle,
               borderColor:
                 isWinning || isActive || isHovered
                   ? color
@@ -106,11 +108,9 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
                   ? `0 0 5px ${color}`
                   : 'inset 0 1px 0 rgba(255,255,255,0.15)',
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
-              fontFamily: isPixel ? "'Courier New', monospace" : undefined,
+              fontFamily: isPixel ? "'Courier New', monospace" : isTimber ? 'serif' : undefined,
             }}
             className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[19px] text-[7px] sm:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
-              isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[3px]'
-            } ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''
             }`}
           >

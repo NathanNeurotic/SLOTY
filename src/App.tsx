@@ -991,10 +991,12 @@ export const App: React.FC = () => {
           maxTotalBet={activeGameDef.maxTotalBet}
         />
 
-        {/* Integrated Footer info banner (desktop only) with clean clearance */}
-        <footer className={`hidden xl:block py-0.5 border-t text-center text-[8.5px] sm:text-[9.5px] flex-shrink-0 ${
+        {/* Integrated Footer info banner (generous 2xl screens only to protect viewport height) */}
+        <footer className={`hidden 2xl:block py-0.5 border-t text-center text-[8.5px] sm:text-[9.5px] flex-shrink-0 ${
           isTimber
-            ? 'bg-[#0e0a07]/95 border-emerald-900/40 text-emerald-500/80'
+            ? 'bg-[#0e0a07]/95 border-emerald-900/40 text-emerald-500/80 font-serif'
+            : isPixel
+            ? 'bg-black/95 border-pink-500/30 text-cyan-400/80 font-mono'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
         }`}>
           PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS

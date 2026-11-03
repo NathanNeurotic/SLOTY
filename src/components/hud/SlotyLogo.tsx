@@ -39,24 +39,38 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
       className="flex items-center space-x-1 sm:space-x-2 xl:space-x-3 cursor-pointer group select-none"
       title={isTimber ? 'Timberland Critters' : isPixel ? 'Pixel Arcade 8-Bit Quest' : 'SLOTY 24K Gold & Cash Vault'}
     >
-      {/* 3D Emblem Token */}
+      {/* 3D Emblem Token with Bespoke Physical Silhouette */}
       <div
-        className={`relative w-8 h-8 sm:w-9 sm:h-9 xl:w-11 xl:h-11 rounded-xl xl:rounded-2xl p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
+        className={`relative w-8 h-8 sm:w-9 sm:h-9 xl:w-11 xl:h-11 p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
           isTimber
             ? 'bg-gradient-to-tr from-amber-700 via-emerald-600 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.6)]'
             : isPixel
             ? 'bg-gradient-to-tr from-purple-700 via-pink-500 to-cyan-400 shadow-[0_0_20px_rgba(236,72,153,0.7)]'
             : 'bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-700 shadow-[0_0_20px_rgba(245,158,11,0.6)]'
         }`}
+        style={{
+          clipPath: isPixel
+            ? 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))'
+            : isTimber
+            ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+            : 'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+        }}
       >
         <div
-          className={`w-full h-full rounded-[14px] flex flex-col items-center justify-center relative overflow-hidden border ${
+          className={`w-full h-full flex flex-col items-center justify-center relative overflow-hidden border ${
             isTimber
               ? 'bg-[#0a180e] border-emerald-400/60'
               : isPixel
               ? 'bg-[#0a051b] border-pink-400/60'
               : 'bg-casino-950 border-yellow-300/40'
           }`}
+          style={{
+            clipPath: isPixel
+              ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+              : isTimber
+              ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+              : 'polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px)',
+          }}
         >
           {/* Animated background radial glow */}
           <div

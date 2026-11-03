@@ -338,18 +338,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         />
       )}
 
-      {/* Outer Luxury Cabinet Frame with Handcrafted Theming */}
+      {/* Outer Luxury Cabinet Frame with Handcrafted Theming and Bespoke Silhouettes */}
       <div
-        className={`relative p-[2px] sm:p-[3px] rounded-2xl sm:rounded-3xl transition-all ${
+        className={`relative p-[2px] sm:p-[3px] transition-all select-none ${
           isTimber
             ? 'border-4 sm:border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
             : isPixel
-            ? 'border-2 sm:border-4 border-pink-500/80 bg-gradient-to-b from-purple-950 via-slate-950 to-black shadow-[0_0_45px_rgba(236,72,153,0.5),0_25px_60px_rgba(0,0,0,0.98)]'
+            ? 'border-2 sm:border-4 border-pink-500 bg-gradient-to-b from-purple-950 via-slate-950 to-black shadow-[0_0_45px_rgba(236,72,153,0.6),0_25px_60px_rgba(0,0,0,0.98)]'
             : 'border-2 sm:border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
+        style={{
+          clipPath: isPixel
+            ? 'polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px))'
+            : isTimber
+            ? 'polygon(0% 4%, 1% 0%, 99% 0%, 100% 4%, 99.5% 50%, 100% 96%, 99% 100%, 1% 100%, 0% 96%, 0.5% 50%)'
+            : 'polygon(16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px), 0 16px)',
+        }}
       >
         <div
-          className={`relative p-1 sm:p-2 md:p-2.5 rounded-[12px] sm:rounded-[20px] transition-all duration-300 shadow-2xl ${
+          className={`relative p-1 sm:p-2 md:p-2.5 transition-all duration-300 shadow-2xl ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
@@ -370,6 +377,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               ? 'bg-gradient-to-b from-[#16062c] via-[#0c031a] to-[#05010b] shadow-[0_15px_40px_rgba(0,0,0,0.95)] border-2 border-purple-500/80 shadow-[0_0_35px_rgba(139,92,246,0.5)]'
               : 'bg-gradient-to-b from-casino-800 via-casino-900 to-black shadow-[0_15px_40px_rgba(0,0,0,0.9)] border border-white/10'
           }`}
+          style={{
+            clipPath: isPixel
+              ? 'polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px))'
+              : isTimber
+              ? 'polygon(0% 4%, 1% 0%, 99% 0%, 100% 4%, 99.5% 50%, 100% 96%, 99% 100%, 1% 100%, 0% 96%, 0.5% 50%)'
+              : 'polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px)',
+          }}
         >
           {/* Authentic Physical Cabinet Hardware Overlay (Hand-forged brackets / Art-deco brass / Neon cyber corners) */}
           <CabinetFrameOverlay
@@ -489,12 +503,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
         <div
-          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full ${
+          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-[170px] ${
             rowCount === 5
-              ? 'h-[clamp(250px,42vh,420px)]'
+              ? 'max-h-[380px] xl:max-h-[420px]'
               : rowCount === 3
-              ? 'h-[clamp(210px,34vh,340px)]'
-              : 'h-[clamp(240px,38vh,380px)]'
+              ? 'max-h-[310px] xl:max-h-[340px]'
+              : 'max-h-[350px] xl:max-h-[380px]'
           }`}
         >
           {/* Left Themed Cabinet Pilaster */}

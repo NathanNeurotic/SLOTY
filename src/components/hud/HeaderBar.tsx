@@ -110,20 +110,36 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <SlotyLogo activeGameId={activeGameId} />
 
           {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
-          <div className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2.5 xl:px-3.5 py-0.5 sm:py-1 rounded-xl shadow-md border ${
-            isTimber
-              ? 'bg-gradient-to-b from-[#241208] via-[#122216] to-[#241208] border-emerald-500/90 shadow-[0_0_12px_rgba(16,185,129,0.5)]'
-              : isPixel
-              ? 'bg-gradient-to-b from-black via-[#1c0638] to-black border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]'
-              : 'bg-gradient-to-b from-[#241703] via-[#0f0a01] to-[#241703] border-yellow-400 shadow-[0_0_12px_rgba(245,158,11,0.6)]'
-          }`}>
-            <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center shadow-md flex-shrink-0 border ${
+          <div
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2.5 xl:px-3.5 py-0.5 sm:py-1 shadow-md border select-none ${
               isTimber
-                ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
+                ? 'bg-gradient-to-b from-[#241208] via-[#122216] to-[#241208] border-emerald-500/90 shadow-[0_0_12px_rgba(16,185,129,0.5)]'
                 : isPixel
-                ? 'bg-gradient-to-tr from-pink-500 to-cyan-400 border-cyan-200 text-white shadow-[0_0_6px_#06B6D4]'
-                : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950 shadow-[0_0_6px_#F59E0B]'
-            }`}>
+                ? 'bg-gradient-to-b from-black via-[#1c0638] to-black border-2 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]'
+                : 'bg-gradient-to-b from-[#241703] via-[#0f0a01] to-[#241703] border-2 border-yellow-400 shadow-[0_0_12px_rgba(245,158,11,0.6)]'
+            }`}
+            style={{
+              clipPath: isPixel
+                ? 'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))'
+                : isTimber
+                ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+                : 'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
+            }}
+          >
+            <div
+              className={`w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md flex-shrink-0 border ${
+                isTimber
+                  ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
+                  : isPixel
+                  ? 'bg-gradient-to-tr from-pink-500 to-cyan-400 border-cyan-200 text-white shadow-[0_0_6px_#06B6D4]'
+                  : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950 shadow-[0_0_6px_#F59E0B]'
+              }`}
+              style={{
+                clipPath: isPixel
+                  ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
+                  : undefined,
+              }}
+            >
               {isTimber ? (
                 <span className="text-[10px]">🌰</span>
               ) : isPixel ? (
@@ -134,7 +150,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </div>
             <div className="flex flex-col">
               <span className={`text-[6px] sm:text-[7.5px] uppercase font-black tracking-wider leading-none ${
-                isTimber ? 'text-emerald-400 font-serif' : isPixel ? 'text-cyan-300 font-mono' : 'text-yellow-400'
+                isTimber ? 'text-emerald-400 font-serif' : isPixel ? 'text-cyan-300 font-mono' : 'text-yellow-400 font-mono'
               }`}>
                 {isTimber ? 'FORAGE CACHE' : isPixel ? 'CREDITS (04)' : 'FORT KNOX VAULT'}
               </span>
@@ -151,13 +167,22 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           </div>
 
           {/* Level / Stage Indicator */}
-          <div className={`hidden lg:flex items-center space-x-1.5 px-2 py-0.5 rounded-xl shadow-md border ${
-            isTimber
-              ? 'bg-gradient-to-b from-[#241308] to-[#122216] border-emerald-500/70 text-emerald-300'
-              : isPixel
-              ? 'bg-gradient-to-b from-[#260845] to-black border-pink-500/70 text-pink-300 font-mono'
-              : 'bg-gradient-to-b from-slate-900 to-black border-yellow-400/70 text-yellow-300'
-          }`}>
+          <div
+            className={`hidden lg:flex items-center space-x-1.5 px-2 py-0.5 shadow-md border ${
+              isTimber
+                ? 'bg-gradient-to-b from-[#241308] to-[#122216] border-emerald-500/70 text-emerald-300'
+                : isPixel
+                ? 'bg-gradient-to-b from-[#260845] to-black border-pink-500/70 text-pink-300 font-mono'
+                : 'bg-gradient-to-b from-slate-900 to-black border-yellow-400/70 text-yellow-300 font-mono'
+            }`}
+            style={{
+              clipPath: isPixel
+                ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+                : isTimber
+                ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+                : 'polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px)',
+            }}
+          >
             {isTimber ? <Trees className="w-3 h-3 text-emerald-400" /> : isPixel ? <Gamepad2 className="w-3 h-3 text-cyan-300" /> : <Trophy className="w-3 h-3 text-yellow-300" />}
             <span className="text-[8px] font-black uppercase">
               {isTimber ? `RANGER LV.${progression.level}` : isPixel ? `STAGE ${progression.level}` : `VIP LV.${progression.level}`}
@@ -182,11 +207,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               soundManager.playButtonClick();
               onOpenBonusWheel();
             }}
-            className={`flex items-center space-x-1 px-1.5 sm:px-2 xl:px-2.5 py-1 rounded-xl border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1 px-1.5 sm:px-2 xl:px-2.5 py-1 border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
               canClaimBonus
                 ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 border-yellow-300 text-white shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-pulse'
                 : 'vlt-btn-stepper text-amber-300 hover:text-white'
             }`}
+            style={{
+              clipPath: isPixel
+                ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+                : isTimber
+                ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+                : 'polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px)',
+            }}
             title="Claim Daily Bonus Wheel"
           >
             <Gift className={`w-3.5 h-3.5 ${canClaimBonus ? 'animate-bounce text-yellow-300' : 'text-amber-400'}`} />
@@ -199,11 +231,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <button
             onClick={handleToggleMusic}
             title={isMusicOn ? 'Mute Music' : 'Start Music'}
-            className={`p-1 sm:px-2 sm:py-1 rounded-xl border transition-all flex-shrink-0 ${
+            className={`p-1 sm:px-2 sm:py-1 border transition-all flex-shrink-0 ${
               isMusicOn
                 ? 'bg-emerald-950/80 border-emerald-400 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.5)]'
                 : 'vlt-btn-stepper text-slate-400 hover:text-white border-white/20'
             }`}
+            style={{
+              clipPath: isPixel
+                ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+                : isTimber
+                ? 'polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 96% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 4% 50%)'
+                : 'polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px)',
+            }}
           >
             <Music className={`w-3.5 h-3.5 ${isMusicOn ? 'text-emerald-300' : 'text-slate-400'}`} />
           </button>
@@ -214,7 +253,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               soundManager.playButtonClick();
               setShowMobileToolsDrawer(true);
             }}
-            className="lg:hidden p-1.5 rounded-xl vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            className="lg:hidden p-1.5 vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            style={{
+              clipPath: isPixel
+                ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
+                : undefined,
+            }}
             title="Open Tools & Settings"
           >
             <Sliders className="w-3.5 h-3.5 text-yellow-300" />
@@ -228,11 +272,16 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 onToggleMute();
               }}
               title={isMuted ? 'Unmute' : 'Mute'}
-              className={`p-1.5 rounded-xl border transition-all flex-shrink-0 ${
+              className={`p-1.5 border transition-all flex-shrink-0 ${
                 isMuted
                   ? 'bg-rose-950/60 border-rose-500/80 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.4)]'
                   : 'vlt-btn-stepper text-slate-300 hover:text-white border-white/20'
               }`}
+              style={{
+                clipPath: isPixel
+                  ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
+                  : undefined,
+              }}
             >
               {isMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
             </button>
@@ -243,7 +292,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 setShowAudioPopover(!showAudioPopover);
               }}
               title="Audio Mixer"
-              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+              className="p-1.5 vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+              style={{
+                clipPath: isPixel
+                  ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
+                  : undefined,
+              }}
             >
               <Sliders className="w-3.5 h-3.5 text-yellow-300" />
             </button>
@@ -254,7 +308,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 onOpenPaytable();
               }}
               title="Paytable & Rules"
-              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+              className="p-1.5 vlt-btn-stepper text-slate-400 hover:text-white transition-colors border-white/20"
+              style={{
+                clipPath: isPixel
+                  ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
+                  : undefined,
+              }}
             >
               <HelpCircle className="w-3.5 h-3.5 text-cyan-300" />
             </button>
@@ -265,7 +324,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 onToggleDebug();
               }}
               title="Developer Rig Suite"
-              className="p-1.5 rounded-xl vlt-btn-stepper text-slate-400 hover:text-amber-400 transition-colors border-white/20"
+              className="p-1.5 vlt-btn-stepper text-slate-400 hover:text-amber-400 transition-colors border-white/20"
+              style={{
+                clipPath: isPixel
+                  ? 'polygon(0 2px, 2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px))'
+                  : undefined,
+              }}
             >
               <Terminal className="w-3.5 h-3.5 text-slate-400 hover:text-amber-300" />
             </button>
