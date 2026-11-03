@@ -42,7 +42,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
 
   return (
     <div
-      className="hidden xl:flex flex-col justify-between py-0.5 self-stretch h-full w-5 sm:w-6 md:w-7 select-none z-20 flex-shrink-0 min-h-0 gap-[1px]"
+      className="flex flex-col justify-between py-0.5 self-stretch h-full w-4 sm:w-5 md:w-6 select-none z-20 flex-shrink-0 min-h-0 gap-[0.5px]"
     >
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;
@@ -107,7 +107,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
               opacity: isLineActiveInGame || isHovered ? 1 : 0.35,
               fontFamily: isPixel ? "'Courier New', monospace" : isTimber ? 'serif' : undefined,
             }}
-            className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[19px] text-[7px] sm:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
+            className={`flex-1 min-h-0 w-full max-w-[28px] max-h-[19px] text-[6.5px] sm:text-[7.5px] md:text-[8px] font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
               isWinning ? 'animate-pulse font-extrabold ring-1 ring-yellow-300 z-10' : ''
             }`}
           >
