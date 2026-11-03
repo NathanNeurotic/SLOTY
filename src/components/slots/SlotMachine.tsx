@@ -390,26 +390,33 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         {/* Flashing Marquee Bulbs Header: FIXED STRICT HEIGHT to prevent frame jumping */}
         <div className="flex items-center justify-between h-8 sm:h-11 px-1.5 sm:px-2 border-b border-white/10 mb-1 sm:mb-2 overflow-hidden flex-shrink-0">
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
-                  isTimber
-                    ? i % 2 === 0
-                      ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
-                      : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
-                    : activeWin
-                    ? 'bg-amber-300 shadow-[0_0_12px_#FCD34D] animate-ping'
-                    : isAnyReelSpinning
-                    ? 'bg-gold-bright shadow-[0_0_10px_#F59E0B] animate-pulse'
-                    : 'bg-gold-bright shadow-[0_0_6px_#F59E0B]'
-                }`}
-                style={{
-                  animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
-                  animationDelay: `${i * (isAnyReelSpinning ? 70 : 150)}ms`,
-                }}
-              />
-            ))}
+            {isPixel ? (
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#06B6D4]">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping mr-0.5" />
+                <span>1P READY</span>
+              </div>
+            ) : (
+              [...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
+                    isTimber
+                      ? i % 2 === 0
+                        ? 'bg-emerald-400 shadow-[0_0_8px_#34D399]'
+                        : 'bg-amber-400 shadow-[0_0_8px_#FBBF24]'
+                      : activeWin
+                      ? 'bg-amber-300 shadow-[0_0_12px_#FCD34D] animate-ping'
+                      : isAnyReelSpinning
+                      ? 'bg-gold-bright shadow-[0_0_10px_#F59E0B] animate-pulse'
+                      : 'bg-gold-bright shadow-[0_0_6px_#F59E0B]'
+                  }`}
+                  style={{
+                    animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
+                    animationDelay: `${i * (isAnyReelSpinning ? 70 : 150)}ms`,
+                  }}
+                />
+              ))
+            )}
           </div>
 
           {/* Active Marquee Win / Info Header (Strictly Single-line, No Wrapping) */}
@@ -470,24 +477,30 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             )}
           </div>
 
-          {/* Right Header Controls: Flashing Bulbs */}
+          {/* Right Header Controls */}
           <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
-                  activeWin
-                    ? 'bg-neon-cyan shadow-[0_0_12px_#00F0FF] animate-ping'
-                    : isAnyReelSpinning
-                    ? 'bg-neon-cyan shadow-[0_0_10px_#00F0FF] animate-pulse'
-                    : 'bg-neon-cyan shadow-[0_0_6px_#00F0FF]'
-                }`}
-                style={{
-                  animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
-                  animationDelay: `${(3 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
-                }}
-              />
-            ))}
+            {isPixel ? (
+              <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-pink-400 font-mono text-[8px] font-black text-pink-300 shadow-[0_0_8px_#EC4899]">
+                <span>50L • CRT</span>
+              </div>
+            ) : (
+              [...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-all duration-150 ${
+                    activeWin
+                      ? 'bg-neon-cyan shadow-[0_0_12px_#00F0FF] animate-ping'
+                      : isAnyReelSpinning
+                      ? 'bg-neon-cyan shadow-[0_0_10px_#00F0FF] animate-pulse'
+                      : 'bg-neon-cyan shadow-[0_0_6px_#00F0FF]'
+                  }`}
+                  style={{
+                    animationDuration: isAnyReelSpinning ? '250ms' : activeWin ? '600ms' : '1200ms',
+                    animationDelay: `${(3 - i) * (isAnyReelSpinning ? 70 : 150)}ms`,
+                  }}
+                />
+              ))
+            )}
           </div>
         </div>
 

@@ -10,6 +10,8 @@ import {
   Terminal,
   Sliders,
   Play,
+  Trees,
+  Gamepad2,
 } from 'lucide-react';
 import type { ProgressionState } from '../../engine/types';
 import type { GameId } from '../../games/types';
@@ -92,11 +94,14 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   };
 
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
 
   return (
     <header className={`w-full px-2 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
       isTimber
         ? 'bg-gradient-to-r from-[#241308] via-[#140c06] to-[#241308] border-b-2 sm:border-b-4 border-[#78350f]'
+        : isPixel
+        ? 'bg-gradient-to-r from-[#18052e] via-[#090117] to-[#18052e] border-b-2 sm:border-b-4 border-pink-500 shadow-[0_4px_25px_rgba(236,72,153,0.5)]'
         : 'bg-gradient-to-r from-black via-[#1a1205] to-black border-b-2 sm:border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.5)]'
     }`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-3 w-full h-9 sm:h-11">
@@ -104,32 +109,40 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         <div className="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
           <SlotyLogo activeGameId={activeGameId} />
 
-          {/* Digital Bank Vault / Forest Reserve Cash Dispenser */}
+          {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
           <div className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-xl shadow-md border ${
             isTimber
               ? 'bg-gradient-to-b from-black via-[#0d1a10] to-black border-emerald-500/80 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+              : isPixel
+              ? 'bg-gradient-to-b from-black via-[#140428] to-black border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]'
               : 'bg-gradient-to-b from-black via-slate-950 to-black border-amber-400/80 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
           }`}>
             <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center shadow-md flex-shrink-0 border ${
               isTimber
                 ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 border-emerald-200 text-white'
+                : isPixel
+                ? 'bg-gradient-to-tr from-pink-500 to-cyan-400 border-cyan-200 text-white shadow-[0_0_6px_#06B6D4]'
                 : 'bg-gradient-to-tr from-amber-500 to-yellow-300 border-yellow-200 text-casino-950'
             }`}>
               {isTimber ? (
                 <span className="text-[10px]">🌰</span>
+              ) : isPixel ? (
+                <span className="text-[10px]">🪙</span>
               ) : (
                 <Coins className="w-3 h-3 fill-amber-950 text-amber-950" />
               )}
             </div>
             <div className="flex flex-col">
               <span className={`text-[6px] sm:text-[7.5px] uppercase font-black tracking-wider leading-none ${
-                isTimber ? 'text-emerald-400' : 'text-amber-400'
+                isTimber ? 'text-emerald-400' : isPixel ? 'text-cyan-300 font-mono' : 'text-amber-400'
               }`}>
-                {isTimber ? 'RESERVE' : 'VAULT'}
+                {isTimber ? 'CACHE' : isPixel ? 'CREDITS' : 'VAULT'}
               </span>
               <span className={`text-[11px] sm:text-sm font-black leading-tight font-mono ${
                 isTimber
                   ? 'text-emerald-200 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                  : isPixel
+                  ? 'text-cyan-200 drop-shadow-[0_0_8px_#06B6D4]'
                   : 'text-yellow-300 drop-shadow-[0_0_6px_rgba(253,224,71,0.8)]'
               }`}>
                 ${balance.toLocaleString()}
@@ -137,10 +150,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </div>
           </div>
 
-          {/* VIP Level (Tablet/Desktop only) */}
-          <div className="hidden lg:flex items-center space-x-1.5 bg-gradient-to-b from-slate-900 to-black border border-purple-500/60 px-2 py-0.5 rounded-xl shadow-md">
-            <Trophy className="w-3 h-3 text-yellow-300" />
-            <span className="text-[8px] font-black text-purple-300">VIP LV.{progression.level}</span>
+          {/* Level / Stage Indicator */}
+          <div className={`hidden lg:flex items-center space-x-1.5 px-2 py-0.5 rounded-xl shadow-md border ${
+            isTimber
+              ? 'bg-gradient-to-b from-[#182a1d] to-black border-emerald-500/60 text-emerald-300'
+              : isPixel
+              ? 'bg-gradient-to-b from-[#1e0738] to-black border-pink-500/60 text-pink-300 font-mono'
+              : 'bg-gradient-to-b from-slate-900 to-black border-purple-500/60 text-purple-300'
+          }`}>
+            {isTimber ? <Trees className="w-3 h-3 text-emerald-400" /> : isPixel ? <Gamepad2 className="w-3 h-3 text-cyan-300" /> : <Trophy className="w-3 h-3 text-yellow-300" />}
+            <span className="text-[8px] font-black uppercase">
+              {isTimber ? `RANGER LV.${progression.level}` : isPixel ? `STAGE ${progression.level}` : `VIP LV.${progression.level}`}
+            </span>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Gem, Coins, Sparkles, Trees, Users, Trophy, Flame } from 'lucide-react';
+import { Crown, Gem, Coins, Sparkles, Trees, Users, Trophy, Flame, ShieldAlert, Zap } from 'lucide-react';
 import { storage } from '../../utils/storage';
 import { soundManager } from '../../audio/soundManager';
 import type { GameId } from '../../games/types';
@@ -144,7 +144,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
           {/* Ambient Warm Hearth Glow */}
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-amber-600/30 via-emerald-600/15 to-transparent filter blur-lg pointer-events-none" />
 
-          {/* Roof Shingles & Log Trusses Container - Sleek Bounded Height (~88px - 96px) */}
+          {/* Roof Shingles & Log Trusses Container */}
           <div className="relative bg-gradient-to-b from-[#3b1d0c] via-[#241207] to-[#120703] border-2 sm:border-3 border-[#78350f] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(16,185,129,0.3)] p-1.5 transition-transform duration-200">
             {/* Top Roof Peak: Nature's Fury Sap Branch & Trail Controls */}
             <div className="flex items-center justify-between px-2 mb-1 z-30 relative">
@@ -195,12 +195,12 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               )}
             </div>
 
-            {/* UNIFIED HORIZONTAL CEDAR LODGE JACKPOT DECK */}
-            <div className="grid grid-cols-12 gap-1.5 items-stretch">
-              {/* Left Column: MAJOR Timber Wolf Plaque */}
+            {/* HANGING CEDAR PLAQUES & HONEY POT ARCHITECTURE */}
+            <div className="flex items-stretch gap-1.5 w-full">
+              {/* Left Hanging Sign: Wolf Pack Major Cache */}
               <div
                 onClick={handleJackpotClick}
-                className="col-span-3 cursor-pointer group relative p-1 sm:p-1.5 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
+                className="w-1/4 cursor-pointer group relative p-1 sm:p-1.5 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
               >
                 <div className="flex items-center space-x-1">
                   <span className="text-xs">🐺</span>
@@ -214,10 +214,10 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
               </div>
 
-              {/* Center Column: GRAND JACKPOT Hollowed Cedar Log (HERO) */}
+              {/* Center Carved Honey Log: Grand Jackpot Hero */}
               <div
                 onClick={handleJackpotClick}
-                className="col-span-6 relative rounded-xl bg-gradient-to-r from-[#170a04] via-[#0b1f13] to-[#170a04] border-2 border-[#a16207] shadow-inner p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
+                className="flex-1 relative rounded-xl bg-gradient-to-r from-[#170a04] via-[#0b1f13] to-[#170a04] border-2 border-[#a16207] shadow-inner p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
               >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#2e180e] border border-amber-400/80 shadow-[0_0_8px_rgba(245,158,11,0.7)] flex items-center justify-center text-sm sm:text-base animate-bounce flex-shrink-0">
                   🐻
@@ -245,9 +245,8 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                 </div>
               </div>
 
-              {/* Right Column: MINOR & MINI Split Totem Plaque */}
-              <div className="col-span-3 grid grid-cols-2 gap-1">
-                {/* MINOR */}
+              {/* Right Stacked Wood Slices: Minor & Mini */}
+              <div className="w-1/4 grid grid-cols-2 gap-1">
                 <div
                   onClick={handleJackpotClick}
                   className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
@@ -263,7 +262,6 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
                   </div>
                 </div>
 
-                {/* MINI */}
                 <div
                   onClick={handleJackpotClick}
                   className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#2e180e] via-[#1a0c05] to-black border border-[#b45309] shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
@@ -281,7 +279,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               </div>
             </div>
 
-            {/* Retro Casino Promotional Ad Banner */}
+            {/* Hand-carved Trail Announcement Sign */}
             <div className="mt-1">
               <RetroCasinoAdBanner activeGameId={activeGameId} />
             </div>
@@ -292,186 +290,218 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   }
 
   // =========================================================================
-  // --- VERSION B: PIXEL ARCADE (NEON CYBER COIN-OP MARQUEE TOP BOX) ---
+  // --- VERSION B: PIXEL ARCADE (1980s COIN-OP CRT SCOREBOARD & BOSS HUD) ---
   // =========================================================================
   if (isPixel) {
+    const bossHpPercent = Math.max(12, 100 - feverCharge);
+    const bossSegments = Math.round((bossHpPercent / 100) * 12);
+
     return (
-      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
-        {/* Mobile Compact Top Box (< 640px) */}
+      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20 font-mono">
+        {/* Mobile Compact CRT Scoreboard (< 640px) */}
         <div className="sm:hidden w-full px-0.5 py-0.5">
           <div
             onClick={handleJackpotClick}
             className="w-full h-11 px-2.5 rounded-xl bg-gradient-to-r from-[#18052e] via-[#090117] to-[#18052e] border-2 border-pink-500/80 shadow-[0_0_15px_rgba(236,72,153,0.5)] flex items-center justify-between cursor-pointer"
           >
-            {/* Left: Mascot Icon + Label */}
+            {/* Left: 1UP */}
             <div className="flex items-center space-x-1 flex-shrink-0">
-              <span className="text-base">👾</span>
-              <span className="text-[8.5px] font-black uppercase text-pink-300 tracking-wider font-mono">
-                GRAND
+              <span className="text-[9px] font-black text-rose-400 animate-pulse">1UP:</span>
+              <span className="text-[10px] font-black text-cyan-300 font-mono">
+                {Math.floor(grand * 0.35).toLocaleString()}
               </span>
             </div>
 
-            {/* Center: Live Grand Jackpot */}
-            <div className="flex items-baseline font-mono px-1">
-              <span className="text-xs font-black text-pink-400 mr-0.5">$</span>
-              <span className="text-base font-black tracking-tight leading-none text-cyan-200 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)]">
-                {Math.floor(grand).toLocaleString()}
-              </span>
-              <span className="text-[9px] font-bold text-pink-400">
-                .{(grand % 1).toFixed(2).slice(2)}
-              </span>
+            {/* Center: HIGH SCORE */}
+            <div className="flex flex-col items-center px-1">
+              <span className="text-[7.5px] font-black text-amber-300 tracking-wider uppercase">HIGH SCORE</span>
+              <div className="flex items-baseline font-mono">
+                <span className="text-xs font-black text-amber-400 mr-0.5">$</span>
+                <span className="text-sm font-black text-yellow-300 drop-shadow-[0_0_10px_#F59E0B]">
+                  {Math.floor(grand).toLocaleString()}
+                </span>
+              </div>
             </div>
 
-            {/* Right: Sub-jackpot summary & Combo meter */}
-            <div className="flex items-center space-x-1.5 flex-shrink-0">
-              <span className="text-[8px] font-mono font-bold text-pink-300">
-                🐉${Math.round(major / 1000)}k
-              </span>
-              <div className="px-1.5 py-0.5 rounded-full bg-purple-950 border border-pink-500/60 text-[7.5px] font-mono font-bold text-pink-200 flex items-center space-x-0.5">
-                <span>COMBO</span>
-                <span className="text-white font-black">{feverCharge}%</span>
+            {/* Right: Mecha Dragon HP */}
+            <div className="flex items-center space-x-1 flex-shrink-0">
+              <span className="text-xs">🐉</span>
+              <div className="px-1.5 py-0.5 rounded bg-purple-950 border border-pink-500/60 text-[7.5px] font-bold text-pink-200">
+                HP {bossHpPercent}%
               </div>
             </div>
           </div>
         </div>
 
-        {/* Desktop / Tablet Arcade Marquee (>= 640px) */}
+        {/* Desktop / Tablet Retro Arcade Coin-Op Hood (>= 640px) */}
         <div className="hidden sm:block relative pt-1 sm:pt-1.5">
-          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-pink-600/30 via-purple-600/20 to-transparent filter blur-lg pointer-events-none" />
+          {/* Neon Purple / Cyan Edge Glow */}
+          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-pink-600/30 via-cyan-500/20 to-transparent filter blur-lg pointer-events-none" />
 
-          <div className="relative bg-gradient-to-b from-purple-600 via-pink-600 to-indigo-950 p-[2px] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(236,72,153,0.5)]">
-            <div className="relative bg-gradient-to-b from-[#14052b] via-[#090214] to-black rounded-t-[22px] sm:rounded-t-[30px] rounded-b-lg p-1.5">
-              {/* Header: Mode Switches & Combo Meter */}
-              <div className="flex items-center justify-between px-2 mb-1 z-30 relative">
-                {onToggleFloorMode && (
-                  <button
-                    onClick={onToggleFloorMode}
-                    className={`flex items-center space-x-1 px-2.5 py-0.5 rounded-full border text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all ${
-                      isFloorMode
-                        ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white border-pink-200 shadow-[0_0_10px_rgba(236,72,153,0.8)]'
-                        : 'bg-[#18052e] text-pink-200 border-pink-500/60 hover:border-pink-300'
-                    }`}
-                    title="Toggle Multiplayer Arcade Bank"
-                  >
-                    <Users className="w-3 h-3 text-pink-300" />
-                    <span>{isFloorMode ? 'ARCADE BANK ON' : 'ARCADE BANK'}</span>
-                  </button>
-                )}
+          {/* Molded Cyber Marquee Frame with Neon Double Stroke */}
+          <div className="relative bg-gradient-to-b from-[#2a0845] via-[#100326] to-[#05010e] border-2 border-pink-500 rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.95),0_0_25px_rgba(236,72,153,0.6)] p-2">
+            {/* TIER 1: AUTHENTIC 1980s SCOREBOARD STRIP */}
+            <div className="flex items-center justify-between px-3 py-1 bg-black/90 rounded-lg border border-pink-500/40 mb-1.5 shadow-inner">
+              {/* 1UP Player Score */}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-black text-rose-500 animate-pulse tracking-widest">1UP</span>
+                <span className="text-xs md:text-sm font-black text-cyan-300 tracking-wider">
+                  {Math.floor(grand * 0.35).toLocaleString().padStart(8, '0')}
+                </span>
+              </div>
 
-                {/* Center: Overdrive Combo Meter */}
-                <div className="flex-1 max-w-xs sm:max-w-sm mx-2 px-2.5 py-0.5 rounded-full bg-[#0a0214] border border-pink-500/60 shadow-inner flex items-center space-x-2">
-                  <div className="flex items-center space-x-1 text-[8.5px] font-black text-pink-300 uppercase whitespace-nowrap font-mono">
-                    <Sparkles className="w-3 h-3 text-pink-400 animate-pulse" />
-                    <span className="hidden xs:inline">COMBO:</span>
-                    <span className="text-cyan-300 font-mono">{feverCharge}%</span>
+              {/* HIGH SCORE: Center Trophy Display */}
+              <div
+                onClick={handleJackpotClick}
+                className="flex items-center space-x-2 cursor-pointer group"
+                title="Grand Arcade Jackpot"
+              >
+                <Trophy className="w-4 h-4 text-yellow-400 fill-yellow-400 animate-bounce" />
+                <span className="text-xs font-black text-amber-400 tracking-widest">HIGH SCORE:</span>
+                <span className="text-sm md:text-base font-black text-yellow-300 drop-shadow-[0_0_10px_#F59E0B]">
+                  ${Math.floor(grand).toLocaleString()}
+                </span>
+                <Trophy className="w-4 h-4 text-yellow-400 fill-yellow-400 animate-bounce" />
+              </div>
+
+              {/* 2UP / Credits Inserted */}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-black text-cyan-400">CREDITS:</span>
+                <span className="text-xs md:text-sm font-black text-emerald-400">04</span>
+                <span className="text-[10px] font-black text-pink-400 animate-pulse uppercase tracking-wider ml-1">
+                  INSERT 25¢
+                </span>
+              </div>
+            </div>
+
+            {/* TIER 2: BOSS BATTLE HP GAUGE & BOUNTY HUD */}
+            <div className="grid grid-cols-12 gap-2 items-center px-1">
+              {/* Left 7 Columns: STAGE 1 MECHA DRAGON BOSS ENCOUNTER */}
+              <div
+                onClick={handleJackpotClick}
+                className="col-span-7 bg-gradient-to-r from-purple-950/80 via-[#18052e] to-purple-950/80 rounded-xl border border-pink-500/70 p-2 shadow flex items-center justify-between cursor-pointer group hover:border-pink-300 transition-colors"
+              >
+                {/* Boss Avatar */}
+                <div className="w-9 h-9 rounded-lg bg-black border-2 border-pink-400 flex items-center justify-center text-xl shadow-[0_0_10px_#EC4899] flex-shrink-0 animate-pulse">
+                  🐉
+                </div>
+
+                {/* Boss Title & Segmented Health Bar */}
+                <div className="flex-1 mx-3 flex flex-col justify-center">
+                  <div className="flex items-center justify-between text-[9px] font-black tracking-wider uppercase mb-1">
+                    <span className="text-pink-300 flex items-center space-x-1">
+                      <ShieldAlert className="w-3 h-3 text-red-400" />
+                      <span>STAGE 1: MECHA DRAGON</span>
+                    </span>
+                    <span className="text-cyan-300 font-mono">
+                      BOSS HP: {bossHpPercent}%
+                    </span>
                   </div>
-                  <div className="flex-1 bg-black h-1.5 rounded-full overflow-hidden p-0.5 border border-purple-500/40">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-purple-500 via-pink-400 to-cyan-300 shadow-[0_0_8px_#EC4899] transition-all duration-300"
-                      style={{ width: `${feverCharge}%` }}
-                    />
+
+                  {/* 12-Segment Retro Pixel HP Bar */}
+                  <div className="w-full h-3 bg-black rounded p-0.5 border border-purple-500/60 flex space-x-0.5">
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <div
+                        key={i}
+                        className={`flex-1 h-full rounded-2xs transition-all duration-300 ${
+                          i < bossSegments
+                            ? i < 4
+                              ? 'bg-rose-500 shadow-[0_0_4px_#F43F5E]'
+                              : i < 8
+                              ? 'bg-amber-400 shadow-[0_0_4px_#FBBF24]'
+                              : 'bg-emerald-400 shadow-[0_0_4px_#34D399]'
+                            : 'bg-stone-900 opacity-40'
+                        }`}
+                      />
+                    ))}
                   </div>
-                  {isFeverActive && (
-                    <span className="text-[8.5px] font-black text-yellow-300 animate-bounce">2X OVERDRIVE!</span>
+                </div>
+
+                {/* Defeat Bounty */}
+                <div className="flex flex-col items-end flex-shrink-0">
+                  <span className="text-[8px] font-black text-rose-400 uppercase tracking-widest">DRAGON BOUNTY</span>
+                  <span className="text-xs sm:text-sm font-black text-cyan-200 drop-shadow-[0_0_6px_#06B6D4]">
+                    ${Math.floor(major).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right 5 Columns: OVERDRIVE COMBO & SUB-BOSS MINI BOUNTIES */}
+              <div className="col-span-5 bg-gradient-to-r from-[#120424] to-black rounded-xl border border-cyan-500/60 p-2 shadow flex flex-col justify-between h-full">
+                {/* Overdrive Combo Meter */}
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center space-x-1 text-[8.5px] font-black uppercase tracking-wider text-cyan-300">
+                    <Zap className="w-3 h-3 text-cyan-400 animate-pulse" />
+                    <span>COMBO:</span>
+                    <span className="text-yellow-300 font-mono">{feverCharge}%</span>
+                  </div>
+                  {isFeverActive ? (
+                    <span className="text-[8px] font-black text-yellow-300 animate-bounce uppercase">
+                      2X OVERDRIVE!
+                    </span>
+                  ) : (
+                    <span className="text-[8px] font-bold text-slate-400 uppercase">
+                      BUILD 100%
+                    </span>
                   )}
                 </div>
 
+                {/* Sub-Boss Badges */}
+                <div className="flex items-center justify-between gap-1 mt-0.5">
+                  <div
+                    onClick={handleJackpotClick}
+                    className="flex-1 bg-black/80 rounded px-1.5 py-0.5 border border-purple-500/50 flex items-center justify-between cursor-pointer hover:border-cyan-400 transition-colors"
+                  >
+                    <span className="text-[8px] text-purple-300">👾 GOBLIN</span>
+                    <span className="text-[9px] font-black text-cyan-300 font-mono">
+                      ${Math.floor(minor).toLocaleString()}
+                    </span>
+                  </div>
+                  <div
+                    onClick={handleJackpotClick}
+                    className="flex-1 bg-black/80 rounded px-1.5 py-0.5 border border-purple-500/50 flex items-center justify-between cursor-pointer hover:border-pink-400 transition-colors"
+                  >
+                    <span className="text-[8px] text-pink-300">🤖 BOT</span>
+                    <span className="text-[9px] font-black text-pink-300 font-mono">
+                      ${Math.floor(mini).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TIER 3: RETRO ARCADE SCANLINE NEWS TICKER & BANK CONTROLS */}
+            <div className="mt-1.5 flex items-center justify-between px-2 py-1 bg-black/95 rounded-lg border border-pink-500/50 text-[9px] text-cyan-300 overflow-hidden shadow-inner">
+              <div className="flex items-center space-x-2 truncate flex-1 mr-2">
+                <span className="w-2 h-2 rounded-full bg-pink-500 animate-ping flex-shrink-0" />
+                <span className="text-pink-300 font-bold uppercase truncate">
+                  ★ NEW CHALLENGER RECORD: TODD R. (117,245 PTS) • 3 CARTRIDGES UNLOCK 15 BOSS RUSH FREE SPINS • 50 RETRO PAYLINES ACTIVE ★
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-1.5 flex-shrink-0">
+                {onToggleFloorMode && (
+                  <button
+                    onClick={onToggleFloorMode}
+                    className={`px-2 py-0.5 rounded text-[8.5px] font-black uppercase border transition-all ${
+                      isFloorMode
+                        ? 'bg-pink-600 text-white border-pink-200 shadow-[0_0_8px_#EC4899]'
+                        : 'bg-purple-950 text-pink-300 border-pink-500/50 hover:border-pink-300'
+                    }`}
+                  >
+                    {isFloorMode ? 'ARCADE BANK ON' : 'ARCADE BANK'}
+                  </button>
+                )}
                 {onOpenLeaderboard && (
                   <button
                     onClick={onOpenLeaderboard}
-                    className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#18052e] hover:bg-[#250947] text-pink-200 border border-pink-500/60 hover:border-pink-300 text-[8.5px] sm:text-[9.5px] font-black uppercase shadow transition-all font-mono"
-                    title="View High Score Hall of Fame"
+                    className="px-2 py-0.5 rounded text-[8.5px] font-black uppercase bg-purple-950 hover:bg-purple-900 text-yellow-300 border border-yellow-400/60 transition-all flex items-center space-x-1"
                   >
-                    <Trophy className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                    <span>HIGH SCORES</span>
+                    <Trophy className="w-2.5 h-2.5 text-yellow-400" />
+                    <span>HALL OF FAME</span>
                   </button>
                 )}
-              </div>
-
-              {/* Marquee Jackpot Deck */}
-              <div className="grid grid-cols-12 gap-1.5 items-stretch">
-                {/* Major: Mecha Dragon */}
-                <div
-                  onClick={handleJackpotClick}
-                  className="col-span-3 cursor-pointer group relative p-1 sm:p-1.5 rounded-xl bg-gradient-to-b from-[#1e0738] via-[#0e021c] to-black border border-purple-500/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
-                >
-                  <div className="flex items-center space-x-1">
-                    <span className="text-xs">🐉</span>
-                    <span className="text-[7.5px] sm:text-[8.5px] font-black uppercase text-pink-300 tracking-wider font-mono">
-                      {gameDef.theme.majorTitle}
-                    </span>
-                  </div>
-                  <div className="flex items-baseline font-mono text-xs sm:text-sm md:text-base font-black text-pink-200 drop-shadow-[0_0_8px_#EC4899] mt-0.5">
-                    <span>${Math.floor(major).toLocaleString()}</span>
-                    <span className="text-[9px] text-pink-400/80">.{(major % 1).toFixed(2).slice(2)}</span>
-                  </div>
-                </div>
-
-                {/* Grand Jackpot */}
-                <div
-                  onClick={handleJackpotClick}
-                  className="col-span-6 relative rounded-xl bg-gradient-to-r from-[#1b0633] via-[#0d011c] to-[#1b0633] border-2 border-pink-500/90 shadow-[inset_0_0_20px_rgba(236,72,153,0.3)] p-1 sm:p-1.5 flex items-center justify-between cursor-pointer group overflow-hidden"
-                >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-950 border border-pink-400 shadow-[0_0_10px_#EC4899] flex items-center justify-center text-sm sm:text-base animate-bounce flex-shrink-0">
-                    👾
-                  </div>
-
-                  <div className="flex flex-col items-center z-10 mx-auto px-1 text-center">
-                    <div className="flex items-center justify-center space-x-1.5 text-pink-300 text-[8px] sm:text-[9px] font-black uppercase tracking-widest font-mono">
-                      <span>★ {gameDef.theme.grandTitle} ★</span>
-                    </div>
-                    <div className="flex items-baseline font-mono">
-                      <span className="text-xs sm:text-sm font-black text-pink-400 mr-0.5">$</span>
-                      <span className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-cyan-200 drop-shadow-[0_0_15px_rgba(6,182,212,1)]">
-                        {Math.floor(grand).toLocaleString()}
-                      </span>
-                      <span className="text-[10px] sm:text-xs font-bold text-pink-300 ml-0.5">
-                        .{(grand % 1).toFixed(2).slice(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-950 border border-cyan-400 shadow-[0_0_10px_#06B6D4] flex items-center justify-center text-sm sm:text-base animate-pulse flex-shrink-0">
-                    🕹️
-                  </div>
-                </div>
-
-                {/* Minor & Mini */}
-                <div className="col-span-3 grid grid-cols-2 gap-1">
-                  <div
-                    onClick={handleJackpotClick}
-                    className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#1e0738] via-[#0e021c] to-black border border-cyan-400/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
-                  >
-                    <div className="flex items-center space-x-0.5">
-                      <span className="text-[10px]">⚔️</span>
-                      <span className="text-[7px] sm:text-[8px] font-black uppercase text-cyan-300 tracking-wider font-mono">
-                        {gameDef.theme.minorTitle}
-                      </span>
-                    </div>
-                    <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-cyan-200 drop-shadow-[0_0_6px_#06B6D4]">
-                      <span>${Math.floor(minor).toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={handleJackpotClick}
-                    className="cursor-pointer group relative p-1 rounded-xl bg-gradient-to-b from-[#1e0738] via-[#0e021c] to-black border border-pink-400/70 shadow flex flex-col justify-center items-center hover:scale-[1.02] transition-transform"
-                  >
-                    <div className="flex items-center space-x-0.5">
-                      <span className="text-[10px]">🪙</span>
-                      <span className="text-[7px] sm:text-[8px] font-black uppercase text-pink-300 tracking-wider font-mono">
-                        {gameDef.theme.miniTitle}
-                      </span>
-                    </div>
-                    <div className="flex items-baseline font-mono text-[10px] sm:text-xs md:text-sm font-black text-pink-200 drop-shadow-[0_0_6px_#EC4899]">
-                      <span>${Math.floor(mini).toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-1">
-                <RetroCasinoAdBanner activeGameId={activeGameId} />
               </div>
             </div>
           </div>
@@ -528,7 +558,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
         {/* Radial Sunburst Gold Glow */}
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-yellow-500/30 via-amber-500/15 to-transparent filter blur-lg pointer-events-none" />
 
-        {/* Monolithic Top Box Housing - Sleek Bounded Height (~88px - 96px) */}
+        {/* Monolithic Top Box Housing */}
         <div className="relative bg-gradient-to-b from-amber-600 via-yellow-700 to-amber-950 p-[2px] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(245,158,11,0.4)]">
           <div className="relative bg-gradient-to-b from-slate-950 via-casino-950 to-black rounded-t-[22px] sm:rounded-t-[30px] rounded-b-lg p-1.5">
             {/* Top Header: Molten Gold Reactor Gauge & High-Roller Mode Switches */}
