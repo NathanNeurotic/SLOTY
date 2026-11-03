@@ -11,7 +11,7 @@ import type { GameDefinition } from '../games/types';
 import { getGame, DEFAULT_GAME_ID } from '../games/gameRegistry';
 import { VAULT_REEL_STRIPS } from '../games/vault24k/vaultDefinition';
 
-// Calibrated 50-stop reel strips with authentic Oregon Lottery VLT distribution
+// Fallback 50-stop reel strips (the Vault strips) when no game definition is supplied
 const REEL_STRIPS: SymbolId[][] = VAULT_REEL_STRIPS;
 
 // Dynamic reels x dynamic rows (5x4 Vault, 5x3 Timberland, 6x5 Pixel Arcade)

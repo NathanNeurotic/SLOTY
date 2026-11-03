@@ -1,32 +1,61 @@
-# React + TypeScript + Vite
+# SLOTY — Deluxe Casino Slots
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A free-play casino slot machine for the web. **Virtual coins only — no real-money
+gambling, no prizes, nothing to buy.** SLOTY's math is its own model, measured by the
+test suite in this repo; it is not certified by, endorsed by, or affiliated with the
+Oregon Lottery or any regulator.
 
-Currently, two official plugins are available:
+**Play it:** https://nathanneurotic.github.io/SLOTY/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## The games
 
-## React Compiler
+| Game | Grid | Lines | Character |
+|---|---|---|---|
+| **24K Gold & Cash Vault** | 5×4 | 40 | The high-roller vault. Blast-door scatters, bullion coins, Baron Bartholomew Sterling watching your quota. |
+| **Timberland Critters** | 5×3 | 25 | Woodland camp slots with Grizzly Gus, moonlit owl scatters, and golden acorn respins. |
+| **Pixel Arcade: 8-Bit Quest** | 6×5 | 50 | A high-hit-frequency 8-bit cabinet — frequent small wins, cartridge scatters, boss-stage free spins. |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Every game shares the same bonus skeleton — 3 scatters award 10 free spins at 3×,
+6 coins trigger a hold & spin respin round, and wins can be risked in a double-up
+gamble — plus a per-boss quota ladder, a fever meter, VIP XP levels, and a fully
+synthesized WebAudio soundtrack (no audio files).
 
-## Expanding the Oxlint configuration
+## Controls
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- **Space** — spin / quick stop
+- **↑ / ↓** — bet per line · **B** — max bet · **A** — 25 auto-spins
+- **G** — switch game · **F** — casino floor view · **P** / **L** — paytable
+- **M** — mute · **T** — turbo
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Progress (balance, XP, stats, settings) is stored locally in your browser.
+
+## Run it locally
+
+```bash
+npm ci
+npm run dev      # Vite dev server
+npm test         # engine + math-model regression checks (Monte Carlo, 100k spins/game)
+npm run lint     # oxlint
+npm run build    # tsc -b && vite build -> dist/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## About the math checks
+
+`test-engine.ts` verifies the forced-outcome scenarios, the payline tables, XP
+progression, and Monte Carlo measurements of each game's base RTP, hit frequency,
+and bonus trigger rates. Bonus EV in the total-RTP estimate is **modeled**, not
+simulated, and the pass/fail bounds are **regression guards for SLOTY's own model** —
+they exist to catch accidental math changes, not to certify anything. Each game's
+measured profile is printed when the suite runs.
+
+## Tech
+
+React 19 · TypeScript · Vite · Tailwind CSS 3 · canvas-confetti · lucide-react ·
+Discord Embedded App SDK (ambient floor mode; the neighbouring "patrons" are
+simulated, not real players).
+
+## Developer debug suite
+
+Forced reels / credit injection exist for development only: available under
+`npm run dev`, or on a production build by adding `?debug=1` to the URL. It is off
+for normal visitors.

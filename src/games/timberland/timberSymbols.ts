@@ -1,7 +1,7 @@
 import type { SlotSymbol } from '../../engine/types';
 
-// Calibrated to Oregon Lottery Video Lottery Terminal (VLT) specifications
-// Target Theoretical RTP: 94.8% ± 0.5% | Base Hit Frequency: ~29% | Scatter Odds: ~1:140 | Hold & Spin: ~1:185
+// Tuned against SLOTY's own math model; measured by test-engine.ts (not a certification)
+// Profile is measured, not targeted on paper: see the Monte Carlo output of test-engine.ts for current numbers
 export const TIMBER_SYMBOLS: Record<string, SlotSymbol> = {
   BEAR: {
     id: 'BEAR',

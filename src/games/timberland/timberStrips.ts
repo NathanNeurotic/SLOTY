@@ -1,6 +1,6 @@
 import type { SymbolId } from '../../engine/types';
 
-// Calibrated to Oregon Lottery Video Lottery Terminal (VLT) specifications
+// Tuned against SLOTY's own math model; measured by test-engine.ts (not a certification)
 // 50-stop reel strips with 3 rows per reel (5x3, 25 paylines)
 export const TIMBER_REEL_STRIPS: SymbolId[][] = [
   // Reel 1: 1 owl, [2, 2] acorns (4 acorns), 1 bear
