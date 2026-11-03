@@ -36,7 +36,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))',
         }}
       >
-        <span className="hidden md:inline text-[7.5px] font-mono font-black text-pink-400 uppercase tracking-widest pl-1 pr-0.5">
+        <span className="hidden 2xl:inline text-[7.5px] font-mono font-black text-pink-400 uppercase tracking-widest pl-1 pr-0.5">
           ROM CART:
         </span>
         {games.map((g) => {
@@ -47,7 +47,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               onClick={() => handleSelect(g.id)}
               disabled={disabled}
               title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-0.5 sm:py-1 font-mono text-[9px] sm:text-[10px] font-black uppercase transition-all ${
+              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 font-mono text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 text-white border border-cyan-300 shadow-[0_0_12px_#06B6D4] scale-[1.02]'
                   : 'bg-slate-950 text-slate-400 hover:text-cyan-300 hover:bg-slate-900 border border-slate-700'
@@ -79,7 +79,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             'polygon(0% 15%, 2% 0%, 98% 0%, 100% 15%, 98% 50%, 100% 85%, 98% 100%, 2% 100%, 0% 85%, 2% 50%)',
         }}
       >
-        <span className="hidden md:inline text-[7.5px] font-black text-amber-400 uppercase tracking-widest pl-1.5 pr-0.5">
+        <span className="hidden 2xl:inline text-[7.5px] font-black text-amber-400 uppercase tracking-widest pl-1.5 pr-0.5">
           TRAILHEAD:
         </span>
         {games.map((g) => {
@@ -90,7 +90,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               onClick={() => handleSelect(g.id)}
               disabled={disabled}
               title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-              className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-black uppercase transition-all ${
+              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-900 text-amber-100 border-2 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.7)] scale-[1.02]'
                   : 'bg-[#140803] text-stone-400 hover:text-amber-200 border border-[#78350f]'
@@ -118,7 +118,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
           'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)',
       }}
     >
-      <span className="hidden md:inline text-[7.5px] font-mono font-black text-yellow-300 uppercase tracking-widest pl-1.5 pr-0.5">
+      <span className="hidden 2xl:inline text-[7.5px] font-mono font-black text-yellow-300 uppercase tracking-widest pl-1.5 pr-0.5">
         DEPOSITORY:
       </span>
       {games.map((g) => {
@@ -129,7 +129,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             onClick={() => handleSelect(g.id)}
             disabled={disabled}
             title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-black uppercase font-mono transition-all ${
+            className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase font-mono transition-all ${
               isActive
                 ? 'bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-amber-950 border border-yellow-100 shadow-[0_0_15px_rgba(245,158,11,0.9)] scale-[1.02]'
                 : 'bg-black/90 text-yellow-500/70 hover:text-yellow-200 border border-yellow-500/30'

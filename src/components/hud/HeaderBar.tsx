@@ -168,7 +168,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 
           {/* Level / Stage Indicator */}
           <div
-            className={`hidden lg:flex items-center space-x-1.5 px-2 py-0.5 shadow-md border ${
+            className={`hidden xl:flex items-center space-x-1.5 px-2 py-0.5 shadow-md border ${
               isTimber
                 ? 'bg-gradient-to-b from-[#241308] to-[#122216] border-emerald-500/70 text-emerald-300'
                 : isPixel
@@ -247,13 +247,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <Music className={`w-3.5 h-3.5 ${isMusicOn ? 'text-emerald-300' : 'text-slate-400'}`} />
           </button>
 
-          {/* Tools & Audio Settings Drawer Launcher (< 1024px) */}
+          {/* Tools & Audio Settings Drawer Launcher (< 1280px) */}
           <button
             onClick={() => {
               soundManager.playButtonClick();
               setShowMobileToolsDrawer(true);
             }}
-            className="lg:hidden p-1.5 vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            className="xl:hidden p-1.5 vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
             style={{
               clipPath: isPixel
                 ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
@@ -264,8 +264,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <Sliders className="w-3.5 h-3.5 text-yellow-300" />
           </button>
 
-          {/* Desktop-only individual utility buttons (>= 1024px) */}
-          <div className="hidden lg:flex items-center space-x-1.5">
+          {/* Desktop-only individual utility buttons (>= 1280px) */}
+          <div className="hidden xl:flex items-center space-x-1.5">
             <button
               onClick={() => {
                 soundManager.playButtonClick();

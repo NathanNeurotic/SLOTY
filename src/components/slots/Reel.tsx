@@ -157,7 +157,7 @@ export const Reel: React.FC<ReelProps> = ({
       {/* 2. Resting / Settling Landing Grid */}
       {!isSpinning && (
         <div
-          className={`w-full h-full flex flex-col justify-between ${
+          className={`w-full h-full flex flex-col ${
             hasSettled ? 'animate-reel-settle' : ''
           }`}
         >
@@ -170,7 +170,8 @@ export const Reel: React.FC<ReelProps> = ({
                 key={rowIdx}
                 data-reel={reelIndex}
                 data-row={rowIdx}
-                className={`flex-1 min-h-0 w-full flex items-center justify-center p-0.5 sm:p-1 transition-all duration-200 ${
+                style={{ height: `${100 / activeRowCount}%` }}
+                className={`w-full flex-shrink-0 min-h-0 flex items-center justify-center p-0.5 sm:p-1 transition-all duration-200 ${
                   isWinning
                     ? isTimber
                       ? 'bg-emerald-500/30 ring-2 ring-emerald-300 shadow-[0_0_25px_rgba(52,211,153,0.85)] z-10 animate-win-symbol-juice'

@@ -340,7 +340,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
       {/* Outer Luxury Cabinet Frame with Handcrafted Theming and Bespoke Silhouettes */}
       <div
-        className={`relative p-[2px] sm:p-[3px] transition-all select-none ${
+        className={`relative p-[2px] sm:p-[3px] transition-all select-none flex flex-col flex-1 min-h-0 justify-center ${
           isTimber
             ? 'border-4 sm:border-[6px] border-[#5c2b09] bg-gradient-to-b from-[#3b1d0c] via-[#200f07] to-[#0d0603] shadow-[0_0_40px_rgba(16,185,129,0.5),0_25px_60px_rgba(0,0,0,0.95)]'
             : isPixel
@@ -356,7 +356,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         }}
       >
         <div
-          className={`relative p-1 sm:p-2 md:p-2.5 transition-all duration-300 shadow-2xl ${
+          className={`relative p-1 sm:p-2 md:p-2.5 transition-all duration-300 shadow-2xl flex flex-col flex-1 min-h-0 justify-between ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
@@ -503,17 +503,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
         <div
-          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-[170px] ${
+          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-[200px] ${
             rowCount === 5
-              ? 'max-h-[380px] xl:max-h-[420px]'
+              ? 'max-h-[500px] xl:max-h-[560px]'
               : rowCount === 3
-              ? 'max-h-[310px] xl:max-h-[340px]'
-              : 'max-h-[350px] xl:max-h-[380px]'
+              ? 'max-h-[440px] xl:max-h-[490px]'
+              : 'max-h-[480px] xl:max-h-[530px]'
           }`}
         >
           {/* Left Themed Cabinet Pilaster */}
           {isTimber ? (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-l-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
               <div className="flex flex-col space-y-5">
                 {[...Array(3)].map((_, i) => (
@@ -525,7 +525,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
             </div>
           ) : isPixel ? (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#180938] via-purple-950 to-black border-y-2 border-l-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-[#180938] via-purple-950 to-black border-y-2 border-l-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-none border border-pink-400 bg-purple-950 flex items-center justify-center">
                 <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
               </div>
@@ -541,7 +541,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
             </div>
           ) : (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-slate-900 via-amber-900 to-black border-y-2 border-l-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-l-xl bg-gradient-to-r from-slate-900 via-amber-900 to-black border-y-2 border-l-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
                 <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
               </div>
@@ -657,7 +657,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* Right Themed Cabinet Pilaster */}
           {isTimber ? (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-r-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-[#2a1306] via-[#451e0a] to-[#2a1306] border-y-2 border-r-2 border-[#78350f] shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
               <div className="flex flex-col space-y-5">
                 {[...Array(3)].map((_, i) => (
@@ -669,7 +669,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               <div className="w-3 h-3 rounded-full bg-[#1c0c04] border border-[#a16207] shadow-inner" />
             </div>
           ) : isPixel ? (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-purple-950 via-[#180938] to-black border-y-2 border-r-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-purple-950 via-[#180938] to-black border-y-2 border-r-2 border-pink-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-none border border-pink-400 bg-purple-950 flex items-center justify-center">
                 <div className="w-1 h-1 bg-cyan-300 shadow-[0_0_6px_#00f0ff]" />
               </div>
@@ -685,7 +685,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               </div>
             </div>
           ) : (
-            <div className="hidden md:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-black via-amber-900 to-slate-900 border-y-2 border-r-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
+            <div className="hidden xl:flex flex-col items-center justify-between w-4 sm:w-6 py-4 rounded-r-xl bg-gradient-to-r from-black via-amber-900 to-slate-900 border-y-2 border-r-2 border-yellow-500/60 shadow-2xl relative flex-shrink-0 self-stretch">
               <div className="w-3 h-3 rounded-full bg-slate-950 border border-yellow-300 shadow-inner flex items-center justify-center">
                 <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
               </div>
@@ -710,7 +710,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 : isPixel
                 ? 'h-7 sm:h-8 bg-gradient-to-r from-purple-950 via-pink-900 to-purple-950 border-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.8)]'
                 : 'h-7 sm:h-8 bg-gradient-to-r from-amber-950 via-casino-900 to-amber-950 border-yellow-300 shadow-[0_0_20px_rgba(253,224,71,0.8)]'
-              : 'h-4.5 sm:h-5.5 bg-black/40 border-white/5 text-slate-400'
+              : 'h-6 sm:h-7 bg-black/40 border-white/5 text-slate-400'
           }`}
         >
           {/* Left Speaker + RTP Cert */}

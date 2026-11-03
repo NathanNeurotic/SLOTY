@@ -39,13 +39,10 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
 
   // Set of winning line indices
   const winningLineIndices = new Set(winningLines.map((w) => w.lineIndex));
-  const isFiftyLines = totalLinesCount > 40;
 
   return (
     <div
-      className={`${
-        isFiftyLines ? 'hidden lg:flex' : 'hidden md:flex'
-      } flex-col justify-between py-0.5 self-stretch h-full w-5 sm:w-6 md:w-7 select-none z-20 flex-shrink-0 min-h-0 gap-[1px]`}
+      className="hidden xl:flex flex-col justify-between py-0.5 self-stretch h-full w-5 sm:w-6 md:w-7 select-none z-20 flex-shrink-0 min-h-0 gap-[1px]"
     >
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;

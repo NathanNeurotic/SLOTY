@@ -31,8 +31,8 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
 
   return (
     <div className="relative w-full flex flex-col items-center flex-1 min-h-0 justify-center">
-      {/* Main Floor Arena with generous clearance for lever & flank cards */}
-      <div className="w-full flex items-end justify-center gap-2 sm:gap-4 xl:gap-10 2xl:gap-14 px-1 sm:px-2 py-0.5 flex-1 min-h-0">
+      {/* Main Floor Arena with generous clearance for lever & flank cards - dynamic vertical centering */}
+      <div className="w-full flex items-center justify-center gap-2 sm:gap-4 xl:gap-10 2xl:gap-14 px-1 sm:px-2 py-0.5 flex-1 min-h-0">
         {/* Left Flank: Neighbor Terminal (in Floor Mode) OR Full Mascot Standee */}
         {isFloorMode && leftNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
@@ -44,7 +44,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
             />
           </div>
         ) : flankCompanion ? (
-          <div className="hidden xl:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-2 z-20">
+          <div className="hidden xl:flex flex-col items-center justify-center transition-all duration-300 flex-shrink-0 pb-2 z-20">
             {flankCompanion}
           </div>
         ) : null}
@@ -65,7 +65,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
             />
           </div>
         ) : (
-          <div className="hidden xl:flex flex-col items-center justify-end transition-all duration-300 flex-shrink-0 pb-2 z-20 xl:ml-8 2xl:ml-12">
+          <div className="hidden xl:flex flex-col items-center justify-center transition-all duration-300 flex-shrink-0 pb-2 z-20 xl:ml-8 2xl:ml-12">
             <GamePerkCard
               activeGameId={activeGameId}
               onOpenPaytable={onOpenPaytable}
