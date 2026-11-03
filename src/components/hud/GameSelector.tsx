@@ -51,7 +51,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               <span className="text-[9px] sm:text-[10.5px] font-black uppercase tracking-wider leading-none">
                 {g.shortName}
               </span>
-              <span className="text-[6.5px] sm:text-[7.5px] font-mono font-bold text-slate-300/80 leading-none mt-0.5">
+              <span className="hidden lg:inline text-[6.5px] sm:text-[7.5px] font-mono font-bold text-slate-300/80 leading-none mt-0.5">
                 {g.reels}x{g.rows} • {g.defaultLines}L
               </span>
             </div>

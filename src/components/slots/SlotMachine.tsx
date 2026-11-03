@@ -7,7 +7,6 @@ import { PaylineSideTabs } from './PaylineSideTabs';
 import { FloatingWins } from './FloatingWins';
 import { SlotLever } from './SlotLever';
 import { CabinetVentsAndWoodsFX } from '../../fx/CabinetVentsAndWoodsFX';
-import { HeroWinCelebration } from './HeroWinCelebration';
 import { CabinetFrameOverlay } from './CabinetFrameOverlay';
 import { CabinetGlassOverlay } from './CabinetGlassOverlay';
 import { soundManager } from '../../audio/soundManager';
@@ -53,7 +52,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onRewardCoins: _onRewardCoins,
   activeGameId = 'vault-24k',
   isFloorMode = false,
-  onOpenGamble,
+  onOpenGamble: _onOpenGamble,
 }) => {
   const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
@@ -559,7 +558,13 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden h-[clamp(240px,44vh,380px)] sm:h-[clamp(270px,46vh,440px)] md:h-[clamp(300px,48vh,480px)] lg:h-[clamp(330px,50vh,520px)] xl:h-[clamp(360px,52vh,560px)] 2xl:h-[clamp(400px,54vh,600px)] ${
+            className={`relative flex-1 min-h-0 flex space-x-1 sm:space-x-1.5 p-1 sm:p-2 rounded-xl border shadow-inner overflow-hidden ${
+              rowCount === 5
+                ? 'h-[clamp(280px,50vh,430px)] sm:h-[clamp(320px,52vh,480px)] md:h-[clamp(350px,54vh,530px)] lg:h-[clamp(380px,56vh,580px)] xl:h-[clamp(420px,58vh,630px)]'
+                : rowCount === 3
+                ? 'h-[clamp(210px,38vh,300px)] sm:h-[clamp(230px,40vh,340px)] md:h-[clamp(260px,42vh,380px)] lg:h-[clamp(290px,44vh,420px)]'
+                : 'h-[clamp(240px,44vh,360px)] sm:h-[clamp(270px,46vh,410px)] md:h-[clamp(300px,48vh,460px)] lg:h-[clamp(330px,50vh,500px)]'
+            } ${
               isTimber
                 ? 'bg-[#180e07] border-2 border-[#78350f] shadow-[inset_0_0_35px_rgba(0,0,0,0.95)]'
                 : isPixel
@@ -600,17 +605,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 rowCount={rowCount}
                 reelsCount={numReels}
                 activeGameId={activeGameId}
-              />
-            )}
-
-            {/* HERO CENTER-STAGE WIN CELEBRATION BANNER */}
-            {!isAnyReelSpinning && spinResult && spinResult.totalPayout > 0 && (
-              <HeroWinCelebration
-                totalPayout={spinResult.totalPayout}
-                winningLines={spinResult.winningLines}
-                activeWinningLine={activeWin}
-                activeGameId={activeGameId}
-                onOpenGamble={onOpenGamble}
               />
             )}
 

@@ -39,9 +39,14 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
 
   // Set of winning line indices
   const winningLineIndices = new Set(winningLines.map((w) => w.lineIndex));
+  const isFiftyLines = totalLinesCount > 40;
 
   return (
-    <div className="hidden sm:flex flex-col justify-between py-1 h-full w-6 sm:w-8 md:w-9 select-none z-20 flex-shrink-0">
+    <div
+      className={`${
+        isFiftyLines ? 'hidden lg:flex' : 'hidden md:flex'
+      } flex-col justify-between py-1 h-full w-5 sm:w-7 md:w-8 select-none z-20 flex-shrink-0`}
+    >
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;
         const isWinning = winningLineIndices.has(lineIdx);
@@ -105,8 +110,8 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
             }}
             className={`${
               totalLinesCount > 40
-                ? 'w-4 h-3 sm:w-6 sm:h-3.5 md:w-7 md:h-4 text-[7px] sm:text-[8px] md:text-[9px]'
-                : 'w-5 h-4 sm:w-7 sm:h-5.5 md:w-8 md:h-6 text-[9px] sm:text-[11px]'
+                ? 'w-full max-w-[28px] h-3 md:h-3.5 text-[7px] md:text-[8px]'
+                : 'w-full max-w-[32px] h-3.5 sm:h-5 md:h-6 text-[8px] sm:text-[10px]'
             } font-black flex items-center justify-center border transition-all duration-150 transform hover:scale-115 active:scale-90 leading-none shadow-sm ${
               isTimber ? leafShape : isPixel ? pixelShape : 'rounded-[4px]'
             } ${

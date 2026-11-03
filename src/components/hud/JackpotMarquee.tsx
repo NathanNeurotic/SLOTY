@@ -101,11 +101,11 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   if (isTimber) {
     return (
       <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
-        {/* Mobile Compact Top Box (< 768px: guaranteed clearance for reels) */}
-        <div className="md:hidden w-full px-0.5 py-0.5">
+        {/* Mobile Compact Top Box (< 640px) */}
+        <div className="sm:hidden w-full px-0.5 py-0.5">
           <div
             onClick={handleJackpotClick}
-            className="w-full h-10 px-2 rounded-xl bg-gradient-to-r from-[#241308] via-[#120703] to-[#241308] border-2 border-[#a16207] shadow-md flex items-center justify-between cursor-pointer"
+            className="w-full h-11 px-2.5 rounded-xl bg-gradient-to-r from-[#241308] via-[#120703] to-[#241308] border-2 border-[#a16207] shadow-md flex items-center justify-between cursor-pointer"
           >
             {/* Left: Mascot Icon + Label */}
             <div className="flex items-center space-x-1 flex-shrink-0">
@@ -139,8 +139,8 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
           </div>
         </div>
 
-        {/* Desktop / Tablet Mountain Cabin A-Frame Shingle Roof Pediment (>= 768px) */}
-        <div className="hidden md:block relative pt-1 sm:pt-1.5">
+        {/* Desktop / Tablet Mountain Cabin A-Frame Shingle Roof Pediment (>= 640px) */}
+        <div className="hidden sm:block relative pt-1 sm:pt-1.5">
           {/* Ambient Warm Hearth Glow */}
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-amber-600/30 via-emerald-600/15 to-transparent filter blur-lg pointer-events-none" />
 
@@ -297,11 +297,11 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   if (isPixel) {
     return (
       <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
-        {/* Mobile Compact Top Box (< 768px) */}
-        <div className="md:hidden w-full px-0.5 py-0.5">
+        {/* Mobile Compact Top Box (< 640px) */}
+        <div className="sm:hidden w-full px-0.5 py-0.5">
           <div
             onClick={handleJackpotClick}
-            className="w-full h-10 px-2 rounded-xl bg-gradient-to-r from-[#18052e] via-[#090117] to-[#18052e] border-2 border-pink-500/80 shadow-[0_0_15px_rgba(236,72,153,0.5)] flex items-center justify-between cursor-pointer"
+            className="w-full h-11 px-2.5 rounded-xl bg-gradient-to-r from-[#18052e] via-[#090117] to-[#18052e] border-2 border-pink-500/80 shadow-[0_0_15px_rgba(236,72,153,0.5)] flex items-center justify-between cursor-pointer"
           >
             {/* Left: Mascot Icon + Label */}
             <div className="flex items-center space-x-1 flex-shrink-0">
@@ -335,8 +335,8 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
           </div>
         </div>
 
-        {/* Desktop / Tablet Arcade Marquee (>= 768px) */}
-        <div className="hidden md:block relative pt-1 sm:pt-1.5">
+        {/* Desktop / Tablet Arcade Marquee (>= 640px) */}
+        <div className="hidden sm:block relative pt-1 sm:pt-1.5">
           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-pink-600/30 via-purple-600/20 to-transparent filter blur-lg pointer-events-none" />
 
           <div className="relative bg-gradient-to-b from-purple-600 via-pink-600 to-indigo-950 p-[2px] rounded-t-2xl sm:rounded-t-3xl rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.9),0_0_25px_rgba(236,72,153,0.5)]">
@@ -485,11 +485,11 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
   // =========================================================================
   return (
     <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-2 mb-0.5 sm:mb-1 select-none flex-shrink-0 z-20">
-      {/* Mobile Compact Top Box (< 768px: guaranteed clearance for reels) */}
-      <div className="md:hidden w-full px-0.5 py-0.5">
+      {/* Mobile Compact Top Box (< 640px) */}
+      <div className="sm:hidden w-full px-0.5 py-0.5">
         <div
           onClick={handleJackpotClick}
-          className="w-full h-10 px-2 rounded-xl bg-gradient-to-r from-amber-950 via-slate-950 to-amber-950 border-2 border-yellow-400/80 shadow-md flex items-center justify-between cursor-pointer"
+          className="w-full h-11 px-2.5 rounded-xl bg-gradient-to-r from-amber-950 via-slate-950 to-amber-950 border-2 border-yellow-400/80 shadow-md flex items-center justify-between cursor-pointer"
         >
           {/* Left: Mascot Icon + Label */}
           <div className="flex items-center space-x-1 flex-shrink-0">
@@ -523,8 +523,8 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
         </div>
       </div>
 
-      {/* Desktop / Tablet Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment (>= 768px) */}
-      <div className="hidden md:block relative pt-1 sm:pt-1.5">
+      {/* Desktop / Tablet Heavy Armored Titanium & 24K Gold Bullion Ingot Pediment (>= 640px) */}
+      <div className="hidden sm:block relative pt-1 sm:pt-1.5">
         {/* Radial Sunburst Gold Glow */}
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3/4 h-14 rounded-full bg-gradient-to-t from-yellow-500/30 via-amber-500/15 to-transparent filter blur-lg pointer-events-none" />
 

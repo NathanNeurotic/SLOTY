@@ -123,7 +123,7 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
         </div>
 
         <div
-          className={`hidden sm:flex items-center space-x-1 text-[8px] sm:text-[9px] font-black tracking-widest leading-none mt-1 ${
+          className={`hidden xl:flex items-center space-x-1 text-[8px] sm:text-[9px] font-black tracking-widest leading-none mt-1 ${
             isTimber
               ? 'text-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.7)]'
               : isPixel
