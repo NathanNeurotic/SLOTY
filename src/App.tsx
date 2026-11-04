@@ -89,7 +89,12 @@ export const App: React.FC = () => {
   const [activeGameId, setActiveGameId] = useState<GameId>(() =>
     (storage.getItem('sloty_active_game') as GameId) || 'vault-24k'
   );
+  // The game whose reels triggered the pending/active free spins. Its award
+  // and multiplier govern the whole bonus, even if the player switches games
+  // while the award modal is up or the spins are running.
+  const [freeSpinGameId, setFreeSpinGameId] = useState<GameId | null>(null);
   const activeGameDef = getGame(activeGameId);
+  const freeSpinDef = freeSpinGameId ? getGame(freeSpinGameId) : activeGameDef;
 
   // Synchronize audio theme with active game on initial load and updates
   useEffect(() => {
@@ -442,7 +447,11 @@ export const App: React.FC = () => {
     if (forcedScenario) {
       const rawForced = generateForcedGrid(forcedScenario);
       nextGrid = rawForced.map((col) => {
-        const c = [...col];
+        // Forced grids are written with Vault symbol IDs; translate the
+        // scatter placeholder to the active game's scatter so the FREE_SPINS
+        // and NEAR_MISS scenarios still register on games whose scatterId
+        // is not 'SCATTER' (evaluator counts only activeDef.scatterId).
+        const c = col.map((sym) => (sym === 'SCATTER' ? activeGameDef.scatterId : sym));
         while (c.length < activeGameDef.rows) c.push(c[0] || 'SEVEN');
         return c.slice(0, activeGameDef.rows);
       });
@@ -456,13 +465,13 @@ export const App: React.FC = () => {
     // Reset one-time forced scenario
     if (forcedScenario) setForcedScenario(null);
 
-    // Free spins gives 3x multiplier, Fever Mode gives 2x
-    const multiplier = (isFreeSpin ? activeGameDef.freeSpinsMultiplier : 1) * (feverSpinsLeft > 0 ? 2 : 1);
+    // Free spins pay the triggering game's multiplier; Fever Mode gives 2x
+    const multiplier = (isFreeSpin ? freeSpinDef.freeSpinsMultiplier : 1) * (feverSpinsLeft > 0 ? 2 : 1);
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier, activeGameDef);
 
     pendingResultRef.current = evaluated;
     setCurrentGrid(nextGrid);
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef, freeSpinDef]);
 
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
@@ -552,6 +561,7 @@ export const App: React.FC = () => {
     if (isFreeSpinsTriggered) {
       soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
       handleSelectScene('PENTHOUSE', false);
+      setFreeSpinGameId(activeGameId);
       setShowFreeSpinsModal(true);
     }
 
@@ -580,6 +590,11 @@ export const App: React.FC = () => {
     // Handle Free Spins Sequence
     if (freeSpinsRemaining > 0) {
       setFreeSpinsRemaining((prev) => prev - 1);
+      // Last free spin consumed with no retrigger: the bonus is over, so
+      // release the triggering-game snapshot.
+      if (freeSpinsRemaining === 1 && !isFreeSpinsTriggered) {
+        setFreeSpinGameId(null);
+      }
     }
 
     // Handle Fever Spins Sequence
@@ -652,9 +667,9 @@ export const App: React.FC = () => {
 
   const handleStartFreeSpins = useCallback(() => {
     setShowFreeSpinsModal(false);
-    setFreeSpinsRemaining((prev) => prev + activeGameDef.freeSpinsAward);
+    setFreeSpinsRemaining((prev) => prev + freeSpinDef.freeSpinsAward);
     soundManager.playButtonClick();
-  }, [activeGameDef]);
+  }, [freeSpinDef]);
 
   // Ensure bet never exceeds balance when balance drops
   useEffect(() => {
@@ -1122,8 +1137,8 @@ export const App: React.FC = () => {
       {/* Free Spins Awarded Modal */}
       {showFreeSpinsModal && (
         <FreeSpinsModal
-          freeSpinsAwarded={activeGameDef.freeSpinsAward}
-          multiplier={activeGameDef.freeSpinsMultiplier}
+          freeSpinsAwarded={freeSpinDef.freeSpinsAward}
+          multiplier={freeSpinDef.freeSpinsMultiplier}
           onStart={handleStartFreeSpins}
           activeGameId={activeGameId}
         />
