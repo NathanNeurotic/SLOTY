@@ -34,7 +34,7 @@ interface HeaderBarProps {
   onToggleMute: () => void;
   onOpenPaytable: () => void;
   onOpenBonusWheel: () => void;
-  onToggleDebug: () => void;
+  onToggleDebug?: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -335,6 +335,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               <HelpCircle className="w-3.5 h-3.5 text-cyan-300" />
             </button>
 
+            {onToggleDebug && (
             <button
               onClick={() => {
                 soundManager.playButtonClick();
@@ -350,6 +351,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             >
               <Terminal className="w-3.5 h-3.5 text-slate-400 hover:text-amber-300" />
             </button>
+            )}
           </div>
 
           {/* Desktop Audio Mixer Popover Drawer */}
@@ -529,6 +531,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </div>
 
             {/* Developer Drawer Launcher */}
+            {onToggleDebug && (
             <button
               onClick={() => {
                 soundManager.playButtonClick();
@@ -540,6 +543,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               <Terminal className="w-4 h-4 text-amber-300" />
               <span>Open Developer Rig</span>
             </button>
+            )}
           </div>
         </div>
       )}
