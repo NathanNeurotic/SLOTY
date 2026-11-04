@@ -175,10 +175,10 @@ export const Reel: React.FC<ReelProps> = ({
       {isSpinning && (
         <div className="absolute inset-0 overflow-hidden">
           <div
-            className="absolute inset-x-0 top-0 flex flex-col animate-slot-spin filter blur-[1.2px] brightness-105"
+            className="absolute inset-x-0 top-0 flex flex-col animate-reel-rolling will-change-transform"
             style={{
               height: '200%',
-              animationDuration: isAnticipating ? '0.3s' : `${0.5 + (reelIndex % 3) * 0.05}s`,
+              animationDuration: isAnticipating ? '0.35s' : `${0.17 + (reelIndex % 3) * 0.02}s`,
             }}
           >
             {Array.from({ length: activeRowCount * 2 }, (_, i) => {
