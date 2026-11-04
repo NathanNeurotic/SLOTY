@@ -24,6 +24,7 @@ interface SlotMachineProps {
   onSelectLines?: (linesCount: number) => void;
   onAllReelsStopped: () => void;
   freeSpinsRemaining: number;
+  freeSpinsMultiplier: number;
   onQuickStop?: () => void;
   onSpin?: () => void;
   canSpin?: boolean;
@@ -44,6 +45,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onSelectLines,
   onAllReelsStopped,
   freeSpinsRemaining,
+  freeSpinsMultiplier,
   onQuickStop,
   onSpin,
   canSpin = true,
@@ -457,10 +459,10 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
                 isPs2 ? 'text-cyan-300 drop-shadow-[0_0_8px_#00F0FF]' : isTimber ? 'text-emerald-300' : 'text-yellow-300'
               }`}>
                 {isPs2
-                  ? `💿 128-BIT FREE SPINS: ${freeSpinsRemaining} REMAINING (3X CLOCK) 💿`
+                  ? `💿 128-BIT FREE SPINS: ${freeSpinsRemaining} REMAINING (${freeSpinsMultiplier}X CLOCK) 💿`
                   : isTimber
-                  ? `🦉 MOONLIT FREE SPINS: ${freeSpinsRemaining} REMAINING (3X WINS) 🦉`
-                  : `🔥 FREE SPINS ACTIVE: ${freeSpinsRemaining} REMAINING (3X WINS) 🔥`}
+                  ? `🦉 MOONLIT FREE SPINS: ${freeSpinsRemaining} REMAINING (${freeSpinsMultiplier}X WINS) 🦉`
+                  : `🔥 FREE SPINS ACTIVE: ${freeSpinsRemaining} REMAINING (${freeSpinsMultiplier}X WINS) 🔥`}
               </span>
             ) : isAnticipating && isAnyReelSpinning ? (
               <span className={`text-xs sm:text-sm font-black tracking-widest uppercase animate-pulse truncate whitespace-nowrap px-2.5 py-0.5 rounded-full border ${
@@ -804,7 +806,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
             <span className="font-mono text-emerald-400 text-[10px] font-black flex-shrink-0 whitespace-nowrap">
-              {isPs2 ? '92.8% RTP' : isPixel ? '~92% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
+              {isPs2 ? '92.8% RTP' : isPixel ? '~91% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
             </span>
           </div>
 
