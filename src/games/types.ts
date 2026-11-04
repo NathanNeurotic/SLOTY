@@ -40,4 +40,13 @@ export interface GameDefinition {
   betSteps: number[];
   maxBetPerLine: number;
   maxTotalBet: number;
+  // Per-game bonus identity — the single source of truth for what used to be
+  // hardcoded symbol-ID lists in the evaluator, ternary chains in the UI, and
+  // free-spin numbers that three different components disagreed about.
+  wildId: SymbolId;
+  scatterId: SymbolId;
+  coinId: SymbolId;
+  freeSpinsAward: number;
+  freeSpinsMultiplier: number;
+  volatilityLabel: string;
 }

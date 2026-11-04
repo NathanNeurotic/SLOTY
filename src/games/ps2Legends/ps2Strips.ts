@@ -1,7 +1,7 @@
 import type { SymbolId } from '../../engine/types';
 
-// Calibrated to Oregon Lottery VLT specifications:
-// 50-stop reel strips with 32% hit frequency and ~94% theoretical RTP
+// SLOTY's own free-play math model (not lottery-calibrated):
+// 50-stop reel strips; measured ~48-49% hit frequency, ~94% total RTP (test-engine.ts)
 export const PS2_REEL_STRIPS: SymbolId[][] = [
   // Reel 1: 1 scatter, 4 memory cards, 1 wild
   [

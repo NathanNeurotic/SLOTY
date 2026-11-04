@@ -1,6 +1,7 @@
 import React from 'react';
 import { Crown, Trees, BookOpen, Gamepad2 } from 'lucide-react';
 import type { GameId } from '../../games/types';
+import { getGame } from '../../games/gameRegistry';
 import { soundManager } from '../../audio/soundManager';
 
 interface GamePerkCardProps {
@@ -12,6 +13,7 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
   activeGameId = 'vault-24k',
   onOpenPaytable,
 }) => {
+  const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
   const isPs2 = activeGameId === 'ps2-legends';
@@ -82,7 +84,7 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
             </span>
           </div>
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5 font-mono">
-            {isPs2 ? '40 HIGH-SPEED PAYLINES • 92.8% RTP' : isPixel ? '50 RETRO PAYLINES • 96.0% RTP' : isTimber ? '25 WILD PAYLINES • 96.2% RTP' : '40 HIGH-ROLLER PAYLINES • 95.8% RTP'}
+            {isPs2 ? '40 HIGH-SPEED PAYLINES • 92.8% RTP' : isPixel ? '50 RETRO PAYLINES • ~91% RTP' : isTimber ? '25 WILD PAYLINES • 96.2% RTP' : '40 HIGH-ROLLER PAYLINES • 95.8% RTP'}
           </span>
         </div>
 
@@ -110,10 +112,10 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
               <span className={`text-[10px] font-black uppercase font-mono ${
                 isPs2 ? 'text-blue-300' : isPixel ? 'text-cyan-300' : isTimber ? 'text-teal-300' : 'text-cyan-300'
               }`}>
-                {isPs2 ? '15 OPTICAL FREE SPINS (3X)' : isPixel ? 'CARTRIDGE SCATTER' : isTimber ? 'MOONLIT OWL SCATTER' : 'VAULT BLAST SCATTER'}
+                {isPs2 ? `${gameDef.freeSpinsAward} OPTICAL FREE SPINS (${gameDef.freeSpinsMultiplier}X)` : isPixel ? 'CARTRIDGE SCATTER' : isTimber ? 'MOONLIT OWL SCATTER' : 'VAULT BLAST SCATTER'}
               </span>
               <span className="text-[8px] text-slate-300 font-mono">
-                {isPs2 ? '3+ Blue DVDs = 15 Spins with 3X clock' : isPixel ? '3+ cartridges = 10 Boss Games (3X)' : isTimber ? '3+ scatters = 10 Free Spins at 3X' : '3+ scatters = 10 Free Spins at 3X'}
+                {isPs2 ? `3+ Blue DVDs = ${gameDef.freeSpinsAward} Spins at ${gameDef.freeSpinsMultiplier}X` : isPixel ? `3+ cartridges = ${gameDef.freeSpinsAward} Boss Games (${gameDef.freeSpinsMultiplier}X)` : `3+ scatters = ${gameDef.freeSpinsAward} Free Spins at ${gameDef.freeSpinsMultiplier}X`}
               </span>
             </div>
           </div>

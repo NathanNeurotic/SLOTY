@@ -178,7 +178,7 @@ export const FreeSpinsModal: React.FC<FreeSpinsModalProps> = ({
           </h1>
 
           <p className="text-cyan-100 text-xs sm:text-sm mb-6 leading-relaxed font-mono">
-            Optical DVD laser seeks at 294 MHz! All 40 paylines supercharged at <span className="text-[#00F0FF] font-black">3X OVERCLOCK</span> with DualShock Wilds and Memory Card re-triggers!
+            Optical DVD laser seeks at 294 MHz! All 40 paylines supercharged at <span className="text-[#00F0FF] font-black">2X OVERCLOCK</span> with DualShock Wilds and Memory Card re-triggers!
           </p>
 
           {/* Feature stats in PS2 Memory Card / BIOS readout */}

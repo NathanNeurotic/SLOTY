@@ -136,13 +136,23 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
                     : 'Vault Door Scatter'}
                 </span>
                 <p className="text-[10px] text-slate-300 leading-tight mt-0.5">
-                  {isPs2
-                    ? '3+ Blue Laser DVD-ROM discs award 10 Free Spins with 3X multipliers and BIOS crystal audio!'
-                    : isPixel
-                    ? '3+ ROM cartridges trigger 10 8-Bit Free Spins with 3X multipliers and neon pixel chimes!'
-                    : isTimber
-                    ? '3+ Moonlit Owls award 10 Free Spins at 3X multiplier with starry night animations!'
-                    : '3+ Bank Vault doors trigger 10 Free Spins with 3X multipliers and raining $100 bills!'}
+                  {`3+ ${
+                    isPs2
+                      ? 'Blue Laser DVD-ROM discs award'
+                      : isPixel
+                      ? 'ROM cartridges trigger'
+                      : isTimber
+                      ? 'Moonlit Owls award'
+                      : 'Bank Vault doors trigger'
+                  } ${gameDef.freeSpinsAward} Free Spins at ${gameDef.freeSpinsMultiplier}X multiplier${
+                    isPs2
+                      ? ' — the long optical marathon, with BIOS crystal audio!'
+                      : isPixel
+                      ? ' with neon pixel chimes!'
+                      : isTimber
+                      ? ' with starry night animations!'
+                      : ' with raining $100 bills!'
+                  }`}
                 </p>
               </div>
             </div>
@@ -256,7 +266,7 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
 
         {/* Footer Note */}
         <div className="pt-2.5 border-t border-white/10 text-center text-[9.5px] text-slate-500 font-mono">
-          SLOTY {gameDef.name} is an authentic Vegas VLT style slot machine certified Oregon Lottery RTP (90.3% - 95.8%).
+          SLOTY is a free-play game — virtual coins only, no real-money gambling, and no regulator certification. {gameDef.name} profile: {gameDef.volatilityLabel}. Math model measured by the repo test suite (test-engine.ts).
         </div>
       </div>
     </div>

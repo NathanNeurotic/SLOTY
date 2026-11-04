@@ -308,7 +308,7 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
                 {
                   id: 'FREE_SPINS' as DebugScenario,
                   name: '3+ Scatters (Free Spins)',
-                  desc: 'Triggers 10 Free Spins with 3X multiplier',
+                  desc: 'Triggers Free Spins at the active game\'s award & multiplier',
                   color: 'border-cyan-400 text-cyan-300',
                 },
                 {

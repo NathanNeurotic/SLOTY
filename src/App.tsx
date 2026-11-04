@@ -35,6 +35,7 @@ import { LevelUpModal } from './components/modals/LevelUpModal';
 import { GambleModal } from './components/modals/GambleModal';
 import { HoldAndSpinModal } from './components/modals/HoldAndSpinModal';
 import { DebugDrawer } from './components/debug/DebugDrawer';
+
 import { discordManager } from './multiplayer/discordSdk';
 import { casinoRoomManager } from './multiplayer/casinoRoom';
 import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordTypes';
@@ -43,6 +44,13 @@ import { LeaderboardModal } from './components/modals/LeaderboardModal';
 import { CompanionLounge } from './components/character/CompanionLounge';
 import { PuppetCharacterPopup } from './components/popups/PuppetCharacterPopup';
 import { quotaManager, type QuotaTier } from './engine/quotaSystem';
+
+// The debug suite (forced reels, credit injection, custom grids) is a
+// development tool: available in dev builds, or in production only with
+// ?debug=1 in the URL. It must never ship as a player-facing feature.
+const DEBUG_ENABLED =
+  import.meta.env.DEV ||
+  (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -81,7 +89,14 @@ export const App: React.FC = () => {
   const [activeGameId, setActiveGameId] = useState<GameId>(() =>
     (storage.getItem('sloty_active_game') as GameId) || 'vault-24k'
   );
+  // The game whose reels triggered the pending/active free spins. Its award
+  // and multiplier govern the whole bonus, even if the player switches games
+  // while the award modal is up or the spins are running.
+  const [freeSpinGameId, setFreeSpinGameId] = useState<GameId | null>(null);
+  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
+  const [showFreeSpinsModal, setShowFreeSpinsModal] = useState(false);
   const activeGameDef = getGame(activeGameId);
+  const freeSpinDef = freeSpinGameId ? getGame(freeSpinGameId) : activeGameDef;
 
   // Synchronize audio theme with active game on initial load and updates
   useEffect(() => {
@@ -98,6 +113,11 @@ export const App: React.FC = () => {
 
   const handleSelectGame = useCallback(
     (gameId: GameId) => {
+      // Cabinet locked while a free-spins bonus is pending or running: the
+      // award's identity (count + multiplier) belongs to the triggering
+      // game, and the pooled remaining count cannot track two games' awards
+      // at once — a mid-bonus switch would reprice the remaining spins.
+      if (showFreeSpinsModal || freeSpinsRemaining > 0) return;
       if (gameId === activeGameId) return;
       const target = getGame(gameId);
       setActiveGameId(gameId);
@@ -140,12 +160,9 @@ export const App: React.FC = () => {
         soundManager.playCashRegister();
       }
     },
-    [activeGameId, balance, betPerLine]
+    [activeGameId, balance, betPerLine, showFreeSpinsModal, freeSpinsRemaining]
   );
 
-  useEffect(() => {
-    soundManager.setGameTheme(activeGameId);
-  }, [activeGameId]);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
@@ -160,7 +177,6 @@ export const App: React.FC = () => {
   const lastSpinStartTimeRef = useRef(0);
   const lastSpinEndTimeRef = useRef(0);
   const [winAmount, setWinAmount] = useState(0);
-  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
   const [feverCharge, setFeverCharge] = useState<number>(() =>
     storage.getNumber('sloty_fever_charge', 35)
@@ -172,7 +188,7 @@ export const App: React.FC = () => {
   const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
   const [isFloorMode, setIsFloorMode] = useState<boolean>(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 167075));
+  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 50000));
   const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
   const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
 
@@ -347,10 +363,10 @@ export const App: React.FC = () => {
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
   const pendingResultRef = useRef<SpinResult | null>(null);
+  const pendingResultGameIdRef = useRef<GameId | null>(null);
 
   // --- Modals State ---
   const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
-  const [showFreeSpinsModal, setShowFreeSpinsModal] = useState(false);
   const [showHoldAndSpinModal, setShowHoldAndSpinModal] = useState(false);
   const [holdAndSpinInitialCoins, setHoldAndSpinInitialCoins] = useState(6);
   const [showGambleModal, setShowGambleModal] = useState(false);
@@ -437,8 +453,16 @@ export const App: React.FC = () => {
     if (forcedScenario) {
       const rawForced = generateForcedGrid(forcedScenario);
       nextGrid = rawForced.map((col) => {
-        const c = [...col];
-        while (c.length < activeGameDef.rows) c.push(c[0] || 'SEVEN');
+        // Forced grids are written with Vault symbol IDs; translate the
+        // scatter placeholder to the active game's scatter so the FREE_SPINS
+        // and NEAR_MISS scenarios still register on games whose scatterId
+        // is not 'SCATTER' (evaluator counts only activeDef.scatterId).
+        const c = col.map((sym) => (sym === 'SCATTER' ? activeGameDef.scatterId : sym));
+        // Pad by extending the column's tail. Copying c[0] duplicated
+        // scatters on 5-row Pixel Arcade — NEAR_MISS padded itself into a
+        // free-spins trigger. (No forced column ends in a scatter, so the
+        // tail symbol is always scatter-safe.)
+        while (c.length < activeGameDef.rows) c.push(c[c.length - 1]);
         return c.slice(0, activeGameDef.rows);
       });
       while (nextGrid.length < (activeGameDef.reels || 5)) {
@@ -451,13 +475,16 @@ export const App: React.FC = () => {
     // Reset one-time forced scenario
     if (forcedScenario) setForcedScenario(null);
 
-    // Free spins gives 3x multiplier, Fever Mode gives 2x
-    const multiplier = (isFreeSpin ? 3 : 1) * (feverSpinsLeft > 0 ? 2 : 1);
+    // Free spins pay the triggering game's multiplier; Fever Mode gives 2x
+    const multiplier = (isFreeSpin ? freeSpinDef.freeSpinsMultiplier : 1) * (feverSpinsLeft > 0 ? 2 : 1);
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier, activeGameDef);
 
     pendingResultRef.current = evaluated;
+    // The completion handler must attribute this result to the game that
+    // EVALUATED it: G can switch cabinets while the reels are still spinning.
+    pendingResultGameIdRef.current = activeGameId;
     setCurrentGrid(nextGrid);
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef, freeSpinDef]);
 
   // Handle completion when all 5 reels stop
   const handleAllReelsStopped = useCallback(() => {
@@ -504,8 +531,10 @@ export const App: React.FC = () => {
       setConsecutiveWins(0);
     }
 
-    // Update Unreasonable Boss / Camp Quota System
-    const quotaResult = quotaManager.addSpinProgress(activeGameId, totalBet, totalPayout);
+    // Update Unreasonable Boss / Camp Quota System — attributed to the game
+    // that evaluated this spin, not a cabinet selected while reels spun.
+    const resultGameId = pendingResultGameIdRef.current ?? activeGameId;
+    const quotaResult = quotaManager.addSpinProgress(resultGameId, totalBet, totalPayout);
     if (quotaResult.unlockedTier) {
       setUnlockedQuotaTier(quotaResult.unlockedTier);
     }
@@ -547,6 +576,7 @@ export const App: React.FC = () => {
     if (isFreeSpinsTriggered) {
       soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
       handleSelectScene('PENTHOUSE', false);
+      setFreeSpinGameId(resultGameId);
       setShowFreeSpinsModal(true);
     }
 
@@ -575,6 +605,11 @@ export const App: React.FC = () => {
     // Handle Free Spins Sequence
     if (freeSpinsRemaining > 0) {
       setFreeSpinsRemaining((prev) => prev - 1);
+      // Last free spin consumed with no retrigger: the bonus is over, so
+      // release the triggering-game snapshot.
+      if (freeSpinsRemaining === 1 && !isFreeSpinsTriggered) {
+        setFreeSpinGameId(null);
+      }
     }
 
     // Handle Fever Spins Sequence
@@ -647,9 +682,9 @@ export const App: React.FC = () => {
 
   const handleStartFreeSpins = useCallback(() => {
     setShowFreeSpinsModal(false);
-    setFreeSpinsRemaining((prev) => prev + 10);
+    setFreeSpinsRemaining((prev) => prev + freeSpinDef.freeSpinsAward);
     soundManager.playButtonClick();
-  }, []);
+  }, [freeSpinDef]);
 
   // Ensure bet never exceeds balance when balance drops
   useEffect(() => {
@@ -839,7 +874,7 @@ export const App: React.FC = () => {
       } else if (e.key === 'l' || e.key === 'L' || e.key === 'p' || e.key === 'P' || e.key === '?') {
         e.preventDefault();
         setShowPaytableModal((prev) => !prev);
-      } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
+      } else if (DEBUG_ENABLED && (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D')) {
         setShowDebugDrawer((prev) => !prev);
       } else if (e.key === 'm' || e.key === 'M') {
         setIsMuted((prev) => !prev);
@@ -909,7 +944,7 @@ export const App: React.FC = () => {
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
-        onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
+        onToggleDebug={DEBUG_ENABLED ? () => setShowDebugDrawer((prev) => !prev) : undefined}
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
@@ -934,14 +969,7 @@ export const App: React.FC = () => {
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         {(() => {
-          const scatterSym: SymbolId =
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER';
+          const scatterSym: SymbolId = activeGameDef.scatterId;
           const hasScatter0 = currentGrid[0]?.includes(scatterSym);
           const hasScatter1 = currentGrid[1]?.includes(scatterSym);
           const isAnticipating = isSpinning && !!hasScatter0 && !!hasScatter1;
@@ -980,6 +1008,7 @@ export const App: React.FC = () => {
                 onAllReelsStopped={handleAllReelsStopped}
                 onQuickStop={handleQuickStop}
                 freeSpinsRemaining={freeSpinsRemaining}
+                freeSpinsMultiplier={freeSpinDef.freeSpinsMultiplier}
                 onSpin={executeSpin}
                 canSpin={(balance >= totalBet && balance > 0) || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
                 isFeverMode={feverSpinsLeft > 0}
@@ -1044,7 +1073,7 @@ export const App: React.FC = () => {
             ? 'bg-[#02050f]/95 border-[#006FCD]/40 text-cyan-400/80 font-mono'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
         }`}>
-          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS • <span className="text-cyan-300 font-mono font-bold">SLOTY v2.4.1 (MATRIX-LOCKED)</span>
+          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">G</kbd> SWITCH GAME • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">P</kbd> PAYTABLE • SLOTY IS A FREE GAME — VIRTUAL COINS ONLY, NO REAL-MONEY PAYOUTS • <span className="text-cyan-300 font-mono font-bold">SLOTY v2.4.1 (MATRIX-LOCKED)</span>
         </footer>
       </div>
 
@@ -1054,24 +1083,8 @@ export const App: React.FC = () => {
         isSpinning={isSpinning}
         isAnticipating={
           isSpinning &&
-          !!currentGrid[0]?.includes(
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER'
-          ) &&
-          !!currentGrid[1]?.includes(
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER'
-          )
+          !!currentGrid[0]?.includes(activeGameDef.scatterId) &&
+          !!currentGrid[1]?.includes(activeGameDef.scatterId)
         }
         isNearMiss={!isSpinning && !!spinResult && spinResult.scatterCount === 2}
         isMaxBet={totalBet >= progression.maxBet}
@@ -1140,10 +1153,10 @@ export const App: React.FC = () => {
       {/* Free Spins Awarded Modal */}
       {showFreeSpinsModal && (
         <FreeSpinsModal
-          freeSpinsAwarded={10}
-          multiplier={3}
+          freeSpinsAwarded={freeSpinDef.freeSpinsAward}
+          multiplier={freeSpinDef.freeSpinsMultiplier}
           onStart={handleStartFreeSpins}
-          activeGameId={activeGameId}
+          activeGameId={freeSpinGameId ?? activeGameId}
         />
       )}
 
@@ -1182,7 +1195,8 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Developer Debug Suite Drawer */}
+      {/* Developer Debug Suite Drawer — dev builds / ?debug=1 only */}
+      {DEBUG_ENABLED && (
       <DebugDrawer
         isOpen={showDebugDrawer}
         balance={balance}
@@ -1200,7 +1214,7 @@ export const App: React.FC = () => {
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
         onInjectCustomGrid={(grid) => {
           setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? 3 : 1, activeGameDef);
+          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? freeSpinDef.freeSpinsMultiplier : 1, activeGameDef);
           setSpinResult(evaluated);
         }}
         onResetStats={() =>
@@ -1214,6 +1228,7 @@ export const App: React.FC = () => {
           })
         }
       />
+      )}
 
       {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
       {showLeaderboardModal && (
