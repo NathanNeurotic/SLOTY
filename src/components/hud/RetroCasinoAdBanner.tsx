@@ -74,7 +74,7 @@ const TIMBER_ADS: CasinoAd[] = [
     tag: 'RECENT WOODLAND WINNER',
     headline: 'CONGRATS TO BOBBY-RAY FROM COOS BAY — $3,420 ON TIMBERLAND!',
     subtext: 'TRIGGERED MOONLIT OWL FREE SPINS AT 3X • "PAID OFF MY LOGGING TRAILER!"',
-    disclaimer: 'Certified Oregon Lottery video harvest payout.',
+    disclaimer: 'Fictional in-game ad. SLOTY is a free-play game — not affiliated with or certified by any lottery.',
   },
   {
     icon: 'coffee',
