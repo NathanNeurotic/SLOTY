@@ -213,13 +213,13 @@
 
 @keyframes reelElasticDrop {
   0% {
-    transform: translate3d(0, -80px, 0);
+    transform: translate3d(0, -10px, 0);
   }
   65% {
-    transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 4px, 0);
   }
   85% {
-    transform: translate3d(0, -4px, 0);
+    transform: translate3d(0, -2px, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);
@@ -1200,3 +1200,16 @@
 
 
 
+
+/* Respect users who prefer reduced motion: calm the ambient animation layer.
+   Core game state changes remain instant; decorative loops are stilled. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
