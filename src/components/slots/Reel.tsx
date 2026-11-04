@@ -197,11 +197,13 @@ export const Reel: React.FC<ReelProps> = ({
         </div>
       )}
 
-      {/* 2. Resting / Settling Landing Grid */}
-      {!isSpinning && (
+      {/* 2. Resting / Settling Landing Grid. Always stays in the layout (hidden while spinning) so the reel's
+          height never changes between rest and spin; the rolling strip above is an absolute overlay. */}
+      {(
         <div
+          aria-hidden={isSpinning}
           className={`w-full h-full flex flex-col ${
-            hasSettled ? 'animate-reel-settle' : ''
+            isSpinning ? 'invisible' : hasSettled ? 'animate-reel-settle' : ''
           }`}
         >
           {displaySymbols.map((sym, rowIdx) => {
