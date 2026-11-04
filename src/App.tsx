@@ -35,6 +35,7 @@ import { LevelUpModal } from './components/modals/LevelUpModal';
 import { GambleModal } from './components/modals/GambleModal';
 import { HoldAndSpinModal } from './components/modals/HoldAndSpinModal';
 import { DebugDrawer } from './components/debug/DebugDrawer';
+
 import { discordManager } from './multiplayer/discordSdk';
 import { casinoRoomManager } from './multiplayer/casinoRoom';
 import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordTypes';
@@ -43,6 +44,13 @@ import { LeaderboardModal } from './components/modals/LeaderboardModal';
 import { CompanionLounge } from './components/character/CompanionLounge';
 import { PuppetCharacterPopup } from './components/popups/PuppetCharacterPopup';
 import { quotaManager, type QuotaTier } from './engine/quotaSystem';
+
+// The debug suite (forced reels, credit injection, custom grids) is a
+// development tool: available in dev builds, or in production only with
+// ?debug=1 in the URL. It must never ship as a player-facing feature.
+const DEBUG_ENABLED =
+  import.meta.env.DEV ||
+  (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
 
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -143,9 +151,6 @@ export const App: React.FC = () => {
     [activeGameId, balance, betPerLine]
   );
 
-  useEffect(() => {
-    soundManager.setGameTheme(activeGameId);
-  }, [activeGameId]);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [isTurbo, setIsTurbo] = useState<boolean>(() =>
@@ -172,7 +177,7 @@ export const App: React.FC = () => {
   const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
   const [isFloorMode, setIsFloorMode] = useState<boolean>(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 167075));
+  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 50000));
   const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
   const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
 
@@ -452,7 +457,7 @@ export const App: React.FC = () => {
     if (forcedScenario) setForcedScenario(null);
 
     // Free spins gives 3x multiplier, Fever Mode gives 2x
-    const multiplier = (isFreeSpin ? 3 : 1) * (feverSpinsLeft > 0 ? 2 : 1);
+    const multiplier = (isFreeSpin ? activeGameDef.freeSpinsMultiplier : 1) * (feverSpinsLeft > 0 ? 2 : 1);
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier, activeGameDef);
 
     pendingResultRef.current = evaluated;
@@ -647,9 +652,9 @@ export const App: React.FC = () => {
 
   const handleStartFreeSpins = useCallback(() => {
     setShowFreeSpinsModal(false);
-    setFreeSpinsRemaining((prev) => prev + 10);
+    setFreeSpinsRemaining((prev) => prev + activeGameDef.freeSpinsAward);
     soundManager.playButtonClick();
-  }, []);
+  }, [activeGameDef]);
 
   // Ensure bet never exceeds balance when balance drops
   useEffect(() => {
@@ -839,7 +844,7 @@ export const App: React.FC = () => {
       } else if (e.key === 'l' || e.key === 'L' || e.key === 'p' || e.key === 'P' || e.key === '?') {
         e.preventDefault();
         setShowPaytableModal((prev) => !prev);
-      } else if (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D') {
+      } else if (DEBUG_ENABLED && (e.key === '`' || e.key === '~' || e.key === 'd' || e.key === 'D')) {
         setShowDebugDrawer((prev) => !prev);
       } else if (e.key === 'm' || e.key === 'M') {
         setIsMuted((prev) => !prev);
@@ -909,7 +914,7 @@ export const App: React.FC = () => {
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
-        onToggleDebug={() => setShowDebugDrawer((prev) => !prev)}
+        onToggleDebug={DEBUG_ENABLED ? () => setShowDebugDrawer((prev) => !prev) : undefined}
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
@@ -934,14 +939,7 @@ export const App: React.FC = () => {
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         {(() => {
-          const scatterSym: SymbolId =
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER';
+          const scatterSym: SymbolId = activeGameDef.scatterId;
           const hasScatter0 = currentGrid[0]?.includes(scatterSym);
           const hasScatter1 = currentGrid[1]?.includes(scatterSym);
           const isAnticipating = isSpinning && !!hasScatter0 && !!hasScatter1;
@@ -1044,7 +1042,7 @@ export const App: React.FC = () => {
             ? 'bg-[#02050f]/95 border-[#006FCD]/40 text-cyan-400/80 font-mono'
             : 'bg-casino-950/90 border-white/5 text-slate-500'
         }`}>
-          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">~</kbd> OR <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">D</kbd> FOR DEBUG CREDITS &amp; RIG REELS • <span className="text-cyan-300 font-mono font-bold">SLOTY v2.4.1 (MATRIX-LOCKED)</span>
+          PRESS <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">SPACE</kbd> TO SPIN / QUICK STOP • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">G</kbd> SWITCH GAME • <kbd className="px-1.5 py-0.5 bg-casino-900 border border-white/10 rounded text-slate-300 font-mono">P</kbd> PAYTABLE • SLOTY IS A FREE GAME — VIRTUAL COINS ONLY, NO REAL-MONEY PAYOUTS • <span className="text-cyan-300 font-mono font-bold">SLOTY v2.4.1 (MATRIX-LOCKED)</span>
         </footer>
       </div>
 
@@ -1054,24 +1052,8 @@ export const App: React.FC = () => {
         isSpinning={isSpinning}
         isAnticipating={
           isSpinning &&
-          !!currentGrid[0]?.includes(
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER'
-          ) &&
-          !!currentGrid[1]?.includes(
-            activeGameId === 'ps2-legends'
-              ? 'DVD_DISC'
-              : activeGameId === 'timber-critters'
-              ? 'OWL'
-              : activeGameId === 'pixel-arcade'
-              ? 'PIXEL_CARTRIDGE'
-              : 'SCATTER'
-          )
+          !!currentGrid[0]?.includes(activeGameDef.scatterId) &&
+          !!currentGrid[1]?.includes(activeGameDef.scatterId)
         }
         isNearMiss={!isSpinning && !!spinResult && spinResult.scatterCount === 2}
         isMaxBet={totalBet >= progression.maxBet}
@@ -1140,8 +1122,8 @@ export const App: React.FC = () => {
       {/* Free Spins Awarded Modal */}
       {showFreeSpinsModal && (
         <FreeSpinsModal
-          freeSpinsAwarded={10}
-          multiplier={3}
+          freeSpinsAwarded={activeGameDef.freeSpinsAward}
+          multiplier={activeGameDef.freeSpinsMultiplier}
           onStart={handleStartFreeSpins}
           activeGameId={activeGameId}
         />
@@ -1182,7 +1164,8 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Developer Debug Suite Drawer */}
+      {/* Developer Debug Suite Drawer — dev builds / ?debug=1 only */}
+      {DEBUG_ENABLED && (
       <DebugDrawer
         isOpen={showDebugDrawer}
         balance={balance}
@@ -1200,7 +1183,7 @@ export const App: React.FC = () => {
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
         onInjectCustomGrid={(grid) => {
           setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? 3 : 1, activeGameDef);
+          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? activeGameDef.freeSpinsMultiplier : 1, activeGameDef);
           setSpinResult(evaluated);
         }}
         onResetStats={() =>
@@ -1214,6 +1197,7 @@ export const App: React.FC = () => {
           })
         }
       />
+      )}
 
       {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
       {showLeaderboardModal && (
