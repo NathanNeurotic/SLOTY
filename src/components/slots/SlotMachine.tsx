@@ -804,7 +804,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
             <span className="font-mono text-emerald-400 text-[10px] font-black flex-shrink-0 whitespace-nowrap">
-              {isPs2 ? '92.8% RTP' : isPixel ? '94.0% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
+              {isPs2 ? '92.8% RTP' : isPixel ? '~92% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
             </span>
           </div>
 

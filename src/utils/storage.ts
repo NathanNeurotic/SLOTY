@@ -45,6 +45,16 @@ export const storage = {
     // 1. Write to localStorage (primary store)
     try {
       localStorage.setItem(key, value);
+      // localStorage is the active store: drop any fallback cookie written
+      // during an earlier outage, so a later localStorage reset/failure
+      // cannot resurrect the stale value via the getItem cookie fallback.
+      try {
+        if (typeof document !== 'undefined') {
+          document.cookie = `${encodeURIComponent(key)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+        }
+      } catch {
+        // Cookie cleanup is best-effort
+      }
       return;
     } catch {
       // localStorage blocked — fall through to the cookie fallback

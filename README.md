@@ -13,12 +13,17 @@ reel strips, theme, and its bonus identity — wild / scatter / coin symbols,
 free-spins award and multiplier, volatility). The evaluator reads bonus roles
 from the definition; nothing per-game is hardcoded in the engine.
 
-| Game | Grid | Lines | Wild | Scatter → Free Spins | Coin → Hold & Spin | Profile (measured) |
+| Game | Grid | Lines | Wild | Scatter → Free Spins | Coin → Hold & Spin | Profile (modeled RTP, measured hit rate) |
 | --- | --- | --- | --- | --- | --- | --- |
 | ★ 24K Gold & Cash Vault | 5×4 | 40 | Wild | Scatter → 10 @ 3X | Bullion Coin | ~93–96% RTP, ~34% hits — balanced, big-win leaning |
 | 🌲 Timberland Critters | 5×3 | 25 | Grizzly Bear | Moonlit Owl → 10 @ 3X | Golden Acorn | ~93–96% RTP, ~26% hits — steady |
 | 🕹️ Pixel Arcade: 8-Bit Quest | 6×5 | 50 | Cyber Wild | Cartridge → 10 @ 3X | Retro Token | ~91% RTP, ~50% hits — small wins, often |
 | 🎮 PlayStation 2: Emotion Engine | 5×4 | 40 | PS2 Logo | DVD-ROM → **15 @ 2X** | Memory Card | ~91–93% RTP, ~48% hits — marathon free spins |
+
+> RTP values are modeled estimates from `test-engine.ts`. Base-game RTP and
+> hit frequency come from 100,000 simulated spins per game; free-spin EV uses
+> each game's definition award and multiplier, and Hold & Spin EV assumes a
+> 28× total-bet average award. The bonus rounds themselves are not simulated.
 
 Quota pacing differs per cabinet too: Vault climbs slowly, Timberland keeps
 the classic ladder, Pixel loops fast like an arcade score chase, and the PS2
@@ -28,8 +33,8 @@ game is the long save-file grind.
 
 - **Space** — spin / quick stop
 - **G** — switch game (cycles all four cabinets)
-- **P** — paytable • **B** — bank • **M** — mute • **T** — turbo
-- **↑ / ↓** — total bet • **← / →** — bet per line
+- **P** — paytable • **B** — max bet • **M** — mute • **T** — turbo
+- **↑ / ↓** — bet per line
 
 ## The casino floor is simulated
 

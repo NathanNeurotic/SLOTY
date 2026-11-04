@@ -84,7 +84,7 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
             </span>
           </div>
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5 font-mono">
-            {isPs2 ? '40 HIGH-SPEED PAYLINES • 92.8% RTP' : isPixel ? '50 RETRO PAYLINES • 96.0% RTP' : isTimber ? '25 WILD PAYLINES • 96.2% RTP' : '40 HIGH-ROLLER PAYLINES • 95.8% RTP'}
+            {isPs2 ? '40 HIGH-SPEED PAYLINES • 92.8% RTP' : isPixel ? '50 RETRO PAYLINES • ~92% RTP' : isTimber ? '25 WILD PAYLINES • 96.2% RTP' : '40 HIGH-ROLLER PAYLINES • 95.8% RTP'}
           </span>
         </div>
 
