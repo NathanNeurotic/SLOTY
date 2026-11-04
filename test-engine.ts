@@ -4,7 +4,7 @@ import { SYMBOLS } from './src/engine/symbols';
 import { calculateProgression } from './src/engine/progression';
 import { getGame } from './src/games/gameRegistry';
 
-console.log('--- RUNNING OREGON LOTTERY VLT COMPLIANCE & MATH VERIFICATION SUITE ---');
+console.log('--- SLOTY ENGINE & MATH REGRESSION SUITE (self-measured — not a certification) ---');
 
 // 1. Payline verification
 console.log(`Checking paylines: ${PAYLINES.length} defined.`);
@@ -72,24 +72,52 @@ if (p1.level !== 1) throw new Error('Level should start at 1');
 const p2 = calculateProgression(15000);
 console.log(`- Level at 15,000 XP: ${p2.level}, Max Bet: ${p2.maxBet}`);
 if (p2.level <= 1) throw new Error('XP should have leveled up player');
+// 4. Monte Carlo regression checks for all games
+//
+// These are REGRESSION BOUNDS for SLOTY's own free-play math model, set from
+// this suite's own repeated measurements — not a certification and not an
+// external standard. (The previous suite printed an "Oregon VLT Standard:
+// 92.0% - 96.0%" next to every game but only asserted 88-100%, and never
+// asserted hit frequency at all: Timberland measured 98.07% RTP and Pixel
+// Arcade a 49.92% hit rate and both "passed".)
+//
+// Bonus EV is MODELED, not simulated:
+//   free spins  = trigger rate x definition award x definition multiplier x base RTP
+//   hold & spin = trigger rate x 28x total bet average award (a modeling
+//                 assumption carried over from the original suite, stated openly)
+// Bounds sit wider than observed run-to-run variance at 100,000 spins. If a
+// change moves a game's math on purpose, re-measure and update the bounds
+// and the measured-range comment together.
+const REGRESSION_BOUNDS: Record<string, { rtp: [number, number]; hit: [number, number]; freeSpins1In: [number, number]; holdSpin1In: [number, number] }> = {
+  // Measured at 100k spins (3 runs, 2026-11-03): Vault RTP 93.1-96.3 / hit ~33.6-34.0,
+  // Timber RTP 93.0-96.4 / hit ~26.2-26.3, Pixel RTP 90.9-91.3 / hit ~50.2-50.4,
+  // PS2 RTP 91.3-93.2 / hit ~48.4-48.7.
+  'vault-24k': { rtp: [88, 104], hit: [28, 40], freeSpins1In: [105, 180], holdSpin1In: [120, 260] },
+  'timber-critters': { rtp: [88, 104], hit: [20, 33], freeSpins1In: [110, 185], holdSpin1In: [120, 250] },
+  'pixel-arcade': { rtp: [84, 100], hit: [43, 57], freeSpins1In: [105, 180], holdSpin1In: [125, 250] },
+  'ps2-legends': { rtp: [86, 102], hit: [42, 56], freeSpins1In: [110, 185], holdSpin1In: [125, 250] },
+};
 
-// 4. Monte Carlo Statistical Verification for All Games
 const games = ['vault-24k', 'timber-critters', 'pixel-arcade', 'ps2-legends'] as const;
 
 for (const gameId of games) {
   const game = getGame(gameId);
-  const spins = 40000;
-  const bet = game.defaultLines * 5;
-  let baseWon = 0;
+  const bounds = REGRESSION_BOUNDS[gameId];
+  const spins = 100000;
+  // Bet must be an exact multiple of the line count: evaluateSpin derives the
+  // line bet with Math.floor(totalBet / lines), so a non-multiple bet would
+  // silently distort the measured RTP. 5 per line mirrors the original suite.
+  const totalBet = game.defaultLines * 5;
   let totalWagered = 0;
+  let baseWon = 0;
   let hitCount = 0;
   let freeSpinsCount = 0;
   let holdAndSpinCount = 0;
 
   for (let i = 0; i < spins; i++) {
-    totalWagered += bet;
     const grid = generateRandomGrid(game);
-    const res = evaluateSpin(grid, bet, game.defaultLines, 1, game);
+    const res = evaluateSpin(grid, totalBet, game.defaultLines, 1, game);
+    totalWagered += totalBet;
     baseWon += res.totalPayout;
     if (res.totalPayout > 0) hitCount++;
     if (res.isFreeSpinsTriggered) freeSpinsCount++;
@@ -97,32 +125,35 @@ for (const gameId of games) {
   }
 
   const baseRtp = (baseWon / totalWagered) * 100;
-  const fsEv = freeSpinsCount > 0 ? (10 * 3 * (baseRtp / 100) * freeSpinsCount) / spins * 100 : 0;
+  const fsEv = freeSpinsCount > 0 ? (game.freeSpinsAward * game.freeSpinsMultiplier * (baseRtp / 100) * freeSpinsCount) / spins * 100 : 0;
   const hsEv = holdAndSpinCount > 0 ? (28 * holdAndSpinCount) / spins * 100 : 0;
   const totalRtp = baseRtp + fsEv + hsEv;
   const hitRate = (hitCount / spins) * 100;
   const fs1In = Math.round(spins / (freeSpinsCount || 1));
   const hs1In = Math.round(spins / (holdAndSpinCount || 1));
 
-  console.log(`\nVerifying Oregon VLT Math for: ${game.name} (${spins.toLocaleString()} spins)...`);
+  console.log(`\nMeasuring ${game.name} (${spins.toLocaleString()} spins, free spins ${game.freeSpinsAward} @ ${game.freeSpinsMultiplier}X)...`);
   console.log(`- Base Game RTP: ${baseRtp.toFixed(2)}%`);
-  console.log(`- Free Spins EV: ${fsEv.toFixed(2)}%`);
-  console.log(`- Hold & Spin EV: ${hsEv.toFixed(2)}%`);
-  console.log(`- Total Theoretical RTP: ${totalRtp.toFixed(2)}% (Oregon VLT Standard: 92.0% - 96.0%)`);
-  console.log(`- Hit Frequency: ${hitRate.toFixed(2)}% (Oregon VLT Standard: 22% - 35%)`);
-  console.log(`- Free Spins Trigger: 1 in ${fs1In} spins (${((freeSpinsCount / spins) * 100).toFixed(2)}%) (Target: 1 in 130-155)`);
-  console.log(`- Hold & Spin Trigger: 1 in ${hs1In} spins (${((holdAndSpinCount / spins) * 100).toFixed(2)}%) (Target: 1 in 160-220)`);
+  console.log(`- Free Spins EV (modeled): ${fsEv.toFixed(2)}%`);
+  console.log(`- Hold & Spin EV (modeled): ${hsEv.toFixed(2)}%`);
+  console.log(`- Total Estimated RTP: ${totalRtp.toFixed(2)}% (regression bound: ${bounds.rtp[0]}% - ${bounds.rtp[1]}%)`);
+  console.log(`- Hit Frequency: ${hitRate.toFixed(2)}% (regression bound: ${bounds.hit[0]}% - ${bounds.hit[1]}%)`);
+  console.log(`- Free Spins Trigger: 1 in ${fs1In} spins (regression bound: 1 in ${bounds.freeSpins1In[0]} - ${bounds.freeSpins1In[1]})`);
+  console.log(`- Hold & Spin Trigger: 1 in ${hs1In} spins (regression bound: 1 in ${bounds.holdSpin1In[0]} - ${bounds.holdSpin1In[1]})`);
 
-  if (totalRtp < 88.0 || totalRtp > 100.0) {
-    throw new Error(`RTP ${totalRtp.toFixed(2)}% out of certified range for ${game.name}`);
+  if (totalRtp < bounds.rtp[0] || totalRtp > bounds.rtp[1]) {
+    throw new Error(`Estimated RTP ${totalRtp.toFixed(2)}% outside regression bound for ${game.name}`);
   }
-  if (fs1In < 100 || fs1In > 180) {
-    throw new Error(`Free spins trigger frequency 1 in ${fs1In} out of range for ${game.name}`);
+  if (hitRate < bounds.hit[0] || hitRate > bounds.hit[1]) {
+    throw new Error(`Hit frequency ${hitRate.toFixed(2)}% outside regression bound for ${game.name}`);
   }
-  if (hs1In < 120 || hs1In > 250) {
-    throw new Error(`Hold & Spin trigger frequency 1 in ${hs1In} out of range for ${game.name}`);
+  if (fs1In < bounds.freeSpins1In[0] || fs1In > bounds.freeSpins1In[1]) {
+    throw new Error(`Free spins trigger 1 in ${fs1In} outside regression bound for ${game.name}`);
   }
-  console.log(`✓ ${game.name} meets Oregon Lottery VLT standards!`);
+  if (hs1In < bounds.holdSpin1In[0] || hs1In > bounds.holdSpin1In[1]) {
+    throw new Error(`Hold & Spin trigger 1 in ${hs1In} outside regression bound for ${game.name}`);
+  }
+  console.log(`✓ ${game.name} within its measured regression bounds`);
 }
 
-console.log('\n✓ ALL OREGON LOTTERY VLT COMPLIANCE & ENGINE CHECKS PASSED SUCCESSFULLY!');
+console.log('\n✓ ALL ENGINE & MATH REGRESSION CHECKS PASSED (regression guards for SLOTY\'s own model — not a certification)');

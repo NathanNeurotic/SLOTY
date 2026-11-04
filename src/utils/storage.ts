@@ -1,7 +1,9 @@
 /**
- * Dual LocalStorage + Cookie Session Persistence Manager
- * Ensures slot machine balances, VIP XP, active bets, settings,
- * and game state survive browser restarts, mobile webviews, and tab closures.
+ * LocalStorage-first persistence with a cookie fallback.
+ * localStorage is the primary store. Cookies are written ONLY when
+ * localStorage is unavailable (private/sandboxed webviews), so normal
+ * browsers do not ship every game-state key back to the server as a
+ * cookie on each request.
  */
 
 const COOKIE_MAX_AGE_DAYS = 365;
@@ -37,16 +39,18 @@ export const storage = {
     return null;
   },
 
-  // Write string to both localStorage and persistent cookie
+  // Write string to localStorage; fall back to a persistent cookie only
+  // when localStorage is unavailable
   setItem(key: string, value: string): void {
-    // 1. Write to localStorage
+    // 1. Write to localStorage (primary store)
     try {
       localStorage.setItem(key, value);
+      return;
     } catch {
-      // localStorage blocked
+      // localStorage blocked — fall through to the cookie fallback
     }
 
-    // 2. Mirror into persistent cookie (365 days, SameSite=Lax, path=/)
+    // 2. Fallback: persistent cookie (365 days, SameSite=Lax, path=/)
     try {
       if (typeof document !== 'undefined') {
         const date = new Date();
@@ -58,6 +62,22 @@ export const storage = {
       }
     } catch {
       // Cookie writing fallback
+    }
+  },
+
+  // Remove a key from both stores
+  removeItem(key: string): void {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // localStorage blocked
+    }
+    try {
+      if (typeof document !== 'undefined') {
+        document.cookie = `${encodeURIComponent(key)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+      }
+    } catch {
+      // Cookie access fallback
     }
   },
 
