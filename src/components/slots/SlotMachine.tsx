@@ -63,6 +63,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const rowCount = gameDef.rows;
   const numReels = gameDef.reels || 5;
   const totalLines = gameDef.defaultLines;
+  // Scatter symbol per game, used for both spin-stop anticipation and the on-reel lock UI
+  const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : isPs2 ? 'DVD_DISC' : 'SCATTER';
 
   // Track spinning state per reel dynamically
   const [reelSpinning, setReelSpinning] = useState<boolean[]>(() => Array(numReels).fill(false));
@@ -106,21 +108,32 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
     }
   }, [numReels]);
 
+  // Latest props read by the stop-schedule effect without restarting it mid-spin
+  const currentGridRef = useRef(currentGrid);
+  const isTurboRef = useRef(isTurbo);
+  const isFeverModeRef = useRef(isFeverMode);
+  useEffect(() => {
+    currentGridRef.current = currentGrid;
+    isTurboRef.current = isTurbo;
+    isFeverModeRef.current = isFeverMode;
+  });
+
   // Handle spin start and staggered stopping schedule with longer, more satisfying spin duration
   useEffect(() => {
     if (isSpinning) {
+      const currentGrid = currentGridRef.current;
+      const isTurbo = isTurboRef.current;
       setReelSpinning(Array(numReels).fill(true));
       setActiveWinningLineIdx(null);
       setHoveredLineIndex(null);
 
       // Start the continuous stimulating Deluxe Casino reel roll arpeggio & stepper ticker
-      soundManager.startSpinRollLoop(isFeverMode);
+      soundManager.startSpinRollLoop(isFeverModeRef.current);
 
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
 
       // Check if reels hit scatters for suspense anticipation excitement
-      const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : isPs2 ? 'DVD_DISC' : 'SCATTER';
       const hasScatter0 = currentGrid[0]?.includes(scatterSym);
       const hasScatter1 = currentGrid[1]?.includes(scatterSym);
       const anticipation = hasScatter0 && hasScatter1;
@@ -182,7 +195,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
     };
-  }, [isSpinning, isTurbo, currentGrid, isFeverMode]);
+  }, [isSpinning, numReels, scatterSym]);
 
   // Audio reaction for active winning paylines with authentic critter voices
   const playWinLineSound = useCallback((symId: string) => {
@@ -284,7 +297,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   // Winning coordinates for symbol highlight
   const winningCoordsMap = useMemo(() => {
     const map = new Map<number, Set<number>>();
-    for (let r = 0; r < 5; r++) map.set(r, new Set<number>());
+    for (let r = 0; r < numReels; r++) map.set(r, new Set<number>());
 
     if (spinResult && !isAnyReelSpinning) {
       const linesToConsider =
@@ -299,12 +312,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       });
     }
     return map;
-  }, [spinResult, isAnyReelSpinning, activeWinningLineIdx]);
+  }, [spinResult, isAnyReelSpinning, activeWinningLineIdx, numReels]);
 
   // Compute scatter coordinates
   const scatterCoordsMap = useMemo(() => {
     const map = new Map<number, Set<number>>();
-    for (let r = 0; r < 5; r++) map.set(r, new Set<number>());
+    for (let r = 0; r < numReels; r++) map.set(r, new Set<number>());
 
     if (spinResult && !isAnyReelSpinning && spinResult.scatterCoords.length >= 2) {
       spinResult.scatterCoords.forEach(([reel, row]) => {
@@ -312,10 +325,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       });
     }
     return map;
-  }, [spinResult, isAnyReelSpinning]);
+  }, [spinResult, isAnyReelSpinning, numReels]);
 
-  // Anticipation status for reels 2, 3, 4
-  const scatterSym = isTimber ? 'OWL' : 'SCATTER';
+  // Anticipation status for reels 2+ (uses the per-game scatter symbol)
   const hasScatter0 = !reelSpinning[0] && currentGrid[0]?.includes(scatterSym);
   const hasScatter1 = !reelSpinning[1] && currentGrid[1]?.includes(scatterSym);
   const isAnticipating = hasScatter0 && hasScatter1;

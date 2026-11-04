@@ -1,6 +1,5 @@
 import { evaluateSpin, generateForcedGrid, generateRandomGrid } from './src/engine/evaluator';
 import { PAYLINES } from './src/engine/paylines';
-import { SYMBOLS } from './src/engine/symbols';
 import { calculateProgression } from './src/engine/progression';
 import { getGame } from './src/games/gameRegistry';
 

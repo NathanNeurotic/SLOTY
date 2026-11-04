@@ -119,6 +119,8 @@ export const App: React.FC = () => {
       // at once — a mid-bonus switch would reprice the remaining spins.
       if (showFreeSpinsModal || freeSpinsRemaining > 0) return;
       if (gameId === activeGameId) return;
+      // Switching mid-spin would orphan the reel-stop timers and leave the machine stuck spinning
+      if (isSpinningRef.current) return;
       const target = getGame(gameId);
       setActiveGameId(gameId);
       soundManager.setGameTheme(gameId);
@@ -411,16 +413,19 @@ export const App: React.FC = () => {
     const now = performance.now();
     // Guard against rapid-fire spin spam (minimum 350ms between spin starts)
     if (now - lastSpinStartTimeRef.current < 350) return;
-    lastSpinStartTimeRef.current = now;
-    isSpinningRef.current = true;
 
     const isFreeSpin = freeSpinsRemaining > 0;
 
-    // Strict balance check: Never allow betting more than player has
+    // Strict balance check: Never allow betting more than player has.
+    // Runs before the spin lock is taken so a rejected spin cannot leave the game stuck "spinning".
     if (!isFreeSpin && balance < totalBet) {
       soundManager.playError();
+      setAutoSpinsRemaining(0);
       return;
     }
+
+    lastSpinStartTimeRef.current = now;
+    isSpinningRef.current = true;
 
     // Deduct wager and add XP
     if (!isFreeSpin) {
@@ -484,14 +489,16 @@ export const App: React.FC = () => {
     // EVALUATED it: G can switch cabinets while the reels are still spinning.
     pendingResultGameIdRef.current = activeGameId;
     setCurrentGrid(nextGrid);
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef, freeSpinDef]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef, activeGameId, freeSpinDef, progression.maxBet]);
 
-  // Handle completion when all 5 reels stop
+  // Handle completion when all reels stop
   const handleAllReelsStopped = useCallback(() => {
     setIsSpinning(false);
     isSpinningRef.current = false;
     lastSpinEndTimeRef.current = performance.now();
+    // Consume the pending result exactly once so a duplicate stop signal can never pay a spin twice
     const result = pendingResultRef.current;
+    pendingResultRef.current = null;
     if (!result) return;
 
     setSpinResult(result);
@@ -558,18 +565,18 @@ export const App: React.FC = () => {
     // Fever charge progression: +1% on spin, +3% on regular win, +6% on big win (requires ~25-35 spins)
     if (feverSpinsLeft === 0) {
       const chargeIncrement = totalPayout > 0 ? (totalPayout >= totalBet * 5 ? 6 : 3) : 1;
-      setFeverCharge((c) => {
-        const next = c + chargeIncrement;
-        if (next >= 100) {
-          setFeverSpinsLeft(5);
-          soundManager.playFeverSurge();
-          soundManager.setOverdriveMusic(true);
-          soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
-          launchCoinFountain('jackpot');
-          return 0;
-        }
-        return next;
-      });
+      const nextCharge = feverCharge + chargeIncrement;
+      if (nextCharge >= 100) {
+        // Side effects live outside the state updater so StrictMode's double-invoke can't repeat them
+        setFeverCharge(0);
+        setFeverSpinsLeft(5);
+        soundManager.playFeverSurge();
+        soundManager.setOverdriveMusic(true);
+        soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
+        launchCoinFountain('jackpot');
+      } else {
+        setFeverCharge(nextCharge);
+      }
     }
 
     // Free Spins Triggered (Smooth backdrop switch, no blast doors interruption)
@@ -622,7 +629,18 @@ export const App: React.FC = () => {
         return next;
       });
     }
-  }, [totalXp, freeSpinsRemaining, feverSpinsLeft, totalBet, handleSelectScene]);
+  }, [
+    balance,
+    totalXp,
+    freeSpinsRemaining,
+    feverSpinsLeft,
+    feverCharge,
+    totalBet,
+    activeGameId,
+    currentGrid,
+    handleSelectScene,
+    triggerStealthBailout,
+  ]);
 
   // Quick Stop Handler with minimum spin duration before stopping is permitted
   const handleQuickStop = useCallback(() => {
@@ -766,6 +784,18 @@ export const App: React.FC = () => {
   activeGameIdRef.current = activeGameId;
   const autoSpinsRemainingRef = useRef(autoSpinsRemaining);
   autoSpinsRemainingRef.current = autoSpinsRemaining;
+  // True while any overlay is open; gameplay hotkeys must not act behind a modal
+  const modalOpenRef = useRef(false);
+  modalOpenRef.current =
+    celebration !== null ||
+    showFreeSpinsModal ||
+    showHoldAndSpinModal ||
+    showGambleModal ||
+    showBonusWheelModal ||
+    showPaytableModal ||
+    levelUpData !== null;
+  const activeGameDefRef = useRef(activeGameDef);
+  activeGameDefRef.current = activeGameDef;
 
   useEffect(() => {
     const BET_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
@@ -791,7 +821,7 @@ export const App: React.FC = () => {
           handleStartFreeSpins();
           return;
         }
-        if (celebration !== null || showHoldAndSpinModal || showGambleModal) {
+        if (modalOpenRef.current) {
           return;
         }
         const now = performance.now();
@@ -827,19 +857,22 @@ export const App: React.FC = () => {
         }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
+        if (isSpinningRef.current || modalOpenRef.current) return;
+        const def = activeGameDefRef.current;
         const cur = betPerLineRef.current;
         let idx = BET_STEPS.indexOf(cur);
         if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
         if (idx < BET_STEPS.length - 1) {
           const nextStep = BET_STEPS[idx + 1];
-          const maxAllowed = Math.min(balanceRef.current, maxBetRef.current);
-          if (nextStep * selectedLinesRef.current <= maxAllowed) {
+          const maxAllowed = Math.min(balanceRef.current, maxBetRef.current, def.maxTotalBet);
+          if (nextStep * selectedLinesRef.current <= maxAllowed && nextStep <= def.maxBetPerLine) {
             setBetPerLine(nextStep);
             soundManager.playChipClick();
           }
         }
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
+        if (isSpinningRef.current || modalOpenRef.current) return;
         const cur = betPerLineRef.current;
         let idx = BET_STEPS.indexOf(cur);
         if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
@@ -849,17 +882,21 @@ export const App: React.FC = () => {
         }
       } else if (e.key === 'b' || e.key === 'B') {
         e.preventDefault();
+        if (isSpinningRef.current || modalOpenRef.current) return;
         handleMaxBet();
       } else if (e.key === 'a' || e.key === 'A') {
         e.preventDefault();
+        if (modalOpenRef.current) return;
         if (autoSpinsRemainingRef.current > 0) {
           setAutoSpinsRemaining(0);
-        } else {
-          setAutoSpinsRemaining(25);
+        } else if (!isSpinningRef.current) {
+          // The first spin starts immediately, so queue one fewer
+          setAutoSpinsRemaining(24);
           executeSpin();
         }
       } else if (e.key === 'g' || e.key === 'G') {
         e.preventDefault();
+        if (isSpinningRef.current || modalOpenRef.current) return;
         const gameCycle: GameId[] = ['vault-24k', 'timber-critters', 'pixel-arcade', 'ps2-legends'];
         const curIdx = gameCycle.indexOf(activeGameIdRef.current);
         const nextGame = gameCycle[(curIdx + 1) % gameCycle.length];
@@ -1010,7 +1047,7 @@ export const App: React.FC = () => {
                 freeSpinsRemaining={freeSpinsRemaining}
                 freeSpinsMultiplier={freeSpinDef.freeSpinsMultiplier}
                 onSpin={executeSpin}
-                canSpin={(balance >= totalBet && balance > 0) || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
+                canSpin={balance >= totalBet || freeSpinsRemaining > 0}
                 isFeverMode={feverSpinsLeft > 0}
                 currentSceneId={currentSceneId}
                 onRewardCoins={(amount) => {
@@ -1050,7 +1087,8 @@ export const App: React.FC = () => {
           onMaxBet={handleMaxBet}
           onTurboToggle={() => setIsTurbo((prev) => !prev)}
           onAutoSpinStart={(count) => {
-            setAutoSpinsRemaining(count);
+            // The first spin starts immediately, so queue one fewer
+            setAutoSpinsRemaining(Math.max(0, count - 1));
             executeSpin();
           }}
           onAutoSpinStop={() => setAutoSpinsRemaining(0)}
