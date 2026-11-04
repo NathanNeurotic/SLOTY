@@ -93,6 +93,8 @@ export const App: React.FC = () => {
   // and multiplier govern the whole bonus, even if the player switches games
   // while the award modal is up or the spins are running.
   const [freeSpinGameId, setFreeSpinGameId] = useState<GameId | null>(null);
+  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
+  const [showFreeSpinsModal, setShowFreeSpinsModal] = useState(false);
   const activeGameDef = getGame(activeGameId);
   const freeSpinDef = freeSpinGameId ? getGame(freeSpinGameId) : activeGameDef;
 
@@ -111,6 +113,11 @@ export const App: React.FC = () => {
 
   const handleSelectGame = useCallback(
     (gameId: GameId) => {
+      // Cabinet locked while a free-spins bonus is pending or running: the
+      // award's identity (count + multiplier) belongs to the triggering
+      // game, and the pooled remaining count cannot track two games' awards
+      // at once — a mid-bonus switch would reprice the remaining spins.
+      if (showFreeSpinsModal || freeSpinsRemaining > 0) return;
       if (gameId === activeGameId) return;
       const target = getGame(gameId);
       setActiveGameId(gameId);
@@ -153,7 +160,7 @@ export const App: React.FC = () => {
         soundManager.playCashRegister();
       }
     },
-    [activeGameId, balance, betPerLine]
+    [activeGameId, balance, betPerLine, showFreeSpinsModal, freeSpinsRemaining]
   );
 
 
@@ -170,7 +177,6 @@ export const App: React.FC = () => {
   const lastSpinStartTimeRef = useRef(0);
   const lastSpinEndTimeRef = useRef(0);
   const [winAmount, setWinAmount] = useState(0);
-  const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
   const [feverCharge, setFeverCharge] = useState<number>(() =>
     storage.getNumber('sloty_fever_charge', 35)
@@ -361,7 +367,6 @@ export const App: React.FC = () => {
 
   // --- Modals State ---
   const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
-  const [showFreeSpinsModal, setShowFreeSpinsModal] = useState(false);
   const [showHoldAndSpinModal, setShowHoldAndSpinModal] = useState(false);
   const [holdAndSpinInitialCoins, setHoldAndSpinInitialCoins] = useState(6);
   const [showGambleModal, setShowGambleModal] = useState(false);
