@@ -11,7 +11,7 @@ import type { GameDefinition } from '../games/types';
 import { getGame, DEFAULT_GAME_ID } from '../games/gameRegistry';
 import { VAULT_REEL_STRIPS } from '../games/vault24k/vaultDefinition';
 
-// Calibrated 50-stop reel strips with authentic Oregon Lottery VLT distribution
+// Reel strips are SLOTY's own free-play math model (see test-engine.ts for measured profiles)
 const REEL_STRIPS: SymbolId[][] = VAULT_REEL_STRIPS;
 
 // Dynamic reels x dynamic rows (5x4 Vault, 5x3 Timberland, 6x5 Pixel Arcade)
@@ -131,9 +131,10 @@ export function evaluateSpin(
   const symbolsMap = activeDef.symbols;
   const rowCount = activeDef.rows;
 
-  const isWild = (sym: SymbolId) => sym === 'WILD' || sym === 'BEAR' || sym === 'CYBER_WILD' || sym === 'PS2_LOGO';
-  const isScatter = (sym: SymbolId) => sym === 'SCATTER' || sym === 'OWL' || sym === 'PIXEL_CARTRIDGE' || sym === 'DVD_DISC';
-  const isCoin = (sym: SymbolId) => sym === 'COIN' || sym === 'ACORN' || sym === 'RETRO_TOKEN' || sym === 'MEMORY_CARD';
+  // Bonus roles come from the active game's definition — no per-game ID lists here.
+  const isWild = (sym: SymbolId) => sym === activeDef.wildId;
+  const isScatter = (sym: SymbolId) => sym === activeDef.scatterId;
+  const isCoin = (sym: SymbolId) => sym === activeDef.coinId;
 
   const lineBet = Math.max(1, Math.floor(totalBet / activePaylinesCount));
   const winningLines: WinningLine[] = [];
@@ -212,7 +213,7 @@ export function evaluateSpin(
 
   const isFreeSpinsTriggered = scatterCount >= 3;
   if (isFreeSpinsTriggered) {
-    const scatterDef = symbolsMap['SCATTER'] || symbolsMap['OWL'] || symbolsMap['PIXEL_CARTRIDGE'] || symbolsMap['DVD_DISC'];
+    const scatterDef = symbolsMap[activeDef.scatterId];
     const scatterMultiplier = (scatterDef?.payouts as Record<number, number>)?.[Math.min(numReels, scatterCount)] || 50;
     const scatterPayout = totalBet * (scatterMultiplier / 10) * winMultiplier;
     totalPayout += scatterPayout;

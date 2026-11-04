@@ -3,8 +3,8 @@ import { SYMBOLS } from '../../engine/symbols';
 import { PAYLINES } from '../../engine/paylines';
 import type { SymbolId } from '../../engine/types';
 
-// Calibrated to Oregon Lottery VLT specifications:
-// 50-stop reel strips with authentic Oregon hit frequency (31%) & scatter/bonus odds
+// Reel strips are SLOTY's own free-play math model (not lottery-calibrated).
+// Measured profile (Monte Carlo, see test-engine.ts): ~93-99% total RTP, ~33-34% hit frequency.
 export const VAULT_REEL_STRIPS: SymbolId[][] = [
   // Reel 1: 1 scatter, [2, 1, 1] coins (4 coins), 1 wild
   [
@@ -75,13 +75,19 @@ export const VAULT_24K_GAME: GameDefinition = {
     minorTitle: 'MINOR',
     miniTitle: 'MINI',
     tickerBadge: 'CASH TICKER',
-    tickerText: '★ 24K GOLD & CASH VAULT ★ 40 HIGH-ROLLER PAYLINES ★ HIT 6 MINTED BULLION COINS FOR FORT KNOX CASH LINK ★ 3 VAULT SCATTERS AWARD 10 FREE SPINS AT 3X MULTIPLIER ★ RISK WINS IN VIDEO POKER DOUBLE-UP ★ 95.2% RTP OREGON VLT CERTIFIED ★ GOOD LUCK HIGH ROLLER! ★',
+    tickerText: '★ 24K GOLD & CASH VAULT ★ 40 HIGH-ROLLER PAYLINES ★ HIT 6 MINTED BULLION COINS FOR FORT KNOX CASH LINK ★ 3 VAULT SCATTERS AWARD 10 FREE SPINS AT 3X MULTIPLIER ★ RISK WINS IN VIDEO POKER DOUBLE-UP ★ FREE-PLAY FUN — NO REAL-MONEY PAYOUTS ★ GOOD LUCK HIGH ROLLER! ★',
     tickerFreeSpinsText: '🔥🔥🔥 PENTHOUSE CASH RUSH ACTIVE • ALL PAYLINE WINS TRIPLED (3X) • RAINING $100 BILLS 🔥🔥🔥',
     feverTitle: 'MOLTEN GOLD OVERDRIVE',
     feverSubtitle: 'CHARGE WITH WINS',
     spinButtonLabel: 'SPIN',
   },
-  betSteps: [1, 2, 5, 10, 25, 50],
-  maxBetPerLine: 50,
+  betSteps: [1, 2, 5, 10, 25, 50, 100],
+  maxBetPerLine: 100,
   maxTotalBet: 2000,
+  wildId: 'WILD',
+  scatterId: 'SCATTER',
+  coinId: 'COIN',
+  freeSpinsAward: 10,
+  freeSpinsMultiplier: 3,
+  volatilityLabel: 'Balanced, big-win leaning',
 };

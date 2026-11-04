@@ -1,6 +1,6 @@
 import type { SymbolId } from '../../engine/types';
 
-// 66-stop calibrated strips across all 6 reels for verified Oregon Lottery math (95.5% RTP, 28% Hit Rate, 1:140 Free Spins, 1:180 Hold & Spin)
+// 66-stop strips across all 6 reels, SLOTY's own free-play math model. Measured profile (test-engine.ts): ~92-94% total RTP, ~50% hit rate — the comment this replaces claimed 28%.
 export const PIXEL_REEL_STRIPS: SymbolId[][] = [
   // Reel 0 (66 stops, no wild on reel 0, 1 cartridge, 5 tokens)
   [

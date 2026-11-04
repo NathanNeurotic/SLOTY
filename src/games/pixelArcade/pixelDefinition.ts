@@ -31,7 +31,7 @@ export const PIXEL_ARCADE_GAME: GameDefinition = {
     miniTitle: '1-UP EXTRA LIFE',
     tickerBadge: 'ARCADE TICKER',
     tickerText:
-      '🕹️ PIXEL ARCADE 🕹️ 6x5 MEGA-GRID 50 LINES 🕹️ HIT 6 RETRO TOKENS TO TRIGGER HIGH SCORE RESPIN 🕹️ 3 CARTRIDGES UNLOCK 8-BIT BOSS STAGE WITH 3X MULTIPLIERS 🕹️ 95.8% OREGON VLT CERTIFIED 🕹️ INSERT COIN TO PLAY! 🕹️',
+      '🕹️ PIXEL ARCADE 🕹️ 6x5 MEGA-GRID 50 LINES 🕹️ HIT 6 RETRO TOKENS TO TRIGGER HIGH SCORE RESPIN 🕹️ 3 CARTRIDGES UNLOCK 8-BIT BOSS STAGE WITH 3X MULTIPLIERS 🕹️ FREE-PLAY FUN — NO REAL-MONEY PAYOUTS 🕹️ INSERT COIN TO PLAY! 🕹️',
     tickerFreeSpinsText:
       '👾👾👾 8-BIT BOSS RUSH FREE SPINS ACTIVE • ALL ARCADE WINS TRIPLED (3X) • DEFEAT THE FINAL BOSS! 👾👾👾',
     feverTitle: 'OVERDRIVE COMBO',
@@ -41,4 +41,10 @@ export const PIXEL_ARCADE_GAME: GameDefinition = {
   betSteps: [1, 2, 3, 4, 5],
   maxBetPerLine: 5,
   maxTotalBet: 250,
+  wildId: 'CYBER_WILD',
+  scatterId: 'PIXEL_CARTRIDGE',
+  coinId: 'RETRO_TOKEN',
+  freeSpinsAward: 10,
+  freeSpinsMultiplier: 3,
+  volatilityLabel: 'High hit frequency, small wins',
 };
