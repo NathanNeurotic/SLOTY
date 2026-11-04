@@ -170,10 +170,9 @@ export const Reel: React.FC<ReelProps> = ({
             : 'bg-gradient-to-t from-gold-bright/80 via-amber-400/40 to-transparent'
         }`} />
       )}
-
-      {/* 1. Matrix-Preserving Fast Rolling Slots (Strictly maintains exact rowCount during spin) */}
+      {/* 1. Fast GPU-Accelerated Rolling Strip (Absolute overlay, strictly clipped to reel bounds) */}
       {isSpinning && (
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
           <div
             className="absolute inset-x-0 top-0 flex flex-col animate-reel-rolling will-change-transform"
             style={{
@@ -186,7 +185,7 @@ export const Reel: React.FC<ReelProps> = ({
               return (
                 <div
                   key={i}
-                  className="w-full flex-shrink-0 min-h-0 overflow-hidden flex items-center justify-center p-0.5 sm:p-1 opacity-85"
+                  className="w-full flex-shrink-0 min-h-0 flex items-center justify-center p-0.5 sm:p-1"
                   style={{ height: `${100 / (activeRowCount * 2)}%` }}
                 >
                   <SymbolRenderer id={sym} reelIndex={reelIndex} rowIndex={i % activeRowCount} />
@@ -197,15 +196,17 @@ export const Reel: React.FC<ReelProps> = ({
         </div>
       )}
 
-      {/* 2. Resting / Settling Landing Grid. Always stays in the layout (hidden while spinning) so the reel's
-          height never changes between rest and spin; the rolling strip above is an absolute overlay. */}
-      {(
-        <div
-          aria-hidden={isSpinning}
-          className={`w-full h-full flex flex-col ${
-            isSpinning ? 'invisible' : hasSettled ? 'animate-reel-settle' : ''
-          }`}
-        >
+      {/* 2. Resting / Settling Landing Grid (Maintains exact in-flow reel height; hidden via visibility+opacity while spinning) */}
+      <div
+        aria-hidden={isSpinning}
+        style={{
+          visibility: isSpinning ? 'hidden' : 'visible',
+          opacity: isSpinning ? 0 : 1,
+        }}
+        className={`w-full h-full flex flex-col ${
+          hasSettled ? 'animate-reel-settle' : ''
+        }`}
+      >
           {displaySymbols.map((sym, rowIdx) => {
             const isWinning = winningRows.has(rowIdx);
             const isScatterHighlight = scatterRows.has(rowIdx);
@@ -249,7 +250,6 @@ export const Reel: React.FC<ReelProps> = ({
             );
           })}
         </div>
-      )}
 
       {/* Themed Reel Background Textures */}
       {isPixel ? (
