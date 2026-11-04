@@ -357,6 +357,7 @@ export const App: React.FC = () => {
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
   const pendingResultRef = useRef<SpinResult | null>(null);
+  const pendingResultGameIdRef = useRef<GameId | null>(null);
 
   // --- Modals State ---
   const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
@@ -452,7 +453,11 @@ export const App: React.FC = () => {
         // and NEAR_MISS scenarios still register on games whose scatterId
         // is not 'SCATTER' (evaluator counts only activeDef.scatterId).
         const c = col.map((sym) => (sym === 'SCATTER' ? activeGameDef.scatterId : sym));
-        while (c.length < activeGameDef.rows) c.push(c[0] || 'SEVEN');
+        // Pad by extending the column's tail. Copying c[0] duplicated
+        // scatters on 5-row Pixel Arcade — NEAR_MISS padded itself into a
+        // free-spins trigger. (No forced column ends in a scatter, so the
+        // tail symbol is always scatter-safe.)
+        while (c.length < activeGameDef.rows) c.push(c[c.length - 1]);
         return c.slice(0, activeGameDef.rows);
       });
       while (nextGrid.length < (activeGameDef.reels || 5)) {
@@ -470,6 +475,9 @@ export const App: React.FC = () => {
     const evaluated = evaluateSpin(nextGrid, totalBet, selectedLines, multiplier, activeGameDef);
 
     pendingResultRef.current = evaluated;
+    // The completion handler must attribute this result to the game that
+    // EVALUATED it: G can switch cabinets while the reels are still spinning.
+    pendingResultGameIdRef.current = activeGameId;
     setCurrentGrid(nextGrid);
   }, [balance, totalBet, selectedLines, freeSpinsRemaining, forcedScenario, feverSpinsLeft, activeGameDef, freeSpinDef]);
 
@@ -518,8 +526,10 @@ export const App: React.FC = () => {
       setConsecutiveWins(0);
     }
 
-    // Update Unreasonable Boss / Camp Quota System
-    const quotaResult = quotaManager.addSpinProgress(activeGameId, totalBet, totalPayout);
+    // Update Unreasonable Boss / Camp Quota System — attributed to the game
+    // that evaluated this spin, not a cabinet selected while reels spun.
+    const resultGameId = pendingResultGameIdRef.current ?? activeGameId;
+    const quotaResult = quotaManager.addSpinProgress(resultGameId, totalBet, totalPayout);
     if (quotaResult.unlockedTier) {
       setUnlockedQuotaTier(quotaResult.unlockedTier);
     }
@@ -561,7 +571,7 @@ export const App: React.FC = () => {
     if (isFreeSpinsTriggered) {
       soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
       handleSelectScene('PENTHOUSE', false);
-      setFreeSpinGameId(activeGameId);
+      setFreeSpinGameId(resultGameId);
       setShowFreeSpinsModal(true);
     }
 
@@ -993,6 +1003,7 @@ export const App: React.FC = () => {
                 onAllReelsStopped={handleAllReelsStopped}
                 onQuickStop={handleQuickStop}
                 freeSpinsRemaining={freeSpinsRemaining}
+                freeSpinsMultiplier={freeSpinDef.freeSpinsMultiplier}
                 onSpin={executeSpin}
                 canSpin={(balance >= totalBet && balance > 0) || freeSpinsRemaining > 0 || feverSpinsLeft > 0}
                 isFeverMode={feverSpinsLeft > 0}
@@ -1140,7 +1151,7 @@ export const App: React.FC = () => {
           freeSpinsAwarded={freeSpinDef.freeSpinsAward}
           multiplier={freeSpinDef.freeSpinsMultiplier}
           onStart={handleStartFreeSpins}
-          activeGameId={activeGameId}
+          activeGameId={freeSpinGameId ?? activeGameId}
         />
       )}
 
@@ -1198,7 +1209,7 @@ export const App: React.FC = () => {
         onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
         onInjectCustomGrid={(grid) => {
           setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? activeGameDef.freeSpinsMultiplier : 1, activeGameDef);
+          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? freeSpinDef.freeSpinsMultiplier : 1, activeGameDef);
           setSpinResult(evaluated);
         }}
         onResetStats={() =>
