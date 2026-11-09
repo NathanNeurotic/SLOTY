@@ -1114,179 +1114,95 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="wolfBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#020817" />
-                <stop offset="45%" stopColor="#072A4A" />
-                <stop offset="100%" stopColor="#031628" />
+              <linearGradient id="wolfSlateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#64748B" />
+                <stop offset="50%" stopColor="#475569" />
+                <stop offset="100%" stopColor="#1E293B" />
               </linearGradient>
-              <radialGradient id="wolfMoon" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
-                <stop offset="50%" stopColor="#BAE6FD" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
-              </radialGradient>
-              <linearGradient id="wolfFurDark" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#1E293B" />
-                <stop offset="50%" stopColor="#334155" />
+              <linearGradient id="wolfDarkFurGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#334155" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <linearGradient id="wolfFurMid" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="wolfCheekGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#94A3B8" />
-                <stop offset="50%" stopColor="#64748B" />
+                <stop offset="60%" stopColor="#64748B" />
                 <stop offset="100%" stopColor="#334155" />
               </linearGradient>
-              <linearGradient id="wolfFurLight" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="60%" stopColor="#E2E8F0" />
-                <stop offset="100%" stopColor="#94A3B8" />
-              </linearGradient>
-              <linearGradient id="wolfBannerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0284C7" />
-                <stop offset="50%" stopColor="#38BDF8" />
-                <stop offset="100%" stopColor="#0284C7" />
-              </linearGradient>
-              <clipPath id="wolfCircleClip">
+              <clipPath id="wolfMedallionClip">
                 <circle cx="50" cy="50" r="41" />
               </clipPath>
             </defs>
 
-            {/* Outer Protective Medallion Frame */}
-            <circle cx="50" cy="50" r="42" fill="url(#wolfBg)" stroke="#38BDF8" strokeWidth="2.5" />
-            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#0284C7" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 2" />
+            {/* Medallion Base in Deep Midnight Blue with Frosted Cyan Rim */}
+            <circle cx="50" cy="50" r="42" fill="#091124" stroke="#38BDF8" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.5" />
 
-            <g clipPath="url(#wolfCircleClip)">
-              {/* Glowing Full Moon in Upper Right */}
-              <circle cx="75" cy="25" r="22" fill="url(#wolfMoon)" opacity="0.4" />
-              <circle cx="75" cy="25" r="14" fill="#F0F9FF" stroke="#BAE6FD" strokeWidth="1.2" />
-              <circle cx="71" cy="21" r="2.5" fill="#BAE6FD" opacity="0.5" />
-              <circle cx="79" cy="22" r="1.8" fill="#BAE6FD" opacity="0.4" />
-              <circle cx="76" cy="30" r="2.8" fill="#BAE6FD" opacity="0.45" />
+            <g clipPath="url(#wolfMedallionClip)">
+              {/* Soft Moonlit Background Glow */}
+              <circle cx="50" cy="44" r="32" fill="#0284C7" opacity="0.18" />
+              <circle cx="50" cy="40" r="18" fill="#38BDF8" opacity="0.12" />
 
-              {/* Mountain Pines in Background */}
-              <polygon points="6,92 18,70 30,92" fill="#021422" opacity="0.9" />
-              <polygon points="20,92 32,76 44,92" fill="#031D30" />
-              <polygon points="68,92 78,74 88,92" fill="#021422" opacity="0.9" />
+              {/* Wolf Ears */}
+              {/* Left Ear */}
+              <polygon points="22,12 40,34 16,38" fill="url(#wolfSlateGrad)" stroke="#38BDF8" strokeWidth="1" />
+              <polygon points="25,18 36,32 20,35" fill="#0F172A" />
+              <polygon points="25,24 32,32 20,33" fill="#E2E8F0" />
+              {/* Right Ear */}
+              <polygon points="78,12 60,34 84,38" fill="url(#wolfSlateGrad)" stroke="#38BDF8" strokeWidth="1" />
+              <polygon points="75,18 64,32 80,35" fill="#0F172A" />
+              <polygon points="75,24 68,32 80,33" fill="#E2E8F0" />
 
-              {/* Distant Stars */}
-              <circle cx="18" cy="22" r="1.2" fill="#FFF" />
-              <circle cx="28" cy="15" r="0.8" fill="#BAE6FD" />
-              <circle cx="48" cy="14" r="1" fill="#BAE6FD" />
-
-              {/* Far Ear (Back) */}
-              <polygon points="34,26 38,10 46,20" fill="#1E293B" stroke="#0F172A" strokeWidth="1" />
-              <polygon points="36,24 39,13 44,20" fill="#334155" />
-
-              {/* Wolf Main Silhouette (Back Coat) */}
-              <path
-                d="M 8 92
-                   C 12 70, 18 55, 26 40
-                   L 20 20
-                   L 34 28
-                   C 38 29, 44 30, 48 29
-                   L 67 17
-                   C 68 18, 69 20, 68 22
-                   L 59 30
-                   C 60 32, 59 35, 57 37
-                   L 60 41
-                   C 57 43, 54 44, 51 44
-                   C 50 50, 54 58, 59 66
-                   C 64 74, 70 82, 78 92 Z"
-                fill="url(#wolfFurDark)"
+              {/* Majestic Flared Wolf Mane / Outer Silhouette */}
+              <polygon
+                points="50,26 66,34 80,46 86,52 78,60 84,68 74,76 50,86 26,76 16,68 22,60 14,52 20,46 34,34"
+                fill="url(#wolfDarkFurGrad)"
                 stroke="#0F172A"
-                strokeWidth="1"
-                strokeLinejoin="round"
-              />
-
-              {/* Near Ear Inner Shell & Fur */}
-              <polygon points="22,23 31,27 26,35" fill="#0F172A" />
-              <path d="M 23 26 Q 28 28 25 33" stroke="#CBD5E1" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-
-              {/* Layered Fur Tufts Along Nape / Spine */}
-              <path
-                d="M 12 88 L 18 78 L 15 76 L 22 64 L 18 63 L 26 50 L 23 48 L 30 38"
-                stroke="#475569"
                 strokeWidth="1.2"
-                fill="none"
                 strokeLinejoin="round"
               />
 
-              {/* Midtone Silver Fur (Cheek, Neck & Shoulder) */}
-              <path
-                d="M 18 92
-                   C 22 75, 26 62, 34 48
-                   C 38 46, 44 44, 48 40
-                   L 65 20
-                   L 59 28
-                   L 55 35
-                   L 49 42
-                   C 47 49, 50 58, 55 66
-                   C 60 74, 65 83, 72 92 Z"
-                fill="url(#wolfFurMid)"
-                stroke="#334155"
-                strokeWidth="0.8"
-              />
+              {/* Sculpted Forehead & Crown Diamond */}
+              <polygon points="50,26 64,42 50,52 36,42" fill="url(#wolfSlateGrad)" stroke="#334155" strokeWidth="0.6" />
+              {/* Central Forehead Shadow Marking */}
+              <polygon points="50,28 56,42 50,50 44,42" fill="#0F172A" />
 
-              {/* Radiant White Fur Bib (Throat, Jaw & Underbelly) */}
-              <path
-                d="M 40 92
-                   C 42 78, 44 68, 48 56
-                   C 47 50, 48 44, 52 40
-                   L 56 37
-                   L 58 39
-                   L 54 44
-                   C 51 52, 54 62, 60 72
-                   C 64 80, 68 87, 72 92 Z"
-                fill="url(#wolfFurLight)"
-                stroke="#CBD5E1"
-                strokeWidth="0.6"
-              />
+              {/* Midtone Silver Fur Cheek Planes */}
+              <polygon points="36,42 50,52 38,68 22,54" fill="url(#wolfCheekGrad)" stroke="#334155" strokeWidth="0.5" />
+              <polygon points="64,42 50,52 62,68 78,54" fill="url(#wolfCheekGrad)" stroke="#334155" strokeWidth="0.5" />
 
-              {/* Open Howling Mouth Cavity */}
-              <polygon points="65,19 58,26 55,33 53,28" fill="#450A0A" />
-              {/* Sharp White Canine Fangs */}
-              <polygon points="62,21 64,24 60,23" fill="#FFFFFF" stroke="#090D16" strokeWidth="0.4" />
-              <polygon points="56,31 58,29 57,33" fill="#FFFFFF" stroke="#090D16" strokeWidth="0.4" />
+              {/* Radiant White Flared Cheek Ruffs */}
+              <polygon points="22,54 38,68 28,74 16,68" fill="#F8FAFC" />
+              <polygon points="78,54 62,68 72,74 84,68" fill="#F8FAFC" />
 
-              {/* Wolf Black Nose Pad */}
-              <path d="M 66 17 Q 69 19 67 21 Q 65 21 64 19 Z" fill="#090D16" stroke="#38BDF8" strokeWidth="0.5" />
-              <circle cx="66.5" cy="18.5" r="0.6" fill="#BAE6FD" />
+              {/* Snout Bridge (Darker Slate Stripe) */}
+              <polygon points="45,50 55,50 54,67 46,67" fill="#64748B" />
 
-              {/* Whisker Dots on Muzzle */}
-              <circle cx="61" cy="22" r="0.6" fill="#334155" />
-              <circle cx="59" cy="24" r="0.6" fill="#334155" />
-              <circle cx="57" cy="26" r="0.6" fill="#334155" />
+              {/* Pure White Snout, Muzzle & Chin */}
+              <polygon points="44,67 56,67 58,79 50,84 42,79" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="0.5" />
 
-              {/* Piercing Glowing Cyan Wolf Eye */}
-              <path d="M 45 32 Q 49 29 53 31 Q 48 34 45 32 Z" fill="#090D16" />
-              <ellipse cx="49" cy="31.2" rx="2" ry="1.3" fill="#38BDF8" stroke="#0284C7" strokeWidth="0.4" />
-              <circle cx="49.3" cy="31.2" r="0.7" fill="#090D16" />
-              <circle cx="49.8" cy="30.7" r="0.4" fill="#FFFFFF" />
-              {/* Furrowed Brow Highlight */}
-              <path d="M 44 29 Q 48 27 53 29" stroke="#F1F5F9" strokeWidth="1" fill="none" strokeLinecap="round" />
+              {/* Intense Golden-Amber Wolf Eyes */}
+              {/* Left Eye */}
+              <polygon points="31,43 45,45 37,50" fill="#0F172A" />
+              <polygon points="33,44 43,45.5 37,49" fill="#F59E0B" />
+              <ellipse cx="37.5" cy="46.5" rx="1.6" ry="1.4" fill="#0F172A" />
+              <circle cx="38.2" cy="46" r="0.7" fill="#FFF" />
+              <line x1="30" y1="41" x2="44" y2="43" stroke="#F1F5F9" strokeWidth="1.2" strokeLinecap="round" />
 
-              {/* Howl Sound Ripple Waves */}
-              <path d="M 72 13 Q 76 16 78 20" fill="none" stroke="#BAE6FD" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
-              <path d="M 76 9 Q 82 12 85 18" fill="none" stroke="#38BDF8" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+              {/* Right Eye */}
+              <polygon points="69,43 55,45 63,50" fill="#0F172A" />
+              <polygon points="67,44 57,45.5 63,49" fill="#F59E0B" />
+              <ellipse cx="62.5" cy="46.5" rx="1.6" ry="1.4" fill="#0F172A" />
+              <circle cx="63.2" cy="46" r="0.7" fill="#FFF" />
+              <line x1="70" y1="41" x2="56" y2="43" stroke="#F1F5F9" strokeWidth="1.2" strokeLinecap="round" />
+
+              {/* Black Nose Pad */}
+              <polygon points="45,69 55,69 50,76" fill="#0F172A" />
+              <ellipse cx="50" cy="70.5" rx="3.5" ry="1" fill="#334155" />
+
+              {/* Muzzle Split & Mouth Line */}
+              <line x1="50" y1="76" x2="50" y2="79" stroke="#0F172A" strokeWidth="1.2" />
+              <path d="M 46 79 Q 50 81 54 79" stroke="#0F172A" strokeWidth="1.2" fill="none" />
             </g>
-
-            {/* Clean Bold WOLF Banner */}
-            <rect x="18" y="72" width="64" height="20" rx="6" fill="#000" opacity="0.6" />
-            <rect x="16" y="70" width="68" height="20" rx="6" fill="url(#wolfBannerGrad)" stroke="#FFF" strokeWidth="1.5" />
-            <rect x="18" y="72" width="64" height="16" rx="4" fill="#082F49" stroke="#38BDF8" strokeWidth="1" />
-            <text
-              x="50"
-              y="83.5"
-              textAnchor="middle"
-              fill="#F0F9FF"
-              stroke="#041E34"
-              strokeWidth="0.8"
-              fontSize="10.5"
-              fontWeight="900"
-              fontFamily="sans-serif"
-              letterSpacing="2"
-              style={{ paintOrder: 'stroke fill' }}
-            >
-              WOLF
-            </text>
           </svg>
         );
 

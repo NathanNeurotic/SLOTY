@@ -86,7 +86,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center rounded-lg sm:rounded-xl border transition-all duration-300 min-w-[95px] w-28 sm:w-36 md:w-44 h-8.5 sm:h-9 md:h-9.5 px-2 py-0.5 flex-shrink-0 overflow-hidden box-border ${
+      className={`relative flex flex-col items-center justify-center rounded-lg sm:rounded-xl border transition-all duration-300 min-w-[130px] w-36 sm:w-44 md:w-52 h-11 sm:h-12 md:h-12.5 px-3 py-1.5 flex-shrink-0 overflow-hidden box-border ${
         hasWin
           ? isPs2
             ? 'bg-gradient-to-b from-[#001026] via-[#000814] to-black border-2 border-[#00F0FF] shadow-[0_0_18px_rgba(0,240,255,0.7),inset_0_0_10px_rgba(0,111,205,0.4)] animate-pulse'
@@ -105,7 +105,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
       }`}
     >
       {/* Top Banner Label */}
-      <div className="flex items-center justify-center space-x-1 leading-none select-none max-w-full px-1">
+      <div className="flex items-center justify-center space-x-1 leading-none select-none max-w-full px-1 mb-1">
         {hasWin && (
           isPs2 ? (
             <span className="text-[9px] text-[#00F0FF] leading-none">🎮</span>
@@ -118,7 +118,7 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
           )
         )}
         <span
-          className={`text-[6.5px] sm:text-[7.5px] uppercase font-black tracking-wider whitespace-nowrap truncate leading-none ${
+          className={`text-[7px] sm:text-[8px] md:text-[8.5px] uppercase font-black tracking-wider whitespace-nowrap truncate leading-none ${
             hasWin
               ? isPs2
                 ? 'text-[#00F0FF] drop-shadow-[0_0_6px_rgba(0,240,255,0.9)] font-mono'
@@ -137,10 +137,10 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
       </div>
 
       {/* Hero Win Digits */}
-      <div className="flex items-center justify-center space-x-1 mt-0.5 max-w-full px-1 leading-none">
+      <div className="flex items-center justify-center space-x-1.5 max-w-full px-1 leading-none">
         {hasWin && (
           <Coins
-            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 ${
+            className={`w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0 ${
               isPs2
                 ? 'text-[#00F0FF] fill-[#006FCD]'
                 : isTimber
@@ -155,12 +155,12 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
           className={`font-black font-mono tracking-tight leading-none whitespace-nowrap truncate ${
             hasWin
               ? isPs2
-                ? 'text-xs sm:text-sm md:text-base text-cyan-200 drop-shadow-[0_0_10px_rgba(0,240,255,0.9)]'
+                ? 'text-sm sm:text-base md:text-lg text-cyan-200 drop-shadow-[0_0_10px_rgba(0,240,255,0.9)]'
                 : isTimber
-                ? 'text-xs sm:text-sm md:text-base text-emerald-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.9)]'
+                ? 'text-sm sm:text-base md:text-lg text-emerald-200 drop-shadow-[0_0_10px_rgba(52,211,153,0.9)]'
                 : isPixel
-                ? 'text-xs sm:text-sm md:text-base text-pink-200 drop-shadow-[0_0_10px_rgba(236,72,153,0.9)]'
-                : 'text-xs sm:text-sm md:text-base text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.9)]'
+                ? 'text-sm sm:text-base md:text-lg text-pink-200 drop-shadow-[0_0_10px_rgba(236,72,153,0.9)]'
+                : 'text-sm sm:text-base md:text-lg text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.9)]'
               : isPs2
               ? 'text-xs sm:text-sm text-cyan-700 font-bold'
               : 'text-xs sm:text-sm text-slate-500 font-bold'
