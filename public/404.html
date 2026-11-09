@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SLOTY | Redirecting...</title>
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var search = window.location.search;
+        var hash = window.location.hash;
+
+        // If the path uses lowercase 'sloty' or variants, normalize to uppercase 'SLOTY'
+        if (/\/sloty(\/.*)?$/i.test(path)) {
+          var target = path.replace(/\/sloty(\/.*)?$/i, '/SLOTY$1');
+          window.location.replace(target + search + hash);
+          return;
+        }
+
+        // SPA fallback: redirect to the repository root while preserving query & hash
+        window.location.replace('/SLOTY/' + search + hash);
+      })();
+    </script>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #020617;
+        color: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+        padding: 24px;
+      }
+      .logo {
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: 3px;
+        color: #fbbf24;
+        margin-bottom: 8px;
+      }
+      a {
+        color: #38bdf8;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">SLOTY</div>
+    <h1>Redirecting to Deluxe Casino...</h1>
+    <p>If you are not redirected automatically, <a href="/SLOTY/">click here to enter the casino</a>.</p>
+  </body>
+</html>

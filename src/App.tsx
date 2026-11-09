@@ -52,6 +52,30 @@ const DEBUG_ENABLED =
   import.meta.env.DEV ||
   (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug'));
 
+function resolveGameIdFromUrl(): GameId | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = (params.get('game') || params.get('theme') || window.location.hash.replace(/^#/, '')).trim().toLowerCase();
+    if (!raw) return null;
+    if (raw === 'timber-critters' || raw === 'timberland' || raw === 'timber' || raw === 'critters') {
+      return 'timber-critters';
+    }
+    if (raw === 'ps2-legends' || raw === 'ps2' || raw === 'playstation' || raw === 'playstation2' || raw === 'emotion-engine') {
+      return 'ps2-legends';
+    }
+    if (raw === 'pixel-arcade' || raw === 'pixel' || raw === 'arcade' || raw === '8bit') {
+      return 'pixel-arcade';
+    }
+    if (raw === 'vault-24k' || raw === 'vault' || raw === '24k' || raw === 'gold') {
+      return 'vault-24k';
+    }
+  } catch {
+    // Ignore URL parsing errors
+  }
+  return null;
+}
+
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export const App: React.FC = () => {
@@ -87,7 +111,21 @@ export const App: React.FC = () => {
 
   // --- Active Game & Bet State (Persisted) ---
   const [activeGameId, setActiveGameId] = useState<GameId>(() =>
-    (storage.getItem('sloty_active_game') as GameId) || 'vault-24k'
+    (() => {
+      const fromUrl = resolveGameIdFromUrl();
+      if (fromUrl) return fromUrl;
+      const persisted = storage.getItem('sloty_active_game') as GameId;
+      if (
+        persisted &&
+        (persisted === 'vault-24k' ||
+          persisted === 'timber-critters' ||
+          persisted === 'pixel-arcade' ||
+          persisted === 'ps2-legends')
+      ) {
+        return persisted;
+      }
+      return 'vault-24k';
+    })()
   );
   // The game whose reels triggered the pending/active free spins. Its award
   // and multiplier govern the whole bonus, even if the player switches games
@@ -101,6 +139,20 @@ export const App: React.FC = () => {
   // Synchronize audio theme with active game on initial load and updates
   useEffect(() => {
     soundManager.setGameTheme(activeGameId);
+  }, [activeGameId]);
+
+  // Synchronize URL query parameter with active game so sharing preserves the selected game
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('game') !== activeGameId) {
+        url.searchParams.set('game', activeGameId);
+        window.history.replaceState(null, '', url.toString());
+      }
+    } catch {
+      // Ignore if history state is unavailable
+    }
   }, [activeGameId]);
 
   const [selectedLines, setSelectedLines] = useState<number>(() =>

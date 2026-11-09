@@ -6,6 +6,20 @@ export default {
   ],
   theme: {
     extend: {
+      // Sizes referenced across the UI (w-8.5, h-9.5, sm:w-88, ...) that Tailwind's default
+      // scale does not generate. Without them those buttons fall back to content width and
+      // their labels overflow the frame.
+      spacing: {
+        5.5: '1.375rem',
+        6.5: '1.625rem',
+        7.5: '1.875rem',
+        8.5: '2.125rem',
+        9.5: '2.375rem',
+        15: '3.75rem',
+        18: '4.5rem',
+        22: '5.5rem',
+        88: '22rem',
+      },
       colors: {
         casino: {
           950: '#07090e',
