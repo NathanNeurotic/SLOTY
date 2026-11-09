@@ -962,61 +962,170 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'OWL':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#0F172A" />
-                <stop offset="100%" stopColor="#1E3A8A" />
+              <linearGradient id="owlSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#0B132B" />
+                <stop offset="60%" stopColor="#1C2541" />
+                <stop offset="100%" stopColor="#3A506B" />
               </linearGradient>
-              <linearGradient id="moonGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FEF08A" />
-                <stop offset="100%" stopColor="#F59E0B" />
+              <linearGradient id="owlMoonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="35%" stopColor="#FEF08A" />
+                <stop offset="80%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#D97706" />
               </linearGradient>
+              <linearGradient id="owlFeatherBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#78350F" />
+                <stop offset="50%" stopColor="#451A03" />
+                <stop offset="100%" stopColor="#1C0A00" />
+              </linearGradient>
+              <radialGradient id="owlEyeGold" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="25%" stopColor="#FDE047" />
+                <stop offset="70%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#B45309" />
+              </radialGradient>
+              <clipPath id="owlFrameClip">
+                <circle cx="50" cy="46" r="38" />
+              </clipPath>
             </defs>
-            {/* Night Sky Circle */}
-            <circle cx="50" cy="45" r="38" fill="url(#nightSky)" stroke="#60A5FA" strokeWidth="2.5" />
-            {/* Crescent Moon */}
-            <path d="M68 20 A22 22 0 1 1 54 52 A26 26 0 1 0 68 20 Z" fill="url(#moonGold)" opacity="0.9" />
-            {/* Stars */}
-            <circle cx="28" cy="22" r="1.5" fill="#FFF" />
-            <circle cx="36" cy="18" r="1.2" fill="#FEF08A" />
-            <circle cx="72" cy="38" r="1.5" fill="#FFF" />
-            {/* Owl Body & Horn Feathers */}
-            <polygon points="34,22 42,32 30,32" fill="#78350F" />
-            <polygon points="66,22 58,32 70,32" fill="#78350F" />
-            <ellipse cx="50" cy="48" rx="24" ry="22" fill="#92400E" stroke="#B45309" strokeWidth="1" />
-            {/* Big Luminous Eyes */}
-            <circle cx="41" cy="42" r="10" fill="#FEF08A" stroke="#451A03" strokeWidth="2" />
-            <circle cx="41" cy="42" r="5" fill="#0F172A" />
-            <circle cx="43" cy="40" r="1.5" fill="#FFF" />
-            <circle cx="59" cy="42" r="10" fill="#FEF08A" stroke="#451A03" strokeWidth="2" />
-            <circle cx="59" cy="42" r="5" fill="#0F172A" />
-            <circle cx="61" cy="40" r="1.5" fill="#FFF" />
-            {/* Beak & Chest Scallop */}
-            <polygon points="50,47 46,55 54,55" fill="#F59E0B" stroke="#B45309" strokeWidth="0.8" />
-            <path d="M42 58 Q50 63 58 58" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
-            <path d="M44 63 Q50 68 56 63" fill="none" stroke="#FEF08A" strokeWidth="1.5" />
-            {/* SCATTER Perch Pedestal */}
-            <rect x="12" y="72" width="76" height="22" rx="7" fill="#020617" stroke="#60A5FA" strokeWidth="1.8" />
-            <rect x="14" y="74" width="72" height="18" rx="5" fill="#172554" stroke="#93C5FD" strokeWidth="0.8" />
-            <text
-              x="50"
-              y="86.5"
-              textAnchor="middle"
-              fill="#93C5FD"
-              stroke="#0F172A"
-              strokeWidth="0.8"
-              fontSize="9.5"
-              fontWeight="900"
-              fontFamily="sans-serif"
-              letterSpacing="1"
-              style={{ paintOrder: 'stroke fill' }}
-            >
-              SCATTER
-            </text>
+
+            {/* Medallion Outer Ring with Moonlit Frost Glow */}
+            <circle cx="50" cy="46" r="38" fill="url(#owlSkyGrad)" stroke="#60A5FA" strokeWidth="2.5" />
+            <circle cx="50" cy="46" r="35.5" fill="none" stroke="#93C5FD" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
+
+            <g clipPath="url(#owlFrameClip)">
+              {/* Golden Full Moon Behind Owl */}
+              <circle cx="50" cy="36" r="26" fill="url(#owlMoonGrad)" />
+              {/* Moon Surface Craters */}
+              <circle cx="40" cy="24" r="3.5" fill="#F59E0B" opacity="0.25" />
+              <circle cx="58" cy="22" r="2.5" fill="#F59E0B" opacity="0.2" />
+              <circle cx="62" cy="32" r="4" fill="#F59E0B" opacity="0.25" />
+
+              {/* Twinkling Night Stars */}
+              <circle cx="22" cy="20" r="1.2" fill="#FFF" />
+              <circle cx="28" cy="14" r="0.9" fill="#FEF08A" />
+              <circle cx="78" cy="18" r="1.2" fill="#FFF" />
+              <circle cx="72" cy="12" r="0.9" fill="#FEF08A" />
+
+              {/* Cedar Tree Branch Perch */}
+              <path d="M 12 70 Q 50 64 88 68 L 88 75 Q 50 71 12 76 Z" fill="#2E1005" stroke="#78350F" strokeWidth="1" />
+              <path d="M 24 69 Q 28 66 32 69" stroke="#16A34A" strokeWidth="1.5" fill="none" />
+              <path d="M 68 67 Q 72 64 76 67" stroke="#16A34A" strokeWidth="1.5" fill="none" />
+
+              {/* Owl Body Silhouette */}
+              <ellipse cx="50" cy="54" rx="22" ry="18" fill="url(#owlFeatherBrown)" stroke="#2E1005" strokeWidth="1" />
+              {/* Folded Wings */}
+              <path d="M 28 44 Q 24 58 36 68 Q 33 54 36 46 Z" fill="#451A03" stroke="#B45309" strokeWidth="0.8" />
+              <path d="M 72 44 Q 76 58 64 68 Q 67 54 64 46 Z" fill="#451A03" stroke="#B45309" strokeWidth="0.8" />
+
+              {/* Chest Feather Chevron Markings */}
+              <path d="M 44 54 Q 50 58 56 54" fill="none" stroke="#FDE68A" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M 42 59 Q 50 63 58 59" fill="none" stroke="#FDE68A" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#FDE68A" strokeWidth="1.2" strokeLinecap="round" />
+
+              {/* Owl Head Feather Base */}
+              <ellipse cx="50" cy="38" rx="21" ry="17" fill="url(#owlFeatherBrown)" />
+
+              {/* Prominent Great Horned Ear Tufts (Horn Feathers) */}
+              {/* Left Horn */}
+              <polygon points="30,12 38,10 42,28 30,30" fill="#3B1204" stroke="#F59E0B" strokeWidth="0.8" />
+              <polygon points="32,16 38,13 40,25 33,26" fill="#78350F" />
+              <polygon points="34,18 37,15 39,22 35,23" fill="#D97706" />
+
+              {/* Right Horn */}
+              <polygon points="70,12 62,10 58,28 70,30" fill="#3B1204" stroke="#F59E0B" strokeWidth="0.8" />
+              <polygon points="68,16 62,13 60,25 67,26" fill="#78350F" />
+              <polygon points="66,18 63,15 61,22 65,23" fill="#D97706" />
+
+              {/* Iconic Heart-Shaped Facial Disc (Cream & Tawny) */}
+              <path
+                d="M 50 31
+                   C 42 22, 28 25, 27 36
+                   C 26 47, 36 55, 50 57
+                   C 64 55, 74 47, 73 36
+                   C 72 25, 58 22, 50 31 Z"
+                fill="#FFFBEB"
+                stroke="#78350F"
+                strokeWidth="1.4"
+              />
+
+              {/* Facial Disc Inner Rim Shading */}
+              <path
+                d="M 50 33
+                   C 43 25, 31 28, 30 37
+                   C 29 45, 38 52, 50 54
+                   C 62 52, 71 45, 70 37
+                   C 69 28, 57 25, 50 33 Z"
+                fill="none"
+                stroke="#D97706"
+                strokeWidth="0.8"
+                opacity="0.6"
+              />
+
+              {/* Hypnotic Golden Amber Owl Eyes */}
+              {/* Left Eye */}
+              <g id="owlLeftEye">
+                <circle cx="39" cy="39" r="8" fill="#2E1005" stroke="#78350F" strokeWidth="1" />
+                <circle cx="39" cy="39" r="6.2" fill="url(#owlEyeGold)" stroke="#B45309" strokeWidth="0.8" />
+                <circle cx="39" cy="39" r="3.4" fill="#09090D" />
+                <circle cx="37.8" cy="37.6" r="1.4" fill="#FFFFFF" />
+                <circle cx="40.5" cy="40.2" r="0.6" fill="#FFFFFF" />
+                <path d="M 31 34 Q 39 31 47 34" stroke="#451A03" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              </g>
+
+              {/* Right Eye */}
+              <g id="owlRightEye">
+                <circle cx="61" cy="39" r="8" fill="#2E1005" stroke="#78350F" strokeWidth="1" />
+                <circle cx="61" cy="39" r="6.2" fill="url(#owlEyeGold)" stroke="#B45309" strokeWidth="0.8" />
+                <circle cx="61" cy="39" r="3.4" fill="#09090D" />
+                <circle cx="59.8" cy="37.6" r="1.4" fill="#FFFFFF" />
+                <circle cx="62.5" cy="40.2" r="0.6" fill="#FFFFFF" />
+                <path d="M 69 34 Q 61 31 53 34" stroke="#451A03" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              </g>
+
+              {/* Center Forehead Feather Split & Brow Furrow */}
+              <polygon points="48,31 52,31 50,39" fill="#78350F" />
+
+              {/* Hooked Sharp Raptor Beak */}
+              <path
+                d="M 48 38 L 52 38 L 51.5 48 Q 50 53 49 53 Q 48.5 48 48 38 Z"
+                fill="#F59E0B"
+                stroke="#78350F"
+                strokeWidth="0.8"
+              />
+              <path d="M 50 40 L 50 51" stroke="#FEF08A" strokeWidth="0.6" />
+
+              {/* Sharp Yellow Talons on Branch */}
+              <circle cx="45" cy="67" r="1.8" fill="#F59E0B" stroke="#78350F" strokeWidth="0.5" />
+              <circle cx="48" cy="67" r="1.8" fill="#F59E0B" stroke="#78350F" strokeWidth="0.5" />
+              <circle cx="52" cy="67" r="1.8" fill="#F59E0B" stroke="#78350F" strokeWidth="0.5" />
+              <circle cx="55" cy="67" r="1.8" fill="#F59E0B" stroke="#78350F" strokeWidth="0.5" />
+            </g>
+
+            {/* SCATTER Pedestal Plaque */}
+            <g id="owlScatterBanner">
+              <rect x="12" y="72" width="76" height="22" rx="7" fill="#0F172A" stroke="#60A5FA" strokeWidth="2" />
+              <rect x="14" y="74" width="72" height="18" rx="5" fill="#1E293B" stroke="#93C5FD" strokeWidth="1" />
+              <text
+                x="50"
+                y="86.5"
+                textAnchor="middle"
+                fill="#FEF08A"
+                stroke="#451A03"
+                strokeWidth="0.8"
+                fontSize="10"
+                fontWeight="900"
+                fontFamily="sans-serif"
+                letterSpacing="1.2"
+                style={{ paintOrder: 'stroke fill' }}
+              >
+                SCATTER
+              </text>
+            </g>
           </svg>
         );
-
       case 'ACORN':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
@@ -1112,100 +1221,135 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'WOLF':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="wolfSlateGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#64748B" />
-                <stop offset="50%" stopColor="#475569" />
-                <stop offset="100%" stopColor="#1E293B" />
+              <linearGradient id="wolfSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#0B132B" />
+                <stop offset="50%" stopColor="#1C2541" />
+                <stop offset="100%" stopColor="#070C18" />
               </linearGradient>
-              <linearGradient id="wolfDarkFurGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#334155" />
+              <linearGradient id="wolfCharcoalFur" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#475569" />
+                <stop offset="40%" stopColor="#334155" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <linearGradient id="wolfCheekGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#94A3B8" />
-                <stop offset="60%" stopColor="#64748B" />
-                <stop offset="100%" stopColor="#334155" />
+              <linearGradient id="wolfSilverFur" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#E2E8F0" />
+                <stop offset="50%" stopColor="#94A3B8" />
+                <stop offset="100%" stopColor="#475569" />
               </linearGradient>
-              <clipPath id="wolfMedallionClip">
+              <radialGradient id="wolfAmberEye" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="30%" stopColor="#FDE047" />
+                <stop offset="70%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#B45309" />
+              </radialGradient>
+              <clipPath id="wolfClip">
                 <circle cx="50" cy="50" r="41" />
               </clipPath>
             </defs>
 
-            {/* Medallion Base in Deep Midnight Blue with Frosted Cyan Rim */}
-            <circle cx="50" cy="50" r="42" fill="#091124" stroke="#38BDF8" strokeWidth="2.5" />
-            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.5" />
+            {/* Medallion Outer Ring with Frost Cyan Glow */}
+            <circle cx="50" cy="50" r="42" fill="url(#wolfSkyGrad)" stroke="#38BDF8" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
 
-            <g clipPath="url(#wolfMedallionClip)">
-              {/* Soft Moonlit Background Glow */}
-              <circle cx="50" cy="44" r="32" fill="#0284C7" opacity="0.18" />
-              <circle cx="50" cy="40" r="18" fill="#38BDF8" opacity="0.12" />
+            <g clipPath="url(#wolfClip)">
+              {/* Moonlit Night Glow Behind Wolf */}
+              <circle cx="50" cy="42" r="30" fill="#0284C7" opacity="0.22" filter="blur(4px)" />
 
-              {/* Wolf Ears */}
+              {/* Tall Erect Pointed Wolf Ears */}
               {/* Left Ear */}
-              <polygon points="22,12 40,34 16,38" fill="url(#wolfSlateGrad)" stroke="#38BDF8" strokeWidth="1" />
-              <polygon points="25,18 36,32 20,35" fill="#0F172A" />
-              <polygon points="25,24 32,32 20,33" fill="#E2E8F0" />
-              {/* Right Ear */}
-              <polygon points="78,12 60,34 84,38" fill="url(#wolfSlateGrad)" stroke="#38BDF8" strokeWidth="1" />
-              <polygon points="75,18 64,32 80,35" fill="#0F172A" />
-              <polygon points="75,24 68,32 80,33" fill="#E2E8F0" />
+              <polygon points="20,10 38,32 16,36" fill="url(#wolfCharcoalFur)" stroke="#38BDF8" strokeWidth="1" />
+              <polygon points="22,14 35,30 18,34" fill="#0B101E" />
+              <polygon points="23,18 33,28 19,32" fill="#FFFFFF" />
 
-              {/* Majestic Flared Wolf Mane / Outer Silhouette */}
-              <polygon
-                points="50,26 66,34 80,46 86,52 78,60 84,68 74,76 50,86 26,76 16,68 22,60 14,52 20,46 34,34"
-                fill="url(#wolfDarkFurGrad)"
-                stroke="#0F172A"
+              {/* Right Ear */}
+              <polygon points="80,10 62,32 84,36" fill="url(#wolfCharcoalFur)" stroke="#38BDF8" strokeWidth="1" />
+              <polygon points="78,14 65,30 82,34" fill="#0B101E" />
+              <polygon points="77,18 67,28 81,32" fill="#FFFFFF" />
+
+              {/* Outer Flared Mane & Crown Silhouette */}
+              <path
+                d="M 50 25
+                   C 62 25, 74 32, 82 44
+                   C 88 52, 80 60, 86 68
+                   C 82 78, 68 85, 50 88
+                   C 32 85, 18 78, 14 68
+                   C 20 60, 12 52, 18 44
+                   C 26 32, 38 25, 50 25 Z"
+                fill="url(#wolfCharcoalFur)"
+                stroke="#090E1A"
                 strokeWidth="1.2"
-                strokeLinejoin="round"
               />
 
-              {/* Sculpted Forehead & Crown Diamond */}
-              <polygon points="50,26 64,42 50,52 36,42" fill="url(#wolfSlateGrad)" stroke="#334155" strokeWidth="0.6" />
-              {/* Central Forehead Shadow Marking */}
-              <polygon points="50,28 56,42 50,50 44,42" fill="#0F172A" />
+              {/* Silver Cheek Flared Fur Tufts */}
+              <polygon points="14,68 28,52 38,66 24,76" fill="url(#wolfSilverFur)" />
+              <polygon points="86,68 72,52 62,66 76,76" fill="url(#wolfSilverFur)" />
 
-              {/* Midtone Silver Fur Cheek Planes */}
-              <polygon points="36,42 50,52 38,68 22,54" fill="url(#wolfCheekGrad)" stroke="#334155" strokeWidth="0.5" />
-              <polygon points="64,42 50,52 62,68 78,54" fill="url(#wolfCheekGrad)" stroke="#334155" strokeWidth="0.5" />
+              {/* Brilliant White Flared Outer Cheek Ruffs */}
+              <polygon points="12,66 22,54 32,68 20,74" fill="#FFFFFF" />
+              <polygon points="88,66 78,54 68,68 80,74" fill="#FFFFFF" />
 
-              {/* Radiant White Flared Cheek Ruffs */}
-              <polygon points="22,54 38,68 28,74 16,68" fill="#F8FAFC" />
-              <polygon points="78,54 62,68 72,74 84,68" fill="#F8FAFC" />
+              {/* Forehead Stripe & Eye Brow Ridges */}
+              <polygon points="50,26 56,42 50,54 44,42" fill="#090E1A" />
+              <polygon points="50,28 54,40 50,48 46,40" fill="#334155" />
 
-              {/* Snout Bridge (Darker Slate Stripe) */}
-              <polygon points="45,50 55,50 54,67 46,67" fill="#64748B" />
+              {/* Silver Brow Planes */}
+              <polygon points="34,40 45,43 38,52 26,48" fill="url(#wolfSilverFur)" />
+              <polygon points="66,40 55,43 62,52 74,48" fill="url(#wolfSilverFur)" />
 
               {/* Pure White Snout, Muzzle & Chin */}
-              <polygon points="44,67 56,67 58,79 50,84 42,79" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="0.5" />
+              <path
+                d="M 37 56
+                   C 37 52, 50 50, 50 50
+                   C 50 50, 63 52, 63 56
+                   C 65 68, 60 82, 50 85
+                   C 40 82, 35 68, 37 56 Z"
+                fill="#FFFFFF"
+                stroke="#CBD5E1"
+                strokeWidth="0.8"
+              />
+
+              {/* Dark Snout Bridge Stripe */}
+              <polygon points="46,50 54,50 53,62 47,62" fill="#475569" />
 
               {/* Intense Golden-Amber Wolf Eyes */}
               {/* Left Eye */}
-              <polygon points="31,43 45,45 37,50" fill="#0F172A" />
-              <polygon points="33,44 43,45.5 37,49" fill="#F59E0B" />
-              <ellipse cx="37.5" cy="46.5" rx="1.6" ry="1.4" fill="#0F172A" />
-              <circle cx="38.2" cy="46" r="0.7" fill="#FFF" />
-              <line x1="30" y1="41" x2="44" y2="43" stroke="#F1F5F9" strokeWidth="1.2" strokeLinecap="round" />
+              <g id="wolfLeftEye">
+                <polygon points="28,42 44,44 35,50" fill="#090E1A" />
+                <ellipse cx="36.5" cy="45.5" rx="4" ry="2.6" fill="url(#wolfAmberEye)" />
+                <ellipse cx="36.5" cy="45.5" rx="1.8" ry="1.8" fill="#050810" />
+                <circle cx="37.2" cy="44.8" r="0.8" fill="#FFFFFF" />
+                <path d="M 27 39 Q 36 41 43 42" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              </g>
 
               {/* Right Eye */}
-              <polygon points="69,43 55,45 63,50" fill="#0F172A" />
-              <polygon points="67,44 57,45.5 63,49" fill="#F59E0B" />
-              <ellipse cx="62.5" cy="46.5" rx="1.6" ry="1.4" fill="#0F172A" />
-              <circle cx="63.2" cy="46" r="0.7" fill="#FFF" />
-              <line x1="70" y1="41" x2="56" y2="43" stroke="#F1F5F9" strokeWidth="1.2" strokeLinecap="round" />
+              <g id="wolfRightEye">
+                <polygon points="72,42 56,44 65,50" fill="#090E1A" />
+                <ellipse cx="63.5" cy="45.5" rx="4" ry="2.6" fill="url(#wolfAmberEye)" />
+                <ellipse cx="63.5" cy="45.5" rx="1.8" ry="1.8" fill="#050810" />
+                <circle cx="64.2" cy="44.8" r="0.8" fill="#FFFFFF" />
+                <path d="M 73 39 Q 64 41 57 42" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              </g>
 
-              {/* Black Nose Pad */}
-              <polygon points="45,69 55,69 50,76" fill="#0F172A" />
-              <ellipse cx="50" cy="70.5" rx="3.5" ry="1" fill="#334155" />
+              {/* Black Leather Wolf Nose Pad */}
+              <path
+                d="M 44 64 L 56 64 C 57 68, 54 73, 50 74 C 46 73, 43 68, 44 64 Z"
+                fill="#090E1A"
+                stroke="#1E293B"
+                strokeWidth="0.8"
+              />
+              <circle cx="47" cy="67" r="1.1" fill="#1E293B" />
+              <circle cx="53" cy="67" r="1.1" fill="#1E293B" />
+              <ellipse cx="50" cy="65.5" rx="3.5" ry="1" fill="#475569" opacity="0.6" />
 
-              {/* Muzzle Split & Mouth Line */}
-              <line x1="50" y1="76" x2="50" y2="79" stroke="#0F172A" strokeWidth="1.2" />
-              <path d="M 46 79 Q 50 81 54 79" stroke="#0F172A" strokeWidth="1.2" fill="none" />
+              {/* Mouth Split & Chin Line */}
+              <line x1="50" y1="74" x2="50" y2="78" stroke="#090E1A" strokeWidth="1.4" />
+              <path d="M 45 78 Q 50 80 55 78" stroke="#090E1A" strokeWidth="1.4" fill="none" />
+              <polygon points="48,81 52,81 50,84" fill="#334155" />
             </g>
           </svg>
         );
-
       case 'FOX':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
@@ -1268,28 +1412,144 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
       case 'SQUIRREL':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            <circle cx="50" cy="50" r="42" fill="#431407" stroke="#EA580C" strokeWidth="2.5" />
-            {/* Giant Bushy Tail curving up */}
-            <path
-              d="M48 78 Q22 72 20 44 Q18 20 40 18 Q50 16 46 32 Q42 46 54 62 Z"
-              fill="#EA580C"
-              stroke="#FDBA74"
-              strokeWidth="2"
-            />
-            {/* Squirrel Body & Head */}
-            <ellipse cx="62" cy="56" rx="14" ry="18" fill="#C2410C" />
-            <circle cx="64" cy="38" r="12" fill="#EA580C" stroke="#FDBA74" strokeWidth="1.5" />
-            {/* Ear */}
-            <polygon points="62,28 68,18 70,28" fill="#C2410C" />
-            {/* Eye */}
-            <circle cx="68" cy="36" r="3" fill="#0F172A" />
-            <circle cx="69" cy="35" r="1" fill="#FFF" />
-            {/* Acorn in Paws */}
-            <circle cx="56" cy="56" r="6" fill="#F59E0B" stroke="#78350F" strokeWidth="1" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            <defs>
+              <linearGradient id="sqBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#2E1206" />
+                <stop offset="60%" stopColor="#1C0A02" />
+                <stop offset="100%" stopColor="#0B0401" />
+              </linearGradient>
+              <linearGradient id="sqFurOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#F97316" />
+                <stop offset="40%" stopColor="#EA580C" />
+                <stop offset="100%" stopColor="#9A3412" />
+              </linearGradient>
+              <linearGradient id="sqTailFluff" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#EA580C" />
+                <stop offset="50%" stopColor="#F97316" />
+                <stop offset="100%" stopColor="#FDBA74" />
+              </linearGradient>
+              <linearGradient id="sqAcornNut" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FEF08A" />
+                <stop offset="40%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#B45309" />
+              </linearGradient>
+              <clipPath id="sqClip">
+                <circle cx="50" cy="50" r="41" />
+              </clipPath>
+            </defs>
+
+            {/* Medallion Base in Autumn Forest Walnut with Golden Rim */}
+            <circle cx="50" cy="50" r="42" fill="url(#sqBgGrad)" stroke="#F59E0B" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#FDE68A" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
+
+            <g clipPath="url(#sqClip)">
+              {/* Forest Autumn Leaves in Background */}
+              <path d="M 18 36 Q 6 22 20 12 Q 32 18 28 30 Z" fill="#15803D" opacity="0.4" />
+              <path d="M 82 28 Q 94 14 82 4 Q 70 10 74 22 Z" fill="#D97706" opacity="0.4" />
+
+              {/* 1. GIANT BUSHY S-CURVE SQUIRREL TAIL */}
+              <g id="squirrelTail">
+                {/* Main Plumed Bushy Tail Body */}
+                <path
+                  d="M 38 78
+                     C 20 76, 10 62, 11 44
+                     C 12 24, 26 13, 40 14
+                     C 48 15, 48 24, 42 30
+                     C 35 37, 28 42, 28 54
+                     C 28 66, 36 72, 44 76 Z"
+                  fill="url(#sqTailFluff)"
+                  stroke="#7C2D12"
+                  strokeWidth="1.2"
+                />
+
+                {/* Fluffy Fur Scallop Edges on Tail Outer Curve */}
+                <path
+                  d="M 12 50 Q 8 42 14 36
+                     M 14 36 Q 12 26 22 20
+                     M 22 20 Q 24 14 34 14
+                     M 34 14 Q 42 13 42 22"
+                  stroke="#FDE68A"
+                  strokeWidth="1.5"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+
+                {/* Curved Internal Fur Texture Lines */}
+                <path d="M 18 52 C 16 38, 26 24, 36 22" fill="none" stroke="#FDBA74" strokeWidth="1.2" opacity="0.7" />
+                <path d="M 22 58 C 20 46, 28 32, 38 28" fill="none" stroke="#FDBA74" strokeWidth="1" opacity="0.6" />
+                <path d="M 28 66 C 24 58, 30 46, 38 38" fill="none" stroke="#C2410C" strokeWidth="1" opacity="0.5" />
+              </g>
+
+              {/* 2. SQUIRREL SITTING BODY & HIND LEGS */}
+              <ellipse cx="50" cy="72" rx="14" ry="12" fill="#C2410C" stroke="#7C2D12" strokeWidth="1" />
+              <ellipse cx="48" cy="82" rx="7" ry="3.5" fill="#9A3412" />
+              <line x1="44" y1="83" x2="44" y2="85" stroke="#FDBA74" strokeWidth="0.8" />
+              <line x1="47" y1="84" x2="47" y2="86" stroke="#FDBA74" strokeWidth="0.8" />
+              <line x1="50" y1="84" x2="50" y2="86" stroke="#FDBA74" strokeWidth="0.8" />
+
+              {/* Main Body */}
+              <ellipse cx="56" cy="58" rx="13" ry="16" fill="url(#sqFurOrange)" />
+              {/* Fluffy White/Cream Chest & Belly */}
+              <path
+                d="M 58 48
+                   C 66 52, 66 68, 58 74
+                   C 52 74, 52 52, 58 48 Z"
+                fill="#FFFBEB"
+              />
+
+              {/* 3. HEAD, ADORABLE FACE & TUFTED EARS */}
+              <circle cx="63" cy="40" r="13" fill="url(#sqFurOrange)" stroke="#7C2D12" strokeWidth="0.8" />
+
+              {/* Tufted Ears */}
+              <polygon points="56,26 62,15 64,26" fill="#9A3412" />
+              <path d="M 62 15 Q 63 11 65 14" stroke="#7C2D12" strokeWidth="1.2" fill="none" />
+              <polygon points="63,25 70,14 72,25" fill="#EA580C" stroke="#7C2D12" strokeWidth="0.8" />
+              <polygon points="65,23 69,17 70,23" fill="#FDBA74" />
+              <path d="M 70 14 Q 72 10 74 13" stroke="#9A3412" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+
+              {/* White Eye Patch Ring */}
+              <circle cx="68" cy="38" r="5" fill="#FFFBEB" opacity="0.9" />
+
+              {/* Big Adorable Glossy Eye */}
+              <circle cx="68" cy="38" r="3.6" fill="#0A0A0E" />
+              <circle cx="67" cy="36.8" r="1.4" fill="#FFFFFF" />
+              <circle cx="69.5" cy="39.2" r="0.6" fill="#FFFFFF" />
+
+              {/* Chubby Cream Cheek & Muzzle */}
+              <ellipse cx="73" cy="44" rx="5" ry="3.5" fill="#FFFBEB" />
+              <circle cx="76.5" cy="43" r="1.4" fill="#431407" />
+              <path d="M 75 44.5 Q 74 46.5 72 45.5" stroke="#7C2D12" strokeWidth="0.8" fill="none" />
+
+              {/* Delicate White Whiskers */}
+              <line x1="74" y1="44" x2="84" y2="42" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.9" />
+              <line x1="74" y1="45" x2="85" y2="46" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.9" />
+              <line x1="73" y1="46" x2="82" y2="50" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.9" />
+
+              {/* 4. FRONT PAWS CLUTCHING A LARGE GOLDEN ACORN */}
+              <g id="squirrelAcorn" transform="translate(62, 54)">
+                <path d="M 0 -7 Q -2 -11 1 -12" stroke="#451A03" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                <path d="M -7 -6 C -7 -10, 7 -10, 7 -6 C 7 -4, -7 -4, -7 -6 Z" fill="#78350F" stroke="#451A03" strokeWidth="0.8" />
+                <line x1="-5" y1="-7" x2="5" y2="-7" stroke="#B45309" strokeWidth="0.6" />
+                <path
+                  d="M -6 -4
+                     C -6 4, -4 10, 0 13
+                     C 4 10, 6 4, 6 -4 Z"
+                  fill="url(#sqAcornNut)"
+                  stroke="#78350F"
+                  strokeWidth="0.9"
+                />
+                <path d="M -3 -1 C -4 3, -3 7, 0 9" stroke="#FFFBEB" strokeWidth="1" fill="none" opacity="0.75" />
+
+                {/* Left & Right Squirrel Paws Clutching the Nut */}
+                <ellipse cx="-6" cy="1" rx="2.5" ry="3" fill="#EA580C" stroke="#7C2D12" strokeWidth="0.6" />
+                <ellipse cx="6" cy="1" rx="2.5" ry="3" fill="#EA580C" stroke="#7C2D12" strokeWidth="0.6" />
+                <circle cx="-6" cy="2" r="0.8" fill="#FDBA74" />
+                <circle cx="6" cy="2" r="0.8" fill="#FDBA74" />
+              </g>
+            </g>
           </svg>
         );
-
       case 'PINECONE':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
