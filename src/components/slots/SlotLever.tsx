@@ -112,108 +112,134 @@ export const SlotLever: React.FC<SlotLeverProps> = ({
     return (
       <div
         onClick={handlePullLever}
-        className={`hidden xl:flex flex-col items-center absolute -right-9 top-1/4 select-none cursor-pointer group z-20 font-mono transition-transform duration-150 ${
+        className={`hidden xl:flex flex-col items-center absolute -right-12 xl:-right-14 2xl:-right-16 top-1/4 select-none cursor-pointer group z-20 font-mono transition-transform duration-150 ${
           disabled && !isSpinning ? 'opacity-40 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
         }`}
         title={disabled ? 'Need more credits' : 'Press DualShock 2 controller to spin!'}
       >
-        <div className="w-16 py-2 px-1.5 rounded-xl bg-gradient-to-b from-[#0a0f1d] via-[#040711] to-[#010308] border-2 border-[#006FCD] shadow-[0_0_20px_rgba(0,111,205,0.6),inset_0_2px_4px_rgba(255,255,255,0.15)] flex flex-col items-center space-y-1.5">
-          {/* Header Badge */}
-          <div className="px-1.5 py-0.5 rounded bg-black/90 border border-cyan-400 text-[6.5px] font-black text-cyan-300 tracking-wider uppercase whitespace-nowrap shadow-[0_0_6px_#00F0FF]">
+        {/* Sculpted DualShock 2 Hardware Dock Station */}
+        <div className="w-24 sm:w-28 py-2.5 px-2 rounded-2xl bg-gradient-to-b from-[#0a1428] via-[#040814] to-[#010206] border-2 border-[#006FCD] shadow-[0_0_25px_rgba(0,111,205,0.7),inset_0_2px_4px_rgba(255,255,255,0.2)] flex flex-col items-center space-y-2">
+          {/* Header Title Badge */}
+          <div className="px-2 py-0.5 rounded bg-black/90 border border-cyan-400 text-[8px] font-black text-cyan-300 tracking-wider uppercase whitespace-nowrap shadow-[0_0_8px_#00F0FF]">
             DUALSHOCK 2
           </div>
 
-          {/* Sculpted DualShock 2 Controller Vector */}
-          <div className="w-full flex items-center justify-center py-1">
+          {/* High-Resolution DualShock 2 Controller Vector */}
+          <div className="w-full flex items-center justify-center py-0.5">
             <svg
-              viewBox="0 0 100 85"
-              className={`w-13 h-11 drop-shadow-[0_2px_8px_rgba(0,111,205,0.7)] transition-transform duration-150 ${
+              viewBox="0 0 100 80"
+              className={`w-20 sm:w-24 h-16 sm:h-18 drop-shadow-[0_4px_12px_rgba(0,111,205,0.9)] transition-transform duration-150 ${
                 isCoinInserted ? 'scale-90 brightness-150' : 'group-hover:scale-105'
               }`}
             >
               <defs>
-                <linearGradient id="ds2BodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#182033" />
-                  <stop offset="40%" stopColor="#0B101E" />
+                <linearGradient id="ds2LeverBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#223052" />
+                  <stop offset="40%" stopColor="#10172A" />
                   <stop offset="100%" stopColor="#03050C" />
                 </linearGradient>
               </defs>
 
-              {/* L1 / R1 Shoulder Triggers */}
-              <rect x="18" y="7" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.8" />
-              <rect x="66" y="7" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.8" />
+              {/* L1 & R1 Shoulder Bumpers */}
+              <rect x="18" y="5" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.9" />
+              <rect x="66" y="5" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.9" />
 
-              {/* DualShock 2 Main Body Silhouette */}
+              {/* Controller Cable Bushing at Top Center */}
+              <rect x="46" y="6" width="8" height="5" rx="1" fill="#0A0F1E" stroke="#334155" strokeWidth="0.6" />
+
+              {/* DualShock 2 Ergonomic Main Body Silhouette */}
               <path
-                d="M 22 13
-                   C 32 13, 38 17, 50 18
-                   C 62 17, 68 13, 78 13
-                   C 88 13, 96 21, 94 46
-                   C 93 62, 88 78, 80 80
-                   C 72 82, 66 68, 62 56
-                   C 58 50, 54 48, 50 48
-                   C 46 48, 42 50, 38 56
-                   C 34 68, 28 82, 20 80
-                   C 12 78, 7 62, 6 46
-                   C 4 21, 12 13, 22 13 Z"
-                fill="url(#ds2BodyGrad)"
+                d="M 22 11
+                   C 32 11, 38 15, 50 16
+                   C 62 15, 68 11, 78 11
+                   C 88 11, 96 19, 94 44
+                   C 93 60, 88 76, 80 78
+                   C 72 80, 66 66, 62 54
+                   C 58 48, 54 46, 50 46
+                   C 46 46, 42 48, 38 54
+                   C 34 66, 28 80, 20 78
+                   C 12 76, 7 60, 6 44
+                   C 4 19, 12 11, 22 11 Z"
+                fill="url(#ds2LeverBody)"
                 stroke="#006FCD"
-                strokeWidth="1.2"
+                strokeWidth="1.4"
                 strokeLinejoin="round"
               />
 
-              {/* D-Pad (Left) */}
-              <rect x="23" y="25" width="6" height="18" rx="1" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
-              <rect x="17" y="31" width="18" height="6" rx="1" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
-              <polygon points="26,27 24.5,29.5 27.5,29.5" fill="#38BDF8" />
-              <polygon points="26,41 24.5,38.5 27.5,38.5" fill="#38BDF8" />
-              <polygon points="19,34 21.5,32.5 21.5,35.5" fill="#38BDF8" />
-              <polygon points="33,34 30.5,32.5 30.5,35.5" fill="#38BDF8" />
+              {/* Grip Edge 3D Highlight Highlights */}
+              <path d="M 8 42 C 7 58, 12 72, 19 75" fill="none" stroke="#38BDF8" strokeWidth="1" opacity="0.6" />
+              <path d="M 92 42 C 93 58, 88 72, 81 75" fill="none" stroke="#38BDF8" strokeWidth="1" opacity="0.6" />
 
-              {/* Action Buttons (Right) - Triangle, Circle, Cross, Square */}
-              {/* Green Triangle △ */}
-              <circle cx="74" cy="26" r="3.6" fill="#040712" stroke="#22C55E" strokeWidth="0.8" />
-              <polygon points="74,23.8 71.8,27.5 76.2,27.5" fill="#22C55E" />
+              {/* D-Pad (Left Grip) */}
+              <g transform="translate(26, 32)">
+                <rect x="-10" y="-3.5" width="20" height="7" rx="1.5" fill="#04060E" stroke="#334155" strokeWidth="0.7" />
+                <rect x="-3.5" y="-10" width="7" height="20" rx="1.5" fill="#04060E" stroke="#334155" strokeWidth="0.7" />
+                <polygon points="0,-8 -2,-5.5 2,-5.5" fill="#38BDF8" />
+                <polygon points="0,8 -2,5.5 2,5.5" fill="#38BDF8" />
+                <polygon points="-8,0 -5.5,-2 -5.5,2" fill="#38BDF8" />
+                <polygon points="8,0 5.5,-2 5.5,2" fill="#38BDF8" />
+              </g>
 
-              {/* Pink Square □ */}
-              <circle cx="66" cy="34" r="3.6" fill="#040712" stroke="#EC4899" strokeWidth="0.8" />
-              <rect x="64.2" y="32.2" width="3.6" height="3.6" fill="none" stroke="#EC4899" strokeWidth="0.9" />
+              {/* =========================================================== */}
+              {/* LARGE HIGH-CONTRAST PLAYSTATION ACTION BUTTONS (Right Grip) */}
+              {/* Triangle (Green), Square (Pink), Circle (Red), Cross (Blue) */}
+              {/* =========================================================== */}
+              <g transform="translate(74, 32)">
+                {/* 1. GREEN TRIANGLE △ (Top) */}
+                <circle cx="0" cy="-9" r="4.2" fill="#040712" stroke="#22C55E" strokeWidth="1.1" />
+                <polygon points="0,-11.2 -2.4,-7.2 2.4,-7.2" fill="#22C55E" />
 
-              {/* Red Circle ○ */}
-              <circle cx="82" cy="34" r="3.6" fill="#040712" stroke="#EF4444" strokeWidth="0.8" />
-              <circle cx="82" cy="34" r="1.8" fill="none" stroke="#EF4444" strokeWidth="0.9" />
+                {/* 2. PINK SQUARE □ (Left) */}
+                <circle cx="-9" cy="0" r="4.2" fill="#040712" stroke="#EC4899" strokeWidth="1.1" />
+                <rect x="-11" y="-2" width="4" height="4" fill="none" stroke="#EC4899" strokeWidth="1.2" />
 
-              {/* Blue Cross ✕ */}
-              <circle cx="74" cy="42" r="3.6" fill="#040712" stroke="#38BDF8" strokeWidth="0.8" />
-              <line x1="72.3" y1="40.3" x2="75.7" y2="43.7" stroke="#38BDF8" strokeWidth="1" />
-              <line x1="75.7" y1="40.3" x2="72.3" y2="43.7" stroke="#38BDF8" strokeWidth="1" />
+                {/* 3. RED CIRCLE ○ (Right) */}
+                <circle cx="9" cy="0" r="4.2" fill="#040712" stroke="#EF4444" strokeWidth="1.1" />
+                <circle cx="9" cy="0" r="2" fill="none" stroke="#EF4444" strokeWidth="1.2" />
 
-              {/* Center SONY Branding & Mode Buttons */}
-              <text x="50" y="24" textAnchor="middle" fill="#64748B" fontSize="3.2" fontFamily="sans-serif" letterSpacing="0.5">SONY</text>
-              <rect x="42" y="30" width="4.5" height="2" rx="0.5" fill="#1E293B" />
-              <rect x="53.5" y="30" width="4.5" height="2" rx="0.5" fill="#1E293B" />
+                {/* 4. BLUE CROSS ✕ (Bottom) */}
+                <circle cx="0" cy="9" r="4.2" fill="#040712" stroke="#38BDF8" strokeWidth="1.1" />
+                <line x1="-1.8" y1="7.2" x2="1.8" y2="10.8" stroke="#38BDF8" strokeWidth="1.3" />
+                <line x1="1.8" y1="7.2" x2="-1.8" y2="10.8" stroke="#38BDF8" strokeWidth="1.3" />
+              </g>
 
-              {/* Analog Mode Button & Glowing Red LED */}
-              <circle cx="50" cy="37" r="2.5" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
-              <circle cx="50" cy="41.5" r="1.1" fill="#EF4444" className="animate-pulse" />
+              {/* SONY Corporate Logo in Center */}
+              <text x="50" y="22" textAnchor="middle" fill="#CBD5E1" fontSize="3.6" fontFamily="sans-serif" fontWeight="bold" letterSpacing="0.6">
+                SONY
+              </text>
 
-              {/* Twin Analog Thumbsticks */}
+              {/* SELECT & START Buttons */}
+              <rect x="41" y="27" width="4.5" height="2" rx="0.5" fill="#1E293B" />
+              <rect x="54.5" y="27" width="4.5" height="2" rx="0.5" fill="#1E293B" />
+
+              {/* ANALOG Button & Glowing Red Indicator LED */}
+              <circle cx="50" cy="34" r="2.8" fill="#04060E" stroke="#334155" strokeWidth="0.7" />
+              <circle cx="50" cy="38.5" r="1.2" fill="#EF4444" className="animate-pulse" />
+
+              {/* Twin Analog Thumbsticks with Concentric Domes */}
               {/* Left Thumbstick */}
-              <circle cx="38" cy="52" r="8" fill="#060A14" stroke="#334155" strokeWidth="0.9" />
-              <circle cx="38" cy="52" r="6" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
-              <circle cx="38" cy="52" r="3" fill="#060A14" />
+              <circle cx="38" cy="49" r="8.5" fill="#060A14" stroke="#334155" strokeWidth="1" />
+              <circle cx="38" cy="49" r="6.2" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
+              <circle cx="38" cy="49" r="3.2" fill="#060A14" stroke="#006FCD" strokeWidth="0.5" />
 
               {/* Right Thumbstick */}
-              <circle cx="62" cy="52" r="8" fill="#060A14" stroke="#334155" strokeWidth="0.9" />
-              <circle cx="62" cy="52" r="6" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
-              <circle cx="62" cy="52" r="3" fill="#060A14" />
+              <circle cx="62" cy="49" r="8.5" fill="#060A14" stroke="#334155" strokeWidth="1" />
+              <circle cx="62" cy="49" r="6.2" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
+              <circle cx="62" cy="49" r="3.2" fill="#060A14" stroke="#006FCD" strokeWidth="0.5" />
             </svg>
           </div>
 
-          {/* Fully Contained Integrated Spin Button */}
-          <div className="w-full py-1 px-1 rounded-md bg-gradient-to-r from-[#002855] via-[#006FCD] to-[#002855] border border-cyan-300 text-white font-mono font-black text-[7.5px] uppercase tracking-wider text-center shadow-[0_0_8px_rgba(0,111,205,0.7)] group-hover:brightness-125 transition-all select-none">
+          {/* Prominent, Fully Contained Integrated Spin Action Button */}
+          <div className="w-full py-2 px-1 rounded-lg bg-gradient-to-r from-[#003B75] via-[#006FCD] to-[#003B75] border-2 border-cyan-300 text-white font-mono font-black text-xs sm:text-[13px] uppercase tracking-wider text-center shadow-[0_0_12px_rgba(0,111,205,0.8)] group-hover:brightness-125 transition-all select-none">
             {isSpinning ? 'STOP' : 'SPIN'}
           </div>
+
+          {/* Ambient Hint Callout */}
+          {!isSpinning && !disabled && (
+            <div className="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-400/60 text-[7.5px] text-cyan-300 font-bold uppercase tracking-wider text-center shadow-[0_0_6px_rgba(0,240,255,0.4)] animate-pulse">
+              PRESS TO SPIN
+            </div>
+          )}
         </div>
       </div>
     );
