@@ -106,45 +106,114 @@ export const SlotLever: React.FC<SlotLeverProps> = ({
   }
 
   // =========================================================================
-  // --- VERSION D: PLAYSTATION 2 (8MB MEMORY CARD DOCK & DUALSHOCK R2 TRIGGER) ---
+  // --- VERSION D: PLAYSTATION 2 (DUALSHOCK 2 CONTROLLER SPIN ACTUATOR) ---
   // =========================================================================
   if (isPs2) {
     return (
       <div
         onClick={handlePullLever}
-        className={`hidden xl:flex flex-col items-center absolute -right-8 top-1/4 select-none cursor-pointer group z-20 font-mono transition-transform duration-150 ${
+        className={`hidden xl:flex flex-col items-center absolute -right-9 top-1/4 select-none cursor-pointer group z-20 font-mono transition-transform duration-150 ${
           disabled && !isSpinning ? 'opacity-40 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
         }`}
-        title={disabled ? 'Need more credits' : 'Click to trigger 8MB Memory Card save & spin!'}
+        title={disabled ? 'Need more credits' : 'Press DualShock 2 controller to spin!'}
       >
-        <div className="w-12 py-3 px-1.5 rounded-lg bg-gradient-to-b from-[#0a0f1d] via-[#040711] to-[#010308] border-2 border-[#006FCD] shadow-[0_0_20px_rgba(0,111,205,0.6),inset_0_2px_4px_rgba(255,255,255,0.2)] flex flex-col items-center space-y-2 relative">
-          <div className="px-1 py-0.5 rounded bg-black border border-cyan-400 text-[6.5px] font-black text-cyan-300 tracking-tighter uppercase whitespace-nowrap shadow-[0_0_6px_#00F0FF]">
-            SLOT 1
+        <div className="w-16 py-2 px-1.5 rounded-xl bg-gradient-to-b from-[#0a0f1d] via-[#040711] to-[#010308] border-2 border-[#006FCD] shadow-[0_0_20px_rgba(0,111,205,0.6),inset_0_2px_4px_rgba(255,255,255,0.15)] flex flex-col items-center space-y-1.5">
+          {/* Header Badge */}
+          <div className="px-1.5 py-0.5 rounded bg-black/90 border border-cyan-400 text-[6.5px] font-black text-cyan-300 tracking-wider uppercase whitespace-nowrap shadow-[0_0_6px_#00F0FF]">
+            DUALSHOCK 2
           </div>
 
-          {/* 8MB Memory Card Silhouette */}
-          <div className={`w-9 h-11 rounded-t-sm rounded-b-md bg-gradient-to-b from-[#182038] via-[#0b0e1a] to-[#02050e] border-2 border-[#006FCD] shadow-[0_0_10px_rgba(0,111,205,0.5)] flex flex-col items-center justify-between p-1 transition-all ${
-            isCoinInserted ? 'scale-95 brightness-150' : 'group-hover:brightness-125'
-          }`}>
-            <span className="text-[6px] font-black text-slate-300">MagicGate</span>
-            <span className="text-[9px]">💾</span>
-            <span className="text-[7px] font-black text-cyan-300">8MB</span>
+          {/* Sculpted DualShock 2 Controller Vector */}
+          <div className="w-full flex items-center justify-center py-1">
+            <svg
+              viewBox="0 0 100 85"
+              className={`w-13 h-11 drop-shadow-[0_2px_8px_rgba(0,111,205,0.7)] transition-transform duration-150 ${
+                isCoinInserted ? 'scale-90 brightness-150' : 'group-hover:scale-105'
+              }`}
+            >
+              <defs>
+                <linearGradient id="ds2BodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#182033" />
+                  <stop offset="40%" stopColor="#0B101E" />
+                  <stop offset="100%" stopColor="#03050C" />
+                </linearGradient>
+              </defs>
+
+              {/* L1 / R1 Shoulder Triggers */}
+              <rect x="18" y="7" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.8" />
+              <rect x="66" y="7" width="16" height="7" rx="2" fill="#182238" stroke="#006FCD" strokeWidth="0.8" />
+
+              {/* DualShock 2 Main Body Silhouette */}
+              <path
+                d="M 22 13
+                   C 32 13, 38 17, 50 18
+                   C 62 17, 68 13, 78 13
+                   C 88 13, 96 21, 94 46
+                   C 93 62, 88 78, 80 80
+                   C 72 82, 66 68, 62 56
+                   C 58 50, 54 48, 50 48
+                   C 46 48, 42 50, 38 56
+                   C 34 68, 28 82, 20 80
+                   C 12 78, 7 62, 6 46
+                   C 4 21, 12 13, 22 13 Z"
+                fill="url(#ds2BodyGrad)"
+                stroke="#006FCD"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+              />
+
+              {/* D-Pad (Left) */}
+              <rect x="23" y="25" width="6" height="18" rx="1" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
+              <rect x="17" y="31" width="18" height="6" rx="1" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
+              <polygon points="26,27 24.5,29.5 27.5,29.5" fill="#38BDF8" />
+              <polygon points="26,41 24.5,38.5 27.5,38.5" fill="#38BDF8" />
+              <polygon points="19,34 21.5,32.5 21.5,35.5" fill="#38BDF8" />
+              <polygon points="33,34 30.5,32.5 30.5,35.5" fill="#38BDF8" />
+
+              {/* Action Buttons (Right) - Triangle, Circle, Cross, Square */}
+              {/* Green Triangle △ */}
+              <circle cx="74" cy="26" r="3.6" fill="#040712" stroke="#22C55E" strokeWidth="0.8" />
+              <polygon points="74,23.8 71.8,27.5 76.2,27.5" fill="#22C55E" />
+
+              {/* Pink Square □ */}
+              <circle cx="66" cy="34" r="3.6" fill="#040712" stroke="#EC4899" strokeWidth="0.8" />
+              <rect x="64.2" y="32.2" width="3.6" height="3.6" fill="none" stroke="#EC4899" strokeWidth="0.9" />
+
+              {/* Red Circle ○ */}
+              <circle cx="82" cy="34" r="3.6" fill="#040712" stroke="#EF4444" strokeWidth="0.8" />
+              <circle cx="82" cy="34" r="1.8" fill="none" stroke="#EF4444" strokeWidth="0.9" />
+
+              {/* Blue Cross ✕ */}
+              <circle cx="74" cy="42" r="3.6" fill="#040712" stroke="#38BDF8" strokeWidth="0.8" />
+              <line x1="72.3" y1="40.3" x2="75.7" y2="43.7" stroke="#38BDF8" strokeWidth="1" />
+              <line x1="75.7" y1="40.3" x2="72.3" y2="43.7" stroke="#38BDF8" strokeWidth="1" />
+
+              {/* Center SONY Branding & Mode Buttons */}
+              <text x="50" y="24" textAnchor="middle" fill="#64748B" fontSize="3.2" fontFamily="sans-serif" letterSpacing="0.5">SONY</text>
+              <rect x="42" y="30" width="4.5" height="2" rx="0.5" fill="#1E293B" />
+              <rect x="53.5" y="30" width="4.5" height="2" rx="0.5" fill="#1E293B" />
+
+              {/* Analog Mode Button & Glowing Red LED */}
+              <circle cx="50" cy="37" r="2.5" fill="#04060E" stroke="#334155" strokeWidth="0.6" />
+              <circle cx="50" cy="41.5" r="1.1" fill="#EF4444" className="animate-pulse" />
+
+              {/* Twin Analog Thumbsticks */}
+              {/* Left Thumbstick */}
+              <circle cx="38" cy="52" r="8" fill="#060A14" stroke="#334155" strokeWidth="0.9" />
+              <circle cx="38" cy="52" r="6" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
+              <circle cx="38" cy="52" r="3" fill="#060A14" />
+
+              {/* Right Thumbstick */}
+              <circle cx="62" cy="52" r="8" fill="#060A14" stroke="#334155" strokeWidth="0.9" />
+              <circle cx="62" cy="52" r="6" fill="#111827" stroke="#1E293B" strokeWidth="0.7" />
+              <circle cx="62" cy="52" r="3" fill="#060A14" />
+            </svg>
           </div>
 
-          {/* R2 Analog Trigger Button */}
-          <div className="flex flex-col items-center space-y-0.5">
-            <div className={`w-8 h-5 rounded-md bg-gradient-to-b from-[#003d80] to-[#001f40] border border-cyan-400 shadow-[0_0_8px_#006FCD] flex items-center justify-center transition-all ${
-              isCoinInserted ? 'scale-90 bg-cyan-600' : ''
-            }`}>
-              <span className="text-[8px] font-black text-white font-mono">R2</span>
-            </div>
+          {/* Fully Contained Integrated Spin Button */}
+          <div className="w-full py-1 px-1 rounded-md bg-gradient-to-r from-[#002855] via-[#006FCD] to-[#002855] border border-cyan-300 text-white font-mono font-black text-[7.5px] uppercase tracking-wider text-center shadow-[0_0_8px_rgba(0,111,205,0.7)] group-hover:brightness-125 transition-all select-none">
+            {isSpinning ? 'STOP' : 'SPIN'}
           </div>
-
-          {!isSpinning && !disabled && (
-            <div className="absolute -bottom-6 whitespace-nowrap px-1.5 py-0.5 rounded bg-[#006FCD] text-white font-black text-[7.5px] border border-cyan-300 shadow-[0_0_8px_#00F0FF] animate-bounce">
-              SAVE & SPIN
-            </div>
-          )}
         </div>
       </div>
     );

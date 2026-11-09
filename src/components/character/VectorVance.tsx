@@ -163,7 +163,7 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
           <div className="flex items-center space-x-1">
             <Gamepad2 className="w-3 h-3 text-[#006FCD]" />
             <span className="text-[10px] font-black text-cyan-300 uppercase tracking-wider font-mono">
-              VECTOR VANCE
+              PLAYSTATION 2
             </span>
           </div>
           <span className="text-[9px] text-cyan-200 font-medium truncate max-w-[200px] font-mono">
@@ -181,7 +181,7 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
       className={`relative group cursor-pointer select-none transition-transform duration-300 flex flex-col items-center w-52 hover:scale-[1.02] ${
         isTapped ? 'scale-95' : ''
       }`}
-      title="Click Vance for 8MB Memory Card bonus credits and BIOS tips!"
+      title="Click PS2 Console for 8MB Memory Card bonus credits and BIOS tips!"
     >
       {/* Dynamic Speech Bubble Overlay */}
       <div className="relative mb-2 z-30 w-full max-w-[210px] animate-fadeIn">
@@ -220,62 +220,146 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
         <div className="relative z-10 flex items-center justify-between border-b border-[#006FCD]/40 pb-1">
           <div className="flex items-center space-x-1 font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#22c55e] animate-pulse" />
-            <span className="text-[9.5px] font-black text-cyan-300 tracking-wider">NAVIGATOR VANCE</span>
+            <span className="text-[9.5px] font-black text-cyan-300 tracking-wider">PLAYSTATION 2</span>
           </div>
-          <span className="text-[7.5px] font-mono text-[#006FCD] font-bold">128-BIT</span>
+          <span className="text-[7.5px] font-mono text-[#006FCD] font-bold">128-BIT EE</span>
         </div>
 
-        {/* Center Character SVG Avatar */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-2">
-          <div className="relative w-28 h-28 flex items-center justify-center">
+        {/* Center Character: Authentic PlayStation 2 Console Artwork */}
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-1">
+          <div className="relative w-32 h-36 flex items-center justify-center">
             {/* Ambient Cyan Aura */}
             <div className="absolute inset-0 rounded-full bg-[#006FCD]/20 filter blur-lg animate-pulse" />
 
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)]">
-              {/* Mechanical Android Head / Helmet Silhouette */}
-              <path
-                d="M20 35 L50 15 L80 35 L85 70 L50 90 L15 70 Z"
-                fill="#050a16"
+            <svg viewBox="0 0 100 135" className="w-full h-full drop-shadow-[0_4px_16px_rgba(0,111,205,0.9)]">
+              <defs>
+                <linearGradient id="ps2ChassisGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0E1628" />
+                  <stop offset="35%" stopColor="#162038" />
+                  <stop offset="75%" stopColor="#090E1A" />
+                  <stop offset="100%" stopColor="#03050C" />
+                </linearGradient>
+                <linearGradient id="ps2LogoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#004B93" />
+                  <stop offset="45%" stopColor="#006FCD" />
+                  <stop offset="100%" stopColor="#00F0FF" />
+                </linearGradient>
+                <linearGradient id="ps2TrayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#1A243C" />
+                  <stop offset="100%" stopColor="#080D18" />
+                </linearGradient>
+              </defs>
+
+              {/* Console Vertical Stand Base */}
+              <polygon points="14,124 86,124 80,116 20,116" fill="#040711" stroke="#006FCD" strokeWidth="1" />
+              <rect x="24" y="120" width="52" height="3" fill="#020409" />
+
+              {/* Monolithic Ribbed PS2 Console Body */}
+              <rect
+                x="20"
+                y="10"
+                width="60"
+                height="106"
+                rx="2"
+                fill="url(#ps2ChassisGrad)"
                 stroke="#006FCD"
-                strokeWidth="2.5"
+                strokeWidth="1.5"
               />
-              {/* Ribbed Helmet Top Fins */}
-              <path d="M42 16 L42 28 M50 15 L50 28 M58 16 L58 28" stroke="#38BDF8" strokeWidth="1.5" />
 
-              {/* Glowing Visor */}
-              <path
-                d="M25 45 L50 38 L75 45 L70 56 L50 52 L30 56 Z"
-                fill="#00183b"
-                stroke="#00F0FF"
-                strokeWidth="2"
-                filter="drop-shadow(0 0 4px #00F0FF)"
+              {/* Iconic Ribbed Horizontal Stepped Cooling Fins */}
+              {[16, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 100, 106].map((y) => (
+                <line key={y} x1="20" y1={y} x2="24" y2={y} stroke="#006FCD" strokeWidth="0.8" opacity="0.6" />
+              ))}
+              {[16, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 100, 106].map((y) => (
+                <line key={`r-${y}`} x1="76" y1={y} x2="80" y2={y} stroke="#006FCD" strokeWidth="0.8" opacity="0.6" />
+              ))}
+
+              {/* DVD-ROM Disc Drive Tray */}
+              <rect
+                x="26"
+                y="15"
+                width="48"
+                height="18"
+                rx="1"
+                fill="url(#ps2TrayGrad)"
+                stroke="#006FCD"
+                strokeWidth="0.8"
               />
-              <line x1="30" y1="48" x2="70" y2="48" stroke="#FFFFFF" strokeWidth="1.5" opacity="0.8" />
+              {/* Disc Tray Seam */}
+              <line x1="26" y1="33" x2="74" y2="33" stroke="#334155" strokeWidth="0.6" />
 
-              {/* PlayStation Controller Face Glyphs in Ear Nodes */}
-              {/* Left Ear: Triangle & Square */}
-              <circle cx="16" cy="50" r="7" fill="#030612" stroke="#006FCD" strokeWidth="1.5" />
-              <path d="M16 46 L13 52 L19 52 Z" fill="#22C55E" />
-              {/* Right Ear: Circle & Cross */}
-              <circle cx="84" cy="50" r="7" fill="#030612" stroke="#006FCD" strokeWidth="1.5" />
-              <circle cx="84" cy="50" r="3.2" fill="none" stroke="#EF4444" strokeWidth="1.2" />
+              {/* Official PlayStation Badge & DVD-ROM Branding */}
+              <rect x="29" y="18" width="6" height="6" rx="0.5" fill="#02050E" stroke="#334155" strokeWidth="0.5" />
+              {/* PS Colorful Family Logo */}
+              <polygon points="31,19 33,20 31,23" fill="#EF4444" />
+              <polygon points="33,20 34,22 32,23" fill="#F59E0B" />
+              <polygon points="31,23 33,22 34,23" fill="#00F0FF" />
 
-              {/* Emotion Engine Core on Chest */}
-              <rect x="38" y="65" width="24" height="16" rx="2" fill="#030814" stroke="#38BDF8" strokeWidth="1.5" />
-              <text x="50" y="73" textAnchor="middle" fill="#00F0FF" fontSize="5" fontFamily="monospace" fontWeight="900">
-                EE
+              <text x="52" y="22.5" textAnchor="middle" fill="#CBD5E1" fontSize="3.8" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.8">
+                DVD-ROM
               </text>
-              <text x="50" y="78" textAnchor="middle" fill="#38BDF8" fontSize="3.5" fontFamily="monospace">
-                294 MHz
+
+              {/* Blue-Cyan Gradient PS2 Monogram */}
+              <text x="52" y="30" textAnchor="middle" fill="url(#ps2LogoGrad)" fontSize="6.5" fontFamily="sans-serif" fontWeight="900" letterSpacing="1.2">
+                PS2
+              </text>
+
+              {/* Power / Reset Button (Green LED) */}
+              <rect x="66" y="37" width="8" height="4.5" rx="0.8" fill="#0A0F1D" stroke="#22C55E" strokeWidth="0.6" />
+              <circle cx="70" cy="39.2" r="1" fill="#22C55E" className="shadow-[0_0_4px_#22C55E]" />
+
+              {/* Disc Eject Button (Blue LED) */}
+              <rect x="66" y="44" width="8" height="4.5" rx="0.8" fill="#0A0F1D" stroke="#006FCD" strokeWidth="0.6" />
+              <circle cx="70" cy="46.2" r="1" fill="#00F0FF" className="shadow-[0_0_4px_#00F0FF]" />
+
+              {/* Slot 1: MagicGate 8MB Memory Card Inserted */}
+              <rect x="26" y="52" width="22" height="15" rx="1.5" fill="#141E38" stroke="#006FCD" strokeWidth="1" />
+              <text x="37" y="58" textAnchor="middle" fill="#CBD5E1" fontSize="3.2" fontFamily="sans-serif" fontWeight="bold">
+                MagicGate
+              </text>
+              <text x="37" y="63" textAnchor="middle" fill="#00F0FF" fontSize="3.8" fontFamily="sans-serif" fontWeight="900">
+                8 MB
+              </text>
+              {/* Red Card Access Activity LED */}
+              <circle cx="45" cy="55" r="0.8" fill="#EF4444" className="animate-pulse" />
+
+              {/* Slot 2: Empty Bay */}
+              <rect x="52" y="52" width="22" height="15" rx="1" fill="#030610" stroke="#1E293B" strokeWidth="0.8" />
+              <text x="63" y="61" textAnchor="middle" fill="#475569" fontSize="3" fontFamily="sans-serif">
+                SLOT 2
+              </text>
+
+              {/* Controller Port 1 (Connected to DualShock 2) */}
+              <rect x="26" y="70" width="22" height="13" rx="1.5" fill="#0A0F1E" stroke="#006FCD" strokeWidth="0.9" />
+              <rect x="29" y="73" width="16" height="7" rx="1" fill="#02040A" />
+              <circle cx="33" cy="76.5" r="0.9" fill="#006FCD" />
+              <circle cx="37" cy="76.5" r="0.9" fill="#006FCD" />
+              <circle cx="41" cy="76.5" r="0.9" fill="#006FCD" />
+
+              {/* Controller Port 2 */}
+              <rect x="52" y="70" width="22" height="13" rx="1.5" fill="#030610" stroke="#1E293B" strokeWidth="0.8" />
+              <text x="63" y="78" textAnchor="middle" fill="#475569" fontSize="2.8" fontFamily="sans-serif">
+                PORT 2
+              </text>
+
+              {/* SONY Corporate Monogram */}
+              <text x="50" y="93" textAnchor="middle" fill="#64748B" fontSize="4.2" fontFamily="sans-serif" letterSpacing="1.5">
+                SONY
+              </text>
+
+              {/* 128-Bit Emotion Engine Core Badge */}
+              <rect x="30" y="98" width="40" height="11" rx="1.5" fill="#02050E" stroke="#00F0FF" strokeWidth="0.8" />
+              <text x="50" y="105" textAnchor="middle" fill="#00F0FF" fontSize="3.8" fontFamily="monospace" fontWeight="900" letterSpacing="0.5">
+                EMOTION ENGINE
               </text>
             </svg>
           </div>
 
-          {/* Memory Card Dock Icon */}
+          {/* Memory Card & Disc Status */}
           <div className="flex items-center space-x-2 mt-1">
             <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-black border border-[#006FCD] font-mono text-[8px] text-cyan-300">
               <Save className="w-2.5 h-2.5 text-cyan-400" />
-              <span>SLOT 1: 8MB</span>
+              <span>8MB CARD</span>
             </div>
             <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-black border border-cyan-400 font-mono text-[8px] text-emerald-400">
               <Disc className="w-2.5 h-2.5 text-blue-400 animate-spin" />
@@ -288,9 +372,9 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
         <div className="relative z-10 flex items-center justify-between border-t border-[#006FCD]/40 pt-1 text-[8px] font-mono text-cyan-400">
           <span className="flex items-center space-x-1">
             <Zap className="w-2.5 h-2.5 text-yellow-300 animate-pulse" />
-            <span>CLICK FOR TIP</span>
+            <span>CLICK FOR BIOS TIP</span>
           </span>
-          <span className="text-slate-400 font-black">Y2K ENGINE</span>
+          <span className="text-slate-400 font-black">294 MHz</span>
         </div>
       </div>
     </div>
