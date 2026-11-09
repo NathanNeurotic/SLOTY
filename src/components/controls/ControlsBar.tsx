@@ -366,11 +366,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* Massive 80mm Stepped Sanwa Arcade Push-Bar */}
-      <div className="w-full h-8 sm:h-9 md:h-10 flex items-center justify-center">
+      <div className="w-full h-9 sm:h-10 md:h-11 flex items-center justify-center">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
-          className={`w-72 sm:w-88 md:w-96 h-8 sm:h-9 md:h-9.5 font-black tracking-widest text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl border-2 active:scale-95 flex items-center justify-center ${
+          className={`w-72 sm:w-88 md:w-96 max-w-full px-3 h-9 sm:h-10 md:h-10.5 font-black tracking-wider text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl border-2 active:scale-95 flex items-center justify-center ${
             isSpinning
               ? 'bg-gradient-to-r from-red-600 to-rose-700 border-red-300 text-white shadow-[0_0_25px_#EF4444] animate-pulse'
               : !isFreeSpins && balance < totalBet
@@ -381,26 +381,26 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           }`}
           style={{
             clipPath:
-              'polygon(0 6px, 6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px))',
+              'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))',
           }}
         >
           {isSpinning ? (
-            <span className="flex items-center space-x-2">
-              <StopCircle className="w-5 h-5 text-white" />
+            <span className="flex items-center space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <StopCircle className="w-5 h-5 text-white flex-shrink-0" />
               <span>[ QUICK STOP ]</span>
             </span>
           ) : isFreeSpins ? (
-            <span className="flex items-center space-x-2">
-              <Flame className="w-5 h-5 text-yellow-300 animate-pulse" />
+            <span className="flex items-center space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <Flame className="w-5 h-5 text-yellow-300 animate-pulse flex-shrink-0" />
               <span>👾 BOSS RUSH (3X MULTIPLIER) 👾</span>
             </span>
           ) : !isFreeSpins && balance < totalBet ? (
-            <span>🪙 NEED 25¢ CREDITS 🪙</span>
+            <span className="whitespace-nowrap truncate max-w-full px-1">🪙 NEED 25¢ CREDITS 🪙</span>
           ) : (
-            <span className="flex items-center space-x-2">
-              <Gamepad2 className="w-5 h-5 text-cyan-200" />
+            <span className="flex items-center space-x-1.5 sm:space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-200 flex-shrink-0" />
               <span>🕹️ 1P START / INSERT COIN 🕹️</span>
-              <Gamepad2 className="w-5 h-5 text-cyan-200" />
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-200 flex-shrink-0" />
             </span>
           )}
         </button>
@@ -642,11 +642,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* Massive Carved Redwood Push-Bar with Notched Ends */}
-      <div className="w-full h-8 sm:h-9 md:h-10 flex items-center justify-center">
+      <div className="w-full h-9 sm:h-10 md:h-11 flex items-center justify-center">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
-          className={`w-72 sm:w-88 md:w-96 h-8 sm:h-9 md:h-9.5 font-black tracking-widest text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl border-2 active:scale-95 flex items-center justify-center font-serif ${
+          className={`w-72 sm:w-88 md:w-96 max-w-full px-3 h-9 sm:h-10 md:h-10.5 font-black tracking-wider text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl border-2 active:scale-95 flex items-center justify-center font-serif ${
             isSpinning
               ? 'bg-gradient-to-r from-rose-800 via-red-700 to-rose-900 border-red-300 text-white shadow-[0_0_20px_#EF4444] animate-pulse'
               : !isFreeSpins && balance < totalBet
@@ -657,26 +657,26 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           }`}
           style={{
             clipPath:
-              'polygon(0% 15%, 2% 0%, 98% 0%, 100% 15%, 98% 50%, 100% 85%, 98% 100%, 2% 100%, 0% 85%, 2% 50%)',
+              'polygon(0% 12%, 2% 0%, 98% 0%, 100% 12%, 98% 50%, 100% 88%, 98% 100%, 2% 100%, 0% 88%, 2% 50%)',
           }}
         >
           {isSpinning ? (
-            <span className="flex items-center space-x-2">
-              <StopCircle className="w-5 h-5 text-white" />
+            <span className="flex items-center space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <StopCircle className="w-5 h-5 text-white flex-shrink-0" />
               <span>LEAF STOP</span>
             </span>
           ) : isFreeSpins ? (
-            <span className="flex items-center space-x-2">
-              <Flame className="w-5 h-5 text-yellow-300 animate-pulse" />
+            <span className="flex items-center space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <Flame className="w-5 h-5 text-yellow-300 animate-pulse flex-shrink-0" />
               <span>🦉 MOONLIT FREE HARVEST 🦉</span>
             </span>
           ) : !isFreeSpins && balance < totalBet ? (
-            <span>🪵 NEED MORE ACORNS 🪵</span>
+            <span className="whitespace-nowrap truncate max-w-full px-1">🪵 NEED MORE ACORNS 🪵</span>
           ) : (
-            <span className="flex items-center space-x-2">
-              <Trees className="w-5 h-5 text-emerald-200" />
+            <span className="flex items-center space-x-1.5 sm:space-x-2 whitespace-nowrap truncate max-w-full px-1">
+              <Trees className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" />
               <span>🌲 WOODLAND HARVEST / SPIN 🌲</span>
-              <Trees className="w-5 h-5 text-emerald-200" />
+              <Trees className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 flex-shrink-0" />
             </span>
           )}
         </button>
@@ -916,11 +916,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* Gold Bullion Bar Push Actuator */}
-      <div className="w-full h-8 sm:h-9 md:h-10 flex items-center justify-center">
+      <div className="w-full h-9 sm:h-10 md:h-11 flex items-center justify-center">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
-          className={`w-72 sm:w-88 md:w-96 h-8 sm:h-9 md:h-9.5 font-black tracking-widest text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl active:scale-95 flex items-center justify-center ${
+          className={`w-72 sm:w-88 md:w-96 max-w-full px-3 h-9 sm:h-10 md:h-10.5 font-black tracking-wider text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl active:scale-95 flex items-center justify-center ${
             isSpinning
               ? 'vlt-stop-btn animate-pulse cursor-pointer'
               : !isFreeSpins && balance < totalBet
@@ -931,25 +931,25 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           }`}
           style={{
             clipPath:
-              'polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px)',
+              'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)',
           }}
         >
           {isSpinning ? (
-            <span className="flex items-center space-x-2 text-white">
-              <StopCircle className="w-5 h-5 fill-white text-rose-700" />
+            <span className="flex items-center space-x-2 text-white whitespace-nowrap truncate max-w-full px-1">
+              <StopCircle className="w-5 h-5 fill-white text-rose-700 flex-shrink-0" />
               <span>EMERGENCY STOP</span>
             </span>
           ) : isFreeSpins ? (
-            <span className="flex items-center space-x-2 font-mono">
-              <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
+            <span className="flex items-center space-x-2 font-mono whitespace-nowrap truncate max-w-full px-1">
+              <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse flex-shrink-0" />
               <span>VAULT FREE SPINS (3X)</span>
             </span>
           ) : !isFreeSpins && balance < totalBet ? (
-            <span className="flex items-center space-x-2 text-amber-300 font-mono">
+            <span className="flex items-center space-x-2 text-amber-300 font-mono whitespace-nowrap truncate max-w-full px-1">
               <span>⚡ INSUFFICIENT GOLD ⚡</span>
             </span>
           ) : (
-            <span className="flex items-center space-x-2 font-mono">
+            <span className="flex items-center space-x-2 font-mono whitespace-nowrap truncate max-w-full px-1">
               <span>👑 VAULT UNLOCK / SPIN 👑</span>
             </span>
           )}
@@ -1192,11 +1192,11 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
       </div>
 
       {/* Giant DualShock 2 Face Button Actuator */}
-      <div className="w-full h-8 sm:h-9 md:h-10 flex items-center justify-center">
+      <div className="w-full h-9 sm:h-10 md:h-11 flex items-center justify-center">
         <button
           onClick={handleTriggerSpin}
           disabled={!isSpinning && !isFreeSpins && balance < totalBet}
-          className={`w-72 sm:w-88 md:w-96 h-8 sm:h-9 md:h-9.5 font-black tracking-widest text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl active:scale-95 flex items-center justify-center ${
+          className={`w-72 sm:w-88 md:w-96 max-w-full px-3 h-9 sm:h-10 md:h-10.5 font-black tracking-wider text-xs sm:text-sm md:text-base uppercase select-none transition-all touch-manipulation shadow-xl active:scale-95 flex items-center justify-center ${
             isSpinning
               ? 'bg-gradient-to-r from-rose-900 via-rose-700 to-rose-900 border-2 border-rose-400 animate-pulse cursor-pointer shadow-[0_0_20px_rgba(244,63,94,0.7)]'
               : !isFreeSpins && balance < totalBet
@@ -1207,30 +1207,30 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           }`}
           style={{
             clipPath:
-              'polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px)',
+              'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)',
           }}
         >
           {isSpinning ? (
-            <span className="flex items-center space-x-2 text-white">
-              <StopCircle className="w-5 h-5 fill-white text-rose-700" />
+            <span className="flex items-center space-x-2 text-white whitespace-nowrap truncate max-w-full px-1">
+              <StopCircle className="w-5 h-5 fill-white text-rose-700 flex-shrink-0" />
               <span>[ ✕ QUICK STOP ]</span>
             </span>
           ) : isFreeSpins ? (
-            <span className="flex items-center space-x-2 font-mono text-cyan-200">
-              <Zap className="w-5 h-5 text-[#00F0FF] fill-[#00F0FF] animate-pulse" />
+            <span className="flex items-center space-x-2 font-mono text-cyan-200 whitespace-nowrap truncate max-w-full px-1">
+              <Zap className="w-5 h-5 text-[#00F0FF] fill-[#00F0FF] animate-pulse flex-shrink-0" />
               <span>⚡ EMOTION ENGINE OVERCLOCK ⚡</span>
             </span>
           ) : !isFreeSpins && balance < totalBet ? (
-            <span className="flex items-center space-x-2 text-rose-400 font-mono text-[10px] sm:text-xs">
+            <span className="flex items-center space-x-2 text-rose-400 font-mono text-[10px] sm:text-xs whitespace-nowrap truncate max-w-full px-1">
               <span>⚠ INSUFFICIENT CREDITS ⚠</span>
             </span>
           ) : (
-            <span className="flex items-center space-x-2 font-mono">
-              <span className="text-[#24B059] text-sm">△</span>
-              <span className="text-[#DF508E] text-sm">□</span>
-              <span className="text-[#00F0FF] font-black tracking-widest px-1">EMOTION ENGINE SPIN</span>
-              <span className="text-[#006FCD] text-sm font-black">✕</span>
-              <span className="text-[#E61A22] text-sm">○</span>
+            <span className="flex items-center space-x-1.5 sm:space-x-2 font-mono whitespace-nowrap truncate max-w-full px-1">
+              <span className="text-[#24B059] text-xs sm:text-sm flex-shrink-0">△</span>
+              <span className="text-[#DF508E] text-xs sm:text-sm flex-shrink-0">□</span>
+              <span className="text-[#00F0FF] font-black tracking-wider px-1">EMOTION ENGINE SPIN</span>
+              <span className="text-[#006FCD] text-xs sm:text-sm font-black flex-shrink-0">✕</span>
+              <span className="text-[#E61A22] text-xs sm:text-sm flex-shrink-0">○</span>
             </span>
           )}
         </button>

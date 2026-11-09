@@ -41,16 +41,20 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
           const cellRect = cell.getBoundingClientRect();
           const parentRect = containerRef.current.getBoundingClientRect();
           if (parentRect.width > 0 && parentRect.height > 0) {
+            const rawLeft = cellRect.left - parentRect.left + cellRect.width / 2;
+            const rawTop = cellRect.top - parentRect.top + cellRect.height / 2;
+            const clampedLeft = Math.max(30, Math.min(parentRect.width - 30, rawLeft));
+            const clampedTop = Math.max(28, Math.min(parentRect.height - 28, rawTop));
             return {
-              left: `${cellRect.left - parentRect.left + cellRect.width / 2}px`,
-              top: `${cellRect.top - parentRect.top + cellRect.height / 2}px`,
+              left: `${clampedLeft}px`,
+              top: `${clampedTop}px`,
             };
           }
         }
       }
       return {
-        left: `${((reel + 0.5) / reelsCount) * 100}%`,
-        top: `${((row + 0.5) / rowCount) * 100}%`,
+        left: `${Math.max(10, Math.min(90, ((reel + 0.5) / reelsCount) * 100))}%`,
+        top: `${Math.max(15, Math.min(85, ((row + 0.5) / rowCount) * 100))}%`,
       };
     },
     [reelsCount, rowCount]
