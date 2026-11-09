@@ -1223,130 +1223,180 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="wolfSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#0B132B" />
-                <stop offset="50%" stopColor="#1C2541" />
-                <stop offset="100%" stopColor="#070C18" />
-              </linearGradient>
-              <linearGradient id="wolfCharcoalFur" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#475569" />
-                <stop offset="40%" stopColor="#334155" />
+              <linearGradient id="wolfNightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#020617" />
+                <stop offset="40%" stopColor="#0B132B" />
+                <stop offset="75%" stopColor="#1E293B" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <linearGradient id="wolfSilverFur" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#E2E8F0" />
-                <stop offset="50%" stopColor="#94A3B8" />
-                <stop offset="100%" stopColor="#475569" />
+              <radialGradient id="wolfMoon" cx="42%" cy="40%" r="58%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="35%" stopColor="#E0F2FE" />
+                <stop offset="75%" stopColor="#BAE6FD" />
+                <stop offset="100%" stopColor="#38BDF8" />
+              </radialGradient>
+              <linearGradient id="wolfFurBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#475569" />
+                <stop offset="40%" stopColor="#334155" />
+                <stop offset="85%" stopColor="#1E293B" />
+                <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <radialGradient id="wolfAmberEye" cx="35%" cy="35%" r="65%">
+              <linearGradient id="wolfFurChest" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#F8FAFC" />
+                <stop offset="40%" stopColor="#CBD5E1" />
+                <stop offset="100%" stopColor="#64748B" />
+              </linearGradient>
+              <radialGradient id="wolfAmberGlint" cx="35%" cy="35%" r="65%">
                 <stop offset="0%" stopColor="#FFFBEB" />
-                <stop offset="30%" stopColor="#FDE047" />
-                <stop offset="70%" stopColor="#F59E0B" />
+                <stop offset="40%" stopColor="#FDE047" />
+                <stop offset="80%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#B45309" />
               </radialGradient>
-              <clipPath id="wolfClip">
-                <circle cx="50" cy="50" r="41" />
+              <clipPath id="wolfMedallionClip">
+                <circle cx="50" cy="50" r="41.5" />
               </clipPath>
             </defs>
 
-            {/* Medallion Outer Ring with Frost Cyan Glow */}
-            <circle cx="50" cy="50" r="42" fill="url(#wolfSkyGrad)" stroke="#38BDF8" strokeWidth="2.5" />
-            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#60A5FA" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
+            {/* Frost Cyan Medallion Outer Frame */}
+            <circle cx="50" cy="50" r="42" fill="url(#wolfNightSky)" stroke="#38BDF8" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="39.5" fill="none" stroke="#7DD3FC" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
 
-            <g clipPath="url(#wolfClip)">
-              {/* Moonlit Night Glow Behind Wolf */}
-              <circle cx="50" cy="42" r="30" fill="#0284C7" opacity="0.22" filter="blur(4px)" />
+            <g clipPath="url(#wolfMedallionClip)">
+              {/* 1. LUNAR HALO & RADIANT FULL MOON */}
+              <circle cx="62" cy="36" r="30" fill="#38BDF8" opacity="0.22" filter="blur(6px)" />
+              <circle cx="62" cy="36" r="23" fill="url(#wolfMoon)" />
 
-              {/* Tall Erect Pointed Wolf Ears */}
-              {/* Left Ear */}
-              <polygon points="20,10 38,32 16,36" fill="url(#wolfCharcoalFur)" stroke="#38BDF8" strokeWidth="1" />
-              <polygon points="22,14 35,30 18,34" fill="#0B101E" />
-              <polygon points="23,18 33,28 19,32" fill="#FFFFFF" />
+              {/* Subtle Lunar Craters / Maria */}
+              <ellipse cx="68" cy="30" rx="4.5" ry="3.5" fill="#93C5FD" opacity="0.35" />
+              <ellipse cx="60" cy="24" rx="3.5" ry="2.5" fill="#93C5FD" opacity="0.3" />
+              <ellipse cx="72" cy="40" rx="5" ry="4" fill="#93C5FD" opacity="0.35" />
+              <ellipse cx="64" cy="45" rx="3" ry="2" fill="#93C5FD" opacity="0.25" />
 
-              {/* Right Ear */}
-              <polygon points="80,10 62,32 84,36" fill="url(#wolfCharcoalFur)" stroke="#38BDF8" strokeWidth="1" />
-              <polygon points="78,14 65,30 82,34" fill="#0B101E" />
-              <polygon points="77,18 67,28 81,32" fill="#FFFFFF" />
+              {/* Twinkling Midnight Sky Stars */}
+              <circle cx="20" cy="22" r="1.2" fill="#FFFFFF" />
+              <circle cx="34" cy="14" r="0.9" fill="#BAE6FD" />
+              <circle cx="15" cy="40" r="0.8" fill="#FFFFFF" />
+              <polygon points="26,26 27,24 28,26 30,26 28.5,27.5 29,29.5 27,28 25,29.5 25.5,27.5 24,26 26,26" fill="#FFFFFF" opacity="0.8" />
 
-              {/* Outer Flared Mane & Crown Silhouette */}
+              {/* Howling Sound Ripples Toward the Moon */}
+              <path d="M 68 18 C 72 21, 74 25, 75 30" fill="none" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+              <path d="M 73 14 C 79 18, 82 23, 83 30" fill="none" stroke="#7DD3FC" strokeWidth="1.2" strokeLinecap="round" opacity="0.45" />
+
+              {/* 2. SILHOUETTED PINE TREES AT FOREST BASE */}
+              <polygon points="6,92 12,74 15,76 18,65 21,76 24,74 30,92" fill="#04151F" />
+              <polygon points="76,92 82,76 85,78 88,68 91,78 94,76 98,92" fill="#04151F" />
+              <path d="M 6 92 Q 30 84 55 88 Q 78 92 94 92 Z" fill="#060C18" />
+
+              {/* 3. MAJESTIC TIMBER WOLF IN PROFILE HOWLING */}
+              {/* Far ear (Back silhouette) */}
+              <polygon points="40,24 45,11 49,20" fill="#1E293B" stroke="#0F172A" strokeWidth="0.8" />
+              <polygon points="42,22 45,13 47,19" fill="#0F172A" />
+
+              {/* Main Wolf Body, Arched Neck & Flared Mane Ruffs */}
               <path
-                d="M 50 25
-                   C 62 25, 74 32, 82 44
-                   C 88 52, 80 60, 86 68
-                   C 82 78, 68 85, 50 88
-                   C 32 85, 18 78, 14 68
-                   C 20 60, 12 52, 18 44
-                   C 26 32, 38 25, 50 25 Z"
-                fill="url(#wolfCharcoalFur)"
+                d="M 12 92
+                   C 14 84, 18 78, 20 72
+                   C 16 68, 22 62, 25 56
+                   C 22 52, 28 46, 32 40
+                   C 30 36, 33 30, 36 26
+                   C 37 20, 42 16, 44 26
+                   C 48 27, 53 28, 56 26
+                   C 60 24, 63 22, 65 22
+                   C 66 23, 64 26, 61 27
+                   C 58 28, 56 30, 56 32
+                   C 53 32, 50 34, 49 37
+                   C 45 44, 40 50, 42 56
+                   C 37 62, 36 70, 38 78
+                   C 34 84, 32 92, 32 92 Z"
+                fill="url(#wolfFurBody)"
                 stroke="#090E1A"
                 strokeWidth="1.2"
               />
 
-              {/* Silver Cheek Flared Fur Tufts */}
-              <polygon points="14,68 28,52 38,66 24,76" fill="url(#wolfSilverFur)" />
-              <polygon points="86,68 72,52 62,66 76,76" fill="url(#wolfSilverFur)" />
-
-              {/* Brilliant White Flared Outer Cheek Ruffs */}
-              <polygon points="12,66 22,54 32,68 20,74" fill="#FFFFFF" />
-              <polygon points="88,66 78,54 68,68 80,74" fill="#FFFFFF" />
-
-              {/* Forehead Stripe & Eye Brow Ridges */}
-              <polygon points="50,26 56,42 50,54 44,42" fill="#090E1A" />
-              <polygon points="50,28 54,40 50,48 46,40" fill="#334155" />
-
-              {/* Silver Brow Planes */}
-              <polygon points="34,40 45,43 38,52 26,48" fill="url(#wolfSilverFur)" />
-              <polygon points="66,40 55,43 62,52 74,48" fill="url(#wolfSilverFur)" />
-
-              {/* Pure White Snout, Muzzle & Chin */}
+              {/* Near Erect Pointed Wolf Ear */}
               <path
-                d="M 37 56
-                   C 37 52, 50 50, 50 50
-                   C 50 50, 63 52, 63 56
-                   C 65 68, 60 82, 50 85
-                   C 40 82, 35 68, 37 56 Z"
-                fill="#FFFFFF"
-                stroke="#CBD5E1"
+                d="M 36 28
+                   C 35 22, 37 13, 40 10
+                   C 42 11, 45 16, 46 25 Z"
+                fill="url(#wolfFurBody)"
+                stroke="#0F172A"
                 strokeWidth="0.8"
               />
+              {/* Inner Ear Silver/Cream Fur Tuft */}
+              <polygon points="38,25 41,13 44,23" fill="#E2E8F0" />
+              <polygon points="39,24 41,16 43,23" fill="#F8FAFC" />
+              <path d="M 40 10 Q 42 16 43 25" stroke="#FFFFFF" strokeWidth="0.8" fill="none" opacity="0.85" />
 
-              {/* Dark Snout Bridge Stripe */}
-              <polygon points="46,50 54,50 53,62 47,62" fill="#475569" />
+              {/* Muzzle Profile, Open Howling Mouth & Fangs */}
+              {/* Open howling mouth aperture (Dark red interior) */}
+              <path d="M 57 26.5 L 63 23 L 59 28.5 L 56 29 Z" fill="#450A0A" />
+              {/* Sharp white upper canine fang */}
+              <polygon points="59.5,24.5 61,26.8 58.5,26" fill="#FFFFFF" stroke="#0F172A" strokeWidth="0.3" />
+              {/* Lower jaw & chin tuft */}
+              <path d="M 56 29 C 58 29.5, 60 28, 59 28.5 C 57 31, 54 32, 52 33" stroke="#CBD5E1" strokeWidth="1.2" fill="none" strokeLinecap="round" />
 
-              {/* Intense Golden-Amber Wolf Eyes */}
-              {/* Left Eye */}
-              <g id="wolfLeftEye">
-                <polygon points="28,42 44,44 35,50" fill="#090E1A" />
-                <ellipse cx="36.5" cy="45.5" rx="4" ry="2.6" fill="url(#wolfAmberEye)" />
-                <ellipse cx="36.5" cy="45.5" rx="1.8" ry="1.8" fill="#050810" />
-                <circle cx="37.2" cy="44.8" r="0.8" fill="#FFFFFF" />
-                <path d="M 27 39 Q 36 41 43 42" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              {/* Black Leather Nose Pad */}
+              <path d="M 64 22 C 65.5 22.5, 65 24, 63.5 24.5 C 62.5 24, 62.8 22.5, 64 22 Z" fill="#090E1A" />
+              <circle cx="64.2" cy="23" r="0.4" fill="#93C5FD" />
+
+              {/* Distinctive Muzzle & Snout Bridge Contour */}
+              <path d="M 63.5 22.5 C 59 24.5, 54 27, 49 27.5" stroke="#94A3B8" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+
+              {/* Piercing Glowing Amber Wolf Eye in Lunar Howl */}
+              <g id="howlEye">
+                {/* Slanted wolf eye slit angled with the howl */}
+                <polygon points="46,26 51,27.5 47,29.5" fill="#090E1A" />
+                <ellipse cx="48.5" cy="27.8" rx="2" ry="1.1" fill="url(#wolfAmberGlint)" />
+                <ellipse cx="48.5" cy="27.8" rx="0.9" ry="0.9" fill="#090E1A" />
+                <circle cx="49" cy="27.4" r="0.4" fill="#FFFFFF" />
+                {/* Furrowed Brow Catching Moonlight */}
+                <path d="M 45 25 Q 49 26 52 27" stroke="#F8FAFC" strokeWidth="1.2" fill="none" strokeLinecap="round" />
               </g>
 
-              {/* Right Eye */}
-              <g id="wolfRightEye">
-                <polygon points="72,42 56,44 65,50" fill="#090E1A" />
-                <ellipse cx="63.5" cy="45.5" rx="4" ry="2.6" fill="url(#wolfAmberEye)" />
-                <ellipse cx="63.5" cy="45.5" rx="1.8" ry="1.8" fill="#050810" />
-                <circle cx="64.2" cy="44.8" r="0.8" fill="#FFFFFF" />
-                <path d="M 73 39 Q 64 41 57 42" stroke="#FFFFFF" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-              </g>
-
-              {/* Black Leather Wolf Nose Pad */}
+              {/* Sculpted Silver & White Throat Fur Ruff */}
               <path
-                d="M 44 64 L 56 64 C 57 68, 54 73, 50 74 C 46 73, 43 68, 44 64 Z"
-                fill="#090E1A"
-                stroke="#1E293B"
-                strokeWidth="0.8"
+                d="M 52 33
+                   C 49 38, 44 43, 45 49
+                   C 41 53, 37 60, 39 67
+                   C 35 73, 31 82, 32 92
+                   C 25 87, 26 77, 29 70
+                   C 32 63, 35 56, 37 50
+                   C 40 43, 44 38, 48 34 Z"
+                fill="url(#wolfFurChest)"
+                opacity="0.95"
               />
-              <circle cx="47" cy="67" r="1.1" fill="#1E293B" />
-              <circle cx="53" cy="67" r="1.1" fill="#1E293B" />
-              <ellipse cx="50" cy="65.5" rx="3.5" ry="1" fill="#475569" opacity="0.6" />
 
-              {/* Mouth Split & Chin Line */}
-              <line x1="50" y1="74" x2="50" y2="78" stroke="#090E1A" strokeWidth="1.4" />
-              <path d="M 45 78 Q 50 80 55 78" stroke="#090E1A" strokeWidth="1.4" fill="none" />
-              <polygon points="48,81 52,81 50,84" fill="#334155" />
+              {/* Cheek & Jawbone Silver Fur Strokes */}
+              <path d="M 44 31 Q 38 37 40 43" stroke="#E2E8F0" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 46 35 Q 41 42 42 48" stroke="#F8FAFC" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              <path d="M 43 43 Q 36 50 37 57" stroke="#CBD5E1" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 39 52 Q 32 60 33 68" stroke="#94A3B8" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+
+              {/* Brilliant Moonlit Rim Lighting Along Back of Neck & Mane */}
+              <path
+                d="M 40 10
+                   C 37 13, 35 22, 36 28
+                   C 33 30, 30 36, 32 40
+                   C 28 46, 22 52, 25 56
+                   C 22 62, 16 68, 20 72
+                   C 18 78, 14 84, 12 92"
+                stroke="#BAE6FD"
+                strokeWidth="1.8"
+                fill="none"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
+              {/* Pure White Specular Rim Glint */}
+              <path
+                d="M 39 12
+                   C 37 18, 36 26, 36 28
+                   C 34 32, 31 38, 32 40
+                   C 29 45, 25 51, 26 55"
+                stroke="#FFFFFF"
+                strokeWidth="1.1"
+                fill="none"
+                strokeLinecap="round"
+              />
             </g>
           </svg>
         );
@@ -1552,15 +1602,174 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         );
       case 'PINECONE':
         return (
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
-            {/* Pine Needles */}
-            <path d="M50 20 L30 10 M50 20 L70 10 M50 20 L24 22 M50 20 L76 22" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Pinecone Scales */}
-            <ellipse cx="50" cy="56" rx="24" ry="32" fill="#78350F" stroke="#F59E0B" strokeWidth="2" />
-            <path d="M38 36 Q50 44 62 36" stroke="#FEF08A" strokeWidth="2" fill="none" />
-            <path d="M32 48 Q50 58 68 48" stroke="#FEF08A" strokeWidth="2" fill="none" />
-            <path d="M34 60 Q50 70 66 60" stroke="#FEF08A" strokeWidth="2" fill="none" />
-            <path d="M40 72 Q50 80 60 72" stroke="#FEF08A" strokeWidth="2" fill="none" />
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
+            <defs>
+              <linearGradient id="needleDark" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#166534" />
+                <stop offset="100%" stopColor="#14532D" />
+              </linearGradient>
+              <linearGradient id="needleBright" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#86EFAC" />
+                <stop offset="50%" stopColor="#22C55E" />
+                <stop offset="100%" stopColor="#15803D" />
+              </linearGradient>
+              <linearGradient id="pineScaleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#9A3412" />
+                <stop offset="45%" stopColor="#78350F" />
+                <stop offset="100%" stopColor="#3B1A08" />
+              </linearGradient>
+              <linearGradient id="pineScaleRim" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FEF08A" />
+                <stop offset="50%" stopColor="#F59E0B" />
+                <stop offset="100%" stopColor="#B45309" />
+              </linearGradient>
+              <radialGradient id="pineWarmGlow" cx="50%" cy="55%" r="45%">
+                <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+
+            {/* Warm Woodland Backglow */}
+            <circle cx="50" cy="56" r="36" fill="url(#pineWarmGlow)" />
+
+            {/* Solid Dark Base Silhouette Underlay */}
+            <path
+              d="M 50 24
+                 C 64 25, 75 36, 76 50
+                 C 77 64, 66 79, 56 89
+                 C 53 92, 47 92, 44 89
+                 C 34 79, 23 64, 24 50
+                 C 25 36, 36 25, 50 24 Z"
+              fill="#240D02"
+              stroke="#1C0A00"
+              strokeWidth="1.2"
+            />
+
+            {/* OVERLAPPING REALISTIC WOODY SCALES (Bottom to Top shingled layering) */}
+            {/* TIER 6 - BOTTOM TIP (y ~ 80-93) */}
+            <g id="pineTier6">
+              <path d="M 46 80 C 44 84, 46 90, 50 93 C 54 90, 56 84, 54 80 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 47 87 Q 50 92 53 87" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+            </g>
+
+            {/* TIER 5 - LOWER CONE (y ~ 70-85) */}
+            <g id="pineTier5">
+              {/* Lower Left Scale */}
+              <path d="M 36 71 C 31 75, 34 82, 42 84 C 47 82, 47 75, 36 71 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 34 78 Q 39 83 43 81" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Lower Right Scale */}
+              <path d="M 64 71 C 69 75, 66 82, 58 84 C 53 82, 53 75, 64 71 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 66 78 Q 61 83 57 81" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Lower Center Scale */}
+              <path d="M 50 69 C 43 73, 44 81, 50 85 C 56 81, 57 73, 50 69 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 79 Q 50 85 55 79" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <polygon points="50,73 53,78 50,82 47,78" fill="#FDE047" opacity="0.6" />
+              <circle cx="50" cy="80" r="1" fill="#FFFBEB" />
+            </g>
+
+            {/* TIER 4 - LOWER BELLY (y ~ 57-73) */}
+            <g id="pineTier4">
+              {/* Lower Far-Left Flared */}
+              <path d="M 25 57 C 17 61, 18 69, 28 72 C 34 69, 34 62, 25 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 21 66 Q 26 72 30 69" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Lower Far-Right Flared */}
+              <path d="M 75 57 C 83 61, 82 69, 72 72 C 66 69, 66 62, 75 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 79 66 Q 74 72 70 69" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Lower Mid-Left */}
+              <path d="M 37 57 C 29 62, 31 71, 41 73 C 47 70, 46 62, 37 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 33 67 Q 38 73 42 70" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <polygon points="37,61 40,66 37,70 34,66" fill="#F59E0B" opacity="0.5" />
+              {/* Lower Mid-Right */}
+              <path d="M 63 57 C 71 62, 69 71, 59 73 C 53 70, 54 62, 63 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 67 67 Q 62 73 58 70" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <polygon points="63,61 66,66 63,70 60,66" fill="#F59E0B" opacity="0.5" />
+              {/* Lower Center */}
+              <path d="M 50 56 C 42 60, 43 70, 50 74 C 57 70, 58 60, 50 56 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 68 Q 50 74 55 68" stroke="url(#pineScaleRim)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+              <polygon points="50,61 54,67 50,71 46,67" fill="#FEF08A" opacity="0.6" />
+              <circle cx="50" cy="69" r="1.1" fill="#FFFBEB" />
+            </g>
+
+            {/* TIER 3 - WIDE MID BELLY (y ~ 43-63) */}
+            <g id="pineTier3">
+              {/* Mid Far-Left Flared */}
+              <path d="M 23 43 C 14 47, 15 55, 25 58 C 31 55, 31 48, 23 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 18 51 Q 23 57 27 54" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              {/* Mid Far-Right Flared */}
+              <path d="M 77 43 C 86 47, 85 55, 75 58 C 69 55, 69 48, 77 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 82 51 Q 77 57 73 54" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              {/* Mid Center-Left */}
+              <path d="M 35 44 C 27 48, 28 58, 38 61 C 45 58, 45 49, 35 44 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 31 55 Q 36 61 41 57" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <polygon points="36,49 40,55 36,59 32,55" fill="#F59E0B" opacity="0.5" />
+              <circle cx="36" cy="56" r="1" fill="#FFFBEB" />
+              {/* Mid Center-Right */}
+              <path d="M 65 44 C 73 48, 72 58, 62 61 C 55 58, 55 49, 65 44 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 69 55 Q 64 61 59 57" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <polygon points="64,49 68,55 64,59 60,55" fill="#F59E0B" opacity="0.5" />
+              <circle cx="64" cy="56" r="1" fill="#FFFBEB" />
+              {/* Primary Center Scale */}
+              <path d="M 50 43 C 41 47, 42 59, 50 63 C 58 59, 59 47, 50 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 44 57 Q 50 63 56 57" stroke="url(#pineScaleRim)" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+              <polygon points="50,48 54,55 50,60 46,55" fill="#FEF08A" opacity="0.7" />
+              <circle cx="50" cy="58" r="1.3" fill="#FFFBEB" />
+            </g>
+
+            {/* TIER 2 - UPPER CHEST (y ~ 31-48) */}
+            <g id="pineTier2">
+              {/* Upper Left Outer */}
+              <path d="M 30 31 C 21 34, 22 42, 30 46 C 36 43, 37 36, 30 31 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 25 39 Q 29 45 33 42" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Upper Right Outer */}
+              <path d="M 70 31 C 79 34, 78 42, 70 46 C 64 43, 63 36, 70 31 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 75 39 Q 71 45 67 42" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              {/* Upper Mid-Left */}
+              <path d="M 40 33 C 33 37, 34 45, 42 48 C 48 45, 48 37, 40 33 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 36 43 Q 41 48 44 45" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              {/* Upper Mid-Right */}
+              <path d="M 60 33 C 67 37, 66 45, 58 48 C 52 45, 52 37, 60 33 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 64 43 Q 59 48 56 45" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            </g>
+
+            {/* TIER 1 - CROWN BASE (y ~ 24-38) */}
+            <g id="pineTier1">
+              {/* Crown Left */}
+              <path d="M 40 24 C 34 27, 35 33, 41 36 C 46 34, 46 27, 40 24 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 37 31 Q 41 35 44 33" stroke="url(#pineScaleRim)" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              {/* Crown Right */}
+              <path d="M 60 24 C 66 27, 65 33, 59 36 C 54 34, 54 27, 60 24 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 63 31 Q 59 35 56 33" stroke="url(#pineScaleRim)" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              {/* Crown Center */}
+              <path d="M 50 25 C 44 28, 44 35, 50 38 C 56 35, 56 28, 50 25 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 34 Q 50 39 55 34" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            </g>
+
+            {/* TOP STEM & EVERGREEN PINE NEEDLES */}
+            {/* Dark green background needles */}
+            <path d="M 48 18 C 34 10, 18 14, 10 24" stroke="url(#needleDark)" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+            <path d="M 52 18 C 66 10, 82 14, 90 24" stroke="url(#needleDark)" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+            <path d="M 48 19 C 32 18, 16 26, 12 38" stroke="url(#needleDark)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 52 19 C 68 18, 84 26, 88 38" stroke="url(#needleDark)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+
+            {/* Midtone vibrant forest green needles */}
+            <path d="M 49 17 C 36 6, 24 8, 16 16" stroke="url(#needleBright)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 51 17 C 64 6, 76 8, 84 16" stroke="url(#needleBright)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 49 18 C 38 12, 28 14, 22 22" stroke="#15803D" strokeWidth="2" fill="none" strokeLinecap="round" />
+            <path d="M 51 18 C 62 12, 72 14, 78 22" stroke="#15803D" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+            {/* Bright lime needle tips */}
+            <path d="M 50 16 C 40 4, 30 6, 22 10" stroke="#86EFAC" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity="0.9" />
+            <path d="M 50 16 C 60 4, 70 6, 78 10" stroke="#86EFAC" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity="0.9" />
+
+            {/* Woody Pine Branch Twig */}
+            <path d="M 50 25 C 49 19, 52 14, 55 10" stroke="#271206" strokeWidth="4.5" fill="none" strokeLinecap="round" />
+            <path d="M 50 25 C 49 19, 52 14, 55 10" stroke="#78350F" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+            <path d="M 50.8 23 C 50.2 18, 52.8 14, 55 11" stroke="#D97706" strokeWidth="1" fill="none" strokeLinecap="round" />
+
+            {/* Golden Pinecone Sparkle */}
+            <polygon points="50,44 51,41 52,44 55,44 52.5,46 53.5,49 50,47 46.5,49 47.5,46 45,44 49,44" fill="#FFFBEB" opacity="0.9" />
+            <circle cx="35" cy="54" r="0.8" fill="#FEF08A" />
+            <circle cx="65" cy="54" r="0.8" fill="#FEF08A" />
           </svg>
         );
 
