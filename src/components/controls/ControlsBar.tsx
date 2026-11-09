@@ -127,11 +127,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
     <div className="hidden sm:flex flex-col space-y-1 sm:space-y-1.5 w-full font-mono">
       {/* Heavy Brushed-Steel Control Panel with Stepped 8-Bit Chassis */}
       <div
-        className="relative bg-gradient-to-b from-[#1c1c28] via-[#101018] to-[#08080f] border-2 border-pink-500 p-1 sm:p-1.5 shadow-[0_0_20px_rgba(236,72,153,0.35),inset_0_1px_3px_rgba(255,255,255,0.2)] flex items-center justify-between gap-1.5 sm:gap-2"
-        style={{
-          clipPath:
-            'polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px))',
-        }}
+        className="relative bg-gradient-to-b from-[#1c1c28] via-[#101018] to-[#08080f] border-2 border-pink-500 rounded-xl p-1 sm:p-1.5 shadow-[0_0_20px_rgba(236,72,153,0.35),inset_0_1px_3px_rgba(255,255,255,0.2)] flex items-center justify-between gap-1.5 sm:gap-2"
       >
         {/* Corner Hex Mounting Screws */}
         <div className="absolute top-1 left-1.5 w-1.5 h-1.5 bg-slate-700 border border-slate-500 flex items-center justify-center">
@@ -338,28 +334,30 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             )}
 
             {showAutoMenu && !isAutoSpinning && (
-              <div
-                className="absolute bottom-full mb-2 right-0 bg-black border-2 border-pink-500 p-2 shadow-2xl flex flex-col space-y-1.5 z-40 min-w-[120px]"
-                style={{
-                  clipPath:
-                    'polygon(0 4px, 4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px))',
-                }}
-              >
-                <div className="text-[9px] text-pink-300 font-black uppercase text-center">AUTO SPINS</div>
-                {[10, 25, 50, 100].map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      setShowAutoMenu(false);
-                      onAutoSpinStart(count);
-                    }}
-                    className="px-2 py-1 bg-purple-950 hover:bg-pink-600 text-xs font-bold text-cyan-200 text-center transition-colors"
-                  >
-                    {count} Plays
-                  </button>
-                ))}
-              </div>
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowAutoMenu(false)}
+                />
+                <div
+                  className="absolute bottom-full mb-2 right-0 bg-black border-2 border-pink-500 p-2 shadow-2xl flex flex-col space-y-1.5 z-50 min-w-[120px] rounded-xl font-mono"
+                >
+                  <div className="text-[9px] text-pink-300 font-black uppercase text-center">AUTO SPINS</div>
+                  {[10, 25, 50, 100].map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setShowAutoMenu(false);
+                        onAutoSpinStart(count);
+                      }}
+                      className="px-2 py-1 bg-purple-950 hover:bg-pink-600 text-xs font-bold text-cyan-200 text-center transition-colors rounded"
+                    >
+                      {count} Plays
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -415,11 +413,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
     <div className="hidden sm:flex flex-col space-y-1 sm:space-y-1.5 w-full font-serif">
       {/* Hewn Cedar Bench Console with Notched Log Ends */}
       <div
-        className="relative bg-gradient-to-b from-[#2e170c] via-[#1a0c05] to-[#0a0502] border-2 sm:border-3 border-[#78350f] p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between gap-1.5 sm:gap-2"
-        style={{
-          clipPath:
-            'polygon(0% 10%, 2% 0%, 98% 0%, 100% 10%, 98% 50%, 100% 90%, 98% 100%, 2% 100%, 0% 90%, 2% 50%)',
-        }}
+        className="relative bg-gradient-to-b from-[#2e170c] via-[#1a0c05] to-[#0a0502] border-2 sm:border-3 border-[#78350f] rounded-xl p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between gap-1.5 sm:gap-2"
       >
         {/* Left Wing: Tree-Stump Growth Ring Dials */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 pl-1.5 sm:pl-2.5">
@@ -614,28 +608,30 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             )}
 
             {showAutoMenu && !isAutoSpinning && (
-              <div
-                className="absolute bottom-full mb-2 right-0 bg-[#1c0c04] border-2 border-[#a16207] p-2 shadow-2xl flex flex-col space-y-1.5 z-40 min-w-[120px]"
-                style={{
-                  clipPath:
-                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
-                }}
-              >
-                <div className="text-[9px] text-amber-300 font-black uppercase text-center">AUTO SPINS</div>
-                {[10, 25, 50, 100].map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      setShowAutoMenu(false);
-                      onAutoSpinStart(count);
-                    }}
-                    className="px-2 py-1 bg-[#2e180e] hover:bg-[#451e0a] text-xs font-bold text-amber-200 text-center transition-colors"
-                  >
-                    {count} Harvests
-                  </button>
-                ))}
-              </div>
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowAutoMenu(false)}
+                />
+                <div
+                  className="absolute bottom-full mb-2 right-0 bg-[#1c0c04] border-2 border-[#a16207] p-2 shadow-2xl flex flex-col space-y-1.5 z-50 min-w-[120px] rounded-xl font-serif"
+                >
+                  <div className="text-[9px] text-amber-300 font-black uppercase text-center">AUTO SPINS</div>
+                  {[10, 25, 50, 100].map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setShowAutoMenu(false);
+                        onAutoSpinStart(count);
+                      }}
+                      className="px-2 py-1 bg-[#2e180e] hover:bg-[#451e0a] text-xs font-bold text-amber-200 text-center transition-colors rounded"
+                    >
+                      {count} Harvests
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -691,11 +687,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
     <div className="hidden sm:flex flex-col space-y-1 sm:space-y-1.5 w-full font-mono">
       {/* Polished Titanium & 24K Gold Bullion Ingot Console */}
       <div
-        className="relative bg-gradient-to-r from-slate-950 via-casino-950 to-slate-950 border-2 border-yellow-400 p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(245,158,11,0.45)] flex items-center justify-between gap-1.5 sm:gap-2"
-        style={{
-          clipPath:
-            'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)',
-        }}
+        className="relative bg-gradient-to-r from-slate-950 via-casino-950 to-slate-950 border-2 border-yellow-400 rounded-xl p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(245,158,11,0.45)] flex items-center justify-between gap-1.5 sm:gap-2"
       >
         {/* Left Wing: Minted Casino Chips & Lines */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 pl-1.5 sm:pl-2.5">
@@ -888,28 +880,30 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             )}
 
             {showAutoMenu && !isAutoSpinning && (
-              <div
-                className="absolute bottom-full mb-2 right-0 bg-casino-900 border border-white/20 p-2 shadow-2xl flex flex-col space-y-1.5 z-40 min-w-[130px]"
-                style={{
-                  clipPath:
-                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
-                }}
-              >
-                <div className="text-[10px] text-slate-400 font-bold uppercase text-center py-0.5">Select Auto Spins</div>
-                {[10, 25, 50, 100].map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      setShowAutoMenu(false);
-                      onAutoSpinStart(count);
-                    }}
-                    className="px-3 py-1.5 bg-casino-800 hover:bg-gold-metallic hover:text-white text-xs font-bold text-slate-200 text-center transition-colors"
-                  >
-                    {count} Spins
-                  </button>
-                ))}
-              </div>
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowAutoMenu(false)}
+                />
+                <div
+                  className="absolute bottom-full mb-2 right-0 bg-casino-900 border border-white/20 p-2 shadow-2xl flex flex-col space-y-1.5 z-50 min-w-[130px] rounded-xl font-mono"
+                >
+                  <div className="text-[10px] text-slate-400 font-bold uppercase text-center py-0.5">AUTO SPINS</div>
+                  {[10, 25, 50, 100].map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setShowAutoMenu(false);
+                        onAutoSpinStart(count);
+                      }}
+                      className="px-3 py-1.5 bg-casino-800 hover:bg-gold-metallic hover:text-white text-xs font-bold text-slate-200 text-center transition-colors rounded"
+                    >
+                      {count} Spins
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -965,11 +959,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
     <div className="hidden sm:flex flex-col space-y-1 sm:space-y-1.5 w-full font-mono">
       {/* Matte Obsidian Ribbed DualShock 2 Console Frame */}
       <div
-        className="relative bg-gradient-to-r from-[#03060c] via-[#080d1a] to-[#03060c] border-2 border-[#006FCD] p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(0,111,205,0.45)] flex items-center justify-between gap-1.5 sm:gap-2"
-        style={{
-          clipPath:
-            'polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px)',
-        }}
+        className="relative bg-gradient-to-r from-[#03060c] via-[#080d1a] to-[#03060c] border-2 border-[#006FCD] rounded-xl p-1 sm:p-1.5 shadow-[0_10px_25px_rgba(0,0,0,0.95),0_0_20px_rgba(0,111,205,0.45)] flex items-center justify-between gap-1.5 sm:gap-2"
       >
         {/* Left Wing: DualShock D-Pad & Analog Bet Stepper */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 pl-1.5 sm:pl-2.5">
@@ -1152,40 +1142,39 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   setShowAutoMenu(!showAutoMenu);
                 }}
                 disabled={isSpinning || isFreeSpins}
-                className="flex items-center justify-center space-x-1 px-2 h-8 sm:h-8.5 md:h-9 bg-[#080d1a] border border-[#006FCD] hover:border-[#00F0FF] text-cyan-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider disabled:opacity-40"
-                style={{
-                  clipPath:
-                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
-                }}
+                className="flex items-center justify-center space-x-1 px-2.5 h-8 sm:h-8.5 md:h-9 bg-[#080d1a] border border-[#006FCD] hover:border-[#00F0FF] text-cyan-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider disabled:opacity-40 rounded-lg hover:bg-[#006FCD]/20 transition-all shadow-[0_0_8px_rgba(0,111,205,0.4)]"
+                title="Auto Spin: Choose 10, 25, 50, or 100 auto spins"
               >
                 <RefreshCw className="w-3 h-3 text-[#00F0FF]" />
-                <span>SELECT</span>
+                <span>AUTO</span>
               </button>
             )}
 
             {showAutoMenu && !isAutoSpinning && (
-              <div
-                className="absolute bottom-full mb-2 right-0 bg-[#050811] border-2 border-[#006FCD] p-2 shadow-2xl flex flex-col space-y-1.5 z-40 min-w-[130px]"
-                style={{
-                  clipPath:
-                    'polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)',
-                }}
-              >
-                <div className="text-[10px] text-cyan-400 font-bold uppercase text-center py-0.5">AUTO CYCLE</div>
-                {[10, 25, 50, 100].map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      setShowAutoMenu(false);
-                      onAutoSpinStart(count);
-                    }}
-                    className="px-3 py-1.5 bg-[#0a1224] hover:bg-[#006FCD] hover:text-white text-xs font-bold text-cyan-200 text-center transition-colors"
-                  >
-                    {count} Cycles
-                  </button>
-                ))}
-              </div>
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowAutoMenu(false)}
+                />
+                <div
+                  className="absolute bottom-full mb-2 right-0 bg-[#050811] border-2 border-[#006FCD] p-2 shadow-2xl flex flex-col space-y-1.5 z-50 min-w-[130px] rounded-xl font-mono"
+                >
+                  <div className="text-[10px] text-cyan-400 font-bold uppercase text-center py-0.5">AUTO CYCLE</div>
+                  {[10, 25, 50, 100].map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => {
+                        soundManager.playButtonClick();
+                        setShowAutoMenu(false);
+                        onAutoSpinStart(count);
+                      }}
+                      className="px-3 py-1.5 bg-[#0a1224] hover:bg-[#006FCD] hover:text-white text-xs font-bold text-cyan-200 text-center transition-colors rounded-lg font-mono"
+                    >
+                      {count} Cycles
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
