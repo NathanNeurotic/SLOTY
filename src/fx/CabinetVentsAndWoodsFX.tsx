@@ -47,30 +47,38 @@ export const CabinetVentsAndWoodsFX: React.FC<CabinetVentsAndWoodsFXProps> = ({
   // Trigger Steam Vents on 24K Vault spin start or cabinet slam ONLY
   useEffect(() => {
     if (isVault && (isCabinetSlamming || (hasActiveWin && !isSpinning))) {
-      setSteamActive(true);
-      soundManager.playSteamHiss();
+      const raf = requestAnimationFrame(() => {
+        setSteamActive(true);
+        soundManager.playSteamHiss();
+      });
       const t = setTimeout(() => setSteamActive(false), 900);
-      return () => clearTimeout(t);
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(t);
+      };
     }
   }, [isCabinetSlamming, hasActiveWin, isSpinning, isVault]);
 
   // Trigger Pine Needle Shower on Timberland cabinet slam
   useEffect(() => {
     if (isTimber && isCabinetSlamming) {
-      soundManager.playPineNeedleRustle();
-      const newNeedles: PineNeedleParticle[] = Array.from({ length: 14 }).map((_, i) => ({
-        id: Date.now() + i,
-        x: 10 + Math.random() * 80,
-        y: 0,
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: 2.2 + Math.random() * 2.8,
-        rotation: Math.random() * Math.PI * 2,
-        vRot: (Math.random() - 0.5) * 0.15,
-        type: Math.random() < 0.6 ? 'needle' : 'leaf',
-        color: Math.random() < 0.5 ? '#15803D' : Math.random() < 0.8 ? '#D97706' : '#DC2626',
-        opacity: 0.95,
-      }));
-      setNeedles((prev) => [...prev.slice(-10), ...newNeedles]);
+      const raf = requestAnimationFrame(() => {
+        soundManager.playPineNeedleRustle();
+        const newNeedles: PineNeedleParticle[] = Array.from({ length: 14 }).map((_, i) => ({
+          id: Date.now() + i,
+          x: 10 + Math.random() * 80,
+          y: 0,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: 2.2 + Math.random() * 2.8,
+          rotation: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.15,
+          type: Math.random() < 0.6 ? 'needle' : 'leaf',
+          color: Math.random() < 0.5 ? '#15803D' : Math.random() < 0.8 ? '#D97706' : '#DC2626',
+          opacity: 0.95,
+        }));
+        setNeedles((prev) => [...prev.slice(-10), ...newNeedles]);
+      });
+      return () => cancelAnimationFrame(raf);
     }
   }, [isTimber, isCabinetSlamming]);
 

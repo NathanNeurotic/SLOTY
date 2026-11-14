@@ -17,8 +17,10 @@ export const VaultBlastDoors: React.FC<VaultBlastDoorsProps> = ({
 
   useEffect(() => {
     if (isOpen && targetScene) {
-      setPhase('closing');
-      soundManager.playVaultSlide();
+      const raf = requestAnimationFrame(() => {
+        setPhase('closing');
+        soundManager.playVaultSlide();
+      });
 
       // Door closed & locked after 350ms
       const t1 = setTimeout(() => {
@@ -39,6 +41,7 @@ export const VaultBlastDoors: React.FC<VaultBlastDoorsProps> = ({
       }, 1450);
 
       return () => {
+        cancelAnimationFrame(raf);
         clearTimeout(t1);
         clearTimeout(t2);
         clearTimeout(t3);

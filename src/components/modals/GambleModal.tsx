@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Sparkles, Trophy, Trees, Gamepad2, Zap } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { X, Sparkles, Trophy, Trees, Gamepad2, Zap, Gift } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
+import { MysteryPickModal } from './MysteryPickModal';
 import type { GameId } from '../../games/types';
 
 interface GambleModalProps {
@@ -25,6 +26,7 @@ export const GambleModal: React.FC<GambleModalProps> = ({
   const isPixel = activeGameId === 'pixel-arcade';
   const isPs2 = activeGameId === 'ps2-legends';
 
+  const [gambleMode, setGambleMode] = useState<'CARDS' | 'MYSTERY_PICK'>('CARDS');
   const [currentPot, setCurrentPot] = useState(initialPot);
   const [history, setHistory] = useState<{ color: CardColor; suit: CardSuit; rank: string }[]>([]);
   const [isFlipping, setIsFlipping] = useState(false);
@@ -35,74 +37,114 @@ export const GambleModal: React.FC<GambleModalProps> = ({
   } | null>(null);
   const [gambleStatus, setGambleStatus] = useState<'CHOOSING' | 'WON' | 'LOST'>('CHOOSING');
 
-  const handlePickColor = (chosenColor: CardColor) => {
-    if (isFlipping) return;
-    setIsFlipping(true);
-    soundManager.playButtonClick();
+  const settledRef = useRef(false);
+  const flipTimerRef = useRef<number | null>(null);
+  const loseTimerRef = useRef<number | null>(null);
 
-    // Generate random card outcome
-    const suits: CardSuit[] = ['HEARTS', 'DIAMONDS', 'SPADES', 'CLUBS'];
-    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    const randomSuit = suits[Math.floor(Math.random() * suits.length)];
-    const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
-    const cardColor: CardColor = randomSuit === 'HEARTS' || randomSuit === 'DIAMONDS' ? 'RED' : 'BLACK';
+  useEffect(() => {
+    return () => {
+      if (flipTimerRef.current) clearTimeout(flipTimerRef.current);
+      if (loseTimerRef.current) clearTimeout(loseTimerRef.current);
+    };
+  }, []);
 
-    setTimeout(() => {
-      const newCard = { color: cardColor, suit: randomSuit, rank: randomRank };
-      setRevealedCard(newCard);
-      setHistory((prev) => [newCard, ...prev.slice(0, 5)]);
-      setIsFlipping(false);
+  const finalizeLose = useCallback(() => {
+    if (settledRef.current) return;
+    settledRef.current = true;
+    if (loseTimerRef.current) clearTimeout(loseTimerRef.current);
+    onLose();
+  }, [onLose]);
 
-      if (chosenColor === cardColor) {
-        // Double the pot!
-        const doubled = currentPot * 2;
-        setCurrentPot(doubled);
-        setGambleStatus('WON');
-        soundManager.playWinChime(8);
-      } else {
-        // Lost
-        setGambleStatus('LOST');
-        soundManager.playReelStop(0);
-        setTimeout(() => {
-          onLose();
-        }, 1600);
-      }
-    }, 600);
-  };
-
-  const handleCollect = () => {
+  const handleCollect = useCallback(() => {
+    if (settledRef.current || isFlipping || gambleStatus === 'LOST') return;
+    settledRef.current = true;
     soundManager.playCoinTally();
     onCollect(currentPot);
-  };
+  }, [isFlipping, gambleStatus, onCollect, currentPot]);
 
-  React.useEffect(() => {
+  const handlePickColor = useCallback(
+    (chosenColor: CardColor) => {
+      if (isFlipping || gambleStatus === 'LOST' || settledRef.current) return;
+      setIsFlipping(true);
+      soundManager.playButtonClick();
+
+      const suits: CardSuit[] = ['HEARTS', 'DIAMONDS', 'SPADES', 'CLUBS'];
+      const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+      const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
+      const cardColor: CardColor =
+        randomSuit === 'HEARTS' || randomSuit === 'DIAMONDS' ? 'RED' : 'BLACK';
+
+      flipTimerRef.current = window.setTimeout(() => {
+        const newCard = { color: cardColor, suit: randomSuit, rank: randomRank };
+        setRevealedCard(newCard);
+        setHistory((prev) => [newCard, ...prev.slice(0, 5)]);
+        setIsFlipping(false);
+
+        if (chosenColor === cardColor) {
+          setCurrentPot((prev) => prev * 2);
+          setGambleStatus('WON');
+          soundManager.playWinChime(8);
+        } else {
+          setGambleStatus('LOST');
+          soundManager.playReelStop(0);
+          loseTimerRef.current = window.setTimeout(() => {
+            finalizeLose();
+          }, 1600);
+        }
+      }, 550);
+    },
+    [isFlipping, gambleStatus, finalizeLose]
+  );
+
+  useEffect(() => {
+    if (gambleMode !== 'CARDS') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft' || e.key === 'r' || e.key === 'R') {
         e.preventDefault();
         e.stopPropagation();
-        if (!isFlipping) handlePickColor('RED');
+        handlePickColor('RED');
       } else if (e.key === 'ArrowRight' || e.key === 'b' || e.key === 'B') {
         e.preventDefault();
         e.stopPropagation();
-        if (!isFlipping) handlePickColor('BLACK');
+        handlePickColor('BLACK');
       } else if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
         e.stopPropagation();
         if (gambleStatus === 'WON') {
           handleCollect();
         } else if (gambleStatus === 'LOST') {
-          onLose();
+          finalizeLose();
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
-        handleCollect();
+        if (gambleStatus === 'LOST') {
+          finalizeLose();
+        } else if (!isFlipping) {
+          handleCollect();
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isFlipping, gambleStatus, currentPot]);
+  }, [gambleMode, isFlipping, gambleStatus, handlePickColor, handleCollect, finalizeLose]);
+
+  if (gambleMode === 'MYSTERY_PICK') {
+    return (
+      <MysteryPickModal
+        totalBet={Math.max(10, Math.round(currentPot / 35))}
+        activeGameId={activeGameId}
+        onComplete={(wonAmount) => {
+          if (settledRef.current) return;
+          settledRef.current = true;
+          onCollect(wonAmount);
+        }}
+        onClose={() => setGambleMode('CARDS')}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
@@ -116,7 +158,7 @@ export const GambleModal: React.FC<GambleModalProps> = ({
           : 'bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-gold-bright/60 shadow-[0_0_50px_rgba(251,191,36,0.5)]'
       } rounded-3xl p-4 sm:p-7 flex flex-col items-center`}>
         {/* Header */}
-        <div className="w-full flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+        <div className="w-full flex items-center justify-between pb-3 border-b border-white/10 mb-3">
           <div className="flex items-center space-x-2">
             {isPs2 ? (
               <span className="text-xl animate-bounce">🎮</span>
@@ -140,12 +182,50 @@ export const GambleModal: React.FC<GambleModalProps> = ({
             </span>
           </div>
           <button
-            onClick={onClose || handleCollect}
-            className={`p-1.5 rounded-lg text-slate-300 ${
+            onClick={() => {
+              if (gambleStatus === 'LOST') {
+                finalizeLose();
+              } else if (onClose) {
+                onClose();
+              } else {
+                handleCollect();
+              }
+            }}
+            disabled={isFlipping}
+            aria-label="Close Gamble Modal"
+            className={`p-1.5 rounded-lg text-slate-300 disabled:opacity-40 ${
               isPs2 ? 'bg-[#00224d] hover:bg-[#003880]' : isPixel ? 'bg-purple-950 hover:bg-pink-900' : isTimber ? 'bg-[#1a0e06] hover:bg-[#2e180a]' : 'bg-casino-800 hover:bg-casino-700'
             }`}
           >
             <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Gamble Feature Mode Switcher */}
+        <div className="w-full flex items-center p-1 rounded-xl bg-black/40 border border-white/10 mb-4 text-xs font-bold">
+          <button
+            onClick={() => setGambleMode('CARDS')}
+            className={`flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center space-x-1 ${
+              gambleMode === 'CARDS'
+                ? isPs2
+                  ? 'bg-[#006FCD] text-white shadow-[0_0_12px_rgba(0,111,205,0.8)] font-mono'
+                  : isPixel
+                  ? 'bg-pink-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.8)] font-mono'
+                  : isTimber
+                  ? 'bg-emerald-700 text-white shadow-md'
+                  : 'bg-gold-500 text-black font-black shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span>🃏</span>
+            <span>Card Double-Up (2X)</span>
+          </button>
+          <button
+            onClick={() => setGambleMode('MYSTERY_PICK')}
+            className="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center space-x-1 text-slate-400 hover:text-white hover:bg-white/5"
+          >
+            <Gift className="w-3.5 h-3.5 text-amber-300" />
+            <span>{isPs2 ? 'Memory Sectors' : isPixel ? 'Prize Cubes' : isTimber ? 'Hollow Logs' : 'Vault Safes'}</span>
           </button>
         </div>
 

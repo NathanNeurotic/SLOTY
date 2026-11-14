@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { soundManager } from '../../audio/soundManager';
 import { Sparkles, DollarSign } from 'lucide-react';
 
@@ -69,11 +69,12 @@ export const BarnabyBullion: React.FC<BarnabyBullionProps> = ({
   onRewardCoins,
   variant = 'full',
 }) => {
-  const [currentQuote, setCurrentQuote] = useState(IDLE_QUOTES[0]);
+  const [idleIndex, setIdleIndex] = useState(0);
+  const [reactionIndex, setReactionIndex] = useState(0);
   const [isTapped, setIsTapped] = useState(false);
   const [showCoinSpark, setShowCoinSpark] = useState(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
-  const quoteTimerRef = useRef<number | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
 
   // Compute mascot operational state
   const mascotState: MascotState = isFeverMode
@@ -88,75 +89,73 @@ export const BarnabyBullion: React.FC<BarnabyBullionProps> = ({
     ? 'spinning'
     : 'idle';
 
-  // Reactively update quotes based on slot events
+  const pool =
+    mascotState === 'fever'
+      ? FEVER_QUOTES
+      : mascotState === 'bigwin'
+      ? BIG_WIN_QUOTES
+      : mascotState === 'win'
+      ? WIN_QUOTES
+      : mascotState === 'anticipation'
+      ? ANTICIPATION_QUOTES
+      : mascotState === 'spinning'
+      ? SPIN_QUOTES
+      : IDLE_QUOTES;
+
+  const baseQuote =
+    winAmount > 0 && (mascotState === 'win' || mascotState === 'bigwin')
+      ? `KA-CHING! +${winAmount.toLocaleString()} COINS!`
+      : pool[(mascotState === 'idle' ? idleIndex : reactionIndex) % pool.length];
+  const currentQuote = tapBonusText || baseQuote;
+
+  // Speak announcement on state transitions without synchronous setState
   useEffect(() => {
-    let pool: string[];
-    switch (mascotState) {
-      case 'fever':
-        pool = FEVER_QUOTES;
-        break;
-      case 'bigwin':
-        pool = BIG_WIN_QUOTES;
-        break;
-      case 'win':
-        pool = WIN_QUOTES;
-        break;
-      case 'anticipation':
-        pool = ANTICIPATION_QUOTES;
-        break;
-      case 'spinning':
-        pool = SPIN_QUOTES;
-        break;
-      default:
-        pool = IDLE_QUOTES;
-        break;
-    }
-
-    const randomQuote =
-      winAmount > 0 && (mascotState === 'win' || mascotState === 'bigwin')
-        ? `KA-CHING! +${winAmount.toLocaleString()} COINS!`
-        : pool[Math.floor(Math.random() * pool.length)];
-    setCurrentQuote(randomQuote);
-
-    // Speak announcement if exciting state
     if (mascotState === 'anticipation') {
       soundManager.speakAnnouncement('Two scatters! One more for the vault!');
     } else if (mascotState === 'bigwin') {
       soundManager.speakAnnouncement('Colossal bankroll! High roller payout!');
     }
-  }, [mascotState]);
 
-  // Periodic idle chatter cycle
-  useEffect(() => {
-    if (mascotState === 'idle') {
-      quoteTimerRef.current = window.setInterval(() => {
-        const quote = IDLE_QUOTES[Math.floor(Math.random() * IDLE_QUOTES.length)];
-        setCurrentQuote(quote);
-      }, 7000);
+    if (mascotState !== 'idle') {
+      const raf = requestAnimationFrame(() => setReactionIndex((i) => i + 1));
+      return () => cancelAnimationFrame(raf);
     }
-    return () => {
-      if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
-    };
+
+    const timer = window.setInterval(() => {
+      setIdleIndex((i) => i + 1);
+    }, 7000);
+    return () => clearInterval(timer);
   }, [mascotState]);
 
-  // Handle clicking on Barnaby for interactive joy & bonus coins!
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const t = window.setTimeout(() => setCooldownLeft((c) => Math.max(0, c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [cooldownLeft]);
+
+  // Handle clicking on Barnaby for interactive joy & bonus coins
   const handleMascotClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsTapped(true);
-    setShowCoinSpark(true);
+    setTimeout(() => setIsTapped(false), 700);
     soundManager.playCoinTally();
-    soundManager.playCelebrationWhistle();
 
-    const bonus = 25;
-    setTapBonusText(`+${bonus} COINS!`);
-    setCurrentQuote("Here's a shiny 24K token for ya, high roller!");
-
-    if (onRewardCoins) {
-      onRewardCoins(bonus);
+    if (cooldownLeft > 0) {
+      setIdleIndex((i) => i + 1);
+      setTapBonusText(`Vault pocket recharging (${cooldownLeft}s)`);
+      setTimeout(() => setTapBonusText(null), 1500);
+      return;
     }
 
+    setCooldownLeft(8);
+    setShowCoinSpark(true);
+    soundManager.playCelebrationWhistle();
+
+    const bonus = 50;
+    setTapBonusText(`+${bonus} COINS!`);
+    onRewardCoins?.(bonus);
+
     setTimeout(() => {
-      setIsTapped(false);
       setShowCoinSpark(false);
       setTapBonusText(null);
     }, 1800);

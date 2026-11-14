@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Plus,
@@ -8,11 +8,13 @@ import {
 } from 'lucide-react';
 import type { DebugScenario, GameStats, SymbolGrid, SymbolId } from '../../engine/types';
 import { soundManager } from '../../audio/soundManager';
-import { SYMBOL_LIST } from '../../engine/symbols';
 import { evaluateSpin, generateRandomGrid } from '../../engine/evaluator';
+import { getGame } from '../../games/gameRegistry';
+import type { GameId } from '../../games/types';
 
 interface DebugDrawerProps {
   isOpen: boolean;
+  activeGameId?: GameId;
   balance: number;
   currentLevel: number;
   stats: GameStats;
@@ -25,10 +27,12 @@ interface DebugDrawerProps {
   onSetForcedScenario: (scenario: DebugScenario | null) => void;
   onInjectCustomGrid: (grid: SymbolGrid) => void;
   onResetStats: () => void;
+  onLaunchMysteryPick?: () => void;
 }
 
 export const DebugDrawer: React.FC<DebugDrawerProps> = ({
   isOpen,
+  activeGameId = 'vault-24k',
   balance,
   currentLevel,
   stats,
@@ -41,19 +45,24 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
   onSetForcedScenario,
   onInjectCustomGrid,
   onResetStats,
+  onLaunchMysteryPick,
 }) => {
+  const gameDef = getGame(activeGameId);
+  const gameSymbolList = Object.values(gameDef.symbols);
+
   const [customCreditAmount, setCustomCreditAmount] = useState('500000');
   const [customLevelInput, setCustomLevelInput] = useState(String(currentLevel));
   const [activeTab, setActiveTab] = useState<'credits' | 'outcomes' | 'grid' | 'sim' | 'audio'>('credits');
 
-  // Custom Grid Editor state (5 reels x 3 rows)
-  const [editingGrid, setEditingGrid] = useState<SymbolGrid>([
-    ['WILD', 'CHERRY', 'PLUM'],
-    ['WILD', 'MELON', 'BELL'],
-    ['WILD', 'SEVEN', 'DIAMOND'],
-    ['DIAMOND', 'HORSESHOE', 'CHERRY'],
-    ['DIAMOND', 'BELL', 'PLUM'],
-  ]);
+  // Custom Grid Editor state dynamically matching active cabinet dimensions
+  const [editingGrid, setEditingGrid] = useState<SymbolGrid>(() => generateRandomGrid(gameDef));
+
+  useEffect(() => {
+    const rafId = requestAnimationFrame(() => {
+      setEditingGrid(generateRandomGrid(getGame(activeGameId)));
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, [activeGameId]);
 
   // RTP Simulation State
   const [simResults, setSimResults] = useState<{
@@ -77,12 +86,12 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
       let winningSpins = 0;
       let freeSpinsCount = 0;
       let maxWin = 0;
-      const bet = 100;
+      const bet = gameDef.defaultLines * (gameDef.betSteps[2] ?? gameDef.betSteps[0] ?? 5);
 
       for (let i = 0; i < spinsCount; i++) {
         totalWagered += bet;
-        const grid = generateRandomGrid();
-        const res = evaluateSpin(grid, bet, 20);
+        const grid = generateRandomGrid(gameDef);
+        const res = evaluateSpin(grid, bet, gameDef.defaultLines, 1, gameDef);
         totalWon += res.totalPayout;
         if (res.totalPayout > 0) winningSpins++;
         if (res.isFreeSpinsTriggered) freeSpinsCount++;
@@ -312,6 +321,18 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
                   color: 'border-cyan-400 text-cyan-300',
                 },
                 {
+                  id: 'HOLD_AND_SPIN' as DebugScenario,
+                  name: '6+ Cash Orbs (Hold & Spin)',
+                  desc: 'Triggers 3 Respins Cash Link with Mini/Minor/Major/Grand Jackpots',
+                  color: 'border-amber-400 text-amber-300',
+                },
+                {
+                  id: 'MYSTERY_PICK' as DebugScenario,
+                  name: 'Mystery Pick Bonus',
+                  desc: 'Forces 3 Vault Safes / Chests to trigger the Safecracker mini-game',
+                  color: 'border-emerald-400 text-emerald-300',
+                },
+                {
                   id: 'NEAR_MISS' as DebugScenario,
                   name: 'Near Miss Suspense',
                   desc: 'Scatters on reels 1 & 2; tests suspense reel slowing',
@@ -353,6 +374,20 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
               ))}
             </div>
 
+            {onLaunchMysteryPick && (
+              <button
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  onLaunchMysteryPick();
+                  onClose();
+                }}
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-center shadow-lg transition-transform active:scale-95 text-xs flex items-center justify-center space-x-2"
+              >
+                <span>🎁</span>
+                <span>Launch Mystery Pick Bonus Modal Now</span>
+              </button>
+            )}
+
             {forcedScenario && (
               <button
                 onClick={() => onSetForcedScenario(null)}
@@ -368,30 +403,35 @@ export const DebugDrawer: React.FC<DebugDrawerProps> = ({
         {activeTab === 'grid' && (
           <div className="space-y-3">
             <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
-              5×3 Symbol Grid Editor
+              {gameDef.reels}×{gameDef.rows} Symbol Grid Editor ({gameDef.shortName})
             </span>
             <p className="text-[11px] text-slate-400">
               Customize any symbol in the grid, then click &quot;Inject &amp; Evaluate&quot; to test:
             </p>
 
-            <div className="grid grid-cols-5 gap-1.5 p-2 bg-casino-900 rounded-xl border border-white/10">
-              {[0, 1, 2, 3, 4].map((reelIdx) => (
+            <div
+              className="grid gap-1.5 p-2 bg-casino-900 rounded-xl border border-white/10"
+              style={{ gridTemplateColumns: `repeat(${gameDef.reels}, minmax(0, 1fr))` }}
+            >
+              {Array.from({ length: gameDef.reels }, (_, reelIdx) => (
                 <div key={reelIdx} className="space-y-1.5">
                   <div className="text-[9px] text-center text-slate-400 font-bold">R{reelIdx + 1}</div>
-                  {[0, 1, 2].map((rowIdx) => (
+                  {Array.from({ length: gameDef.rows }, (_, rowIdx) => (
                     <select
                       key={rowIdx}
-                      value={editingGrid[reelIdx][rowIdx]}
+                      value={editingGrid[reelIdx]?.[rowIdx] || gameSymbolList[0]?.id}
                       onChange={(e) => {
                         const newGrid = editingGrid.map((r) => [...r]);
-                        newGrid[reelIdx][rowIdx] = e.target.value as SymbolId;
+                        if (newGrid[reelIdx]) {
+                          newGrid[reelIdx][rowIdx] = e.target.value as SymbolId;
+                        }
                         setEditingGrid(newGrid);
                       }}
                       className="w-full bg-casino-950 border border-white/15 text-[10px] p-1 rounded text-white text-center font-bold"
                     >
-                      {SYMBOL_LIST.map((s) => (
+                      {gameSymbolList.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.id.substring(0, 4)}
+                          {s.id.replace(/^(WOOD|PIXEL|PS)_/, '').substring(0, 5)}
                         </option>
                       ))}
                     </select>

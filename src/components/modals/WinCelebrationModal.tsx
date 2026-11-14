@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import type { WinTier } from '../../engine/types';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
@@ -27,14 +27,29 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   const autoDismissTimerRef = useRef<number | null>(null);
   const isDismissedRef = useRef(false);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     if (isDismissedRef.current) return;
     isDismissedRef.current = true;
     if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
     soundManager.playButtonClick();
     onDismiss();
-  };
+  }, [onDismiss]);
+
+  const handleSkipOrCollect = useCallback(() => {
+    if (!isFinishedCounting) {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      setDisplayedAmount(winAmount);
+      setIsFinishedCounting(true);
+      soundManager.playButtonClick();
+      if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
+      autoDismissTimerRef.current = window.setTimeout(() => {
+        handleDismiss();
+      }, 1400);
+    } else {
+      handleDismiss();
+    }
+  }, [isFinishedCounting, winAmount, handleDismiss]);
 
   useEffect(() => {
     // Determine celebration intensity
@@ -73,7 +88,6 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
     const tick = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / duration);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.floor(eased * winAmount);
       setDisplayedAmount(current);
@@ -89,7 +103,6 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
         setDisplayedAmount(winAmount);
         setIsFinishedCounting(true);
 
-        // Auto-dismiss after 2.5 seconds
         autoDismissTimerRef.current = window.setTimeout(() => {
           handleDismiss();
         }, 2500);
@@ -98,6 +111,13 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
 
     animationFrameRef.current = requestAnimationFrame(tick);
 
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (autoDismissTimerRef.current) clearTimeout(autoDismissTimerRef.current);
+    };
+  }, [winTier, winAmount, isTimber, isPixel, isPs2, handleDismiss]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'Enter' || e.key === 'Escape') {
         e.preventDefault();
@@ -107,31 +127,8 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
     };
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (autoDismissTimerRef.current) {
-        clearTimeout(autoDismissTimerRef.current);
-      }
-      window.removeEventListener('keydown', handleKeyDown, { capture: true });
-    };
-  }, [winTier, winAmount, isTimber, isPixel]);
-
-  const handleSkipOrCollect = () => {
-    if (!isFinishedCounting) {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-      setDisplayedAmount(winAmount);
-      setIsFinishedCounting(true);
-      soundManager.playButtonClick();
-      autoDismissTimerRef.current = window.setTimeout(() => {
-        handleDismiss();
-      }, 1400);
-    } else {
-      handleDismiss();
-    }
-  };
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [handleSkipOrCollect]);
 
   const getTierDetails = () => {
     if (isPs2) {
@@ -286,10 +283,10 @@ export const WinCelebrationModal: React.FC<WinCelebrationModalProps> = ({
   return (
     <div
       onClick={handleSkipOrCollect}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 cursor-pointer select-none animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 cursor-pointer select-none animate-fadeIn"
     >
       <div
-        className={`relative max-w-lg w-full ${tier.bg} border-4 ${tier.borderColor} ${tier.glow} rounded-3xl p-6 sm:p-10 text-center flex flex-col items-center transform transition-transform hover:scale-[1.01]`}
+        className={`relative max-w-lg w-full max-h-[92vh] overflow-y-auto ${tier.bg} border-4 ${tier.borderColor} ${tier.glow} rounded-3xl p-5 sm:p-10 text-center flex flex-col items-center transform transition-transform hover:scale-[1.01]`}
       >
         {/* Top Decorative Sparkles */}
         <div className="flex items-center space-x-2 text-gold-bright mb-2 animate-bounce">

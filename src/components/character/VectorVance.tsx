@@ -72,6 +72,7 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
   const [currentQuote, setCurrentQuote] = useState<string>(PS2_IDLE_QUOTES[0]);
   const [isTapped, setIsTapped] = useState<boolean>(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
   const quoteTimerRef = useRef<number | null>(null);
 
   // Compute active mascot emotional state
@@ -91,23 +92,23 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
   useEffect(() => {
     if (tapBonusText) return;
 
+    let nextQ: string | null = null;
     if (mascotState === 'bigwin') {
-      const q = PS2_BIG_WIN_QUOTES[Math.floor(Math.random() * PS2_BIG_WIN_QUOTES.length)];
-      setCurrentQuote(q);
+      nextQ = PS2_BIG_WIN_QUOTES[Math.floor(Math.random() * PS2_BIG_WIN_QUOTES.length)];
       soundManager.playPs2Scatter(3);
     } else if (mascotState === 'win') {
-      const q = PS2_WIN_QUOTES[Math.floor(Math.random() * PS2_WIN_QUOTES.length)];
-      setCurrentQuote(q);
+      nextQ = PS2_WIN_QUOTES[Math.floor(Math.random() * PS2_WIN_QUOTES.length)];
     } else if (mascotState === 'anticipation') {
-      const q = PS2_ANTICIPATION_QUOTES[Math.floor(Math.random() * PS2_ANTICIPATION_QUOTES.length)];
-      setCurrentQuote(q);
+      nextQ = PS2_ANTICIPATION_QUOTES[Math.floor(Math.random() * PS2_ANTICIPATION_QUOTES.length)];
     } else if (mascotState === 'spinning') {
-      const q = PS2_SPIN_QUOTES[Math.floor(Math.random() * PS2_SPIN_QUOTES.length)];
-      setCurrentQuote(q);
+      nextQ = PS2_SPIN_QUOTES[Math.floor(Math.random() * PS2_SPIN_QUOTES.length)];
     } else if (mascotState === 'fever') {
-      const q = PS2_FEVER_QUOTES[Math.floor(Math.random() * PS2_FEVER_QUOTES.length)];
-      setCurrentQuote(q);
+      nextQ = PS2_FEVER_QUOTES[Math.floor(Math.random() * PS2_FEVER_QUOTES.length)];
     }
+    if (!nextQ) return;
+    const picked = nextQ;
+    const rafId = requestAnimationFrame(() => setCurrentQuote(picked));
+    return () => cancelAnimationFrame(rafId);
   }, [mascotState, tapBonusText]);
 
   // Periodic ambient dialogue rotation during idle periods
@@ -124,11 +125,38 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
     };
   }, [mascotState]);
 
-  // Click-to-interact easter egg with coin tip reward
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const t = window.setTimeout(() => setCooldownLeft((prev) => Math.max(0, prev - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [cooldownLeft]);
+
+  const tapTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    };
+  }, []);
+
+  // Click-to-interact easter egg with fair cooldown coin tip reward
   const handleMascotTap = () => {
     soundManager.unlockAudio();
+
+    if (cooldownLeft > 0) {
+      soundManager.playButtonClick();
+      setIsTapped(true);
+      setTapBonusText(`Memory cache cooling (${cooldownLeft}s)`);
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      tapTimerRef.current = window.setTimeout(() => {
+        setIsTapped(false);
+        setTapBonusText(null);
+      }, 1500);
+      return;
+    }
+
     soundManager.playPs2MemoryCardSave();
     setIsTapped(true);
+    setCooldownLeft(8);
 
     const bonusRewards = [50, 75, 100, 150];
     const awarded = bonusRewards[Math.floor(Math.random() * bonusRewards.length)];
@@ -140,7 +168,8 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
 
     setCurrentQuote('Vector Unit 1 allocated spare credits to your balance!');
 
-    setTimeout(() => {
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    tapTimerRef.current = window.setTimeout(() => {
       setIsTapped(false);
       setTapBonusText(null);
     }, 2400);
@@ -178,7 +207,7 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
   return (
     <div
       onClick={handleMascotTap}
-      className={`relative group cursor-pointer select-none transition-transform duration-300 flex flex-col items-center w-52 hover:scale-[1.02] ${
+      className={`relative group cursor-pointer select-none transition-transform duration-300 flex flex-col items-center w-full max-w-[196px] 2xl:max-w-[224px] hover:scale-[1.02] ${
         isTapped ? 'scale-95' : ''
       }`}
       title="Click PS2 Console & Controller for 8MB Memory Card bonus credits and BIOS tips!"
@@ -202,7 +231,7 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
 
       {/* Main Standee Chamber - Sized to Match Grizzly Gus & Pixel Penny */}
       <div
-        className={`relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 bg-gradient-to-b from-[#081226] via-[#030612] to-black p-2.5 flex flex-col justify-between ${
+        className={`relative w-[92%] aspect-[208/340] max-h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 bg-gradient-to-b from-[#081226] via-[#030612] to-black p-2.5 flex flex-col justify-between ${
           mascotState === 'fever'
             ? 'border-cyan-300 shadow-[0_0_35px_rgba(0,240,255,0.8)] scale-105'
             : mascotState === 'bigwin'
@@ -631,15 +660,15 @@ export const VectorVance: React.FC<VectorVanceProps> = ({
 
       {/* 3D PS2 Vertical Stand Pedestal Base Beneath Card */}
       <div className="w-full flex flex-col items-center -mt-2 z-10 pointer-events-none">
-        <div className="w-44 h-2.5 bg-gradient-to-r from-[#02050E] via-[#004B93] to-[#02050E] rounded-t-md border-t border-cyan-400/80 shadow-md flex items-center justify-around px-4">
+        <div className="w-[82%] h-2.5 bg-gradient-to-r from-[#02050E] via-[#004B93] to-[#02050E] rounded-t-md border-t border-cyan-400/80 shadow-md flex items-center justify-around px-4">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_4px_#00F0FF]" />
           <span className="text-[7px] font-mono text-cyan-200 font-bold">SONY COMPUTER ENTERTAINMENT</span>
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_4px_#00F0FF]" />
         </div>
-        <div className="w-52 h-5 bg-gradient-to-r from-[#010206] via-[#091226] to-[#010206] rounded-b-xl border-b-2 border-x-2 border-[#006FCD] shadow-2xl relative flex items-center justify-center">
+        <div className="w-full h-5 bg-gradient-to-r from-[#010206] via-[#091226] to-[#010206] rounded-b-xl border-b-2 border-x-2 border-[#006FCD] shadow-2xl relative flex items-center justify-center">
           <div className="w-28 h-1 bg-cyan-400/60 rounded-full blur-[0.5px]" />
         </div>
-        <div className="w-56 h-2.5 bg-black/80 blur-sm rounded-full -mt-1" />
+        <div className="w-full h-2.5 bg-black/80 blur-sm rounded-full -mt-1" />
       </div>
     </div>
   );

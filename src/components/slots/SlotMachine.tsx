@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useMemo, useRef, useCallback } from 'react';
 import type { SpinResult, SymbolGrid } from '../../engine/types';
 import type { CasinoSceneId } from '../scenes/SceneTypes';
 import { Reel } from './Reel';
@@ -60,11 +60,78 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
   const isPs2 = activeGameId === 'ps2-legends';
-  const rowCount = gameDef.rows;
-  const numReels = gameDef.reels || 5;
+  const rowCount = activeGameId === 'timber-critters' ? 3 : activeGameId === 'pixel-arcade' ? 5 : 4;
+  const numReels = activeGameId === 'pixel-arcade' ? 6 : 5;
   const totalLines = gameDef.defaultLines;
   // Scatter symbol per game, used for both spin-stop anticipation and the on-reel lock UI
   const scatterSym = isTimber ? 'OWL' : isPixel ? 'PIXEL_CARTRIDGE' : isPs2 ? 'DVD_DISC' : 'SCATTER';
+
+  // --- Fit-to-viewport sizing ---------------------------------------------
+  // The cabinet is measured against the space the layout actually gives it, so
+  // the reels never overflow the stage (previously the bottom row slid under
+  // the controls dock) and never overflow the viewport width on phones.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cabinetRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState<{ stageH: number; frameW: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const compute = () => {
+      const cab = cabinetRef.current;
+      const stage = stageRef.current;
+      const panel = panelRef.current;
+      const reel = panel?.querySelector<HTMLElement>('[data-reel-container]');
+      if (!cab || !stage || !panel || !reel) return;
+
+      const rootStyle = getComputedStyle(root);
+      const padW = parseFloat(rootStyle.paddingLeft || '0') + parseFloat(rootStyle.paddingRight || '0');
+      const padH = parseFloat(rootStyle.paddingTop || '0') + parseFloat(rootStyle.paddingBottom || '0');
+      const rootW = Math.max(0, root.clientWidth - padW);
+      const rootH = Math.max(0, root.clientHeight - padH);
+      if (rootW < 80 || rootH < 80) return;
+
+      // Room reserved for the pull-lever or DualShock that overhangs the cabinet on xl screens
+      const leverAllow = !isFloorMode && window.innerWidth >= 1280 ? (isPs2 ? 74 : 48) : 0;
+      const chromeH = cab.offsetHeight - stage.offsetHeight; // header + status bar + frame padding
+      const extraH = stage.offsetHeight - reel.offsetHeight; // reel panel padding + borders
+      const chromeW = cab.offsetWidth - panel.offsetWidth; // pilasters, payline tabs, frame padding
+      const extraW = panel.offsetWidth - reel.offsetWidth * numReels; // reel gaps + panel padding
+
+      const availW = rootW - leverAllow - chromeW - extraW;
+      const availH = rootH - chromeH - extraH - 2;
+      const cellFromW = availW / numReels;
+      const cellFromH = availH / rowCount;
+      // Keep symbols close to square: taller cells on narrow phone screens so portrait space is used
+      const maxRatio = window.innerWidth < 640 ? 1.45 : 1.2;
+      const cellH = Math.max(28, Math.min(cellFromH, cellFromW * maxRatio, 210));
+      const cellW = Math.max(28, Math.min(cellFromW, cellH * 1.1));
+
+      const stageH = Math.round(cellH * rowCount + extraH);
+      const frameW = Math.min(Math.round(cellW * numReels + extraW + chromeW), rootW);
+      setFit((prev) => (prev && prev.stageH === stageH && prev.frameW === frameW ? prev : { stageH, frameW }));
+    };
+
+    compute();
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      compute();
+      raf2 = requestAnimationFrame(compute);
+    });
+    const observer = new ResizeObserver(compute);
+    observer.observe(root);
+    window.addEventListener('orientationchange', compute);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      observer.disconnect();
+      window.removeEventListener('orientationchange', compute);
+    };
+  }, [numReels, rowCount, isFloorMode, activeGameId, isPs2]);
 
   // Track spinning state per reel dynamically
   const [reelSpinning, setReelSpinning] = useState<boolean[]>(() => Array(numReels).fill(false));
@@ -79,9 +146,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   useEffect(() => {
     timersRef.current.forEach((t) => clearTimeout(t));
     timersRef.current = [];
-    setReelSpinning(Array(numReels).fill(false));
-    setActiveWinningLineIdx(null);
-    setHoveredLineIndex(null);
+    const rafId = requestAnimationFrame(() => {
+      setReelSpinning(Array(numReels).fill(false));
+      setActiveWinningLineIdx(null);
+      setHoveredLineIndex(null);
+    });
+    return () => cancelAnimationFrame(rafId);
   }, [numReels, activeGameId]);
 
   // Keep a ref to onAllReelsStopped to prevent recreation of effect timers
@@ -120,12 +190,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   // Handle spin start and staggered stopping schedule with longer, more satisfying spin duration
   useEffect(() => {
+    let spinRafId = 0;
     if (isSpinning) {
       const currentGrid = currentGridRef.current;
       const isTurbo = isTurboRef.current;
-      setReelSpinning(Array(numReels).fill(true));
-      setActiveWinningLineIdx(null);
-      setHoveredLineIndex(null);
+      spinRafId = requestAnimationFrame(() => {
+        setReelSpinning(Array(numReels).fill(true));
+        setActiveWinningLineIdx(null);
+        setHoveredLineIndex(null);
+      });
 
       // Start the continuous stimulating Deluxe Casino reel roll arpeggio & stepper ticker
       soundManager.startSpinRollLoop(isFeverModeRef.current);
@@ -188,16 +261,19 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
-      setReelSpinning(Array(numReels).fill(false));
+      spinRafId = requestAnimationFrame(() => {
+        setReelSpinning(Array(numReels).fill(false));
+      });
     }
 
     return () => {
+      cancelAnimationFrame(spinRafId);
       soundManager.stopSpinRollLoop();
       timersRef.current.forEach((t) => clearTimeout(t));
     };
   }, [isSpinning, numReels, scatterSym]);
 
-  // Audio reaction for active winning paylines with authentic critter voices
+  // Audio reaction for active winning paylines with authentic game & critter voices
   const playWinLineSound = useCallback((symId: string) => {
     if (isTimber) {
       switch (symId) {
@@ -223,18 +299,46 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           soundManager.playForestWin(1);
           break;
       }
+    } else if (isPixel) {
+      soundManager.playArcade8BitChime(symId);
+    } else if (isPs2) {
+      soundManager.playPs2SymbolSound(symId);
     } else {
-      soundManager.playLaserZap();
+      // 24K Gold Vault: Authentic mechanical and casino audio reactions
+      switch (symId) {
+        case 'WILD':
+        case 'DIAMOND':
+          soundManager.playDiamondGlissando();
+          break;
+        case 'BELL':
+        case 'SEVEN':
+          soundManager.playBellRing();
+          break;
+        case 'GOLDBAR':
+        case 'HORSESHOE':
+          soundManager.playGoldBarClank();
+          break;
+        case 'MELON':
+        case 'GRAPES':
+          soundManager.playCashRegister();
+          break;
+        default:
+          soundManager.playCoinTally();
+          break;
+      }
     }
-  }, [isTimber]);
+  }, [isTimber, isPixel, isPs2]);
 
   // Cycle through winning lines when idle after a win
   useEffect(() => {
     if (!isAnyReelSpinning && spinResult && spinResult.winningLines.length > 0) {
+      let initRaf = 0;
       if (activeWinningLineIdx === null) {
         const firstLine = spinResult.winningLines[0];
-        setActiveWinningLineIdx(firstLine.lineIndex);
-        playWinLineSound(firstLine.symbolId);
+        initRaf = requestAnimationFrame(() => {
+          setActiveWinningLineIdx(firstLine.lineIndex);
+          playWinLineSound(firstLine.symbolId);
+        });
       }
       const interval = setInterval(() => {
         setActiveWinningLineIdx((prev) => {
@@ -250,9 +354,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           return nextLine.lineIndex;
         });
       }, 1900);
-      return () => clearInterval(interval);
+      return () => {
+        if (initRaf) cancelAnimationFrame(initRaf);
+        clearInterval(interval);
+      };
     } else {
-      setActiveWinningLineIdx(null);
+      const clearRaf = requestAnimationFrame(() => {
+        setActiveWinningLineIdx(null);
+      });
+      return () => cancelAnimationFrame(clearRaf);
     }
   }, [isAnyReelSpinning, spinResult, activeWinningLineIdx, playWinLineSound]);
 
@@ -281,9 +391,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   useEffect(() => {
     if (!isAnyReelSpinning && spinResult) {
       if (spinResult.totalPayout >= 500 || spinResult.scatterCoords.length >= 3) {
-        setIsCabinetSlamming(true);
-        const t = setTimeout(() => setIsCabinetSlamming(false), 450);
-        return () => clearTimeout(t);
+        let slamTimer = 0;
+        const rafId = requestAnimationFrame(() => {
+          setIsCabinetSlamming(true);
+          slamTimer = window.setTimeout(() => setIsCabinetSlamming(false), 450);
+        });
+        return () => {
+          cancelAnimationFrame(rafId);
+          if (slamTimer) clearTimeout(slamTimer);
+        };
       }
     }
   }, [isAnyReelSpinning, spinResult]);
@@ -344,8 +460,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   return (
     <div
+      ref={rootRef}
       onClick={handleStageClick}
-      className={`relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-3 select-none flex flex-col flex-1 min-h-0 justify-center my-auto ${
+      className={`relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-1 sm:px-3 select-none flex flex-col items-center flex-1 min-h-0 min-w-0 justify-center ${
         isSpinning ? 'cursor-pointer' : ''
       }`}
       title={isSpinning ? 'Click anywhere to Quick Stop' : undefined}
@@ -364,7 +481,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
       {/* Outer Luxury Cabinet Frame with Handcrafted Theming and Bespoke Silhouettes */}
       <div
-        className={`relative p-[2px] sm:p-[3px] transition-all select-none flex flex-col flex-1 min-h-0 justify-center my-auto ${
+        ref={cabinetRef}
+        className={`relative p-[2px] sm:p-[3px] transition-all select-none flex flex-col flex-none w-full min-w-0 ${
           isPs2
             ? 'border-2 sm:border-4 border-[#006FCD] bg-gradient-to-b from-[#081226] via-[#02050e] to-black shadow-[0_0_45px_rgba(0,111,205,0.6),0_25px_60px_rgba(0,0,0,0.98)]'
             : isTimber
@@ -374,6 +492,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             : 'border-2 sm:border-4 border-yellow-500/80 bg-gradient-to-b from-amber-600 via-amber-950 to-black neon-chase-border shadow-[0_0_35px_rgba(245,158,11,0.4)]'
         }`}
         style={{
+          maxWidth: fit ? `${fit.frameW}px` : undefined,
           clipPath: isPixel
             ? 'polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px))'
             : isPs2
@@ -384,7 +503,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         }}
       >
         <div
-          className={`relative p-1 sm:p-2 md:p-2.5 transition-all duration-300 shadow-2xl flex flex-col flex-1 min-h-0 justify-between ${
+          className={`relative p-1 sm:p-2 md:p-2.5 transition-all duration-300 shadow-2xl flex flex-col justify-between ${
             isCabinetSlamming ? 'animate-cabinet-slam' : ''
           } ${
             isFeverMode
@@ -440,7 +559,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         {/* Themed Cabinet Top Header: Bespoke Hardware Per Game Theme */}
         <div className="flex items-center justify-between h-7 sm:h-8 px-1.5 sm:px-2 border-b border-white/10 mb-0.5 sm:mb-1 overflow-hidden flex-shrink-0">
           {/* Left Header Indicator */}
-          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+          <div className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
             {isPs2 ? (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/90 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#00F0FF]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-0.5" />
@@ -527,7 +646,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
 
           {/* Right Header Controls */}
-          <div className="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+          <div className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
             {isPs2 ? (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-black/80 border border-cyan-400 font-mono text-[8px] font-black text-cyan-300 shadow-[0_0_8px_#00F0FF]">
                 <span>40L • PS2 128-BIT</span>
@@ -552,8 +671,12 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Central Playing Stage Flanked by Deluxe VLT Numbered Tabs and Architectural Pilasters */}
         <div
-          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-1 min-h-0 ${
-            rowCount === 5
+          ref={stageRef}
+          style={fit ? { height: `${fit.stageH}px` } : undefined}
+          className={`flex items-stretch space-x-1 sm:space-x-1.5 w-full flex-none ${
+            fit
+              ? ''
+              : rowCount === 5
               ? 'h-[clamp(130px,32vh,370px)]'
               : rowCount === 3
               ? 'h-[clamp(105px,25vh,280px)]'
@@ -640,7 +763,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
           {/* The Animated Reels with SVG Payline Canvas & Real Glass Depth */}
           <div
-            className={`relative flex-1 min-h-0 h-full flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
+            ref={panelRef}
+            className={`relative flex-1 min-h-0 min-w-0 h-full flex space-x-1 sm:space-x-1.5 p-1 sm:p-1.5 rounded-xl border shadow-inner overflow-hidden ${
               isPs2
                 ? 'bg-[#02050f] border-2 border-[#006FCD] shadow-[inset_0_0_35px_rgba(0,111,205,0.4)]'
                 : isTimber
@@ -818,7 +942,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
             <span className="font-mono text-emerald-400 text-[10px] font-black flex-shrink-0 whitespace-nowrap">
-              {isPs2 ? '92.8% RTP' : isPixel ? '~91% RTP' : isTimber ? '93.4% RTP' : '95.3% RTP'}
+              {`${gameDef.defaultLines} LINES • ${gameDef.volatilityLabel}`}
             </span>
           </div>
 

@@ -29,12 +29,18 @@ Quota pacing differs per cabinet too: Vault climbs slowly, Timberland keeps
 the classic ladder, Pixel loops fast like an arcade score chase, and the PS2
 game is the long save-file grind.
 
-## Controls
+## Controls & Features
 
-- **Space** — spin / quick stop
-- **G** — switch game (cycles all four cabinets)
-- **P** — paytable • **B** — max bet • **M** — mute • **T** — turbo
-- **↑ / ↓** — bet per line
+- **Space**: spin / quick stop
+- **G**: switch game (cycles all four cabinets)
+- **P**: paytable • **B**: max bet • **M**: mute • **T**: turbo
+- **↑ / ↓**: bet per line
+- **Konami Code (↑ ↑ ↓ ↓ ← → ← → B A)**: secret retro cheat code (+2,500 credits)
+- **Mechanical Reel Nudge**: near-miss spins have a chance to trigger a mechanical solenoid nudge into the bonus
+- **Hold & Spin Grand Jackpot**: locking all board positions awards the top progressive Grand Jackpot (+50,000 coins / +500x total bet)
+- **Mystery Safecracker Multi-Pick Bonus**: pick mystery safes, hollow logs, prize cubes, and memory card sectors for cash bullion, multipliers up to 75X, and extra picks. Selectable anytime in the Double-Up gamble modal or debug suite
+- **Responsive Mobile Touch Deck**: dedicated bottom touch controls with 32px+ touch targets, dynamic reel fitting engine, and landscape phone support
+- **Haptic & Enhanced Audio**: vibration feedback on spin start, reel stops, scatter lands, and jackpot sirens, paired with themed chimes and bells
 
 ## The casino floor is simulated
 

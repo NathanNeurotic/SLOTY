@@ -27,13 +27,13 @@ export const RollingWinDisplay: React.FC<RollingWinDisplayProps> = ({
     prevTargetRef.current = targetAmount;
 
     if (endVal === 0) {
-      setDisplayedAmount(0);
-      return;
+      const raf = requestAnimationFrame(() => setDisplayedAmount(0));
+      return () => cancelAnimationFrame(raf);
     }
 
     if (startVal === endVal) {
-      setDisplayedAmount(endVal);
-      return;
+      const raf = requestAnimationFrame(() => setDisplayedAmount(endVal));
+      return () => cancelAnimationFrame(raf);
     }
 
     if (endVal > 0) {

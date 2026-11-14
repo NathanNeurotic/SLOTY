@@ -155,4 +155,112 @@ for (const gameId of games) {
   console.log(`✓ ${game.name} within its measured regression bounds`);
 }
 
+// 4. Per-game structural invariants, trigger checks, Lucky Nudge invariant & progression monotonicity
+console.log('\nChecking per-game grid, trigger, nudge & progression invariants across all 4 games:');
+for (const gameId of games) {
+  const def = getGame(gameId);
+
+  const sampleGrid = generateRandomGrid(def);
+  if (sampleGrid.length !== def.reels || sampleGrid.some((col) => col.length !== def.rows)) {
+    throw new Error(`Invalid grid dimensions for ${def.id}: expected ${def.reels}x${def.rows}`);
+  }
+
+  if (def.paylines.length < def.defaultLines) {
+    throw new Error(`${def.id} has fewer paylines (${def.paylines.length}) than defaultLines (${def.defaultLines})`);
+  }
+  def.paylines.forEach((line, lineIdx) => {
+    if (line.length !== def.reels) {
+      throw new Error(`${def.id} payline ${lineIdx} has length ${line.length}, expected ${def.reels}`);
+    }
+    if (line.some((r) => r < 0 || r >= def.rows)) {
+      throw new Error(`${def.id} payline ${lineIdx} has out-of-range row index for rows=${def.rows}`);
+    }
+  });
+
+  if (!def.availableLines.includes(def.defaultLines)) {
+    throw new Error(`${def.id} defaultLines (${def.defaultLines}) missing from availableLines`);
+  }
+  for (let i = 1; i < def.betSteps.length; i++) {
+    if (def.betSteps[i] <= def.betSteps[i - 1]) {
+      throw new Error(`${def.id} betSteps are not strictly ascending`);
+    }
+  }
+
+  const safeSymbols = Object.values(def.symbols).filter(
+    (s) => s.id !== def.wildId && s.id !== def.scatterId && s.id !== def.coinId
+  );
+  if (safeSymbols.length < 3) {
+    throw new Error(`Expected at least 3 non-special symbols for ${def.id}`);
+  }
+  const makeFilledGrid = () =>
+    Array.from({ length: def.reels }, (_, c) =>
+      Array(def.rows).fill(safeSymbols[c % 3].id)
+    );
+
+  const betTotal = def.defaultLines * (def.betSteps[0] || 1);
+
+  // Near-miss -> Lucky Nudge Scatter Trigger & Payout Invariant
+  const nearScatterGrid = makeFilledGrid();
+  nearScatterGrid[0][0] = def.scatterId;
+  nearScatterGrid[1][0] = def.scatterId;
+  const nearEval = evaluateSpin(nearScatterGrid, betTotal, def.defaultLines, 1, def);
+  if (nearEval.scatterCount !== 2 || nearEval.isFreeSpinsTriggered) {
+    throw new Error(`${def.id} 2-scatter near-miss failed check`);
+  }
+
+  const nudgedScatterGrid = nearScatterGrid.map((col, idx) =>
+    idx === 2 ? [def.scatterId, ...col.slice(1)] : [...col]
+  );
+  const nudgedEval = evaluateSpin(nudgedScatterGrid, betTotal, def.defaultLines, 1, def);
+  if (nudgedEval.scatterCount !== 3 || !nudgedEval.isFreeSpinsTriggered) {
+    throw new Error(`${def.id} 3-scatter Lucky Nudge failed to trigger free spins`);
+  }
+  if (nudgedEval.totalPayout < nearEval.totalPayout) {
+    throw new Error(`${def.id} Lucky Nudge payout invariant violated (${nudgedEval.totalPayout} < ${nearEval.totalPayout})`);
+  }
+
+  const multEval = evaluateSpin(
+    nudgedScatterGrid,
+    betTotal,
+    def.defaultLines,
+    def.freeSpinsMultiplier,
+    def
+  );
+  if (multEval.totalPayout < nudgedEval.totalPayout) {
+    throw new Error(`${def.id} free spins multiplier failed payout monotonicity`);
+  }
+
+  // 6-Coin Hold & Spin Trigger check
+  const coinGrid = makeFilledGrid();
+  let placedCoins = 0;
+  for (let c = 0; c < def.reels && placedCoins < 6; c++) {
+    for (let r = 0; r < def.rows && placedCoins < 6; r++) {
+      coinGrid[c][r] = def.coinId;
+      placedCoins++;
+    }
+  }
+  const coinEval = evaluateSpin(coinGrid, betTotal, def.defaultLines, 1, def);
+  if (coinEval.coinCount !== 6 || !coinEval.isHoldAndSpinTriggered) {
+    throw new Error(`${def.id} 6-coin Hold & Spin trigger check failed`);
+  }
+  console.log(`✓ ${def.id}: ${def.reels}x${def.rows} grid, ${def.paylines.length} paylines, Scatter/Coin triggers & Lucky Nudge invariants OK`);
+}
+
+// Progression maxBet monotonicity
+const xpSamples = [0, 100, 500, 1000, 5000, 15000, 50000, 150000, 500000, 1500000];
+let prevProg = calculateProgression(xpSamples[0]);
+if (prevProg.maxBet <= 0) {
+  throw new Error(`Expected initial maxBet > 0, got ${prevProg.maxBet}`);
+}
+for (let i = 1; i < xpSamples.length; i++) {
+  const curr = calculateProgression(xpSamples[i]);
+  if (curr.level < prevProg.level || curr.maxBet < prevProg.maxBet) {
+    throw new Error(
+      `Progression monotonicity violated at XP=${xpSamples[i]}: lvl ${prevProg.level}->${curr.level}, maxBet ${prevProg.maxBet}->${curr.maxBet}`
+    );
+  }
+  prevProg = curr;
+}
+console.log(`✓ Progression maxBet monotonically non-decreasing (level 1..${prevProg.level}, up to maxBet=${prevProg.maxBet})`);
+
 console.log('\n✓ ALL ENGINE & MATH REGRESSION CHECKS PASSED (regression guards for SLOTY\'s own model — not a certification)');

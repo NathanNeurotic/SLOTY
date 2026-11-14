@@ -5,10 +5,21 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    // Declare ordered screens explicitly so `xs:` never overrides `sm:`..`2xl:` in CSS cascade.
+    // Height-based breakpoints (`short`, `compact`) drop decorative chrome on landscape phones & laptops.
+    screens: {
+      xs: '400px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+      short: { raw: '(max-height: 540px)' },
+      compact: { raw: '(max-height: 820px)' },
+    },
     extend: {
-      // Sizes referenced across the UI (w-8.5, h-9.5, sm:w-88, ...) that Tailwind's default
-      // scale does not generate. Without them those buttons fall back to content width and
-      // their labels overflow the frame.
+      // Sizes referenced across the UI (w-8.5, h-9.5, w-30, w-42, sm:w-88, ...) that Tailwind's
+      // default scale does not generate.
       spacing: {
         5.5: '1.375rem',
         6.5: '1.625rem',
@@ -18,7 +29,15 @@ export default {
         15: '3.75rem',
         18: '4.5rem',
         22: '5.5rem',
+        30: '7.5rem',
+        42: '10.5rem',
         88: '22rem',
+      },
+      borderWidth: {
+        3: '3px',
+      },
+      borderRadius: {
+        xs: '0.125rem',
       },
       colors: {
         casino: {
@@ -59,8 +78,19 @@ export default {
         'bounce-soft': 'bounceSoft 0.35s ease-out forwards',
         'glow-pulse': 'glowPulse 2s ease-in-out infinite alternate',
         'reel-spin': 'reelSpin 0.35s linear infinite',
+        'fadeIn': 'fadeIn 0.25s ease-out forwards',
+        'fade-in': 'fadeIn 0.25s ease-out forwards',
+        'slide-in-up': 'slideInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideInUp: {
+          '0%': { opacity: '0', transform: 'translateY(14px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         reelSpin: {
           '0%': { transform: 'translateY(0%)' },
           '100%': { transform: 'translateY(-50%)' },

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { GameId } from '../../games/types';
 import { soundManager } from '../../audio/soundManager';
 import { X } from 'lucide-react';
 import { quotaManager, type QuotaState, type QuotaTier } from '../../engine/quotaSystem';
-import baronImg from '../../assets/baron_sterling.jpg';
-import gusImg from '../../assets/grizzly_gus.jpg';
-import pennyImg from '../../assets/pixel_penny.jpg';
+import baronImg from '../../assets/baron_sterling.webp';
+import gusImg from '../../assets/grizzly_gus.webp';
+import pennyImg from '../../assets/pixel_penny.webp';
 
 interface PuppetCharacterPopupProps {
   activeGameId?: GameId;
@@ -216,23 +216,61 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
   const [isJiggling, setIsJiggling] = useState(false);
 
   const hideTimerRef = useRef<number | null>(null);
-  const lastSpinTimeRef = useRef<number>(Date.now());
+  const jiggleTimerRef = useRef<number | null>(null);
+  const quipTimerRef = useRef<number | null>(null);
+  const lastSpinTimeRef = useRef<number>(0);
   const lastPopupTimeRef = useRef<number>(0);
   const consecutiveLossesRef = useRef<number>(0);
 
-  // Reset and dismiss popup immediately when switching games (prevents dialogue text carry-over)
+  const triggerPopup = useCallback(
+    (category: SpeechCategory, customText?: string) => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      if (jiggleTimerRef.current) clearTimeout(jiggleTimerRef.current);
+      if (quipTimerRef.current) clearTimeout(quipTimerRef.current);
+      lastPopupTimeRef.current = Date.now();
+
+      const pool = isPs2 ? PS2_LINES : isTimber ? GUS_LINES : isPixel ? ARCADE_LINES : BARON_LINES;
+      const list = (category !== 'quota' ? pool[category] : undefined) || pool.idle;
+      const text = customText || list[Math.floor(Math.random() * list.length)] || pool.idle[0];
+
+      setSpeechText(text);
+      setSpeechCategory(category);
+      setIsVisible(true);
+      setIsJiggling(true);
+      jiggleTimerRef.current = window.setTimeout(() => setIsJiggling(false), 700);
+
+      // Audio cue
+      soundManager.playPuppetBoing();
+      quipTimerRef.current = window.setTimeout(() => {
+        soundManager.playPuppetQuip();
+      }, 160);
+
+      // Auto hide after 8 seconds
+      hideTimerRef.current = window.setTimeout(() => {
+        setIsVisible(false);
+      }, 8000);
+    },
+    [isPs2, isTimber, isPixel]
+  );
+
+  // Initialize activity timestamps on mount / game change and clean timers on unmount
   useEffect(() => {
-    setIsVisible(false);
-    setSpeechText('');
-    setSpeechCategory('idle');
-    setIsJiggling(false);
-    if (hideTimerRef.current) {
-      clearTimeout(hideTimerRef.current);
-      hideTimerRef.current = null;
-    }
-    lastSpinTimeRef.current = Date.now();
-    lastPopupTimeRef.current = Date.now();
-    setQuotaState(quotaManager.getState(activeGameId));
+    const now = Date.now();
+    lastSpinTimeRef.current = now;
+    lastPopupTimeRef.current = now;
+    const raf = requestAnimationFrame(() => {
+      setIsVisible(false);
+      setSpeechText('');
+      setSpeechCategory('idle');
+      setIsJiggling(false);
+      setQuotaState(quotaManager.getState(activeGameId));
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      if (jiggleTimerRef.current) clearTimeout(jiggleTimerRef.current);
+      if (quipTimerRef.current) clearTimeout(quipTimerRef.current);
+    };
   }, [activeGameId]);
 
   // Listen to quota updates
@@ -255,96 +293,67 @@ export const PuppetCharacterPopup: React.FC<PuppetCharacterPopupProps> = ({
     }, 6000);
 
     return () => clearInterval(checkIdle);
-  }, [isSpinning, isVisible]);
+  }, [isSpinning, isVisible, triggerPopup]);
 
   // Handle spin events with balanced trigger filtering
   useEffect(() => {
     const now = Date.now();
+    let raf: number | null = null;
     if (isSpinning) {
       lastSpinTimeRef.current = now;
       if (isAnticipating && now - lastPopupTimeRef.current > 30000) {
-        triggerPopup('anticipating');
+        raf = requestAnimationFrame(() => triggerPopup('anticipating'));
       }
     } else {
       if (winAmount > 0) {
         consecutiveLossesRef.current = 0;
-        // Big Wins trigger immediately
         if (winAmount >= 1000) {
-          triggerPopup('bigWin');
+          raf = requestAnimationFrame(() => triggerPopup('bigWin'));
         } else if (consecutiveWins >= 3 && now - lastPopupTimeRef.current > 20000) {
-          triggerPopup('streakWin');
+          raf = requestAnimationFrame(() => triggerPopup('streakWin'));
         } else if (winAmount >= 300 && now - lastPopupTimeRef.current > 30000) {
-          triggerPopup('win');
+          raf = requestAnimationFrame(() => triggerPopup('win'));
         }
       } else {
-        // Track near misses
         if (isNearMiss && now - lastPopupTimeRef.current > 25000) {
-          triggerPopup('nearMiss');
+          raf = requestAnimationFrame(() => triggerPopup('nearMiss'));
         } else {
-          // Track cold streaks (5 dry spins)
           consecutiveLossesRef.current += 1;
           if (consecutiveLossesRef.current >= 5 && now - lastPopupTimeRef.current > 35000) {
-            triggerPopup('coldStreak');
             consecutiveLossesRef.current = 0;
+            raf = requestAnimationFrame(() => triggerPopup('coldStreak'));
           }
         }
       }
     }
-  }, [isSpinning, isAnticipating, isNearMiss, winAmount, consecutiveWins]);
+    return () => {
+      if (raf !== null) cancelAnimationFrame(raf);
+    };
+  }, [isSpinning, isAnticipating, isNearMiss, winAmount, consecutiveWins, triggerPopup]);
 
   // Max bet trigger
   useEffect(() => {
-    if (isMaxBet) {
-      const now = Date.now();
-      if (now - lastPopupTimeRef.current > 35000) {
-        triggerPopup('maxBet');
-      }
+    if (!isMaxBet) return;
+    const now = Date.now();
+    if (now - lastPopupTimeRef.current > 35000) {
+      const raf = requestAnimationFrame(() => triggerPopup('maxBet'));
+      return () => cancelAnimationFrame(raf);
     }
-  }, [isMaxBet]);
+  }, [isMaxBet, triggerPopup]);
 
   // Handle newly unlocked tier celebration
   useEffect(() => {
-    if (unlockedTier) {
-      triggerPopup('quota', unlockedTier.dialogueUnlock);
-      if (onRewardCoins) {
-        onRewardCoins(unlockedTier.coinReward);
-      }
-      if (onClearUnlockedTier) {
-        onClearUnlockedTier();
-      }
-    }
-  }, [unlockedTier]);
-
-  const triggerPopup = (category: SpeechCategory, customText?: string) => {
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    lastPopupTimeRef.current = Date.now();
-
-    const pool = isPs2 ? PS2_LINES : isTimber ? GUS_LINES : isPixel ? ARCADE_LINES : BARON_LINES;
-    const list = (category !== 'quota' ? pool[category] : undefined) || pool.idle;
-    const text = customText || list[Math.floor(Math.random() * list.length)] || pool.idle[0];
-
-    setSpeechText(text);
-    setSpeechCategory(category);
-    setIsVisible(true);
-    setIsJiggling(true);
-    setTimeout(() => setIsJiggling(false), 700);
-
-    // Audio cue
-    soundManager.playPuppetBoing();
-    setTimeout(() => {
-      soundManager.playPuppetQuip();
-    }, 160);
-
-    // Auto hide after 8 seconds
-    hideTimerRef.current = window.setTimeout(() => {
-      setIsVisible(false);
-    }, 8000);
-  };
+    if (!unlockedTier) return;
+    const tierSnapshot = unlockedTier;
+    const raf = requestAnimationFrame(() => {
+      triggerPopup('quota', tierSnapshot.dialogueUnlock);
+      onRewardCoins?.(tierSnapshot.coinReward);
+      onClearUnlockedTier?.();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [unlockedTier, onRewardCoins, onClearUnlockedTier, triggerPopup]);
 
   const handleCharacterClick = () => {
-    soundManager.playPuppetBoing();
-    setIsJiggling(true);
-    setTimeout(() => setIsJiggling(false), 500);
     triggerPopup('idle');
   };
 

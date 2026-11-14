@@ -24,10 +24,49 @@ const VAULT_TO_TIMBER: Record<string, SymbolId> = {
   HORSESHOE: 'PINECONE',
   GRAPES: 'BERRIES',
   PLUM: 'ACORN',
-  ACE: 'ACE',
-  KING: 'KING',
-  QUEEN: 'QUEEN',
-  JACK: 'JACK',
+  ACE: 'WOOD_A',
+  KING: 'WOOD_K',
+  QUEEN: 'WOOD_Q',
+  JACK: 'WOOD_J',
+  CHERRY: 'BERRIES',
+};
+
+const VAULT_TO_PIXEL: Record<string, SymbolId> = {
+  WILD: 'CYBER_WILD',
+  SCATTER: 'PIXEL_CARTRIDGE',
+  COIN: 'RETRO_TOKEN',
+  SEVEN: 'BOSS_DRAGON',
+  DIAMOND: 'HERO_KNIGHT',
+  BELL: 'GAMEPAD',
+  MELON: 'JOYSTICK',
+  GOLDBAR: 'POTION_HEAL',
+  HORSESHOE: 'GAMEPAD',
+  GRAPES: 'POTION_HEAL',
+  PLUM: 'PIXEL_10',
+  ACE: 'PIXEL_A',
+  KING: 'PIXEL_K',
+  QUEEN: 'PIXEL_Q',
+  JACK: 'PIXEL_J',
+  CHERRY: 'PIXEL_10',
+};
+
+const VAULT_TO_PS2: Record<string, SymbolId> = {
+  WILD: 'DUALSHOCK',
+  SCATTER: 'DVD_DISC',
+  COIN: 'MEMORY_CARD',
+  SEVEN: 'EMOTION_ENGINE',
+  DIAMOND: 'PS2_LOGO',
+  BELL: 'BOOT_TOWER',
+  MELON: 'ANALOG_STICK',
+  GOLDBAR: 'EMOTION_ENGINE',
+  HORSESHOE: 'BOOT_TOWER',
+  GRAPES: 'ANALOG_STICK',
+  PLUM: 'PS_SQUARE',
+  ACE: 'PS_TRIANGLE',
+  KING: 'PS_CIRCLE',
+  QUEEN: 'PS_CROSS',
+  JACK: 'PS_SQUARE',
+  CHERRY: 'PS_CROSS',
 };
 
 export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
@@ -37,12 +76,25 @@ export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
   activeGameId = 'vault-24k',
 }) => {
   const isTimber = activeGameId === 'timber-critters';
+  const isPixel = activeGameId === 'pixel-arcade';
+  const isPs2 = activeGameId === 'ps2-legends';
+  const symbolMap = isTimber
+    ? VAULT_TO_TIMBER
+    : isPixel
+    ? VAULT_TO_PIXEL
+    : isPs2
+    ? VAULT_TO_PS2
+    : null;
 
   return (
     <div
       className={`relative flex flex-col w-[190px] sm:w-[220px] rounded-2xl p-2 shadow-2xl transition-all duration-300 flex-shrink-0 select-none overflow-hidden ${
         isTimber
           ? 'bg-gradient-to-b from-[#24130a] via-[#140a05] to-black border-2 border-amber-800/70 shadow-[0_0_25px_rgba(16,185,129,0.25)]'
+          : isPixel
+          ? 'bg-gradient-to-b from-[#1a093e] via-[#0c0420] to-black border-2 border-pink-500/50 shadow-[0_0_25px_rgba(236,72,153,0.25)]'
+          : isPs2
+          ? 'bg-gradient-to-b from-[#07142a] via-[#020714] to-black border-2 border-[#006FCD]/70 shadow-[0_0_25px_rgba(0,111,205,0.3)]'
           : 'bg-gradient-to-b from-casino-900 via-casino-950 to-black border border-white/15'
       }`}
     >
@@ -138,16 +190,22 @@ export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
 
       {/* Mini 5-Reel Slot Grid (5 columns x 4 rows) */}
       <div className={`relative z-10 grid grid-cols-5 gap-0.5 p-1 rounded-lg border shadow-inner h-[130px] sm:h-[150px] overflow-hidden ${
-        isTimber ? 'bg-[#09150d] border-emerald-600/30' : 'bg-casino-950 border-white/10'
+        isTimber
+          ? 'bg-[#09150d] border-emerald-600/30'
+          : isPixel
+          ? 'bg-[#090218] border-pink-500/30'
+          : isPs2
+          ? 'bg-[#020817] border-[#006FCD]/40'
+          : 'bg-casino-950 border-white/10'
       }`}>
         {/* Spinning Motion Blur Overlay */}
         {peer.isSpinning && (
           <div className="absolute inset-0 bg-black/80 backdrop-blur-[1px] flex flex-col items-center justify-center z-20 pointer-events-none">
             <div className={`w-5 h-5 rounded-full border-2 border-t-transparent animate-spin mb-1 ${
-              isTimber ? 'border-emerald-400' : 'border-neon-cyan'
+              isTimber ? 'border-emerald-400' : isPixel ? 'border-pink-400' : 'border-neon-cyan'
             }`} />
             <span className={`text-[8px] font-black tracking-widest uppercase animate-pulse ${
-              isTimber ? 'text-emerald-300' : 'text-neon-cyan'
+              isTimber ? 'text-emerald-300' : isPixel ? 'text-pink-300' : 'text-neon-cyan'
             }`}>
               ROLLING...
             </span>
@@ -159,7 +217,7 @@ export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
           <div key={colIdx} className="flex flex-col justify-between h-full">
             {[0, 1, 2, 3].map((rowIdx) => {
               const rawSymId = (peer.reelSymbols[colIdx]?.[rowIdx] as SymbolId) || 'SEVEN';
-              const symId = isTimber ? (VAULT_TO_TIMBER[rawSymId] || rawSymId) : rawSymId;
+              const symId = symbolMap ? (symbolMap[rawSymId] || rawSymId) : rawSymId;
               return (
                 <div
                   key={rowIdx}
@@ -175,7 +233,7 @@ export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
 
       {/* Terminal Footer: Tip Neighbor Button */}
       <div className={`relative z-10 flex items-center justify-between mt-2 pt-1.5 border-t ${
-        isTimber ? 'border-amber-900/60' : 'border-white/10'
+        isTimber ? 'border-amber-900/60' : isPixel ? 'border-pink-500/30' : isPs2 ? 'border-[#006FCD]/40' : 'border-white/10'
       }`}>
         <span className="text-[8px] font-bold text-slate-400 truncate max-w-[110px]">
           {peer.statusText}
@@ -186,6 +244,10 @@ export const NeighborTerminal: React.FC<NeighborTerminalProps> = ({
           className={`flex items-center space-x-1 px-2 py-0.5 rounded-full font-black text-[8px] uppercase shadow-md transition-transform active:scale-95 flex-shrink-0 ${
             isTimber
               ? 'bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-700 text-white hover:brightness-110'
+              : isPixel
+              ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white hover:brightness-110'
+              : isPs2
+              ? 'bg-gradient-to-r from-[#006FCD] to-cyan-500 text-white hover:brightness-110'
               : 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-amber-950'
           }`}
           title={`Toss a 25-coin tip to ${peer.name}!`}

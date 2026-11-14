@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { RefreshCw, Landmark, Coins, X, FastForward, CheckCircle2, Trees, Gamepad2 } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { RefreshCw, Landmark, Coins, X, FastForward, CheckCircle2, Trees, Gamepad2, Crown, Sparkles } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
+import { launchCoinFountain } from '../../fx/celebrations';
 import type { GameId } from '../../games/types';
 
 interface HoldAndSpinModalProps {
@@ -28,11 +29,13 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
   const [respinsLeft, setRespinsLeft] = useState(3);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isGrandJackpotWon, setIsGrandJackpotWon] = useState(false);
 
   // Dynamic grid based on game (Timberland = 5x3 = 15, Vault = 5x4 = 20, Pixel = 6x5 = 30)
   const numCols = isPixel ? 6 : 5;
   const numRows = isPixel ? 5 : isTimber ? 3 : 4;
   const totalPositions = numCols * numRows;
+  const grandJackpotAward = Math.max(50000, totalBet * 500);
 
   const [grid, setGrid] = useState<OrbCell[][]>(() => {
     const initial: OrbCell[][] = [];
@@ -75,18 +78,27 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
     0
   );
 
-  const handleRespin = () => {
+  const respinTimerRef = useRef<number | null>(null);
+  const completedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (respinTimerRef.current) clearTimeout(respinTimerRef.current);
+    };
+  }, []);
+
+  const handleRespin = useCallback(() => {
     if (isSpinning || respinsLeft <= 0 || isFinished) return;
     setIsSpinning(true);
     soundManager.playSpinStart();
 
-    setTimeout(() => {
+    if (respinTimerRef.current) clearTimeout(respinTimerRef.current);
+    respinTimerRef.current = window.setTimeout(() => {
       let anyNewLocked = false;
       const nextGrid = grid.map((col) =>
         col.map((cell) => {
           if (cell.isLocked) return cell;
 
-          // 22% chance of landing a new orb on empty position
           if (Math.random() < 0.22) {
             anyNewLocked = true;
             const isMini = Math.random() < 0.08;
@@ -121,7 +133,19 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       setGrid(nextGrid);
       setIsSpinning(false);
 
-      if (anyNewLocked) {
+      const nextLockedTotal = nextGrid.reduce(
+        (count, col) => count + col.filter((cell) => cell.isLocked).length,
+        0
+      );
+
+      if (nextLockedTotal === totalPositions) {
+        setIsGrandJackpotWon(true);
+        setIsFinished(true);
+        setRespinsLeft(0);
+        soundManager.playHoldAndSpinGrandJackpot();
+        soundManager.speakAnnouncer('Grand Jackpot! All Positions Locked!');
+        launchCoinFountain('jackpot');
+      } else if (anyNewLocked) {
         if (isPs2) {
           soundManager.playPs2MemoryCardSave();
         } else if (isPixel) {
@@ -132,7 +156,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
           soundManager.playGoldBarClank();
         }
         soundManager.playCoinCascade(6);
-        setRespinsLeft(3); // Reset to 3 respins!
+        setRespinsLeft(3);
       } else {
         const nextRespins = respinsLeft - 1;
         setRespinsLeft(nextRespins);
@@ -153,7 +177,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         }
       }
     }, 450);
-  };
+  }, [isSpinning, respinsLeft, isFinished, grid, totalBet, totalPositions, isPs2, isPixel, isTimber]);
 
   // Fast resolve: simulate remaining respins automatically and finish
   const handleAutoComplete = () => {
@@ -177,6 +201,15 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
         })
       );
 
+      const lockedCountNow = currentGridState.reduce(
+        (count, col) => count + col.filter((cell) => cell.isLocked).length,
+        0
+      );
+      if (lockedCountNow === totalPositions) {
+        currentRespins = 0;
+        break;
+      }
+
       if (newHit) {
         currentRespins = 3;
       } else {
@@ -184,9 +217,40 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       }
     }
 
+    const finalLockedCount = currentGridState.reduce(
+      (count, col) => count + col.filter((cell) => cell.isLocked).length,
+      0
+    );
+
     setGrid(currentGridState);
     setRespinsLeft(0);
     setIsFinished(true);
+
+    if (finalLockedCount === totalPositions) {
+      setIsGrandJackpotWon(true);
+      soundManager.playHoldAndSpinGrandJackpot();
+      soundManager.speakAnnouncer("Grand Jackpot! All Positions Locked!");
+      launchCoinFountain('jackpot');
+    } else {
+      if (isPs2) {
+        soundManager.playPs2Startup();
+      } else if (isPixel) {
+        soundManager.playArcadeVictoryFanfare();
+      } else if (isTimber) {
+        soundManager.playJackpotFanfare();
+      } else {
+        soundManager.playCashRegister();
+        soundManager.playJackpotFanfare();
+      }
+    }
+  };
+
+  const effectiveTotalPot = totalPot + (isGrandJackpotWon ? grandJackpotAward : 0);
+
+  const handleCollectAndExit = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    if (respinTimerRef.current) clearTimeout(respinTimerRef.current);
     if (isPs2) {
       soundManager.playPs2Startup();
     } else if (isPixel) {
@@ -197,23 +261,10 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
       soundManager.playCashRegister();
       soundManager.playJackpotFanfare();
     }
-  };
+    onComplete(effectiveTotalPot);
+  }, [isPs2, isPixel, isTimber, onComplete, effectiveTotalPot]);
 
-  const handleCollectAndExit = () => {
-    if (isPs2) {
-      soundManager.playPs2Startup();
-    } else if (isPixel) {
-      soundManager.playArcadeVictoryFanfare();
-    } else if (isTimber) {
-      soundManager.playJackpotFanfare();
-    } else {
-      soundManager.playCashRegister();
-      soundManager.playJackpotFanfare();
-    }
-    onComplete(totalPot);
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
@@ -232,7 +283,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [isFinished, isSpinning, respinsLeft, totalPot]);
+  }, [isFinished, isSpinning, respinsLeft, handleCollectAndExit, handleRespin]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md select-none animate-fadeIn">
@@ -392,6 +443,22 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
           ))}
         </div>
 
+        {/* Grand Jackpot Unlocked Celebration Banner */}
+        {isGrandJackpotWon && (
+          <div className="w-full my-2 p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black border-2 border-white shadow-[0_0_35px_rgba(245,158,11,1)] flex items-center justify-center space-x-3 animate-bounce">
+            <Crown className="w-6 h-6 text-black fill-black flex-shrink-0" />
+            <div className="flex flex-col text-center">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-widest font-mono">
+                ★ GRAND JACKPOT FULL BOARD CLEAR! ★
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold leading-tight">
+                ALL {totalPositions} POSITIONS LOCKED! GRAND BONUS +{grandJackpotAward.toLocaleString()} AWARDED!
+              </span>
+            </div>
+            <Sparkles className="w-6 h-6 text-black flex-shrink-0" />
+          </div>
+        )}
+
         {/* Total Cash Pot summary */}
         <div className={`flex items-center justify-between w-full px-3 py-2 rounded-xl border my-1.5 ${
           isPs2 ? 'bg-[#030919] border-[#006FCD]/40' : isPixel ? 'bg-[#120422] border-pink-500/40' : isTimber ? 'bg-[#140c06] border-emerald-600/40' : 'bg-casino-900/80 border-yellow-400/30'
@@ -403,7 +470,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
             <span className={`text-lg sm:text-xl font-black font-mono ${
               isPs2 ? 'text-[#00F0FF] drop-shadow-[0_0_10px_#00F0FF]' : isPixel ? 'text-cyan-300 drop-shadow-[0_0_10px_#06B6D4]' : 'text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]'
             }`}>
-              +{totalPot.toLocaleString()} {isPs2 ? 'CREDITS' : ''}
+              +{effectiveTotalPot.toLocaleString()} {isPs2 ? 'CREDITS' : ''}
             </span>
           </div>
 
@@ -431,7 +498,7 @@ export const HoldAndSpinModal: React.FC<HoldAndSpinModalProps> = ({
               }`}
             >
               <CheckCircle2 className="w-5 h-5" />
-              <span>COLLECT +{totalPot.toLocaleString()} {isPs2 ? 'CREDITS' : 'CASH'} &amp; RETURN TO SLOTS</span>
+              <span>COLLECT +{effectiveTotalPot.toLocaleString()} {isPs2 ? 'CREDITS' : 'CASH'} &amp; RETURN TO SLOTS</span>
               <span className="px-2 py-0.5 rounded bg-black/25 text-[10px] font-mono font-bold">SPACE</span>
             </button>
           ) : (

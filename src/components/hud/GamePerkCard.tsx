@@ -29,7 +29,7 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className="relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-56 hover:scale-[1.02]"
+      className="relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-full max-w-[196px] 2xl:max-w-[224px] hover:scale-[1.02]"
       title="Click to view full paytable and game rules"
     >
       {/* Top Banner Tag */}
@@ -80,11 +80,11 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
             <span className={`text-xs font-black uppercase tracking-wider font-mono ${
               isPs2 ? 'text-cyan-300' : isPixel ? 'text-pink-300' : isTimber ? 'text-emerald-300' : 'text-yellow-300'
             }`}>
-              {isPs2 ? 'PS2 LEGENDS 5x4' : isPixel ? 'PIXEL ARCADE 6x5' : isTimber ? 'TIMBERLAND CRITTERS' : '24K GOLD VAULT'}
+              {gameDef.name} ({gameDef.reels}x{gameDef.rows})
             </span>
           </div>
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5 font-mono">
-            {isPs2 ? '40 HIGH-SPEED PAYLINES • 92.8% RTP' : isPixel ? '50 RETRO PAYLINES • ~91% RTP' : isTimber ? '25 WILD PAYLINES • 96.2% RTP' : '40 HIGH-ROLLER PAYLINES • 95.8% RTP'}
+            {`${gameDef.defaultLines} PAYLINES • ${gameDef.volatilityLabel}`}
           </span>
         </div>
 
@@ -97,10 +97,10 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
               <span className={`text-[10px] font-black uppercase font-mono ${
                 isPs2 ? 'text-cyan-300' : isPixel ? 'text-pink-300' : isTimber ? 'text-emerald-300' : 'text-yellow-300'
               }`}>
-                {isPs2 ? 'DUALSHOCK WILD (840X)' : isPixel ? 'STAR WILD (1,000X)' : isTimber ? 'BEAR WILD (1,000X)' : 'IMPERIAL WILD (1,000X)'}
+                {gameDef.symbols[gameDef.wildId]?.name.toUpperCase()} ({Math.max(...Object.values(gameDef.symbols[gameDef.wildId]?.payouts || { 5: 1000 })).toLocaleString()}X)
               </span>
               <span className="text-[8px] text-slate-300 font-mono">
-                {isPs2 ? 'Substitutes all symbols except DVD & Card' : isPixel ? 'Substitutes all arcade symbols' : isTimber ? 'Substitutes all woodland critters' : 'Substitutes all standard vault symbols'}
+                Substitutes all standard symbols except {gameDef.symbols[gameDef.scatterId]?.name} & {gameDef.symbols[gameDef.coinId]?.name}
               </span>
             </div>
           </div>
@@ -112,10 +112,10 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
               <span className={`text-[10px] font-black uppercase font-mono ${
                 isPs2 ? 'text-blue-300' : isPixel ? 'text-cyan-300' : isTimber ? 'text-teal-300' : 'text-cyan-300'
               }`}>
-                {isPs2 ? `${gameDef.freeSpinsAward} OPTICAL FREE SPINS (${gameDef.freeSpinsMultiplier}X)` : isPixel ? 'CARTRIDGE SCATTER' : isTimber ? 'MOONLIT OWL SCATTER' : 'VAULT BLAST SCATTER'}
+                {`${gameDef.freeSpinsAward} ${gameDef.theme.freeSpinsTitle} (${gameDef.freeSpinsMultiplier}X)`}
               </span>
               <span className="text-[8px] text-slate-300 font-mono">
-                {isPs2 ? `3+ Blue DVDs = ${gameDef.freeSpinsAward} Spins at ${gameDef.freeSpinsMultiplier}X` : isPixel ? `3+ cartridges = ${gameDef.freeSpinsAward} Boss Games (${gameDef.freeSpinsMultiplier}X)` : `3+ scatters = ${gameDef.freeSpinsAward} Free Spins at ${gameDef.freeSpinsMultiplier}X`}
+                3+ {gameDef.symbols[gameDef.scatterId]?.name} = {gameDef.freeSpinsAward} Free Spins at {gameDef.freeSpinsMultiplier}X
               </span>
             </div>
           </div>
@@ -127,10 +127,10 @@ export const GamePerkCard: React.FC<GamePerkCardProps> = ({
               <span className={`text-[10px] font-black uppercase font-mono ${
                 isPs2 ? 'text-purple-300' : isPixel ? 'text-yellow-300' : isTimber ? 'text-amber-300' : 'text-amber-300'
               }`}>
-                {isPs2 ? '8MB MEMORY HOLD & SPIN' : isPixel ? 'HIGH SCORE RESPIN' : isTimber ? 'ACORN CASH LINK' : 'BULLION CASH LINK'}
+                {gameDef.theme.bonusTitle.toUpperCase()}
               </span>
               <span className="text-[8px] text-slate-300 font-mono">
-                {isPs2 ? '6+ cards lock for 3 respins & Grand' : isPixel ? '6+ tokens lock & reset 3 respins' : isTimber ? '6+ cash coins lock & reset 3 respins' : '6+ cash coins lock & reset 3 respins'}
+                6+ {gameDef.symbols[gameDef.coinId]?.name} lock & reset 3 respins for Grand
               </span>
             </div>
           </div>

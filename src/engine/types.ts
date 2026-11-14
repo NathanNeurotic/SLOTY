@@ -119,6 +119,7 @@ export type DebugScenario =
   | 'FIVE_SEVENS'
   | 'FREE_SPINS'
   | 'HOLD_AND_SPIN'
+  | 'MYSTERY_PICK'
   | 'NEAR_MISS'
   | 'BIG_WIN'
   | 'NO_WIN';

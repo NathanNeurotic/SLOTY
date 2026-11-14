@@ -77,12 +77,14 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
 
   // Feed wagers into progressives
   useEffect(() => {
-    if (totalBet > 0) {
+    if (totalBet <= 0) return;
+    const rafId = requestAnimationFrame(() => {
       setGrand((g) => g + totalBet * 0.005);
       setMajor((m) => m + totalBet * 0.003);
       setMinor((mi) => mi + totalBet * 0.002);
       setMini((mn) => mn + totalBet * 0.001);
-    }
+    });
+    return () => cancelAnimationFrame(rafId);
   }, [totalBet]);
 
   const handleJackpotClick = () => {
@@ -536,7 +538,7 @@ export const JackpotMarquee: React.FC<JackpotMarqueeProps> = ({
               <div className="flex items-center space-x-1.5 truncate flex-1 mr-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping flex-shrink-0" />
                 <span className="text-pink-300 font-bold uppercase truncate">
-                  ★ NEW RECORD: TODD R. (117,245 PTS) • 3 CARTRIDGES UNLOCK 15 BOSS RUSH FREE SPINS • 50 RETRO PAYLINES ★
+                  ★ NEW RECORD: TODD R. (117,245 PTS) • 3 CARTRIDGES UNLOCK {getGame('pixel-arcade').freeSpinsAward} BOSS RUSH FREE SPINS • {getGame('pixel-arcade').defaultLines} RETRO PAYLINES ★
                 </span>
               </div>
 

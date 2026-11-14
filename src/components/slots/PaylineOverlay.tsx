@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useLayoutEffect, useCallback, useId } from 'react';
 import type { WinningLine, Payline } from '../../engine/types';
 import { PAYLINES, PAYLINE_COLORS } from '../../engine/paylines';
 import type { GameId } from '../../games/types';
@@ -16,6 +16,30 @@ interface PaylineOverlayProps {
   activeGameId?: GameId;
 }
 
+interface OverlayMeasurement {
+  width: number;
+  height: number;
+  centers: Record<string, [number, number]>;
+}
+
+function centersMatch(
+  a: Record<string, [number, number]>,
+  b: Record<string, [number, number]>
+): boolean {
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  for (const key of keysA) {
+    const ptA = a[key];
+    const ptB = b[key];
+    if (!ptB) return false;
+    if (Math.abs(ptA[0] - ptB[0]) > 0.5 || Math.abs(ptA[1] - ptB[1]) > 0.5) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   winningLines,
   activeLineIndex,
@@ -29,76 +53,92 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
   activeGameId,
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+  const uid = useId().replace(/:/g, '');
+  const lineNeonGlowId = `lineNeonGlow-${uid}`;
+  const superNeonGlowId = `superNeonGlow-${uid}`;
+  const pixelBlockGlowId = `pixelBlockGlow-${uid}`;
+
+  const [measurement, setMeasurement] = useState<OverlayMeasurement>({
+    width: 0,
+    height: 0,
+    centers: {},
+  });
 
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
   const effectiveIsPs2 = activeGameId === 'ps2-legends';
 
-  // Continuous measurement of rendered SVG container
-  useEffect(() => {
-    const updateSize = () => {
-      if (svgRef.current) {
-        const rect = svgRef.current.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          setDimensions((prev) => {
-            if (Math.abs(prev.width - rect.width) > 0.5 || Math.abs(prev.height - rect.height) > 0.5) {
-              return { width: rect.width, height: rect.height };
-            }
-            return prev;
-          });
-        }
+  // Continuous measurement of rendered SVG container and symbol cell centers
+  useLayoutEffect(() => {
+    const measureLayout = () => {
+      const svg = svgRef.current;
+      if (!svg) return;
+      const svgRect = svg.getBoundingClientRect();
+      if (svgRect.width <= 0 || svgRect.height <= 0) return;
+
+      const nextCenters: Record<string, [number, number]> = {};
+      const parent = svg.parentElement;
+      if (parent) {
+        const cells = parent.querySelectorAll('[data-reel][data-row]');
+        cells.forEach((cell) => {
+          const reelAttr = cell.getAttribute('data-reel');
+          const rowAttr = cell.getAttribute('data-row');
+          if (reelAttr === null || rowAttr === null) return;
+          const cellRect = cell.getBoundingClientRect();
+          if (cellRect.width <= 0 || cellRect.height <= 0) return;
+          const xRel = cellRect.left - svgRect.left + cellRect.width / 2;
+          const yRel = cellRect.top - svgRect.top + cellRect.height / 2;
+          nextCenters[`${reelAttr}-${rowAttr}`] = [xRel, yRel];
+        });
       }
+
+      setMeasurement((prev) => {
+        const sameDims =
+          Math.abs(prev.width - svgRect.width) <= 0.5 &&
+          Math.abs(prev.height - svgRect.height) <= 0.5;
+        if (sameDims && centersMatch(prev.centers, nextCenters)) {
+          return prev;
+        }
+        return {
+          width: svgRect.width,
+          height: svgRect.height,
+          centers: nextCenters,
+        };
+      });
     };
 
-    updateSize();
+    const rafId = requestAnimationFrame(measureLayout);
 
     let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && svgRef.current) {
-      ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          const w = entry.contentRect.width || entry.target.getBoundingClientRect().width;
-          const h = entry.contentRect.height || entry.target.getBoundingClientRect().height;
-          if (w > 0 && h > 0) {
-            setDimensions({ width: w, height: h });
-          }
-        }
+    const svg = svgRef.current;
+    if (typeof ResizeObserver !== 'undefined' && svg) {
+      ro = new ResizeObserver(() => {
+        measureLayout();
       });
-      ro.observe(svgRef.current);
-      if (svgRef.current.parentElement) {
-        ro.observe(svgRef.current.parentElement);
+      ro.observe(svg);
+      if (svg.parentElement) {
+        ro.observe(svg.parentElement);
       }
     }
 
-    window.addEventListener('resize', updateSize);
+    window.addEventListener('resize', measureLayout);
     return () => {
+      cancelAnimationFrame(rafId);
       ro?.disconnect();
-      window.removeEventListener('resize', updateSize);
+      window.removeEventListener('resize', measureLayout);
     };
-  }, []);
+  }, [reelsCount, rowCount, activeGameId, winningLines.length, previewLineIndex]);
 
-  const { width, height } = dimensions;
+  const { width, height, centers } = measurement;
   const isMeasured = width > 0 && height > 0;
   const svgW = isMeasured ? width : 1000;
   const svgH = isMeasured ? height : 500;
 
-  // Exact reel column & row slice center calculation using rendered DOM elements with mathematical fallback
+  // Exact reel column & row slice center lookup with mathematical fallback
   const getCellCenter = useCallback(
     (reel: number, row: number): [number, number] => {
-      if (svgRef.current && svgRef.current.parentElement) {
-        const cell = svgRef.current.parentElement.querySelector(`[data-reel="${reel}"][data-row="${row}"]`);
-        if (cell) {
-          const cellRect = cell.getBoundingClientRect();
-          const svgRect = svgRef.current.getBoundingClientRect();
-          if (svgRect.width > 0 && svgRect.height > 0) {
-            const xRel = cellRect.left - svgRect.left + cellRect.width / 2;
-            const yRel = cellRect.top - svgRect.top + cellRect.height / 2;
-            const scaleX = svgW / svgRect.width;
-            const scaleY = svgH / svgRect.height;
-            return [xRel * scaleX, yRel * scaleY];
-          }
-        }
-      }
+      const measured = centers[`${reel}-${row}`];
+      if (measured) return measured;
 
       // Mathematical fallback matching slot machine grid flex layout
       const isSm = typeof window !== 'undefined' ? window.innerWidth >= 640 : svgW >= 640;
@@ -109,7 +149,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
       const y = (row + 0.5) * (svgH / rowCount);
       return [x, y];
     },
-    [reelsCount, rowCount, svgW, svgH]
+    [centers, reelsCount, rowCount, svgW, svgH]
   );
 
   const hasContent = winningLines.length > 0 || previewLineIndex !== null;
@@ -127,14 +167,14 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
       className="absolute inset-1 sm:inset-2 pointer-events-none z-20 overflow-visible w-[calc(100%-8px)] sm:w-[calc(100%-16px)] h-[calc(100%-8px)] sm:h-[calc(100%-16px)]"
     >
       <defs>
-        <filter id="lineNeonGlow" x="-30%" y="-30%" width="160%" height="160%">
+        <filter id={lineNeonGlowId} x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="3.0" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        <filter id="superNeonGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id={superNeonGlowId} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="6.0" result="blur1" />
           <feGaussianBlur stdDeviation="2.5" result="blur2" />
           <feMerge>
@@ -143,7 +183,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        <filter id="pixelBlockGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <filter id={pixelBlockGlowId} x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#EC4899" floodOpacity="0.8" />
         </filter>
       </defs>
@@ -170,7 +210,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                   strokeOpacity="0.85"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  filter="url(#lineNeonGlow)"
+                  filter={`url(#${lineNeonGlowId})`}
                 />
                 <path
                   d={pathData}
@@ -189,7 +229,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     fill={color}
                     stroke="#FFF"
                     strokeWidth={1.5}
-                    filter="url(#lineNeonGlow)"
+                    filter={`url(#${lineNeonGlowId})`}
                   />
                 ))}
               </>
@@ -228,7 +268,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeOpacity={isHighlighted ? 0.75 : 0.25}
                     strokeLinecap="square"
                     strokeLinejoin="miter"
-                    filter="url(#superNeonGlow)"
+                    filter={`url(#${superNeonGlowId})`}
                   />
 
                   {/* 2. Stepped High-Intensity Laser Core */}
@@ -239,7 +279,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeWidth={isHighlighted ? 6 : 3}
                     strokeLinecap="square"
                     strokeLinejoin="miter"
-                    filter="url(#lineNeonGlow)"
+                    filter={`url(#${lineNeonGlowId})`}
                   />
 
                   {/* 3. White Core Pixel Streak */}
@@ -283,7 +323,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           fill={color}
                           stroke="#FFF"
                           strokeWidth={2}
-                          filter="url(#lineNeonGlow)"
+                          filter={`url(#${lineNeonGlowId})`}
                         />
                         {/* Inner Specular Core */}
                         {isHighlighted && (
@@ -313,7 +353,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeOpacity={isHighlighted ? 0.7 : 0.25}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter="url(#superNeonGlow)"
+                    filter={`url(#${superNeonGlowId})`}
                   />
                   {/* 2. Heavy Twisted Briar Bark Stem */}
                   <path
@@ -376,7 +416,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           fill="#F59E0B"
                           stroke="#FEF08A"
                           strokeWidth={isHighlighted ? 2.5 : 1.5}
-                          filter="url(#lineNeonGlow)"
+                          filter={`url(#${lineNeonGlowId})`}
                         />
                         {isHighlighted && (
                           <circle cx={x} cy={y} r={3.5} fill="#FFFFFF" />
@@ -399,7 +439,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeOpacity={isHighlighted ? 0.75 : 0.25}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter="url(#superNeonGlow)"
+                    filter={`url(#${superNeonGlowId})`}
                   />
                   {/* 2. Cyan High-Bandwidth DMA Core */}
                   <path
@@ -409,7 +449,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeWidth={isHighlighted ? 5 : 2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter="url(#lineNeonGlow)"
+                    filter={`url(#${lineNeonGlowId})`}
                   />
                   {/* 3. High-Speed White Bus Pulse */}
                   {isHighlighted && (
@@ -447,7 +487,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           fill="#030816"
                           stroke="#006FCD"
                           strokeWidth={2}
-                          filter="url(#lineNeonGlow)"
+                          filter={`url(#${lineNeonGlowId})`}
                         />
                         {/* Distinct Controller Symbol Glyphs inside nodes */}
                         {glyphIndex === 0 ? (
@@ -480,7 +520,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeOpacity={isHighlighted ? 0.75 : 0.2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter="url(#superNeonGlow)"
+                    filter={`url(#${superNeonGlowId})`}
                   />
 
                   {/* 2. Primary Vibrant Laser Beam */}
@@ -492,7 +532,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                     strokeOpacity={isHighlighted ? 0.95 : 0.3}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter="url(#lineNeonGlow)"
+                    filter={`url(#${lineNeonGlowId})`}
                   />
 
                   {/* 3. High-Voltage Traveling Laser Stream */}
@@ -543,7 +583,7 @@ export const PaylineOverlay: React.FC<PaylineOverlayProps> = ({
                           fill={color}
                           stroke="#FFF"
                           strokeWidth={isHighlighted ? 2 : 1.2}
-                          filter="url(#lineNeonGlow)"
+                          filter={`url(#${lineNeonGlowId})`}
                         />
                         {/* White Center Flare Core */}
                         {isHighlighted && (

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { soundManager } from '../../audio/soundManager';
 import { Sparkles, Gamepad2, Star, Zap } from 'lucide-react';
-import pennyImg from '../../assets/pixel_penny.jpg';
+import pennyImg from '../../assets/pixel_penny.webp';
 
 export type PennyState = 'idle' | 'spinning' | 'anticipation' | 'win' | 'bigwin' | 'fever';
 
@@ -71,10 +71,11 @@ export const PixelPenny: React.FC<PixelPennyProps> = ({
   onRewardCoins,
   variant = 'full',
 }) => {
-  const [currentQuote, setCurrentQuote] = useState(PIXEL_IDLE_QUOTES[0]);
+  const [idleIndex, setIdleIndex] = useState(0);
+  const [reactionIndex, setReactionIndex] = useState(0);
   const [isTapped, setIsTapped] = useState(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
-  const quoteTimerRef = useRef<number | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
 
   // Compute operational mascot state
   const mascotState: PennyState = isFeverMode
@@ -89,63 +90,60 @@ export const PixelPenny: React.FC<PixelPennyProps> = ({
     ? 'spinning'
     : 'idle';
 
-  // State-driven dialogue selector
+  const pool =
+    mascotState === 'fever'
+      ? PIXEL_FEVER_QUOTES
+      : mascotState === 'bigwin'
+      ? PIXEL_BIG_WIN_QUOTES
+      : mascotState === 'win'
+      ? PIXEL_WIN_QUOTES
+      : mascotState === 'anticipation'
+      ? PIXEL_ANTICIPATION_QUOTES
+      : mascotState === 'spinning'
+      ? PIXEL_SPIN_QUOTES
+      : PIXEL_IDLE_QUOTES;
+
+  const currentQuote = pool[(mascotState === 'idle' ? idleIndex : reactionIndex) % pool.length];
+
+  // Auto-cycle dialogue cleanly without synchronous setState in effect
   useEffect(() => {
-    let pool: string[];
-    switch (mascotState) {
-      case 'fever':
-        pool = PIXEL_FEVER_QUOTES;
-        break;
-      case 'bigwin':
-        pool = PIXEL_BIG_WIN_QUOTES;
-        break;
-      case 'win':
-        pool = PIXEL_WIN_QUOTES;
-        break;
-      case 'anticipation':
-        pool = PIXEL_ANTICIPATION_QUOTES;
-        break;
-      case 'spinning':
-        pool = PIXEL_SPIN_QUOTES;
-        break;
-      default:
-        pool = PIXEL_IDLE_QUOTES;
+    if (mascotState !== 'idle') {
+      const raf = requestAnimationFrame(() => setReactionIndex((i) => i + 1));
+      return () => cancelAnimationFrame(raf);
     }
-
-    const randomQuote = pool[Math.floor(Math.random() * pool.length)];
-    setCurrentQuote(randomQuote);
-
-    // Auto-cycle idle dialogue every 8 seconds
-    if (mascotState === 'idle') {
-      quoteTimerRef.current = window.setInterval(() => {
-        const nextQuote = PIXEL_IDLE_QUOTES[Math.floor(Math.random() * PIXEL_IDLE_QUOTES.length)];
-        setCurrentQuote(nextQuote);
-      }, 8000);
-    }
-
-    return () => {
-      if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
-    };
+    const timer = window.setInterval(() => {
+      setIdleIndex((i) => i + 1);
+    }, 8000);
+    return () => clearInterval(timer);
   }, [mascotState]);
 
-  // Click-to-interact easter egg with coin tip reward
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const t = window.setTimeout(() => setCooldownLeft((c) => Math.max(0, c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [cooldownLeft]);
+
+  // Click-to-interact easter egg with fair cooldown coin tip reward
   const handleMascotTap = () => {
     soundManager.unlockAudio();
     soundManager.playButtonClick();
     setIsTapped(true);
+    setTimeout(() => setIsTapped(false), 700);
 
-    const bonusRewards = [25, 50, 75, 100];
-    const awarded = bonusRewards[Math.floor(Math.random() * bonusRewards.length)];
-
-    setTapBonusText(`+${awarded} 🪙 RETRO TIP!`);
-    if (onRewardCoins) {
-      onRewardCoins(awarded);
+    if (cooldownLeft > 0) {
+      setIdleIndex((i) => i + 1);
+      setTapBonusText(`1UP token buffer cooling (${cooldownLeft}s)`);
+      setTimeout(() => setTapBonusText(null), 1600);
+      return;
     }
 
-    setCurrentQuote("RADICAL! Here are some spare tokens for the next round!");
+    const bonusRewards = [50, 75, 100];
+    const awarded = bonusRewards[Math.floor(Math.random() * bonusRewards.length)];
+    setCooldownLeft(8);
+    setTapBonusText(`+${awarded} 🪙 RETRO TIP!`);
+    onRewardCoins?.(awarded);
 
     setTimeout(() => {
-      setIsTapped(false);
       setTapBonusText(null);
     }, 2400);
   };
@@ -198,7 +196,7 @@ export const PixelPenny: React.FC<PixelPennyProps> = ({
 
       {/* Main Standee Chamber */}
       <div
-        className={`relative w-48 h-[310px] rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 bg-gradient-to-b from-[#180938] via-[#0d0422] to-[#05010e] ${
+        className={`relative w-full max-w-[196px] 2xl:max-w-[208px] aspect-[192/310] max-h-[310px] rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 bg-gradient-to-b from-[#180938] via-[#0d0422] to-[#05010e] ${
           mascotState === 'fever'
             ? 'border-yellow-400 shadow-[0_0_35px_rgba(250,204,21,0.8)] scale-105'
             : mascotState === 'bigwin'

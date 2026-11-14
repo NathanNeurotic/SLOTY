@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { X, Gift, Sparkles } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
@@ -30,8 +30,17 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [wonAmount, setWonAmount] = useState<number | null>(null);
+  const tickIntervalRef = useRef<number | null>(null);
+  const spinTimeoutRef = useRef<number | null>(null);
 
-  const handleSpinWheel = () => {
+  useEffect(() => {
+    return () => {
+      if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+      if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+    };
+  }, []);
+
+  const handleSpinWheel = useCallback(() => {
     if (isSpinning || !canClaim) return;
 
     soundManager.playSpinStart();
@@ -45,27 +54,33 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
     // Each slice is 360 / 8 = 45 degrees
     // Pointer is at the top (0 degrees / 270 deg)
     const sliceDegrees = 360 / WHEEL_SLICES.length;
-    // Compute rotation: at least 5 full rotations (1800 deg) + offset to land target slice at top pointer
-    const targetRotation = 360 * 6 + (WHEEL_SLICES.length - 1 - sliceIndex) * sliceDegrees + sliceDegrees / 2;
+    // Compute rotation: at least 6 full rotations + offset to land target slice at top pointer
+    const targetRotation =
+      360 * 6 + (WHEEL_SLICES.length - 1 - sliceIndex) * sliceDegrees + sliceDegrees / 2;
 
     setRotationDegrees(targetRotation);
 
     // Play ticking sounds while spinning
-    const tickInterval = setInterval(() => {
+    if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+    tickIntervalRef.current = window.setInterval(() => {
       soundManager.playCoinTally();
     }, 120);
 
-    setTimeout(() => {
-      clearInterval(tickInterval);
+    if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+    spinTimeoutRef.current = window.setTimeout(() => {
+      if (tickIntervalRef.current) {
+        clearInterval(tickIntervalRef.current);
+        tickIntervalRef.current = null;
+      }
       soundManager.playWinChime(targetSlice.amount >= 50000 ? 25 : 10);
       launchCoinFountain(targetSlice.amount >= 50000 ? 'mega' : 'big');
       setIsSpinning(false);
       setWonAmount(targetSlice.amount);
       onClaim(targetSlice.amount);
     }, 4500);
-  };
+  }, [isSpinning, canClaim, onClaim]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
@@ -79,7 +94,7 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
           soundManager.playButtonClick();
           onClose();
         }
-      } else if (e.key === 'Escape') {
+      } else if (e.key === 'Escape' && !isSpinning) {
         e.preventDefault();
         e.stopPropagation();
         soundManager.playButtonClick();
@@ -89,7 +104,7 @@ export const DailyBonusModal: React.FC<DailyBonusModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [wonAmount, canClaim, isSpinning, onClose]);
+  }, [wonAmount, canClaim, isSpinning, onClose, handleSpinWheel]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md select-none">

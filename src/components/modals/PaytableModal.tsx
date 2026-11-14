@@ -3,14 +3,20 @@ import { X, Coins } from 'lucide-react';
 import { SymbolRenderer } from '../slots/SymbolRenderer';
 import { soundManager } from '../../audio/soundManager';
 import type { GameId } from '../../games/types';
+import type { GameStats } from '../../engine/types';
 import { getGame } from '../../games/gameRegistry';
 
 interface PaytableModalProps {
   onClose: () => void;
   activeGameId?: GameId;
+  stats?: GameStats;
 }
 
-export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGameId = 'vault-24k' }) => {
+export const PaytableModal: React.FC<PaytableModalProps> = ({
+  onClose,
+  activeGameId = 'vault-24k',
+  stats,
+}) => {
   const gameDef = getGame(activeGameId);
   const isTimber = activeGameId === 'timber-critters';
   const isPixel = activeGameId === 'pixel-arcade';
@@ -87,13 +93,35 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto pr-1 my-3 space-y-5">
+          {stats && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-xl bg-black/50 border border-white/10">
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Session Spins</span>
+                <span className="text-sm font-black font-mono tabular-nums text-white">{stats.totalSpins.toLocaleString()}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Session RTP</span>
+                <span className="text-sm font-black font-mono tabular-nums text-emerald-300">
+                  {stats.totalWagered > 0 ? `${((stats.totalWon / stats.totalWagered) * 100).toFixed(1)}%` : '—'}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Best Hit</span>
+                <span className="text-sm font-black font-mono tabular-nums text-amber-300">{stats.biggestWin.toLocaleString()}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Bonuses Hit</span>
+                <span className="text-sm font-black font-mono tabular-nums text-cyan-300">{(stats.freeSpinsPlayed + stats.holdAndSpinsPlayed).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
           {/* Special Feature Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* Wild */}
             <div className="bg-casino-900/90 border border-gold-bright/30 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
                 <SymbolRenderer
-                  id={isPs2 ? 'PS2_LOGO' : isPixel ? 'CYBER_WILD' : isTimber ? 'BEAR' : 'WILD'}
+                  id={gameDef.wildId}
                 />
               </div>
               <div>
@@ -122,7 +150,7 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
             <div className="bg-casino-900/90 border border-neon-cyan/30 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
                 <SymbolRenderer
-                  id={isPs2 ? 'DVD_DISC' : isPixel ? 'PIXEL_CARTRIDGE' : isTimber ? 'OWL' : 'SCATTER'}
+                  id={gameDef.scatterId}
                 />
               </div>
               <div>
@@ -161,7 +189,7 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
             <div className="bg-casino-900/90 border border-amber-400/40 rounded-2xl p-3 flex items-center space-x-2.5">
               <div className="w-14 h-14 flex-shrink-0">
                 <SymbolRenderer
-                  id={isPs2 ? 'MEMORY_CARD' : isPixel ? 'RETRO_TOKEN' : isTimber ? 'ACORN' : 'COIN'}
+                  id={gameDef.coinId}
                 />
               </div>
               <div>
@@ -184,6 +212,44 @@ export const PaytableModal: React.FC<PaytableModalProps> = ({ onClose, activeGam
                     : '6+ Golden Bullion Coins trigger the Fort Knox Cash Link Respins with Mini, Minor, Major & Grand Pots!'}
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Bonus Features & Jackpots Overview */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {/* Grand Jackpot Full Board */}
+            <div className="bg-casino-900/80 border border-yellow-500/30 rounded-2xl p-2.5 flex flex-col justify-between">
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="text-base">🏆</span>
+                <span className="text-[11px] font-black uppercase text-yellow-400">Grand Jackpot (Full Board)</span>
+              </div>
+              <p className="text-[10px] text-slate-300 leading-relaxed">
+                Lock all positions during Hold & Spin to win the top Grand Jackpot: +50,000 coins (+500x total bet) plus all locked prize values!
+              </p>
+            </div>
+
+            {/* Mystery Safecracker Pick */}
+            <div className="bg-casino-900/80 border border-emerald-500/30 rounded-2xl p-2.5 flex flex-col justify-between">
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="text-base">🎁</span>
+                <span className="text-[11px] font-black uppercase text-emerald-400">
+                  {isPs2 ? 'MagicGate Pick Bonus' : isPixel ? 'Prize Cube Pick' : isTimber ? 'Critter Hollow Pick' : 'Safecracker Pick'}
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-300 leading-relaxed">
+                Choose 3 mystery vaults to reveal instant cash bullion, multipliers up to 75x, and extra picks. Selectable anytime in the Double-Up menu!
+              </p>
+            </div>
+
+            {/* Fever Surge Overdrive */}
+            <div className="bg-casino-900/80 border border-purple-500/30 rounded-2xl p-2.5 flex flex-col justify-between">
+              <div className="flex items-center space-x-2 mb-1">
+                <span className="text-base">⚡</span>
+                <span className="text-[11px] font-black uppercase text-purple-400">Fever Surge Overdrive</span>
+              </div>
+              <p className="text-[10px] text-slate-300 leading-relaxed">
+                Spins charge the 100% Fever gauge. When full, 5 turbo-charged overdrive spins unlock with 2x multipliers and electric soundtrack!
+              </p>
             </div>
           </div>
 

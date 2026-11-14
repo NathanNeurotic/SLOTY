@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { soundManager } from '../../audio/soundManager';
 import { Sparkles, Trees, Star } from 'lucide-react';
-import grizzlyImg from '../../assets/grizzly_gus.jpg';
+import grizzlyImg from '../../assets/grizzly_gus.webp';
 
 export type MascotState = 'idle' | 'spinning' | 'anticipation' | 'win' | 'bigwin' | 'fever';
 
@@ -71,10 +71,11 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
   onRewardCoins,
   variant = 'full',
 }) => {
-  const [currentQuote, setCurrentQuote] = useState(TIMBER_IDLE_QUOTES[0]);
+  const [idleIndex, setIdleIndex] = useState(0);
+  const [reactionIndex, setReactionIndex] = useState(0);
   const [isTapped, setIsTapped] = useState(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
-  const quoteTimerRef = useRef<number | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
 
   // Compute operational mascot state
   const mascotState: MascotState = isFeverMode
@@ -89,59 +90,55 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
     ? 'spinning'
     : 'idle';
 
+  const pool =
+    mascotState === 'fever'
+      ? TIMBER_FEVER_QUOTES
+      : mascotState === 'bigwin'
+      ? TIMBER_BIG_WIN_QUOTES
+      : mascotState === 'win'
+      ? TIMBER_WIN_QUOTES
+      : mascotState === 'anticipation'
+      ? TIMBER_ANTICIPATION_QUOTES
+      : mascotState === 'spinning'
+      ? TIMBER_SPIN_QUOTES
+      : TIMBER_IDLE_QUOTES;
+
+  const currentQuote = pool[(mascotState === 'idle' ? idleIndex : reactionIndex) % pool.length];
+
   useEffect(() => {
-    let pool: string[];
-    switch (mascotState) {
-      case 'fever':
-        pool = TIMBER_FEVER_QUOTES;
-        break;
-      case 'bigwin':
-        pool = TIMBER_BIG_WIN_QUOTES;
-        break;
-      case 'win':
-        pool = TIMBER_WIN_QUOTES;
-        break;
-      case 'anticipation':
-        pool = TIMBER_ANTICIPATION_QUOTES;
-        break;
-      case 'spinning':
-        pool = TIMBER_SPIN_QUOTES;
-        break;
-      case 'idle':
-      default:
-        pool = TIMBER_IDLE_QUOTES;
-        break;
+    if (mascotState !== 'idle') {
+      const raf = requestAnimationFrame(() => setReactionIndex((i) => i + 1));
+      return () => cancelAnimationFrame(raf);
     }
-
-    const nextQuote = pool[Math.floor(Math.random() * pool.length)];
-    setCurrentQuote(nextQuote);
-
-    if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
-
-    if (mascotState === 'idle') {
-      quoteTimerRef.current = window.setInterval(() => {
-        setCurrentQuote(TIMBER_IDLE_QUOTES[Math.floor(Math.random() * TIMBER_IDLE_QUOTES.length)]);
-      }, 7500);
-    }
-
-    return () => {
-      if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
-    };
+    const timer = window.setInterval(() => {
+      setIdleIndex((i) => i + 1);
+    }, 7500);
+    return () => clearInterval(timer);
   }, [mascotState]);
+
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const t = window.setTimeout(() => setCooldownLeft((c) => Math.max(0, c - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [cooldownLeft]);
 
   const handleGusClick = () => {
     soundManager.unlockAudio();
     soundManager.playGrizzlyRoar();
-
     setIsTapped(true);
-    setTapBonusText('+150 GOLDEN ACORNS!');
+    setTimeout(() => setIsTapped(false), 700);
 
-    if (onRewardCoins) {
-      onRewardCoins(150);
+    if (cooldownLeft > 0) {
+      setIdleIndex((i) => i + 1);
+      setTapBonusText(`ROAR! Acorn stash recharging (${cooldownLeft}s)`);
+      setTimeout(() => setTapBonusText(null), 1600);
+      return;
     }
 
-    setTimeout(() => setIsTapped(false), 800);
-    setTimeout(() => setTapBonusText(null), 2500);
+    setCooldownLeft(8);
+    setTapBonusText('+150 GOLDEN ACORNS!');
+    onRewardCoins?.(150);
+    setTimeout(() => setTapBonusText(null), 2400);
   };
 
   // Compact Stage Banner for Header & Floor Mode
@@ -196,7 +193,7 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
   return (
     <div
       onClick={handleGusClick}
-      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-56 ${
+      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-full max-w-[196px] 2xl:max-w-[224px] ${
         isTapped ? 'scale-105' : 'hover:scale-[1.02]'
       }`}
       title="Click Grizzly Gus for lucky cheers, bear roars & free acorns!"
@@ -246,7 +243,7 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
       )}
 
       {/* High-Resolution Illustrated 3D Mascot Character Standee */}
-      <div className={`relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black ${
+      <div className={`relative w-[92%] aspect-[208/340] max-h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black ${
         mascotState === 'fever'
           ? 'border-amber-400 shadow-[0_0_35px_rgba(245,158,11,0.8)]'
           : 'border-emerald-400/70 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
@@ -282,12 +279,12 @@ export const GrizzlyGus: React.FC<GrizzlyGusProps> = ({
 
       {/* 3D Mossy Cedar Log Stump Base */}
       <div className="w-full flex flex-col items-center -mt-2 z-10 pointer-events-none">
-        <div className="w-48 h-3 bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] rounded-t-md border-t border-[#a16207] shadow-md flex items-center justify-around px-4">
+        <div className="w-[86%] h-3 bg-gradient-to-r from-[#2e180e] via-[#5c2b09] to-[#2e180e] rounded-t-md border-t border-[#a16207] shadow-md flex items-center justify-around px-4">
           <span className="text-[8px]">🍂</span>
           <span className="text-[8px]">🌰</span>
           <span className="text-[8px]">🍁</span>
         </div>
-        <div className="w-56 h-6 bg-gradient-to-r from-[#170a04] via-[#2e180e] to-[#170a04] rounded-b-xl border-b-2 border-x-2 border-[#78350f] shadow-2xl relative flex items-center justify-center">
+        <div className="w-full h-6 bg-gradient-to-r from-[#170a04] via-[#2e180e] to-[#170a04] rounded-b-xl border-b-2 border-x-2 border-[#78350f] shadow-2xl relative flex items-center justify-center">
           <div className="w-24 h-1.5 bg-emerald-700/60 rounded-full blur-[0.5px]" />
         </div>
         <div className="w-60 h-3 bg-black/80 blur-sm rounded-full -mt-1" />

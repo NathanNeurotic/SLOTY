@@ -29,6 +29,14 @@ class SoundManager {
     this.musicVolume = storage.getNumber('sloty_music_volume', 70) / 100;
   }
 
+  public vibrate(pattern: number | number[] = 20) {
+    if (typeof window !== 'undefined' && 'navigator' in window && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch {}
+    }
+  }
+
   public initContext() {
     if (!this.ctx) {
       const AudioCtx =
@@ -1275,6 +1283,7 @@ class SoundManager {
 
   // Spin start: Bespoke Per Game
   public playSpinStart() {
+    this.vibrate(15);
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
@@ -2253,6 +2262,7 @@ class SoundManager {
 
   // Heavy tactile physical reel stop (bass punch + spring latch clack)
   public playReelStop(reelIndex: number = 0) {
+    this.vibrate(22);
     if (this.activeGameTheme === 'pixel-arcade') {
       this.playArcadeStop(reelIndex);
       return;
@@ -2317,6 +2327,7 @@ class SoundManager {
 
   // Radiant casino scatter bell fanfare with dual harmonic ring
   public playScatterLand(scatterIndex: number = 1) {
+    this.vibrate([30, 40, 50]);
     if (this.activeGameTheme === 'pixel-arcade') {
       this.playArcadeCartridge(scatterIndex);
       return;
@@ -2533,6 +2544,7 @@ class SoundManager {
 
   // Vegas Jackpot Police / Casino Siren
   public playJackpotSiren() {
+    this.vibrate([80, 50, 80, 50, 120]);
     this.initContext();
     if (!this.ctx || this.isMuted) return;
 
@@ -3088,6 +3100,354 @@ class SoundManager {
       gain.connect(this.ctx.destination);
       osc.start(t);
       osc.stop(t + 0.11);
+    });
+  }
+
+  // Classic brass casino bell ring with physical harmonic overtones
+  public playBellRing() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    const gain2 = this.ctx.createGain();
+
+    gain1.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+    gain2.gain.setValueAtTime(0.20 * this.sfxVolume, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, now);
+    osc1.frequency.exponentialRampToValueAtTime(876, now + 0.85);
+
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(2640, now);
+    osc2.frequency.exponentialRampToValueAtTime(2630, now + 0.45);
+
+    osc1.connect(gain1);
+    osc2.connect(gain2);
+    gain1.connect(this.ctx.destination);
+    gain2.connect(this.ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.9);
+    osc2.stop(now + 0.5);
+  }
+
+  // Crystalline sparkling harp glissando for diamond / royal payouts
+  public playDiamondGlissando() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+    const freqs = [1046.5, 1318.5, 1567.98, 2093.0, 2637.02];
+    freqs.forEach((freq, idx) => {
+      if (!this.ctx) return;
+      const t = now + idx * 0.055;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      gain.gain.setValueAtTime(0.25 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.36);
+    });
+  }
+
+  // Authentic 8-bit retro arcade win chimes per symbol
+  public playArcade8BitChime(symId: string) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    if (symId === 'PIXEL_WILD') {
+      // Star power-up arpeggio (C5, E5, G5, C6, G5, C6)
+      const starNotes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+      starNotes.forEach((f, i) => {
+        if (!this.ctx) return;
+        const t = now + i * 0.06;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.25 * this.sfxVolume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(f, t);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.13);
+      });
+      return;
+    }
+
+    if (symId === 'INVADER_RED' || symId === 'GHOST_BLUE') {
+      // Classic descending alien pulse
+      const steps = [880, 740, 620, 520];
+      steps.forEach((f, i) => {
+        if (!this.ctx) return;
+        const t = now + i * 0.05;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.22 * this.sfxVolume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, t);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      });
+      return;
+    }
+
+    if (symId === 'COIN_8BIT' || symId === 'CHERRY_8BIT') {
+      // Two-tone jump coin ding (B5 then E6)
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.28 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(987.77, now);
+      osc.frequency.setValueAtTime(1318.51, now + 0.07);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
+      return;
+    }
+
+    if (symId === 'HEART_PIXEL') {
+      // 1-UP life fanfare
+      const lifeNotes = [330, 392, 659, 523, 587, 784];
+      lifeNotes.forEach((f, i) => {
+        if (!this.ctx) return;
+        const t = now + i * 0.07;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.25 * this.sfxVolume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      });
+      return;
+    }
+
+    this.playArcadeWin(1);
+  }
+
+  // Authentic PlayStation 2 BIOS & hardware win reaction sounds
+  public playPs2SymbolSound(symId: string) {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    if (symId === 'PS2_LOGO') {
+      // 128-bit Emotion Engine choir swell / startup pad
+      const osc1 = this.ctx.createOscillator();
+      const osc2 = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.35 * this.sfxVolume, now + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, now);
+      filter.frequency.exponentialRampToValueAtTime(2200, now + 0.4);
+
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(110, now); // A2
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(220.8, now); // A3 + slight chorusing
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 1.25);
+      osc2.stop(now + 1.25);
+      return;
+    }
+
+    if (symId === 'DVD_DISC') {
+      // Optical drive laser seek chirp
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(2200, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+      osc.frequency.linearRampToValueAtTime(1600, now + 0.13);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+      return;
+    }
+
+    if (symId === 'MEMORY_CARD' || symId === 'MEMORY_BLOCK') {
+      this.playPs2MemoryCardSave();
+      return;
+    }
+
+    if (symId === 'CONTROLLER' || symId === 'CONSOLE') {
+      // DualShock rumble pulse + button click
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.40 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.linearRampToValueAtTime(45, now + 0.11);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.13);
+      return;
+    }
+
+    if (symId === 'TRIANGLE' || symId === 'CIRCLE' || symId === 'CROSS' || symId === 'SQUARE') {
+      // Authentic PS2 BIOS menu navigation selection chirp
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.30 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.type = 'sine';
+      const freq = symId === 'TRIANGLE' ? 880 : symId === 'CIRCLE' ? 987.77 : symId === 'CROSS' ? 659.25 : 783.99;
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.linearRampToValueAtTime(freq * 1.04, now + 0.05);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.98, now + 0.17);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.19);
+      return;
+    }
+
+    this.playPs2Win(1);
+  }
+
+  // Solenoid mechanical reel bump / lucky nudge
+  public playNudgeClunk() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // Heavy mechanical solenoid thud
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    gain1.gain.setValueAtTime(0.65 * this.sfxVolume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(95, now);
+    osc1.frequency.exponentialRampToValueAtTime(28, now + 0.15);
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.17);
+
+    // Spring metallic rattle
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    gain2.gain.setValueAtTime(0.25 * this.sfxVolume, now + 0.03);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(380, now + 0.03);
+    osc2.frequency.linearRampToValueAtTime(140, now + 0.17);
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    osc2.start(now + 0.03);
+    osc2.stop(now + 0.19);
+  }
+
+  // Grand Jackpot Hold & Spin grand finale fanfare
+  public playHoldAndSpinGrandJackpot() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+
+    // Timpani drum hit
+    const timp = this.ctx.createOscillator();
+    const timpGain = this.ctx.createGain();
+    timpGain.gain.setValueAtTime(0.6 * this.sfxVolume, now);
+    timpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    timp.type = 'sine';
+    timp.frequency.setValueAtTime(120, now);
+    timp.frequency.exponentialRampToValueAtTime(45, now + 0.4);
+    timp.connect(timpGain);
+    timpGain.connect(this.ctx.destination);
+    timp.start(now);
+    timp.stop(now + 0.46);
+
+    // Ascending brass fanfare chords
+    const chord1 = [261.63, 329.63, 392.0, 523.25]; // C major
+    const chord2 = [349.23, 440.0, 523.25, 698.46]; // F major
+    const chord3 = [392.0, 493.88, 587.33, 783.99]; // G major
+    const chord4 = [523.25, 659.25, 783.99, 1046.5]; // C high octave
+
+    const chords = [
+      { notes: chord1, delay: 0.1, dur: 0.2 },
+      { notes: chord2, delay: 0.32, dur: 0.2 },
+      { notes: chord3, delay: 0.54, dur: 0.22 },
+      { notes: chord4, delay: 0.78, dur: 0.85 },
+    ];
+
+    chords.forEach(({ notes, delay, dur }) => {
+      notes.forEach((f) => {
+        if (!this.ctx) return;
+        const t = now + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.20 * this.sfxVolume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, t);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + dur + 0.05);
+      });
+    });
+  }
+
+  // Retro 8-bit Konami Code cheat success fanfare
+  public playKonamiSuccess() {
+    this.initContext();
+    if (!this.ctx || this.isMuted) return;
+    const now = this.ctx.currentTime;
+    const notes = [261.63, 329.63, 392.0, 523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((f, i) => {
+      if (!this.ctx) return;
+      const t = now + i * 0.07;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.28 * this.sfxVolume, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(f, t);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.18);
     });
   }
 

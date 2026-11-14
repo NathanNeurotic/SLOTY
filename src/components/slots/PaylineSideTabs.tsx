@@ -44,7 +44,7 @@ export const PaylineSideTabs: React.FC<PaylineSideTabsProps> = ({
 
   return (
     <div
-      className="flex flex-col justify-between py-0.5 self-stretch h-full w-4 sm:w-5 md:w-6 select-none z-20 flex-shrink-0 min-h-0 gap-[0.5px]"
+      className="hidden sm:flex flex-col justify-between py-0.5 self-stretch h-full w-4 sm:w-5 md:w-6 select-none z-20 flex-shrink-0 min-h-0 gap-[0.5px]"
     >
       {lineIndices.map((lineIdx) => {
         const isLineActiveInGame = lineIdx < selectedLines;

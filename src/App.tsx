@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useCallback, useRef } from 'react';
 import type {
   DebugScenario,
   GameStats,
@@ -19,6 +19,8 @@ import { soundManager } from './audio/soundManager';
 import { storage } from './utils/storage';
 import { HeaderBar } from './components/hud/HeaderBar';
 import { JackpotMarquee } from './components/hud/JackpotMarquee';
+import { VegasTicker } from './components/hud/VegasTicker';
+import { VegasAmbience } from './components/hud/VegasAmbience';
 import { SceneBackdrop } from './components/scenes/SceneBackdrop';
 import { VaultBlastDoors } from './components/scenes/VaultBlastDoors';
 import { CASINO_SCENES, type CasinoScene, type CasinoSceneId } from './components/scenes/SceneTypes';
@@ -27,23 +29,50 @@ import { ThemedCursorFX } from './fx/ThemedCursorFX';
 import { SlotMachine } from './components/slots/SlotMachine';
 import { ControlsBar } from './components/controls/ControlsBar';
 import { launchCoinFountain } from './fx/celebrations';
-import { WinCelebrationModal } from './components/modals/WinCelebrationModal';
-import { FreeSpinsModal } from './components/modals/FreeSpinsModal';
-import { DailyBonusModal } from './components/modals/DailyBonusModal';
-import { PaytableModal } from './components/modals/PaytableModal';
-import { LevelUpModal } from './components/modals/LevelUpModal';
-import { GambleModal } from './components/modals/GambleModal';
-import { HoldAndSpinModal } from './components/modals/HoldAndSpinModal';
-import { DebugDrawer } from './components/debug/DebugDrawer';
 
 import { discordManager } from './multiplayer/discordSdk';
 import { casinoRoomManager } from './multiplayer/casinoRoom';
 import type { CasinoPeerState, DiscordUserProfile } from './multiplayer/discordTypes';
 import { CasinoFloorBank } from './components/multiplayer/CasinoFloorBank';
-import { LeaderboardModal } from './components/modals/LeaderboardModal';
 import { CompanionLounge } from './components/character/CompanionLounge';
 import { PuppetCharacterPopup } from './components/popups/PuppetCharacterPopup';
 import { quotaManager, type QuotaTier } from './engine/quotaSystem';
+
+const WinCelebrationModal = lazy(() =>
+  import('./components/modals/WinCelebrationModal').then((m) => ({ default: m.WinCelebrationModal }))
+);
+const FreeSpinsModal = lazy(() =>
+  import('./components/modals/FreeSpinsModal').then((m) => ({ default: m.FreeSpinsModal }))
+);
+const DailyBonusModal = lazy(() =>
+  import('./components/modals/DailyBonusModal').then((m) => ({ default: m.DailyBonusModal }))
+);
+const PaytableModal = lazy(() =>
+  import('./components/modals/PaytableModal').then((m) => ({ default: m.PaytableModal }))
+);
+const LevelUpModal = lazy(() =>
+  import('./components/modals/LevelUpModal').then((m) => ({ default: m.LevelUpModal }))
+);
+const GambleModal = lazy(() =>
+  import('./components/modals/GambleModal').then((m) => ({ default: m.GambleModal }))
+);
+const HoldAndSpinModal = lazy(() =>
+  import('./components/modals/HoldAndSpinModal').then((m) => ({ default: m.HoldAndSpinModal }))
+);
+const MysteryPickModal = lazy(() =>
+  import('./components/modals/MysteryPickModal').then((m) => ({ default: m.MysteryPickModal }))
+);
+const DebugDrawer = lazy(() =>
+  import('./components/debug/DebugDrawer').then((m) => ({ default: m.DebugDrawer }))
+);
+const LeaderboardModal = lazy(() =>
+  import('./components/modals/LeaderboardModal').then((m) => ({ default: m.LeaderboardModal }))
+);
+
+type BonusQueueItem =
+  | { type: 'HOLD_AND_SPIN'; gameId: GameId; coinCount: number }
+  | { type: 'MYSTERY_PICK' }
+  | { type: 'FREE_SPINS'; gameId: GameId };
 
 // The debug suite (forced reels, credit injection, custom grids) is a
 // development tool: available in dev builds, or in production only with
@@ -76,6 +105,49 @@ function resolveGameIdFromUrl(): GameId | null {
   return null;
 }
 
+function getOverdriveAnnouncerLine(gameId: GameId): string {
+  if (gameId === 'timber-critters') return "Nature's Fury Sap Frenzy Activated!";
+  if (gameId === 'pixel-arcade') return "8-Bit Turbo Hyper-Stage Overclock!";
+  if (gameId === 'ps2-legends') return "128-Bit Emotion Engine Core Overclock!";
+  return "24K Gold Overdrive Activated!";
+}
+
+function getFreeSpinsAnnouncerLine(gameId: GameId): string {
+  if (gameId === 'timber-critters') return "Moonlit Owl Forest Free Spins Expedition!";
+  if (gameId === 'pixel-arcade') return "ROM Cartridge Boss Battle Bonus Stage!";
+  if (gameId === 'ps2-legends') return "DVD-ROM Free Spins Marathon Rush!";
+  return "Penthouse Free Spins Cash Rush!";
+}
+
+function getHoldAndSpinAnnouncerLine(gameId: GameId): string {
+  if (gameId === 'timber-critters') return "Golden Acorn Forest Harvest Link!";
+  if (gameId === 'pixel-arcade') return "Cyber Power Token Respin Matrix!";
+  if (gameId === 'ps2-legends') return "8MB MagicGate Memory Card Save Link!";
+  return "Fort Knox Cash Link Vault!";
+}
+
+function getWinTierAnnouncerLine(tier: WinTier, gameId: GameId): string {
+  if (tier === 'EPIC_JACKPOT') {
+    if (gameId === 'timber-critters') return "Colossal Timberland Jackpot! Lumberjack Legend!";
+    if (gameId === 'pixel-arcade') return "All-Time High Score Champion! Grand Arcade Jackpot!";
+    if (gameId === 'ps2-legends') return "128-Bit Emotion Engine Master Jackpot!";
+    return "Epic Cash Jackpot! Congratulations!";
+  }
+  if (tier === 'MEGA_WIN') {
+    if (gameId === 'timber-critters') return "Mega Forest Harvest Win!";
+    if (gameId === 'pixel-arcade') return "Mega Combo Victory!";
+    if (gameId === 'ps2-legends') return "Mega 128-Bit Payout!";
+    return "Mega Cash Win!";
+  }
+  if (tier === 'BIG_WIN') {
+    if (gameId === 'timber-critters') return "Big Woodsman Payout!";
+    if (gameId === 'pixel-arcade') return "Big Combo Strike!";
+    if (gameId === 'ps2-legends') return "Big Vector Win!";
+    return "Big Cash Win!";
+  }
+  return "Winner!";
+}
+
 const BONUS_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export const App: React.FC = () => {
@@ -89,10 +161,12 @@ export const App: React.FC = () => {
   const [totalXp, setTotalXp] = useState<number>(() =>
     storage.getNumber('sloty_xp', 0)
   );
+  const progression = calculateProgression(totalXp);
 
   const [lastBonusClaimTime, setLastBonusClaimTime] = useState<number>(() =>
     storage.getNumber('sloty_bonus_time', 0)
   );
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
 
   const [isMuted, setIsMuted] = useState<boolean>(() =>
     storage.getBoolean('sloty_muted', false)
@@ -136,6 +210,182 @@ export const App: React.FC = () => {
   const activeGameDef = getGame(activeGameId);
   const freeSpinDef = freeSpinGameId ? getGame(freeSpinGameId) : activeGameDef;
 
+  const [selectedLines, setSelectedLines] = useState<number>(() => {
+    const saved = storage.getNumber('sloty_lines', activeGameDef.defaultLines);
+    return activeGameDef.availableLines.includes(saved) ? saved : activeGameDef.defaultLines;
+  });
+  const [betPerLine, setBetPerLine] = useState<number>(() => {
+    const savedLines = storage.getNumber('sloty_lines', activeGameDef.defaultLines);
+    const initialLines = activeGameDef.availableLines.includes(savedLines)
+      ? savedLines
+      : activeGameDef.defaultLines;
+    const savedBet = storage.getNumber('sloty_bet_per_line', 5);
+    const maxTotal = Math.min(
+      balance > 0 ? balance : Infinity,
+      progression.maxBet,
+      activeGameDef.maxTotalBet
+    );
+    const revSteps = [...activeGameDef.betSteps].reverse();
+    return (
+      revSteps.find(
+        (s) => s <= savedBet && s <= activeGameDef.maxBetPerLine && s * initialLines <= maxTotal
+      ) ??
+      revSteps.find(
+        (s) => s <= activeGameDef.maxBetPerLine && s * initialLines <= maxTotal
+      ) ??
+      activeGameDef.betSteps[0] ??
+      1
+    );
+  });
+  const totalBet = selectedLines * betPerLine;
+
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [isTurbo, setIsTurbo] = useState<boolean>(() =>
+    storage.getBoolean('sloty_turbo', false)
+  );
+  const [winAmount, setWinAmount] = useState(0);
+  const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
+  const [feverCharge, setFeverCharge] = useState<number>(() =>
+    storage.getNumber('sloty_fever_charge', 35)
+  );
+  const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
+
+  // --- Discord Activity & Multiplayer State ---
+  const [discordProfile, setDiscordProfile] = useState<DiscordUserProfile | null>(null);
+  const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
+  const [isFloorMode, setIsFloorMode] = useState<boolean>(() =>
+    storage.getBoolean('sloty_floor_mode', false)
+  );
+  const [showMobileCompanion, setShowMobileCompanion] = useState<boolean>(() =>
+    storage.getBoolean('sloty_mobile_companion', false)
+  );
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [peakBalance, setPeakBalance] = useState<number>(() =>
+    Math.max(
+      storage.getNumber('sloty_peak_balance', 50000),
+      storage.getNumber('sloty_balance', 50000)
+    )
+  );
+  const effectivePeakBalance = Math.max(peakBalance, balance);
+  const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
+  const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
+  const [showNudgeToast, setShowNudgeToast] = useState<string | null>(null);
+  const [showKonamiToast, setShowKonamiToast] = useState(false);
+  const [showChapterPrestigeToast, setShowChapterPrestigeToast] = useState<string | null>(null);
+
+  // --- Active Scenic Environment State (Persisted) ---
+  const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() => {
+    const saved = storage.getItem('sloty_scene') as CasinoSceneId | null;
+    return saved && (saved === 'VAULT' || saved === 'PENTHOUSE' || saved === 'MINT' || saved === 'HEIST')
+      ? saved
+      : 'VAULT';
+  });
+  const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
+  const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
+
+  // Initial grid conforming strictly to active game's dimensions (reels x rows)
+  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => {
+    const saved = storage.getJSON<SymbolGrid | null>('sloty_grid', null);
+    if (
+      saved &&
+      saved.length === (activeGameDef.reels || 5) &&
+      saved.every((col) => col.length === activeGameDef.rows)
+    ) {
+      return saved;
+    }
+    return generateRandomGrid(activeGameDef);
+  });
+
+  const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
+  const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
+
+  // --- Modals State ---
+  const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
+  const [showHoldAndSpinModal, setShowHoldAndSpinModal] = useState(false);
+  const [holdAndSpinInitialCoins, setHoldAndSpinInitialCoins] = useState(6);
+  const [showMysteryPickModal, setShowMysteryPickModal] = useState(false);
+  const [showGambleModal, setShowGambleModal] = useState(false);
+  const [showBonusWheelModal, setShowBonusWheelModal] = useState(false);
+  const [showPaytableModal, setShowPaytableModal] = useState(false);
+  const [levelUpData, setLevelUpData] = useState<{
+    newLevel: number;
+    bonusCoins: number;
+    newMaxBet: number;
+  } | null>(null);
+  const [showDebugDrawer, setShowDebugDrawer] = useState(false);
+
+  // Synchronous & callback refs (updated inside effects, never during render)
+  const isSpinningRef = useRef(false);
+  const isTurboRef = useRef(false);
+  const lastSpinStartTimeRef = useRef(0);
+  const lastSpinEndTimeRef = useRef(0);
+  const konamiBufferRef = useRef<string[]>([]);
+  const initialBalanceRef = useRef(balance);
+  const prevLevelRef = useRef<number>(progression.level);
+  const pendingResultRef = useRef<SpinResult | null>(null);
+  const pendingResultGameIdRef = useRef<GameId | null>(null);
+  const wasForcedMysteryPickRef = useRef(false);
+  const bonusQueueRef = useRef<BonusQueueItem[]>([]);
+  const levelUpDataRef = useRef(levelUpData);
+  const showFreeSpinsModalRef = useRef(false);
+  const balanceRef = useRef(balance);
+  const totalBetRef = useRef(totalBet);
+  const freeSpinsRemainingRef = useRef(0);
+  const betPerLineRef = useRef(betPerLine);
+  const selectedLinesRef = useRef(selectedLines);
+  const maxBetRef = useRef(progression.maxBet);
+  const activeGameIdRef = useRef(activeGameId);
+  const autoSpinsRemainingRef = useRef(0);
+  const modalOpenRef = useRef(false);
+  const activeGameDefRef = useRef(activeGameDef);
+
+  const isModalOpen =
+    celebration !== null ||
+    showFreeSpinsModal ||
+    showHoldAndSpinModal ||
+    showMysteryPickModal ||
+    showGambleModal ||
+    showBonusWheelModal ||
+    showPaytableModal ||
+    levelUpData !== null;
+
+  useEffect(() => {
+    isSpinningRef.current = isSpinning;
+    isTurboRef.current = isTurbo;
+    levelUpDataRef.current = levelUpData;
+    showFreeSpinsModalRef.current = showFreeSpinsModal;
+    balanceRef.current = balance;
+    totalBetRef.current = totalBet;
+    freeSpinsRemainingRef.current = freeSpinsRemaining;
+    betPerLineRef.current = betPerLine;
+    selectedLinesRef.current = selectedLines;
+    maxBetRef.current = progression.maxBet;
+    activeGameIdRef.current = activeGameId;
+    autoSpinsRemainingRef.current = autoSpinsRemaining;
+    modalOpenRef.current = isModalOpen;
+    activeGameDefRef.current = activeGameDef;
+  });
+
+  // --- Bonus Countdown Timer ---
+  const remainingBonusMs = Math.max(0, BONUS_COOLDOWN_MS - (nowMs - lastBonusClaimTime));
+  const canClaimBonus = remainingBonusMs === 0;
+  const timeUntilBonus = (() => {
+    if (remainingBonusMs <= 0) return 'CLAIM NOW!';
+    const hours = Math.floor(remainingBonusMs / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingBonusMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remainingBonusMs % (1000 * 60)) / 1000);
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  })();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Synchronize audio theme with active game on initial load and updates
   useEffect(() => {
     soundManager.setGameTheme(activeGameId);
@@ -155,102 +405,11 @@ export const App: React.FC = () => {
     }
   }, [activeGameId]);
 
-  const [selectedLines, setSelectedLines] = useState<number>(() =>
-    storage.getNumber('sloty_lines', activeGameDef.defaultLines)
-  );
-  const [betPerLine, setBetPerLine] = useState<number>(() =>
-    storage.getNumber('sloty_bet_per_line', 5)
-  );
-  const totalBet = selectedLines * betPerLine;
-
-  const handleSelectGame = useCallback(
-    (gameId: GameId) => {
-      // Cabinet locked while a free-spins bonus is pending or running: the
-      // award's identity (count + multiplier) belongs to the triggering
-      // game, and the pooled remaining count cannot track two games' awards
-      // at once — a mid-bonus switch would reprice the remaining spins.
-      if (showFreeSpinsModal || freeSpinsRemaining > 0) return;
-      if (gameId === activeGameId) return;
-      // Switching mid-spin would orphan the reel-stop timers and leave the machine stuck spinning
-      if (isSpinningRef.current) return;
-      const target = getGame(gameId);
-      setActiveGameId(gameId);
-      soundManager.setGameTheme(gameId);
-      storage.setItem('sloty_active_game', gameId);
-      const lines = target.defaultLines;
-      setSelectedLines(lines);
-      storage.setItem('sloty_lines', lines.toString());
-
-      // Ensure bet conforms to the selected game's max bet rules and player balance
-      let nextBet = betPerLine;
-      if (nextBet > target.maxBetPerLine) {
-        nextBet = target.maxBetPerLine;
-      }
-      if (lines * nextBet > target.maxTotalBet) {
-        const revSteps = [...target.betSteps].reverse();
-        nextBet = revSteps.find((s) => s * lines <= target.maxTotalBet) || 1;
-      }
-      if (balance > 0 && lines * nextBet > balance) {
-        const revSteps = [...target.betSteps].reverse();
-        nextBet = revSteps.find((s) => s * lines <= balance) || 1;
-      }
-      setBetPerLine(nextBet);
-      storage.setItem('sloty_bet_per_line', nextBet.toString());
-
-      const newGrid = generateRandomGrid(target);
-      setCurrentGrid(newGrid);
-      storage.setJSON('sloty_grid', newGrid);
-      setSpinResult(null);
-      setWinAmount(0);
-      if (gameId === 'ps2-legends') {
-        soundManager.playPs2Startup();
-      } else if (gameId === 'timber-critters') {
-        soundManager.playOwlHoot(1);
-      } else if (gameId === 'pixel-arcade') {
-        soundManager.playLaserZap();
-      } else {
-        setCurrentSceneId('VAULT');
-        storage.setItem('sloty_scene', 'VAULT');
-        soundManager.playCashRegister();
-      }
-    },
-    [activeGameId, balance, betPerLine, showFreeSpinsModal, freeSpinsRemaining]
-  );
-
-
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [isTurbo, setIsTurbo] = useState<boolean>(() =>
-    storage.getBoolean('sloty_turbo', false)
-  );
-
-  // Synchronous refs for rapid keydown throttling and rate-limiting
-  const isSpinningRef = useRef(isSpinning);
-  isSpinningRef.current = isSpinning;
-  const isTurboRef = useRef(isTurbo);
-  isTurboRef.current = isTurbo;
-  const lastSpinStartTimeRef = useRef(0);
-  const lastSpinEndTimeRef = useRef(0);
-  const [winAmount, setWinAmount] = useState(0);
-  const [autoSpinsRemaining, setAutoSpinsRemaining] = useState(0);
-  const [feverCharge, setFeverCharge] = useState<number>(() =>
-    storage.getNumber('sloty_fever_charge', 35)
-  );
-  const [feverSpinsLeft, setFeverSpinsLeft] = useState(0);
-
-  // --- Discord Activity & Multiplayer State ---
-  const [discordProfile, setDiscordProfile] = useState<DiscordUserProfile | null>(null);
-  const [roomPeers, setRoomPeers] = useState<CasinoPeerState[]>([]);
-  const [isFloorMode, setIsFloorMode] = useState<boolean>(false);
-  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-  const [peakBalance, setPeakBalance] = useState<number>(() => storage.getNumber('sloty_peak_balance', 50000));
-  const [showStealthBailoutToast, setShowStealthBailoutToast] = useState(false);
-  const [tipReceivedToast, setTipReceivedToast] = useState<string | null>(null);
-
   // Initialize Discord Embedded App SDK & Room Connection
   useEffect(() => {
     discordManager.initialize().then((profile) => {
       setDiscordProfile(profile);
-      casinoRoomManager.initialize(profile, balance);
+      casinoRoomManager.initialize(profile, initialBalanceRef.current);
     });
 
     const unsubPeers = casinoRoomManager.subscribePeers((peers) => {
@@ -271,12 +430,14 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Track Peak Bankroll Record
+  // Track Peak Bankroll Record without synchronous setState in effect
   useEffect(() => {
-    if (balance > peakBalance) {
-      setPeakBalance(balance);
-      storage.setItem('sloty_peak_balance', balance.toString());
-    }
+    if (balance <= peakBalance) return;
+    storage.setItem('sloty_peak_balance', balance.toString());
+    const rafId = requestAnimationFrame(() => {
+      setPeakBalance((prev) => (balance > prev ? balance : prev));
+    });
+    return () => cancelAnimationFrame(rafId);
   }, [balance, peakBalance]);
 
   // Stealth $1,000 Safety Net: Secretly recharges player balance so play never stops
@@ -291,14 +452,6 @@ export const App: React.FC = () => {
     setShowStealthBailoutToast(true);
     setTimeout(() => setShowStealthBailoutToast(false), 5000);
   }, []);
-
-  // --- Active Scenic Environment State (Persisted) ---
-  const [currentSceneId, setCurrentSceneId] = useState<CasinoSceneId>(() => {
-    const saved = storage.getItem('sloty_scene') as CasinoSceneId;
-    return saved === 'VAULT' ? 'VAULT' : 'VAULT';
-  });
-  const [transitioningScene, setTransitioningScene] = useState<CasinoScene | null>(null);
-  const [isVaultDoorTransitionOpen, setIsVaultDoorTransitionOpen] = useState(false);
 
   useEffect(() => {
     storage.setItem('sloty_scene', currentSceneId);
@@ -322,6 +475,88 @@ export const App: React.FC = () => {
     [currentSceneId]
   );
 
+  // Open the next queued bonus modal once a blocking celebration/bonus modal finishes
+  const openBonusModal = useCallback(
+    (item: BonusQueueItem) => {
+      if (item.type === 'HOLD_AND_SPIN') {
+        soundManager.speakAnnouncer(getHoldAndSpinAnnouncerLine(item.gameId));
+        handleSelectScene('HEIST', false);
+        setHoldAndSpinInitialCoins(item.coinCount);
+        setShowHoldAndSpinModal(true);
+      } else if (item.type === 'MYSTERY_PICK') {
+        setShowMysteryPickModal(true);
+      } else {
+        soundManager.speakAnnouncer(getFreeSpinsAnnouncerLine(item.gameId));
+        handleSelectScene('PENTHOUSE', false);
+        setFreeSpinGameId(item.gameId);
+        setShowFreeSpinsModal(true);
+      }
+    },
+    [handleSelectScene]
+  );
+
+  const flushNextBonusModal = useCallback(() => {
+    const nextItem = bonusQueueRef.current.shift();
+    if (nextItem) {
+      openBonusModal(nextItem);
+    }
+  }, [openBonusModal]);
+
+  const handleSelectGame = useCallback(
+    (gameId: GameId) => {
+      // Cabinet locked while a free-spins bonus is pending or running: the
+      // award's identity (count + multiplier) belongs to the triggering
+      // game, and the pooled remaining count cannot track two games' awards
+      // at once — a mid-bonus switch would reprice the remaining spins.
+      if (showFreeSpinsModal || freeSpinsRemaining > 0) return;
+      if (gameId === activeGameId) return;
+      // Switching mid-spin would orphan the reel-stop timers and leave the machine stuck spinning
+      if (isSpinningRef.current) return;
+      const target = getGame(gameId);
+      setActiveGameId(gameId);
+      soundManager.setGameTheme(gameId);
+      storage.setItem('sloty_active_game', gameId);
+      const lines = target.defaultLines;
+      setSelectedLines(lines);
+      storage.setItem('sloty_lines', lines.toString());
+
+      // Ensure bet conforms to the selected game's steps, max bet rules, progression, and player balance
+      const maxAllowedTotal = Math.min(
+        balance > 0 ? balance : Infinity,
+        progression.maxBet,
+        target.maxTotalBet
+      );
+      const revSteps = [...target.betSteps].reverse();
+      const nextBet =
+        revSteps.find(
+          (s) => s <= betPerLine && s <= target.maxBetPerLine && s * lines <= maxAllowedTotal
+        ) ??
+        revSteps.find((s) => s <= target.maxBetPerLine && s * lines <= maxAllowedTotal) ??
+        target.betSteps[0] ??
+        1;
+      setBetPerLine(nextBet);
+      storage.setItem('sloty_bet_per_line', nextBet.toString());
+
+      const newGrid = generateRandomGrid(target);
+      setCurrentGrid(newGrid);
+      storage.setJSON('sloty_grid', newGrid);
+      setSpinResult(null);
+      setWinAmount(0);
+      if (gameId === 'ps2-legends') {
+        soundManager.playPs2Startup();
+      } else if (gameId === 'timber-critters') {
+        soundManager.playOwlHoot(1);
+      } else if (gameId === 'pixel-arcade') {
+        soundManager.playLaserZap();
+      } else {
+        setCurrentSceneId('VAULT');
+        storage.setItem('sloty_scene', 'VAULT');
+        soundManager.playCashRegister();
+      }
+    },
+    [activeGameId, balance, betPerLine, progression.maxBet, showFreeSpinsModal, freeSpinsRemaining]
+  );
+
   // Auto-unlock Web Audio and start background lounge music on user interaction
   useEffect(() => {
     const handleFirstGesture = () => {
@@ -338,19 +573,6 @@ export const App: React.FC = () => {
       window.removeEventListener('click', handleFirstGesture);
     };
   }, []);
-
-  // Initial grid conforming strictly to active game's dimensions (reels x rows)
-  const [currentGrid, setCurrentGrid] = useState<SymbolGrid>(() => {
-    const saved = storage.getJSON<SymbolGrid | null>('sloty_grid', null);
-    if (
-      saved &&
-      saved.length === (activeGameDef.reels || 5) &&
-      saved.every((col) => col.length === activeGameDef.rows)
-    ) {
-      return saved;
-    }
-    return generateRandomGrid(activeGameDef);
-  });
 
   // Save to dual localStorage + cookies on change
   useEffect(() => {
@@ -394,70 +616,28 @@ export const App: React.FC = () => {
     storage.setJSON('sloty_grid', currentGrid);
   }, [currentGrid]);
 
+  useEffect(() => {
+    storage.setItem('sloty_mobile_companion', showMobileCompanion.toString());
+  }, [showMobileCompanion]);
+
   // Ensure currentGrid strictly conforms to active game dimensions (reels x rows)
   useEffect(() => {
-    setCurrentGrid((prev) => {
-      if (
-        prev &&
-        prev.length === (activeGameDef.reels || 5) &&
-        prev.every((col) => col && col.length === activeGameDef.rows)
-      ) {
-        return prev;
-      }
-      const fresh = generateRandomGrid(activeGameDef);
-      storage.setJSON('sloty_grid', fresh);
-      return fresh;
+    const rafId = requestAnimationFrame(() => {
+      setCurrentGrid((prev) => {
+        if (
+          prev &&
+          prev.length === (activeGameDef.reels || 5) &&
+          prev.every((col) => col && col.length === activeGameDef.rows)
+        ) {
+          return prev;
+        }
+        const fresh = generateRandomGrid(activeGameDef);
+        storage.setJSON('sloty_grid', fresh);
+        return fresh;
+      });
     });
+    return () => cancelAnimationFrame(rafId);
   }, [activeGameDef]);
-
-  // --- Derived Progression State ---
-  const progression = calculateProgression(totalXp);
-  const prevLevelRef = useRef<number>(progression.level);
-
-  const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
-  const [forcedScenario, setForcedScenario] = useState<DebugScenario | null>(null);
-  const pendingResultRef = useRef<SpinResult | null>(null);
-  const pendingResultGameIdRef = useRef<GameId | null>(null);
-
-  // --- Modals State ---
-  const [celebration, setCelebration] = useState<{ tier: WinTier; amount: number } | null>(null);
-  const [showHoldAndSpinModal, setShowHoldAndSpinModal] = useState(false);
-  const [holdAndSpinInitialCoins, setHoldAndSpinInitialCoins] = useState(6);
-  const [showGambleModal, setShowGambleModal] = useState(false);
-  const [showBonusWheelModal, setShowBonusWheelModal] = useState(false);
-  const [showPaytableModal, setShowPaytableModal] = useState(false);
-  const [levelUpData, setLevelUpData] = useState<{
-    newLevel: number;
-    bonusCoins: number;
-    newMaxBet: number;
-  } | null>(null);
-  const [showDebugDrawer, setShowDebugDrawer] = useState(false);
-
-  // --- Bonus Countdown Timer ---
-  const [timeUntilBonus, setTimeUntilBonus] = useState('');
-  const canClaimBonus = Date.now() - lastBonusClaimTime >= BONUS_COOLDOWN_MS;
-
-  useEffect(() => {
-    const updateCountdown = () => {
-      const remainingMs = BONUS_COOLDOWN_MS - (Date.now() - lastBonusClaimTime);
-      if (remainingMs <= 0) {
-        setTimeUntilBonus('CLAIM NOW!');
-      } else {
-        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-        setTimeUntilBonus(
-          `${hours.toString().padStart(2, '0')}:${minutes
-            .toString()
-            .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-        );
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, [lastBonusClaimTime]);
 
   // --- Main Spin Logic ---
   const executeSpin = useCallback(() => {
@@ -508,6 +688,9 @@ export const App: React.FC = () => {
     // Generate grid: check forced scenario first, then random for active game definition
     let nextGrid: SymbolGrid;
     if (forcedScenario) {
+      if (forcedScenario === 'MYSTERY_PICK') {
+        wasForcedMysteryPickRef.current = true;
+      }
       const rawForced = generateForcedGrid(forcedScenario);
       nextGrid = rawForced.map((col) => {
         // Forced grids are written with Vault symbol IDs; translate the
@@ -549,12 +732,77 @@ export const App: React.FC = () => {
     isSpinningRef.current = false;
     lastSpinEndTimeRef.current = performance.now();
     // Consume the pending result exactly once so a duplicate stop signal can never pay a spin twice
-    const result = pendingResultRef.current;
+    const rawResult = pendingResultRef.current;
     pendingResultRef.current = null;
-    if (!result) return;
+    if (!rawResult) return;
+
+    const resultGameId = pendingResultGameIdRef.current ?? activeGameId;
+    const spinGameDef = getGame(resultGameId);
+
+    // Lucky Nudge Mechanic: 28% chance on near-miss (2 Scatters or 5 Coins),
+    // resolved BEFORE payout/stats/bonus dispatch so nudged hits pay out and progress normally.
+    let finalGrid = currentGrid;
+    let result = rawResult;
+    const isScatterNearMiss = rawResult.scatterCount === 2 && !rawResult.isFreeSpinsTriggered;
+    const isCoinNearMiss = rawResult.coinCount === 5 && !rawResult.isHoldAndSpinTriggered;
+
+    if ((isScatterNearMiss || isCoinNearMiss) && Math.random() < 0.28) {
+      const targetSymbol = isScatterNearMiss ? spinGameDef.scatterId : spinGameDef.coinId;
+      const winningCells = new Set<string>();
+      rawResult.winningLines.forEach((wl) => {
+        const path = spinGameDef.paylines[wl.lineIndex];
+        if (path) {
+          for (let c = 0; c < wl.count; c++) {
+            winningCells.add(`${c}:${path[c]}`);
+          }
+        }
+      });
+
+      const eligibleCells: Array<{ reelIdx: number; rowIdx: number }> = [];
+      currentGrid.forEach((col, reelIdx) => {
+        if (col.includes(targetSymbol)) return;
+        for (let rowIdx = 0; rowIdx < spinGameDef.rows; rowIdx++) {
+          if (!winningCells.has(`${reelIdx}:${rowIdx}`)) {
+            eligibleCells.push({ reelIdx, rowIdx });
+          }
+        }
+      });
+
+      if (eligibleCells.length > 0) {
+        const chosen = eligibleCells[Math.floor(Math.random() * eligibleCells.length)];
+        const nudgeReelIdx = chosen.reelIdx;
+        const nudgeRowIdx = chosen.rowIdx;
+
+        finalGrid = currentGrid.map((col, cIdx) =>
+          cIdx === nudgeReelIdx
+            ? col.map((s, rIdx) => (rIdx === nudgeRowIdx ? targetSymbol : s))
+            : [...col]
+        );
+
+        soundManager.playNudgeClunk();
+        soundManager.speakAnnouncer(
+          isScatterNearMiss ? 'Lucky Nudge! Bonus Unlocked!' : 'Coin Nudge! Hold and Spin Active!'
+        );
+        setShowNudgeToast(
+          isScatterNearMiss
+            ? 'LUCKY NUDGE! Mechanical tumbler bumped a 3rd Scatter into view!'
+            : 'LUCKY NUDGE! Mechanical tumbler bumped a 6th Cash Coin into view!'
+        );
+        setTimeout(() => setShowNudgeToast(null), 4500);
+
+        const mult =
+          (freeSpinsRemaining > 0 ? freeSpinDef.freeSpinsMultiplier : 1) *
+          (feverSpinsLeft > 0 ? 2 : 1);
+        result = evaluateSpin(finalGrid, totalBet, selectedLines, mult, spinGameDef);
+        setCurrentGrid(finalGrid);
+      }
+    }
 
     setSpinResult(result);
     const { totalPayout, winTier, isFreeSpinsTriggered, isHoldAndSpinTriggered, coinCount } = result;
+    const celebrationWillShow =
+      totalPayout > 0 &&
+      (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN' || winTier === 'BIG_WIN');
 
     // Reliably credit win amount to player's balance!
     const nextBalance = balance + totalPayout;
@@ -572,12 +820,12 @@ export const App: React.FC = () => {
       if (winTier === 'EPIC_JACKPOT' || winTier === 'MEGA_WIN') {
         soundManager.playJackpotSiren();
         soundManager.playCashRegister();
-        soundManager.speakAnnouncer(winTier === 'EPIC_JACKPOT' ? "Epic Cash Jackpot! Congratulations!" : "Mega Cash Win!");
+        soundManager.speakAnnouncer(getWinTierAnnouncerLine(winTier, resultGameId));
         setCelebration({ tier: winTier, amount: totalPayout });
       } else if (winTier === 'BIG_WIN') {
         soundManager.playCelebrationWhistle();
         soundManager.playCashRegister();
-        soundManager.speakAnnouncer("Big Cash Win!");
+        soundManager.speakAnnouncer(getWinTierAnnouncerLine(winTier, resultGameId));
         setCelebration({ tier: winTier, amount: totalPayout });
       } else {
         soundManager.playCashRegister();
@@ -592,23 +840,29 @@ export const App: React.FC = () => {
 
     // Update Unreasonable Boss / Camp Quota System — attributed to the game
     // that evaluated this spin, not a cabinet selected while reels spun.
-    const resultGameId = pendingResultGameIdRef.current ?? activeGameId;
     const quotaResult = quotaManager.addSpinProgress(resultGameId, totalBet, totalPayout);
     if (quotaResult.unlockedTier) {
       setUnlockedQuotaTier(quotaResult.unlockedTier);
+      if (quotaResult.unlockedTier.tier === 5) {
+        soundManager.playJackpotFanfare();
+        launchCoinFountain('jackpot');
+        setShowChapterPrestigeToast(`CHAPTER COMPLETE: ${quotaResult.unlockedTier.name}! +${quotaResult.unlockedTier.coinReward.toLocaleString()} COINS!`);
+        setTimeout(() => setShowChapterPrestigeToast(null), 6500);
+      }
     }
 
     // Broadcast live spin outcome to Discord channel & casino floor peers
     casinoRoomManager.broadcastSpinResult(
-      currentGrid,
+      finalGrid,
       totalPayout,
       nextBalance,
       freeSpinsRemaining > 0,
       result.winningLines.length
     );
 
-    // Stealth Safety Net Check: If player dropped below minimum bet (40)
-    if (nextBalance < 40 && freeSpinsRemaining === 0 && feverSpinsLeft === 0) {
+    // Stealth Safety Net Check: If player dropped below minimum valid spin cost for this game
+    const minSpinCost = (spinGameDef.availableLines[0] || 1) * (spinGameDef.betSteps[0] || 1);
+    if (nextBalance < minSpinCost && freeSpinsRemaining === 0 && feverSpinsLeft === 0) {
       setTimeout(() => {
         triggerStealthBailout(1000);
       }, 1200);
@@ -624,27 +878,40 @@ export const App: React.FC = () => {
         setFeverSpinsLeft(5);
         soundManager.playFeverSurge();
         soundManager.setOverdriveMusic(true);
-        soundManager.speakAnnouncer("24K Gold Overdrive Activated!");
+        soundManager.speakAnnouncer(getOverdriveAnnouncerLine(resultGameId));
         launchCoinFountain('jackpot');
       } else {
         setFeverCharge(nextCharge);
       }
     }
 
-    // Free Spins Triggered (Smooth backdrop switch, no blast doors interruption)
+    // Queue bonus modals sequentially so overlapping triggers never fight at z-50
+    const queuedBonuses: BonusQueueItem[] = [];
+    if (isHoldAndSpinTriggered) {
+      queuedBonuses.push({ type: 'HOLD_AND_SPIN', gameId: resultGameId, coinCount });
+    }
+    if (wasForcedMysteryPickRef.current) {
+      wasForcedMysteryPickRef.current = false;
+      queuedBonuses.push({ type: 'MYSTERY_PICK' });
+    }
     if (isFreeSpinsTriggered) {
-      soundManager.speakAnnouncer("Penthouse Free Spins Cash Rush!");
-      handleSelectScene('PENTHOUSE', false);
-      setFreeSpinGameId(resultGameId);
-      setShowFreeSpinsModal(true);
+      queuedBonuses.push({ type: 'FREE_SPINS', gameId: resultGameId });
     }
 
-    // Hold & Spin Cash Respins Triggered (Smooth backdrop switch, no blast doors interruption)
-    if (isHoldAndSpinTriggered) {
-      soundManager.speakAnnouncer("Fort Knox Cash Link Vault!");
-      handleSelectScene('HEIST', false);
-      setHoldAndSpinInitialCoins(coinCount);
-      setShowHoldAndSpinModal(true);
+    if (queuedBonuses.length > 0) {
+      if (celebrationWillShow) {
+        bonusQueueRef.current.push(...queuedBonuses);
+      } else if (queuedBonuses.length === 1 && queuedBonuses[0].type === 'MYSTERY_PICK') {
+        setTimeout(() => {
+          setShowMysteryPickModal(true);
+        }, 500);
+      } else {
+        const [firstBonus, ...restBonuses] = queuedBonuses;
+        if (restBonuses.length > 0) {
+          bonusQueueRef.current.push(...restBonuses);
+        }
+        openBonusModal(firstBonus);
+      }
     }
 
     // Check VIP Level Up (Paced at most 1 level up modal per spin)
@@ -685,12 +952,14 @@ export const App: React.FC = () => {
     balance,
     totalXp,
     freeSpinsRemaining,
+    freeSpinDef.freeSpinsMultiplier,
     feverSpinsLeft,
     feverCharge,
     totalBet,
+    selectedLines,
     activeGameId,
     currentGrid,
-    handleSelectScene,
+    openBonusModal,
     triggerStealthBailout,
   ]);
 
@@ -760,18 +1029,29 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (freeSpinsRemaining > 0 || isSpinning) return;
     if (balance > 0 && totalBet > balance) {
-      const lines = selectedLines;
-      const steps = [5000, 2500, 1000, 500, 250, 100, 50, 25, 10, 5, 2, 1];
-      const affordableStep = steps.find((s) => s * lines <= balance);
-      if (affordableStep) {
-        setBetPerLine(affordableStep);
-      } else {
-        const fittingLines = Math.max(1, Math.min(lines, Math.floor(balance)));
-        setSelectedLines(fittingLines);
-        setBetPerLine(1);
-      }
+      const rafId = requestAnimationFrame(() => {
+        const lines = selectedLines;
+        const revSteps = [...activeGameDef.betSteps].reverse();
+        const affordableStep = revSteps.find(
+          (s) => s * lines <= balance && s <= activeGameDef.maxBetPerLine
+        );
+        if (affordableStep) {
+          setBetPerLine(affordableStep);
+        } else {
+          const minStep = activeGameDef.betSteps[0] || 1;
+          const fittingLines =
+            [...activeGameDef.availableLines]
+              .reverse()
+              .find((l) => l * minStep <= balance) ??
+            activeGameDef.availableLines[0] ??
+            1;
+          setSelectedLines(fittingLines);
+          setBetPerLine(minStep);
+        }
+      });
+      return () => cancelAnimationFrame(rafId);
     }
-  }, [balance, totalBet, selectedLines, freeSpinsRemaining, isSpinning]);
+  }, [balance, totalBet, selectedLines, freeSpinsRemaining, isSpinning, activeGameDef]);
 
   // Handle continuous Auto-Spins and Free-Spins cadence
   useEffect(() => {
@@ -780,6 +1060,7 @@ export const App: React.FC = () => {
       celebration !== null ||
       showFreeSpinsModal ||
       showHoldAndSpinModal ||
+      showMysteryPickModal ||
       showGambleModal ||
       levelUpData !== null
     ) {
@@ -809,6 +1090,7 @@ export const App: React.FC = () => {
     celebration,
     showFreeSpinsModal,
     showHoldAndSpinModal,
+    showMysteryPickModal,
     showGambleModal,
     levelUpData,
     executeSpin,
@@ -816,46 +1098,30 @@ export const App: React.FC = () => {
   ]);
 
   // --- Keyboard Shortcuts & Zero-Mouse Navigation ---
-  const levelUpDataRef = useRef(levelUpData);
-  levelUpDataRef.current = levelUpData;
-  const showFreeSpinsModalRef = useRef(showFreeSpinsModal);
-  showFreeSpinsModalRef.current = showFreeSpinsModal;
-  const balanceRef = useRef(balance);
-  balanceRef.current = balance;
-  const totalBetRef = useRef(totalBet);
-  totalBetRef.current = totalBet;
-  const freeSpinsRemainingRef = useRef(freeSpinsRemaining);
-  freeSpinsRemainingRef.current = freeSpinsRemaining;
-  const betPerLineRef = useRef(betPerLine);
-  betPerLineRef.current = betPerLine;
-  const selectedLinesRef = useRef(selectedLines);
-  selectedLinesRef.current = selectedLines;
-  const maxBetRef = useRef(progression.maxBet);
-  maxBetRef.current = progression.maxBet;
-  const activeGameIdRef = useRef(activeGameId);
-  activeGameIdRef.current = activeGameId;
-  const autoSpinsRemainingRef = useRef(autoSpinsRemaining);
-  autoSpinsRemainingRef.current = autoSpinsRemaining;
-  // True while any overlay is open; gameplay hotkeys must not act behind a modal
-  const modalOpenRef = useRef(false);
-  modalOpenRef.current =
-    celebration !== null ||
-    showFreeSpinsModal ||
-    showHoldAndSpinModal ||
-    showGambleModal ||
-    showBonusWheelModal ||
-    showPaytableModal ||
-    levelUpData !== null;
-  const activeGameDefRef = useRef(activeGameDef);
-  activeGameDefRef.current = activeGameDef;
-
   useEffect(() => {
-    const BET_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+    const KONAMI_CODE = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Avoid hotkeys when typing in debug input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
         return;
+      }
+
+      // Track Konami Code Cheat sequence
+      const codeKey = e.key.toLowerCase();
+      const expectedKey = KONAMI_CODE[konamiBufferRef.current.length];
+      if (codeKey === expectedKey) {
+        konamiBufferRef.current.push(codeKey);
+        if (konamiBufferRef.current.length === KONAMI_CODE.length) {
+          konamiBufferRef.current = [];
+          soundManager.playKonamiSuccess();
+          launchCoinFountain('jackpot');
+          setBalance((b) => b + 2500);
+          setShowKonamiToast(true);
+          setTimeout(() => setShowKonamiToast(false), 6000);
+        }
+      } else {
+        konamiBufferRef.current = codeKey === 'arrowup' ? ['arrowup'] : [];
       }
 
       if (e.code === 'Space' || e.code === 'Enter') {
@@ -911,11 +1177,12 @@ export const App: React.FC = () => {
         e.preventDefault();
         if (isSpinningRef.current || modalOpenRef.current) return;
         const def = activeGameDefRef.current;
+        const betSteps = def.betSteps;
         const cur = betPerLineRef.current;
-        let idx = BET_STEPS.indexOf(cur);
-        if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
-        if (idx < BET_STEPS.length - 1) {
-          const nextStep = BET_STEPS[idx + 1];
+        let idx = betSteps.indexOf(cur);
+        if (idx === -1) idx = betSteps.findIndex((s) => s >= cur);
+        if (idx !== -1 && idx < betSteps.length - 1) {
+          const nextStep = betSteps[idx + 1];
           const maxAllowed = Math.min(balanceRef.current, maxBetRef.current, def.maxTotalBet);
           if (nextStep * selectedLinesRef.current <= maxAllowed && nextStep <= def.maxBetPerLine) {
             setBetPerLine(nextStep);
@@ -925,11 +1192,16 @@ export const App: React.FC = () => {
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         if (isSpinningRef.current || modalOpenRef.current) return;
+        const def = activeGameDefRef.current;
+        const betSteps = def.betSteps;
         const cur = betPerLineRef.current;
-        let idx = BET_STEPS.indexOf(cur);
-        if (idx === -1) idx = BET_STEPS.findIndex((s) => s >= cur);
+        let idx = betSteps.indexOf(cur);
+        if (idx === -1) {
+          const higherIdx = betSteps.findIndex((s) => s > cur);
+          idx = higherIdx === -1 ? betSteps.length : higherIdx;
+        }
         if (idx > 0) {
-          setBetPerLine(BET_STEPS[idx - 1]);
+          setBetPerLine(betSteps[idx - 1]);
           soundManager.playChipClick();
         }
       } else if (e.key === 'b' || e.key === 'B') {
@@ -979,11 +1251,13 @@ export const App: React.FC = () => {
     celebration,
     showFreeSpinsModal,
     showHoldAndSpinModal,
+    showMysteryPickModal,
     showGambleModal,
     executeSpin,
     handleQuickStop,
     handleMaxBet,
     handleSelectGame,
+    handleStartFreeSpins,
   ]);
 
   const isTimber = activeGameId === 'timber-critters';
@@ -996,6 +1270,9 @@ export const App: React.FC = () => {
     }`}>
       {/* 1. Dynamic Panoramic Scene Backdrop (Enchanted Forest vs Fort Knox Vault) */}
       <SceneBackdrop sceneId={currentSceneId} activeGameId={activeGameId} />
+
+      {/* 1b. Atmospheric Lighting, Searchlights & Stardust Wash */}
+      <VegasAmbience activeGameId={activeGameId} />
 
       {/* 2. Full-Screen 60 FPS Cascading Cash & Currency / Autumn Leaf Rain Canvas */}
       <CashRainCanvas
@@ -1033,12 +1310,24 @@ export const App: React.FC = () => {
         onToggleMute={() => setIsMuted((prev) => !prev)}
         onOpenPaytable={() => setShowPaytableModal(true)}
         onOpenBonusWheel={() => setShowBonusWheelModal(true)}
+        onOpenLeaderboard={() => setShowLeaderboardModal(true)}
+        isFloorMode={isFloorMode}
+        onToggleFloorMode={() => {
+          setIsFloorMode((prev) => {
+            const next = !prev;
+            storage.setItem('sloty_floor_mode', next.toString());
+            return next;
+          });
+        }}
+        showMobileCompanion={showMobileCompanion}
+        onToggleMobileCompanion={() => setShowMobileCompanion((prev) => !prev)}
         onToggleDebug={DEBUG_ENABLED ? () => setShowDebugDrawer((prev) => !prev) : undefined}
       />
 
       {/* Main Gaming Stage with dynamic viewport fitting */}
       <main className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-center gap-0.5 sm:gap-1 w-full px-1 sm:px-2 py-0.5 overflow-hidden">
         {/* Dynamic Architectural Physical Top Box (Fort Knox Vault vs Cedar Cabin Gable) */}
+        <div className="w-full flex-shrink-0 short-hidden">
         <JackpotMarquee
           totalBet={totalBet}
           activeGameId={activeGameId}
@@ -1055,6 +1344,15 @@ export const App: React.FC = () => {
           }}
           onOpenLeaderboard={() => setShowLeaderboardModal(true)}
         />
+        </div>
+
+        {/* Live Casino LED Marquee Ticker (dropped on short viewports to give the reels room) */}
+        <div className="w-full flex-shrink-0 compact-hidden">
+        <VegasTicker
+          freeSpinsRemaining={freeSpinsRemaining}
+          activeGameId={activeGameId}
+        />
+        </div>
 
         {/* Multiplayer Casino Floor Bank View with Live Neighbors */}
         {(() => {
@@ -1062,55 +1360,73 @@ export const App: React.FC = () => {
           const hasScatter0 = currentGrid[0]?.includes(scatterSym);
           const hasScatter1 = currentGrid[1]?.includes(scatterSym);
           const isAnticipating = isSpinning && !!hasScatter0 && !!hasScatter1;
+          const isWinning = !isSpinning && !!spinResult && spinResult.totalPayout > 0;
+          const isBigWin = !isSpinning && !!spinResult && spinResult.totalPayout >= 500;
+          const rewardCoins = (amount: number) => {
+            setBalance((b) => b + amount);
+            soundManager.playCoinTally();
+          };
 
           return (
-            <CasinoFloorBank
-              peers={roomPeers}
-              isFloorMode={isFloorMode}
-              activeGameId={activeGameId}
-              onOpenPaytable={() => setShowPaytableModal(true)}
-              onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
-              flankCompanion={
-                <CompanionLounge
-                  position="desktop-flank"
-                  isSpinning={isSpinning}
-                  isAnticipating={isAnticipating}
-                  isWinning={!isSpinning && !!spinResult && spinResult.totalPayout > 0}
-                  isBigWin={!isSpinning && !!spinResult && spinResult.totalPayout >= 500}
-                  isFeverMode={feverSpinsLeft > 0}
-                  winAmount={spinResult?.totalPayout || 0}
-                  onRewardCoins={(amount) => {
-                    setBalance((b) => b + amount);
-                    soundManager.playCoinTally();
-                  }}
-                  activeGameId={activeGameId}
-                />
-              }
-            >
-              <SlotMachine
-                currentGrid={currentGrid}
-                isSpinning={isSpinning}
-                spinResult={spinResult}
-                isTurbo={isTurbo}
-                selectedLines={selectedLines}
-                onSelectLines={handleSelectLines}
-                onAllReelsStopped={handleAllReelsStopped}
-                onQuickStop={handleQuickStop}
-                freeSpinsRemaining={freeSpinsRemaining}
-                freeSpinsMultiplier={freeSpinDef.freeSpinsMultiplier}
-                onSpin={executeSpin}
-                canSpin={balance >= totalBet || freeSpinsRemaining > 0}
-                isFeverMode={feverSpinsLeft > 0}
-                currentSceneId={currentSceneId}
-                onRewardCoins={(amount) => {
-                  setBalance((b) => b + amount);
-                  soundManager.playCoinTally();
-                }}
-                activeGameId={activeGameId}
+            <>
+              {showMobileCompanion && (
+                <div className="md:hidden short-hidden w-full max-w-md flex-shrink-0">
+                  <CompanionLounge
+                    position="mobile-bar"
+                    isSpinning={isSpinning}
+                    isAnticipating={isAnticipating}
+                    isWinning={isWinning}
+                    isBigWin={isBigWin}
+                    isFeverMode={feverSpinsLeft > 0}
+                    winAmount={spinResult?.totalPayout || 0}
+                    onRewardCoins={rewardCoins}
+                    activeGameId={activeGameId}
+                  />
+                </div>
+              )}
+
+              <CasinoFloorBank
+                peers={roomPeers}
                 isFloorMode={isFloorMode}
-                onOpenGamble={() => setShowGambleModal(true)}
-              />
-            </CasinoFloorBank>
+                activeGameId={activeGameId}
+                onOpenPaytable={() => setShowPaytableModal(true)}
+                onTipNeighbor={(peerId) => casinoRoomManager.tipNeighbor(peerId, 25)}
+                flankCompanion={
+                  <CompanionLounge
+                    position="desktop-flank"
+                    isSpinning={isSpinning}
+                    isAnticipating={isAnticipating}
+                    isWinning={isWinning}
+                    isBigWin={isBigWin}
+                    isFeverMode={feverSpinsLeft > 0}
+                    winAmount={spinResult?.totalPayout || 0}
+                    onRewardCoins={rewardCoins}
+                    activeGameId={activeGameId}
+                  />
+                }
+              >
+                <SlotMachine
+                  currentGrid={currentGrid}
+                  isSpinning={isSpinning}
+                  spinResult={spinResult}
+                  isTurbo={isTurbo}
+                  selectedLines={selectedLines}
+                  onSelectLines={handleSelectLines}
+                  onAllReelsStopped={handleAllReelsStopped}
+                  onQuickStop={handleQuickStop}
+                  freeSpinsRemaining={freeSpinsRemaining}
+                  freeSpinsMultiplier={freeSpinDef.freeSpinsMultiplier}
+                  onSpin={executeSpin}
+                  canSpin={balance >= totalBet || freeSpinsRemaining > 0}
+                  isFeverMode={feverSpinsLeft > 0}
+                  currentSceneId={currentSceneId}
+                  onRewardCoins={rewardCoins}
+                  activeGameId={activeGameId}
+                  isFloorMode={isFloorMode}
+                  onOpenGamble={() => setShowGambleModal(true)}
+                />
+              </CasinoFloorBank>
+            </>
           );
         })()}
       </main>
@@ -1189,147 +1505,181 @@ export const App: React.FC = () => {
       />
 
       {/* --- Modals & Overlays --- */}
+      <Suspense fallback={null}>
+        {/* Win Celebration Modal */}
+        {celebration && (
+          <WinCelebrationModal
+            winTier={celebration.tier}
+            winAmount={celebration.amount}
+            onDismiss={() => {
+              setCelebration(null);
+              flushNextBonusModal();
+            }}
+            activeGameId={activeGameId}
+          />
+        )}
 
-      {/* Win Celebration Modal */}
-      {celebration && (
-        <WinCelebrationModal
-          winTier={celebration.tier}
-          winAmount={celebration.amount}
-          onDismiss={() => setCelebration(null)}
-          activeGameId={activeGameId}
-        />
-      )}
+        {/* Video Poker Double-Up Gamble Modal */}
+        {showGambleModal && (
+          <GambleModal
+            initialPot={winAmount}
+            activeGameId={activeGameId}
+            onCollect={(doubledPot) => {
+              const addedDifference = doubledPot - winAmount;
+              setBalance((b) => b + addedDifference);
+              setWinAmount(doubledPot);
+              setShowGambleModal(false);
+            }}
+            onLose={() => {
+              setBalance((b) => b - winAmount);
+              setWinAmount(0);
+              setShowGambleModal(false);
+            }}
+            onClose={() => setShowGambleModal(false)}
+          />
+        )}
 
-      {/* Video Poker Double-Up Gamble Modal */}
-      {showGambleModal && (
-        <GambleModal
-          initialPot={winAmount}
-          activeGameId={activeGameId}
-          onCollect={(doubledPot) => {
-            const addedDifference = doubledPot - winAmount;
-            setBalance((b) => b + addedDifference);
-            setWinAmount(doubledPot);
-            setShowGambleModal(false);
-          }}
-          onLose={() => {
-            setBalance((b) => b - winAmount);
-            setWinAmount(0);
-            setShowGambleModal(false);
-          }}
-          onClose={() => setShowGambleModal(false)}
-        />
-      )}
+        {/* Cash Link Hold & Spin Modal */}
+        {showHoldAndSpinModal && (
+          <HoldAndSpinModal
+            totalBet={totalBet}
+            initialCoinCount={holdAndSpinInitialCoins}
+            activeGameId={activeGameId}
+            onComplete={(bonusWon) => {
+              setBalance((b) => b + bonusWon);
+              setWinAmount(bonusWon);
+              setStats((s) => ({
+                ...s,
+                totalWon: s.totalWon + bonusWon,
+                biggestWin: Math.max(s.biggestWin, bonusWon),
+                holdAndSpinsPlayed: s.holdAndSpinsPlayed + 1,
+              }));
+              setShowHoldAndSpinModal(false);
+              flushNextBonusModal();
+            }}
+          />
+        )}
 
-      {/* Cash Link Hold & Spin Modal */}
-      {showHoldAndSpinModal && (
-        <HoldAndSpinModal
-          totalBet={totalBet}
-          initialCoinCount={holdAndSpinInitialCoins}
-          activeGameId={activeGameId}
-          onComplete={(bonusWon) => {
-            setBalance((b) => b + bonusWon);
-            setWinAmount(bonusWon);
-            setStats((s) => ({
-              ...s,
-              totalWon: s.totalWon + bonusWon,
-              biggestWin: Math.max(s.biggestWin, bonusWon),
-              holdAndSpinsPlayed: s.holdAndSpinsPlayed + 1,
-            }));
-            setShowHoldAndSpinModal(false);
-          }}
-        />
-      )}
+        {/* Mystery Safecracker Pick Bonus Modal */}
+        {showMysteryPickModal && (
+          <MysteryPickModal
+            totalBet={totalBet}
+            activeGameId={activeGameId}
+            onComplete={(bonusWon) => {
+              setBalance((b) => b + bonusWon);
+              setWinAmount(bonusWon);
+              setStats((s) => ({
+                ...s,
+                totalWon: s.totalWon + bonusWon,
+                biggestWin: Math.max(s.biggestWin, bonusWon),
+              }));
+              setShowMysteryPickModal(false);
+              flushNextBonusModal();
+            }}
+            onClose={() => {
+              setShowMysteryPickModal(false);
+              flushNextBonusModal();
+            }}
+          />
+        )}
 
-      {/* Free Spins Awarded Modal */}
-      {showFreeSpinsModal && (
-        <FreeSpinsModal
-          freeSpinsAwarded={freeSpinDef.freeSpinsAward}
-          multiplier={freeSpinDef.freeSpinsMultiplier}
-          onStart={handleStartFreeSpins}
-          activeGameId={freeSpinGameId ?? activeGameId}
-        />
-      )}
+        {/* Free Spins Awarded Modal */}
+        {showFreeSpinsModal && (
+          <FreeSpinsModal
+            freeSpinsAwarded={freeSpinDef.freeSpinsAward}
+            multiplier={freeSpinDef.freeSpinsMultiplier}
+            onStart={handleStartFreeSpins}
+            activeGameId={freeSpinGameId ?? activeGameId}
+            isRetrigger={freeSpinsRemaining > 0}
+          />
+        )}
 
-      {/* Lucky Bonus Wheel Modal */}
-      {showBonusWheelModal && (
-        <DailyBonusModal
-          canClaim={canClaimBonus}
-          timeRemaining={timeUntilBonus}
-          onClaim={(amount) => {
-            setBalance((b) => b + amount);
-            setLastBonusClaimTime(Date.now());
-          }}
-          onClose={() => setShowBonusWheelModal(false)}
-        />
-      )}
+        {/* Lucky Bonus Wheel Modal */}
+        {showBonusWheelModal && (
+          <DailyBonusModal
+            canClaim={canClaimBonus}
+            timeRemaining={timeUntilBonus}
+            onClaim={(amount) => {
+              const claimedAt = Date.now();
+              setBalance((b) => b + amount);
+              setLastBonusClaimTime(claimedAt);
+              setNowMs(claimedAt);
+            }}
+            onClose={() => setShowBonusWheelModal(false)}
+          />
+        )}
 
-      {/* Paytable & Rules Modal */}
-      {showPaytableModal && (
-        <PaytableModal
-          activeGameId={activeGameId}
-          onClose={() => setShowPaytableModal(false)}
-        />
-      )}
+        {/* Paytable & Rules Modal */}
+        {showPaytableModal && (
+          <PaytableModal
+            activeGameId={activeGameId}
+            stats={stats}
+            onClose={() => setShowPaytableModal(false)}
+          />
+        )}
 
-      {/* Level Up Celebration Modal */}
-      {levelUpData && (
-        <LevelUpModal
-          newLevel={levelUpData.newLevel}
-          bonusCoins={levelUpData.bonusCoins}
-          newMaxBet={levelUpData.newMaxBet}
-          autoSpinsRemaining={autoSpinsRemaining}
-          onClaim={() => {
-            setBalance((b) => b + levelUpData.bonusCoins);
-            setLevelUpData(null);
-          }}
-        />
-      )}
+        {/* Level Up Celebration Modal */}
+        {levelUpData && (
+          <LevelUpModal
+            newLevel={levelUpData.newLevel}
+            bonusCoins={levelUpData.bonusCoins}
+            newMaxBet={levelUpData.newMaxBet}
+            autoSpinsRemaining={autoSpinsRemaining}
+            onClaim={() => {
+              setBalance((b) => b + levelUpData.bonusCoins);
+              setLevelUpData(null);
+            }}
+          />
+        )}
 
-      {/* Developer Debug Suite Drawer — dev builds / ?debug=1 only */}
-      {DEBUG_ENABLED && (
-      <DebugDrawer
-        isOpen={showDebugDrawer}
-        balance={balance}
-        currentLevel={progression.level}
-        stats={stats}
-        forcedScenario={forcedScenario}
-        onClose={() => setShowDebugDrawer(false)}
-        onAddCredits={(amount) => setBalance((b) => b + amount)}
-        onSetBalance={(amount) => setBalance(amount)}
-        onAddXp={(amount) => setTotalXp((xp) => xp + amount)}
-        onSetLevel={(level) => {
-          const xpNeeded = getXpRequiredForLevel(level);
-          setTotalXp(xpNeeded);
-        }}
-        onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
-        onInjectCustomGrid={(grid) => {
-          setCurrentGrid(grid);
-          const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? freeSpinDef.freeSpinsMultiplier : 1, activeGameDef);
-          setSpinResult(evaluated);
-        }}
-        onResetStats={() =>
-          setStats({
-            totalSpins: 0,
-            totalWagered: 0,
-            totalWon: 0,
-            biggestWin: 0,
-            freeSpinsPlayed: 0,
-            holdAndSpinsPlayed: 0,
-          })
-        }
-      />
-      )}
+        {/* Developer Debug Suite Drawer — dev builds / ?debug=1 only */}
+        {DEBUG_ENABLED && showDebugDrawer && (
+          <DebugDrawer
+            isOpen={showDebugDrawer}
+            balance={balance}
+            currentLevel={progression.level}
+            stats={stats}
+            forcedScenario={forcedScenario}
+            activeGameId={activeGameId}
+            onClose={() => setShowDebugDrawer(false)}
+            onAddCredits={(amount) => setBalance((b) => b + amount)}
+            onSetBalance={(amount) => setBalance(amount)}
+            onAddXp={(amount) => setTotalXp((xp) => xp + amount)}
+            onSetLevel={(level) => {
+              const xpNeeded = getXpRequiredForLevel(level);
+              setTotalXp(xpNeeded);
+            }}
+            onSetForcedScenario={(scenario) => setForcedScenario(scenario)}
+            onInjectCustomGrid={(grid) => {
+              setCurrentGrid(grid);
+              const evaluated = evaluateSpin(grid, totalBet, selectedLines, freeSpinsRemaining > 0 ? freeSpinDef.freeSpinsMultiplier : 1, activeGameDef);
+              setSpinResult(evaluated);
+            }}
+            onResetStats={() =>
+              setStats({
+                totalSpins: 0,
+                totalWagered: 0,
+                totalWon: 0,
+                biggestWin: 0,
+                freeSpinsPlayed: 0,
+                holdAndSpinsPlayed: 0,
+              })
+            }
+            onLaunchMysteryPick={() => setShowMysteryPickModal(true)}
+          />
+        )}
 
-      {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
-      {showLeaderboardModal && (
-        <LeaderboardModal
-          userProfile={discordProfile}
-          currentBalance={balance}
-          peakBalance={peakBalance}
-          peers={roomPeers}
-          onClose={() => setShowLeaderboardModal(false)}
-        />
-      )}
+        {/* Discord Server High Scores & Hall of Fame Leaderboard Modal */}
+        {showLeaderboardModal && (
+          <LeaderboardModal
+            userProfile={discordProfile}
+            currentBalance={balance}
+            peakBalance={effectivePeakBalance}
+            peers={roomPeers}
+            onClose={() => setShowLeaderboardModal(false)}
+          />
+        )}
+      </Suspense>
 
       {/* Stealth $1,000 Safety Net Whisper Notification */}
       {showStealthBailoutToast && (
@@ -1358,6 +1708,63 @@ export const App: React.FC = () => {
             <span className="text-xs font-black text-emerald-300 tracking-wide">
               {tipReceivedToast}
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* Lucky Nudge Mechanical Solenoid Toast */}
+      {showNudgeToast && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-bounce max-w-sm w-full px-3 pointer-events-none">
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-cyan-950 via-slate-900 to-blue-950 border-2 border-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.9)] flex items-center space-x-3 backdrop-blur-md">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-sky-300 border border-cyan-200 flex items-center justify-center text-lg flex-shrink-0 shadow-md">
+              ⚡
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[10px] font-black uppercase text-cyan-300 tracking-wider font-mono">
+                MECHANICAL REEL BUMP
+              </span>
+              <span className="text-[11px] text-cyan-100 font-semibold leading-tight">
+                {showNudgeToast}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Konami Code Retro Easter Egg Toast */}
+      {showKonamiToast && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 animate-bounce max-w-sm w-full px-3 pointer-events-none">
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-pink-950 via-purple-950 to-indigo-950 border-2 border-pink-400 shadow-[0_0_35px_rgba(236,72,153,1)] flex items-center space-x-3 backdrop-blur-md">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-cyan-300 border border-pink-200 flex items-center justify-center text-xl flex-shrink-0 shadow-md">
+              🎮
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[10px] font-black uppercase text-pink-300 tracking-wider font-mono">
+                SECRET KONAMI CODE UNLOCKED!
+              </span>
+              <span className="text-[11px] text-pink-100 font-semibold leading-tight font-mono">
+                30 Lives Granted! <strong className="text-yellow-300 font-bold">+2,500 COINS</strong> inserted into coin door hopper!
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quota Chapter 5 Prestige Trophy Toast */}
+      {showChapterPrestigeToast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-bounce max-w-md w-full px-3 pointer-events-none">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-950 via-yellow-950 to-amber-950 border-2 border-yellow-300 shadow-[0_0_40px_rgba(245,158,11,1)] flex items-center space-x-3 backdrop-blur-md">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-yellow-400 to-amber-600 border-2 border-white flex items-center justify-center text-2xl flex-shrink-0 shadow-lg animate-pulse">
+              🏆
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[11px] font-black uppercase text-yellow-300 tracking-wider font-serif">
+                ★ GRAND CHAPTER MASTER UNLOCKED ★
+              </span>
+              <span className="text-[11px] text-yellow-100 font-semibold leading-tight font-mono">
+                {showChapterPrestigeToast}
+              </span>
+            </div>
           </div>
         </div>
       )}

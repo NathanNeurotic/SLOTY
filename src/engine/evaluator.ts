@@ -86,6 +86,16 @@ export function generateForcedGrid(scenario: DebugScenario): SymbolGrid {
     ];
   }
 
+  if (scenario === 'MYSTERY_PICK') {
+    return [
+      ['GOLDBAR', 'JACK', 'QUEEN', 'KING'],
+      ['BELL', 'MELON', 'ACE', 'CHERRY'],
+      ['GRAPES', 'GOLDBAR', 'DIAMOND', 'JACK'],
+      ['HORSESHOE', 'BELL', 'SEVEN', 'QUEEN'],
+      ['ACE', 'KING', 'GOLDBAR', 'MELON'],
+    ];
+  }
+
   if (scenario === 'NEAR_MISS') {
     return [
       ['SCATTER', 'JACK', 'QUEEN', 'KING'],

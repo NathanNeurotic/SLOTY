@@ -45,7 +45,7 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
     >
       {/* 3D Emblem Token with Bespoke Physical Silhouette */}
       <div
-        className={`relative w-8 h-8 sm:w-9 sm:h-9 xl:w-11 xl:h-11 p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
+        className={`relative w-7 h-7 sm:w-9 sm:h-9 xl:w-11 xl:h-11 p-0.5 shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0 ${
           isPs2
             ? 'bg-gradient-to-tr from-[#006FCD] via-cyan-400 to-[#001433] shadow-[0_0_20px_rgba(0,111,205,0.7)]'
             : isTimber
@@ -121,8 +121,8 @@ export const SlotyLogo: React.FC<SlotyLogoProps> = ({ activeGameId = 'vault-24k'
         </div>
       </div>
 
-      {/* Marquee Typography - Bespoke Title Styling Per Game */}
-      <div className="flex flex-col justify-center">
+      {/* Marquee Typography - Bespoke Title Styling Per Game (hidden below lg: the active game is named by the selector) */}
+      <div className="hidden lg:flex flex-col justify-center">
         {isPs2 ? (
           <div className="flex items-center space-x-1.5 leading-none font-mono">
             <span className="text-sm sm:text-lg font-black tracking-wider uppercase text-cyan-300 drop-shadow-[0_0_10px_rgba(0,111,205,0.9)]">

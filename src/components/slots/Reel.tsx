@@ -71,19 +71,25 @@ export const Reel: React.FC<ReelProps> = ({
 
   useEffect(() => {
     if (isSpinning) {
-      setHasSettled(false);
       wasSpinningRef.current = true;
+      const raf = requestAnimationFrame(() => setHasSettled(false));
+      return () => cancelAnimationFrame(raf);
     } else if (wasSpinningRef.current) {
       // Transition from spinning to settled
       wasSpinningRef.current = false;
-      setHasSettled(true);
-      if (onStopRef.current) {
-        onStopRef.current(reelIndex);
-      }
+      const raf = requestAnimationFrame(() => {
+        setHasSettled(true);
+        if (onStopRef.current) {
+          onStopRef.current(reelIndex);
+        }
+      });
       const t = setTimeout(() => {
         setHasSettled(false);
       }, 350);
-      return () => clearTimeout(t);
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(t);
+      };
     }
   }, [isSpinning, reelIndex]);
 

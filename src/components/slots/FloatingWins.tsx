@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
 import type { WinningLine } from '../../engine/types';
 import { Coins, Star, Gamepad2 } from 'lucide-react';
 import type { GameId } from '../../games/types';
@@ -21,13 +21,42 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
   activeGameId,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [, setTick] = useState(0);
+  const [cellCoordsMap, setCellCoordsMap] = useState<Record<string, { left: string; top: string }>>({});
 
-  // Re-render once on mount to capture accurate DOM cell bounding rects
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setTick((v) => v + 1));
-    return () => cancelAnimationFrame(t);
-  }, [activeWin]);
+  useLayoutEffect(() => {
+    const measure = () => {
+      const container = containerRef.current;
+      const parent = container?.parentElement;
+      if (!container || !parent) return;
+      const parentRect = container.getBoundingClientRect();
+      if (parentRect.width <= 0 || parentRect.height <= 0) return;
+
+      const nextMap: Record<string, { left: string; top: string }> = {};
+      const cells = parent.querySelectorAll<HTMLElement>('[data-reel][data-row]');
+      cells.forEach((cell) => {
+        const r = cell.getAttribute('data-reel');
+        const row = cell.getAttribute('data-row');
+        if (r === null || row === null) return;
+        const cellRect = cell.getBoundingClientRect();
+        const rawLeft = cellRect.left - parentRect.left + cellRect.width / 2;
+        const rawTop = cellRect.top - parentRect.top + cellRect.height / 2;
+        const clampedLeft = Math.max(30, Math.min(parentRect.width - 30, rawLeft));
+        const clampedTop = Math.max(28, Math.min(parentRect.height - 28, rawTop));
+        nextMap[`${r}-${row}`] = {
+          left: `${clampedLeft}px`,
+          top: `${clampedTop}px`,
+        };
+      });
+      setCellCoordsMap(nextMap);
+    };
+
+    const raf = requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measure);
+    };
+  }, [activeWin, reelsCount, rowCount]);
 
   const effectiveIsTimber = isTimber || activeGameId === 'timber-critters';
   const effectiveIsPixel = isPixel || activeGameId === 'pixel-arcade';
@@ -35,29 +64,14 @@ export const FloatingWins: React.FC<FloatingWinsProps> = ({
 
   const getCellPosition = useCallback(
     (reel: number, row: number) => {
-      if (containerRef.current && containerRef.current.parentElement) {
-        const cell = containerRef.current.parentElement.querySelector(`[data-reel="${reel}"][data-row="${row}"]`);
-        if (cell) {
-          const cellRect = cell.getBoundingClientRect();
-          const parentRect = containerRef.current.getBoundingClientRect();
-          if (parentRect.width > 0 && parentRect.height > 0) {
-            const rawLeft = cellRect.left - parentRect.left + cellRect.width / 2;
-            const rawTop = cellRect.top - parentRect.top + cellRect.height / 2;
-            const clampedLeft = Math.max(30, Math.min(parentRect.width - 30, rawLeft));
-            const clampedTop = Math.max(28, Math.min(parentRect.height - 28, rawTop));
-            return {
-              left: `${clampedLeft}px`,
-              top: `${clampedTop}px`,
-            };
-          }
+      return (
+        cellCoordsMap[`${reel}-${row}`] ?? {
+          left: `${Math.max(10, Math.min(90, ((reel + 0.5) / reelsCount) * 100))}%`,
+          top: `${Math.max(15, Math.min(85, ((row + 0.5) / rowCount) * 100))}%`,
         }
-      }
-      return {
-        left: `${Math.max(10, Math.min(90, ((reel + 0.5) / reelsCount) * 100))}%`,
-        top: `${Math.max(15, Math.min(85, ((row + 0.5) / rowCount) * 100))}%`,
-      };
+      );
     },
-    [reelsCount, rowCount]
+    [cellCoordsMap, reelsCount, rowCount]
   );
 
   if (!activeWin || activeWin.coords.length === 0) return null;

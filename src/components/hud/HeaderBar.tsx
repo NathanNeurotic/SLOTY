@@ -12,12 +12,15 @@ import {
   Play,
   Trees,
   Gamepad2,
+  Users,
+  Sparkles,
 } from 'lucide-react';
 import type { ProgressionState } from '../../engine/types';
 import type { GameId } from '../../games/types';
 import { soundManager } from '../../audio/soundManager';
 import { SlotyLogo } from './SlotyLogo';
 import { GameSelector } from './GameSelector';
+import { SceneSelector } from '../scenes/SceneSelector';
 import type { CasinoSceneId } from '../scenes/SceneTypes';
 
 interface HeaderBarProps {
@@ -35,6 +38,11 @@ interface HeaderBarProps {
   onOpenPaytable: () => void;
   onOpenBonusWheel: () => void;
   onToggleDebug?: () => void;
+  onOpenLeaderboard?: () => void;
+  isFloorMode?: boolean;
+  onToggleFloorMode?: () => void;
+  showMobileCompanion?: boolean;
+  onToggleMobileCompanion?: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -43,8 +51,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isMuted,
   canClaimBonus,
   timeUntilBonus,
-  currentSceneId: _currentSceneId,
-  onSelectScene: _onSelectScene,
+  currentSceneId,
+  onSelectScene,
   activeGameId,
   onSelectGame,
   isSpinning = false,
@@ -52,6 +60,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onOpenPaytable,
   onOpenBonusWheel,
   onToggleDebug,
+  onOpenLeaderboard,
+  isFloorMode = false,
+  onToggleFloorMode,
+  showMobileCompanion = true,
+  onToggleMobileCompanion,
 }) => {
   const [isMusicOn, setIsMusicOn] = useState(() => soundManager.isMusicPlaying());
   const [showAudioPopover, setShowAudioPopover] = useState(false);
@@ -98,7 +111,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   const isPs2 = activeGameId === 'ps2-legends';
 
   return (
-    <header className={`w-full px-2 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
+    <header className={`w-full px-1.5 sm:px-4 py-1 sm:py-1.5 sticky top-0 z-30 select-none shadow-[0_4px_25px_rgba(0,0,0,0.95)] transition-colors duration-300 flex-shrink-0 ${
       isPs2
         ? 'bg-gradient-to-r from-[#030612] via-[#081126] to-[#030612] border-b-2 sm:border-b-4 border-[#006FCD] shadow-[0_4px_25px_rgba(0,111,205,0.7)]'
         : isTimber
@@ -107,14 +120,14 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         ? 'bg-gradient-to-r from-[#220642] via-[#0b011c] to-[#220642] border-b-2 sm:border-b-4 border-pink-500 shadow-[0_4px_25px_rgba(236,72,153,0.7)]'
         : 'bg-gradient-to-r from-[#2a1b02] via-[#0f0a01] to-[#2a1b02] border-b-2 sm:border-b-4 border-yellow-400 shadow-[0_4px_25px_rgba(245,158,11,0.6)]'
     }`}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-3 w-full h-9 sm:h-11">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-3 w-full h-10 sm:h-11 min-w-0">
         {/* Left: Brand Logo & Coin Balance */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2.5 flex-shrink-0">
+        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
           <SlotyLogo activeGameId={activeGameId} />
 
           {/* Digital Bank Vault / Forest Reserve / Arcade Credits Dispenser */}
           <div
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-1.5 sm:px-2.5 xl:px-3.5 py-0.5 sm:py-1 shadow-md border select-none ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-1 sm:px-2.5 xl:px-3.5 py-0.5 sm:py-1 shadow-md border select-none ${
               isPs2
                 ? 'bg-gradient-to-b from-black via-[#040c1e] to-black border-2 border-[#006FCD] shadow-[0_0_12px_rgba(0,111,205,0.6)]'
                 : isTimber
@@ -224,7 +237,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               soundManager.playButtonClick();
               onOpenBonusWheel();
             }}
-            className={`flex items-center space-x-1 px-1.5 sm:px-2 xl:px-2.5 py-1 border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
+            className={`w-7 h-7 sm:w-auto flex items-center justify-center space-x-1 p-1 sm:px-2 xl:px-2.5 py-1 border text-[9px] sm:text-xs font-bold transition-all flex-shrink-0 ${
               canClaimBonus
                 ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-amber-500 border-yellow-300 text-white shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-pulse'
                 : 'vlt-btn-stepper text-amber-300 hover:text-white'
@@ -244,11 +257,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             </span>
           </button>
 
-          {/* Background Lounge Music Toggle */}
+          {/* Background Lounge Music Toggle (desktop; on mobile it's in the Settings Drawer) */}
           <button
             onClick={handleToggleMusic}
             title={isMusicOn ? 'Mute Music' : 'Start Music'}
-            className={`p-1 sm:px-2 sm:py-1 border transition-all flex-shrink-0 ${
+            className={`hidden sm:flex w-7 h-7 sm:w-auto p-1 sm:px-2 sm:py-1 border transition-all items-center justify-center flex-shrink-0 ${
               isMusicOn
                 ? 'bg-emerald-950/80 border-emerald-400 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.5)]'
                 : 'vlt-btn-stepper text-slate-400 hover:text-white border-white/20'
@@ -270,7 +283,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               soundManager.playButtonClick();
               setShowMobileToolsDrawer(true);
             }}
-            className="xl:hidden p-1.5 vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
+            className="xl:hidden w-7 h-7 sm:w-auto p-1 sm:p-1.5 flex items-center justify-center vlt-btn-stepper text-slate-300 hover:text-white border border-white/20"
             style={{
               clipPath: isPixel
                 ? 'polygon(0 3px, 3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px))'
@@ -417,6 +430,17 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               </div>
 
               {/* Individual Sound FX */}
+              {/* Scene / Backdrop Switcher */}
+              <div className="pt-2 border-t border-white/10 mb-3">
+                <div className="text-[9px] font-bold uppercase text-slate-400 mb-1.5">
+                  Casino Floor Backdrop:
+                </div>
+                <SceneSelector
+                  currentSceneId={currentSceneId}
+                  onSelectScene={onSelectScene}
+                />
+              </div>
+
               <div className="pt-2 border-t border-white/10">
                 <div className="text-[9px] font-bold uppercase text-slate-400 mb-1.5">
                   Individual Sound FX:
@@ -456,7 +480,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
       {/* Mobile Tools & Settings Drawer Modal */}
       {showMobileToolsDrawer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm select-none animate-fadeIn">
-          <div className="relative w-full max-w-sm bg-gradient-to-b from-slate-900 via-casino-950 to-black border-2 border-amber-400 rounded-3xl p-5 shadow-2xl flex flex-col space-y-4">
+          <div className="relative w-full max-w-sm max-h-[92vh] overflow-y-auto bg-gradient-to-b from-slate-900 via-casino-950 to-black border-2 border-amber-400 rounded-3xl p-5 shadow-2xl flex flex-col space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <span className="text-sm font-black uppercase text-amber-300 tracking-wider">
                 Game Settings &amp; Tools
@@ -495,6 +519,65 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                 <HelpCircle className="w-4 h-4 text-cyan-300" />
                 <span>Paytable &amp; Rules</span>
               </button>
+
+              {onOpenLeaderboard && (
+                <button
+                  onClick={() => {
+                    soundManager.playButtonClick();
+                    setShowMobileToolsDrawer(false);
+                    onOpenLeaderboard();
+                  }}
+                  className="py-2 px-3 rounded-xl bg-casino-900 border border-amber-400/50 text-amber-200 font-bold text-xs flex items-center justify-center space-x-1.5"
+                >
+                  <Trophy className="w-4 h-4 text-amber-300" />
+                  <span>Leaderboard</span>
+                </button>
+              )}
+
+              {onToggleFloorMode && (
+                <button
+                  onClick={() => {
+                    soundManager.playButtonClick();
+                    onToggleFloorMode();
+                  }}
+                  className={`py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center space-x-1.5 ${
+                    isFloorMode
+                      ? 'bg-emerald-950 border-emerald-400 text-emerald-200'
+                      : 'bg-casino-900 border-white/20 text-slate-200'
+                  }`}
+                >
+                  <Users className="w-4 h-4 text-emerald-300" />
+                  <span>{isFloorMode ? 'Floor Bank: ON' : 'Floor Bank: OFF'}</span>
+                </button>
+              )}
+
+              {onToggleMobileCompanion && (
+                <button
+                  onClick={() => {
+                    soundManager.playButtonClick();
+                    onToggleMobileCompanion();
+                  }}
+                  className={`col-span-2 py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center space-x-1.5 ${
+                    showMobileCompanion
+                      ? 'bg-purple-950/70 border-purple-400/60 text-purple-200'
+                      : 'bg-casino-900 border-white/20 text-slate-300'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-purple-300" />
+                  <span>{showMobileCompanion ? 'Host & Mascot Strip: Visible' : 'Host & Mascot Strip: Hidden'}</span>
+                </button>
+              )}
+            </div>
+
+            {/* Scene / Backdrop Switcher */}
+            <div className="bg-black/50 p-3 rounded-2xl border border-white/10">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Casino Floor Backdrop
+              </div>
+              <SceneSelector
+                currentSceneId={currentSceneId}
+                onSelectScene={onSelectScene}
+              />
             </div>
 
             {/* Volume Sliders */}

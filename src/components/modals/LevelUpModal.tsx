@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Trophy, Coins, Sparkles } from 'lucide-react';
 import { soundManager } from '../../audio/soundManager';
 import { launchCoinFountain } from '../../fx/celebrations';
@@ -21,12 +21,12 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
   const [countdown, setCountdown] = useState(autoSpinsRemaining > 0 ? 3 : 5);
   const claimedRef = useRef(false);
 
-  const handleClaim = () => {
+  const handleClaim = useCallback(() => {
     if (claimedRef.current) return;
     claimedRef.current = true;
     soundManager.playButtonClick();
     onClaim();
-  };
+  }, [onClaim]);
 
   useEffect(() => {
     soundManager.playLevelUp();
@@ -58,16 +58,16 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
       clearInterval(timer);
       window.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
-  }, []);
+  }, [handleClaim]);
 
   return (
     <div
       onClick={handleClaim}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 select-none cursor-pointer animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 select-none cursor-pointer animate-fadeIn"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-w-sm w-full bg-casino-950 border-2 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.7)] rounded-3xl p-6 text-center flex flex-col items-center"
+        className="relative max-w-sm w-full max-h-[92vh] overflow-y-auto bg-casino-950 border-2 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.7)] rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center"
       >
         {/* Level Up Trophy */}
         <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-[0_0_25px_rgba(168,85,247,0.8)] mb-3 animate-bounce">

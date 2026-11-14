@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import type { SymbolId } from '../../engine/types';
 
 interface SymbolRendererProps {
@@ -18,26 +18,29 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
   reelIndex,
   rowIndex,
 }) => {
+  const svgUid = useId().replace(/:/g, '');
+  const uid = (name: string) => `${name}-${svgUid}`;
+
   const getSymbolSvg = () => {
     switch (id) {
       case 'WILD':
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="wildCrownGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('wildCrownGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="20%" stopColor="#FDE047" />
                 <stop offset="50%" stopColor="#F59E0B" />
                 <stop offset="80%" stopColor="#B45309" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
-              <linearGradient id="rubyJewel" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('rubyJewel')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFAEC0" />
                 <stop offset="30%" stopColor="#FF1E56" />
                 <stop offset="70%" stopColor="#9B0024" />
                 <stop offset="100%" stopColor="#40000D" />
               </linearGradient>
-              <linearGradient id="diamondJewel" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('diamondJewel')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" />
                 <stop offset="45%" stopColor="#BAE6FD" />
                 <stop offset="85%" stopColor="#0284C7" />
@@ -56,7 +59,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* 5-Peak Imperial 24K Gold Crown */}
             <path
               d="M14 66 L9 28 L30 44 L50 14 L70 44 L91 28 L86 66 Z"
-              fill="url(#wildCrownGold)"
+              fill={`url(#${uid('wildCrownGold')})`}
               stroke="#FFFBEB"
               strokeWidth="2.2"
               strokeLinejoin="round"
@@ -66,22 +69,22 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <path d="M50 16 L31 43 L12 29 L16 64 L84 64 L88 29 L69 43 Z" fill="#FEF08A" opacity="0.35" />
 
             {/* Crown Base Band with Gold Rivets */}
-            <path d="M12 65 L88 65 L86 73 L14 73 Z" fill="url(#wildCrownGold)" stroke="#FEF08A" strokeWidth="1.5" />
+            <path d="M12 65 L88 65 L86 73 L14 73 Z" fill={`url(#${uid('wildCrownGold')})`} stroke="#FEF08A" strokeWidth="1.5" />
             <circle cx="24" cy="69" r="2.2" fill="#451A03" stroke="#FEF08A" strokeWidth="0.6" />
             <circle cx="37" cy="69" r="2.2" fill="#451A03" stroke="#FEF08A" strokeWidth="0.6" />
-            <circle cx="50" cy="69" r="3" fill="url(#rubyJewel)" stroke="#FEF08A" strokeWidth="1" />
+            <circle cx="50" cy="69" r="3" fill={`url(#${uid('rubyJewel')})`} stroke="#FEF08A" strokeWidth="1" />
             <circle cx="63" cy="69" r="2.2" fill="#451A03" stroke="#FEF08A" strokeWidth="0.6" />
             <circle cx="76" cy="69" r="2.2" fill="#451A03" stroke="#FEF08A" strokeWidth="0.6" />
 
             {/* Sparkling Jewels on Crown Peaks */}
-            <circle cx="9" cy="27" r="5" fill="url(#diamondJewel)" stroke="#FFF" strokeWidth="1.2" />
-            <circle cx="50" cy="13" r="6.5" fill="url(#rubyJewel)" stroke="#FFF" strokeWidth="1.5" />
-            <circle cx="91" cy="27" r="5" fill="url(#diamondJewel)" stroke="#FFF" strokeWidth="1.2" />
-            <circle cx="30" cy="44" r="4" fill="url(#diamondJewel)" stroke="#FFF" strokeWidth="1" />
-            <circle cx="70" cy="44" r="4" fill="url(#diamondJewel)" stroke="#FFF" strokeWidth="1" />
+            <circle cx="9" cy="27" r="5" fill={`url(#${uid('diamondJewel')})`} stroke="#FFF" strokeWidth="1.2" />
+            <circle cx="50" cy="13" r="6.5" fill={`url(#${uid('rubyJewel')})`} stroke="#FFF" strokeWidth="1.5" />
+            <circle cx="91" cy="27" r="5" fill={`url(#${uid('diamondJewel')})`} stroke="#FFF" strokeWidth="1.2" />
+            <circle cx="30" cy="44" r="4" fill={`url(#${uid('diamondJewel')})`} stroke="#FFF" strokeWidth="1" />
+            <circle cx="70" cy="44" r="4" fill={`url(#${uid('diamondJewel')})`} stroke="#FFF" strokeWidth="1" />
 
             {/* Center Royal Medallion */}
-            <polygon points="50,33 58,45 50,57 42,45" fill="url(#rubyJewel)" stroke="#FEF08A" strokeWidth="1.8" />
+            <polygon points="50,33 58,45 50,57 42,45" fill={`url(#${uid('rubyJewel')})`} stroke="#FEF08A" strokeWidth="1.8" />
             <circle cx="50" cy="45" r="2.5" fill="#FFF" />
 
             {/* Specular Starbursts on Diamonds */}
@@ -114,19 +117,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="vaultSteelRing" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('vaultSteelRing')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#F8FAFC" />
                 <stop offset="25%" stopColor="#94A3B8" />
                 <stop offset="65%" stopColor="#334155" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <radialGradient id="vaultGoldSpoke" cx="40%" cy="40%" r="65%">
+              <radialGradient id={uid('vaultGoldSpoke')} cx="40%" cy="40%" r="65%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="35%" stopColor="#FBBF24" />
                 <stop offset="75%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </radialGradient>
-              <radialGradient id="vaultDoorInteriorGlow" cx="50%" cy="50%" r="50%">
+              <radialGradient id={uid('vaultDoorInteriorGlow')} cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#FDE047" stopOpacity="0.8" />
                 <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#000000" stopOpacity="0.8" />
@@ -134,7 +137,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Outer Heavy Steel Flange with 8 Chrome Hex Bolts */}
-            <circle cx="50" cy="44" r="39" fill="url(#vaultSteelRing)" stroke="#00F0FF" strokeWidth="2.5" />
+            <circle cx="50" cy="44" r="39" fill={`url(#${uid('vaultSteelRing')})`} stroke="#00F0FF" strokeWidth="2.5" />
             {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
               <circle
                 key={i}
@@ -148,13 +151,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             ))}
 
             {/* Recessed Vault Cavity */}
-            <circle cx="50" cy="44" r="29" fill="url(#vaultDoorInteriorGlow)" stroke="#FBBF24" strokeWidth="2" />
+            <circle cx="50" cy="44" r="29" fill={`url(#${uid('vaultDoorInteriorGlow')})`} stroke="#FBBF24" strokeWidth="2" />
 
             {/* 3-Spoke Hydraulic Gold Steering Wheel */}
             <g className={isScatterHighlight || isWinning ? 'animate-spin origin-[50px_44px]' : ''}>
-              <line x1="50" y1="18" x2="50" y2="70" stroke="url(#vaultGoldSpoke)" strokeWidth="4.5" strokeLinecap="round" />
-              <line x1="27" y1="31" x2="73" y2="57" stroke="url(#vaultGoldSpoke)" strokeWidth="4.5" strokeLinecap="round" />
-              <line x1="27" y1="57" x2="73" y2="31" stroke="url(#vaultGoldSpoke)" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="50" y1="18" x2="50" y2="70" stroke={`url(#${uid('vaultGoldSpoke')})`} strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="27" y1="31" x2="73" y2="57" stroke={`url(#${uid('vaultGoldSpoke')})`} strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="27" y1="57" x2="73" y2="31" stroke={`url(#${uid('vaultGoldSpoke')})`} strokeWidth="4.5" strokeLinecap="round" />
 
               {/* Hand Grips at spoke ends */}
               <circle cx="50" cy="18" r="3.2" fill="#FEF08A" stroke="#78350F" strokeWidth="1" />
@@ -166,7 +169,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </g>
 
             {/* Center Lock Dial Core */}
-            <circle cx="50" cy="40" r="11" fill="url(#vaultGoldSpoke)" stroke="#FFF" strokeWidth="1.8" />
+            <circle cx="50" cy="40" r="11" fill={`url(#${uid('vaultGoldSpoke')})`} stroke="#FFF" strokeWidth="1.8" />
             <circle cx="50" cy="40" r="5" fill="#0C0F18" stroke="#FDE047" strokeWidth="1" />
 
             {/* Top Indicator Alarm LEDs */}
@@ -176,7 +179,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* SCATTER 3D Pedestal Plaque */}
             <g transform="translate(0, 0)">
               <rect x="10" y="73" width="80" height="23" rx="6" fill="#030712" stroke="#00F0FF" strokeWidth="2" />
-              <rect x="12" y="75" width="76" height="19" rx="4" fill="url(#vaultSteelRing)" opacity="0.4" />
+              <rect x="12" y="75" width="76" height="19" rx="4" fill={`url(#${uid('vaultSteelRing')})`} opacity="0.4" />
               <text
                 x="50"
                 y="87.5"
@@ -198,19 +201,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <radialGradient id="coinGoldFace" cx="35%" cy="35%" r="65%">
+              <radialGradient id={uid('coinGoldFace')} cx="35%" cy="35%" r="65%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="20%" stopColor="#FEF08A" />
                 <stop offset="55%" stopColor="#F59E0B" />
                 <stop offset="85%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </radialGradient>
-              <linearGradient id="reededRim" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('reededRim')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="50%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#FFFBEB" />
               </linearGradient>
-              <linearGradient id="coinPlaqueBg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('coinPlaqueBg')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#1E1202" />
                 <stop offset="100%" stopColor="#080401" />
               </linearGradient>
@@ -220,9 +223,9 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="52" cy="48" r="42" fill="#1E0E03" opacity="0.75" />
 
             {/* Outer Reeded Security Edge */}
-            <circle cx="50" cy="45" r="41" fill="url(#reededRim)" stroke="#78350F" strokeWidth="1.8" />
+            <circle cx="50" cy="45" r="41" fill={`url(#${uid('reededRim')})`} stroke="#78350F" strokeWidth="1.8" />
             {/* Mirror Gold Coin Face */}
-            <circle cx="50" cy="45" r="37" fill="url(#coinGoldFace)" stroke="#FEF08A" strokeWidth="1.8" />
+            <circle cx="50" cy="45" r="37" fill={`url(#${uid('coinGoldFace')})`} stroke="#FEF08A" strokeWidth="1.8" />
             <circle cx="50" cy="45" r="31" fill="none" stroke="#FBBF24" strokeWidth="1.2" strokeDasharray="3 2" />
 
             {/* Engraved Arch Stars at Top Rim */}
@@ -250,8 +253,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Clean, Raised High-Contrast BONUS Chamber at Bottom */}
             <g transform="translate(0, 1)">
               <rect x="14" y="70" width="72" height="21" rx="6" fill="#000" opacity="0.8" />
-              <rect x="12" y="68" width="76" height="21" rx="6" fill="url(#coinGoldFace)" stroke="#FFF" strokeWidth="1.2" />
-              <rect x="14" y="70" width="72" height="17" rx="4" fill="url(#coinPlaqueBg)" stroke="#F59E0B" strokeWidth="0.8" />
+              <rect x="12" y="68" width="76" height="21" rx="6" fill={`url(#${uid('coinGoldFace')})`} stroke="#FFF" strokeWidth="1.2" />
+              <rect x="14" y="70" width="72" height="17" rx="4" fill={`url(#${uid('coinPlaqueBg')})`} stroke="#F59E0B" strokeWidth="0.8" />
               <text
                 x="50"
                 y="82"
@@ -278,19 +281,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="briefcaseMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('briefcaseMetal')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#F1F5F9" />
                 <stop offset="40%" stopColor="#94A3B8" />
                 <stop offset="80%" stopColor="#475569" />
                 <stop offset="100%" stopColor="#1E293B" />
               </linearGradient>
-              <linearGradient id="diamondBlueCut" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('diamondBlueCut')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" />
                 <stop offset="35%" stopColor="#7DD3FC" />
                 <stop offset="70%" stopColor="#0284C7" />
                 <stop offset="100%" stopColor="#082F49" />
               </linearGradient>
-              <linearGradient id="cashStackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('cashStackGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#BBF7D0" />
                 <stop offset="45%" stopColor="#22C55E" />
                 <stop offset="85%" stopColor="#15803D" />
@@ -299,24 +302,24 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Briefcase Base */}
-            <rect x="10" y="36" width="80" height="52" rx="6" fill="url(#briefcaseMetal)" stroke="#FBBF24" strokeWidth="2.5" />
+            <rect x="10" y="36" width="80" height="52" rx="6" fill={`url(#${uid('briefcaseMetal')})`} stroke="#FBBF24" strokeWidth="2.5" />
             <rect x="14" y="40" width="72" height="44" rx="4" fill="#020617" stroke="#334155" strokeWidth="1" />
 
             {/* Stacks of $100 Cash Overflowing */}
-            <rect x="18" y="60" width="30" height="20" rx="2" fill="url(#cashStackGrad)" stroke="#166534" strokeWidth="1" />
+            <rect x="18" y="60" width="30" height="20" rx="2" fill={`url(#${uid('cashStackGrad')})`} stroke="#166534" strokeWidth="1" />
             <rect x="30" y="60" width="6" height="20" fill="#38BDF8" opacity="0.9" />
-            <rect x="52" y="60" width="30" height="20" rx="2" fill="url(#cashStackGrad)" stroke="#166534" strokeWidth="1" />
+            <rect x="52" y="60" width="30" height="20" rx="2" fill={`url(#${uid('cashStackGrad')})`} stroke="#166534" strokeWidth="1" />
             <rect x="64" y="60" width="6" height="20" fill="#38BDF8" opacity="0.9" />
 
             {/* Briefcase Handle */}
             <path d="M38 36 L38 22 Q38 17 50 17 Q62 17 62 22 L62 36" fill="none" stroke="#FBBF24" strokeWidth="4.5" strokeLinecap="round" />
 
             {/* Giant Radiant 3D Diamond in Center */}
-            <polygon points="32,20 68,20 82,38 50,66 18,38" fill="url(#diamondBlueCut)" stroke="#FFF" strokeWidth="2" />
+            <polygon points="32,20 68,20 82,38 50,66 18,38" fill={`url(#${uid('diamondBlueCut')})`} stroke="#FFF" strokeWidth="2" />
             <polygon points="32,20 50,38 18,38" fill="#BAE6FD" opacity="0.85" />
             <polygon points="50,38 68,20 82,38" fill="#BAE6FD" opacity="0.85" />
             <polygon points="32,20 50,38 68,20" fill="#FFFFFF" opacity="0.95" />
-            <polygon points="18,38 82,38 50,66" fill="url(#diamondBlueCut)" stroke="#7DD3FC" strokeWidth="1" />
+            <polygon points="18,38 82,38 50,66" fill={`url(#${uid('diamondBlueCut')})`} stroke="#7DD3FC" strokeWidth="1" />
 
             {/* Blazing Specular 8-Point Star Glint */}
             <polygon points="50,8 52,18 62,20 52,22 50,32 48,22 38,20 48,18" fill="#FFFFFF" className="animate-pulse" />
@@ -327,14 +330,14 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="gold777" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('gold777')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="20%" stopColor="#FEF08A" />
                 <stop offset="50%" stopColor="#F59E0B" />
                 <stop offset="80%" stopColor="#B45309" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
-              <linearGradient id="rubyCore7" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('rubyCore7')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FF4D6D" />
                 <stop offset="50%" stopColor="#E11D48" />
                 <stop offset="100%" stopColor="#881337" />
@@ -351,7 +354,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Main Solid 24K Gold 7 Frame */}
             <path
               d="M16 14 L84 14 L84 32 L56 88 L34 88 L60 36 L16 36 Z"
-              fill="url(#gold777)"
+              fill={`url(#${uid('gold777')})`}
               stroke="#FFF"
               strokeWidth="2.5"
               strokeLinejoin="round"
@@ -360,7 +363,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Fiery Ruby Neon Core Stripe */}
             <path
               d="M24 22 L76 22 L52 70 L42 70 L64 30 L24 30 Z"
-              fill="url(#rubyCore7)"
+              fill={`url(#${uid('rubyCore7')})`}
               stroke="#FDE047"
               strokeWidth="1.2"
             />
@@ -375,13 +378,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="bullionGoldA" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('bullionGoldA')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="30%" stopColor="#FBBF24" />
                 <stop offset="70%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </linearGradient>
-              <linearGradient id="bullionGoldB" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('bullionGoldB')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF9D2" />
                 <stop offset="40%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#92400E" />
@@ -389,15 +392,15 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Bottom Left Bullion Bar */}
-            <polygon points="10,60 54,60 44,80 2,80" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
+            <polygon points="10,60 54,60 44,80 2,80" fill={`url(#${uid('bullionGoldA')})`} stroke="#FEF08A" strokeWidth="1.4" />
             <polygon points="54,60 64,65 54,85 44,80" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
 
             {/* Bottom Right Bullion Bar */}
-            <polygon points="46,60 90,60 80,80 36,80" fill="url(#bullionGoldA)" stroke="#FEF08A" strokeWidth="1.4" />
+            <polygon points="46,60 90,60 80,80 36,80" fill={`url(#${uid('bullionGoldA')})`} stroke="#FEF08A" strokeWidth="1.4" />
             <polygon points="90,60 98,65 88,85 80,80" fill="#92400E" stroke="#FEF08A" strokeWidth="1" />
 
             {/* Center Pyramid Top Bullion Bar */}
-            <polygon points="26,24 74,24 62,52 14,52" fill="url(#bullionGoldB)" stroke="#FFF" strokeWidth="2" />
+            <polygon points="26,24 74,24 62,52 14,52" fill={`url(#${uid('bullionGoldB')})`} stroke="#FFF" strokeWidth="2" />
             <polygon points="74,24 86,31 74,59 62,52" fill="#78350F" stroke="#FEF08A" strokeWidth="1.2" />
 
             {/* Top Bar Embossed Mint Seal Medallion */}
@@ -434,7 +437,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="sackBurlap" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('sackBurlap')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FEF08A" />
                 <stop offset="35%" stopColor="#EAB308" />
                 <stop offset="75%" stopColor="#A16207" />
@@ -449,13 +452,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Plump Bulging Money Sack Body */}
             <path
               d="M50 32 C30 32, 10 46, 10 70 C10 88, 30 92, 50 92 C70 92, 90 88, 90 70 C90 46, 70 32, 50 32 Z"
-              fill="url(#sackBurlap)"
+              fill={`url(#${uid('sackBurlap')})`}
               stroke="#FFFBEB"
               strokeWidth="2.2"
             />
 
             {/* Tied Neck & Ruffled Top Frill */}
-            <path d="M34 26 L26 12 L40 18 L50 10 L60 18 L74 12 L66 26 Z" fill="url(#sackBurlap)" stroke="#FEF08A" strokeWidth="1.5" />
+            <path d="M34 26 L26 12 L40 18 L50 10 L60 18 L74 12 L66 26 Z" fill={`url(#${uid('sackBurlap')})`} stroke="#FEF08A" strokeWidth="1.5" />
 
             {/* Thick Golden Twine Tie */}
             <rect x="32" y="27" width="36" height="7" rx="3.5" fill="#FDE047" stroke="#78350F" strokeWidth="1.5" />
@@ -480,13 +483,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="brickGreenA" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('brickGreenA')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#DCFCE7" />
                 <stop offset="40%" stopColor="#4ADE80" />
                 <stop offset="80%" stopColor="#16A34A" />
                 <stop offset="100%" stopColor="#14532D" />
               </linearGradient>
-              <linearGradient id="fedBandBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('fedBandBlue')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#BAE6FD" />
                 <stop offset="50%" stopColor="#0284C7" />
                 <stop offset="100%" stopColor="#082F49" />
@@ -494,16 +497,16 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Bottom Cash Brick */}
-            <polygon points="12,56 78,56 66,80 0,80" fill="url(#brickGreenA)" stroke="#15803D" strokeWidth="1.8" />
+            <polygon points="12,56 78,56 66,80 0,80" fill={`url(#${uid('brickGreenA')})`} stroke="#15803D" strokeWidth="1.8" />
             <polygon points="78,56 90,62 78,86 66,80" fill="#14532D" stroke="#15803D" strokeWidth="1.2" />
-            <polygon points="34,56 50,56 40,80 24,80" fill="url(#fedBandBlue)" stroke="#FFF" strokeWidth="1" />
+            <polygon points="34,56 50,56 40,80 24,80" fill={`url(#${uid('fedBandBlue')})`} stroke="#FFF" strokeWidth="1" />
 
             {/* Top Cash Brick Stacked Crosswise */}
-            <polygon points="20,26 86,26 74,50 8,50" fill="url(#brickGreenA)" stroke="#FFF" strokeWidth="2" />
+            <polygon points="20,26 86,26 74,50 8,50" fill={`url(#${uid('brickGreenA')})`} stroke="#FFF" strokeWidth="2" />
             <polygon points="86,26 98,33 86,57 74,50" fill="#14532D" stroke="#15803D" strokeWidth="1.2" />
 
             {/* Federal Reserve Security Band & Embossed Reserve Seal */}
-            <polygon points="44,26 62,26 52,50 34,50" fill="url(#fedBandBlue)" stroke="#FEF08A" strokeWidth="1.4" />
+            <polygon points="44,26 62,26 52,50 34,50" fill={`url(#${uid('fedBandBlue')})`} stroke="#FEF08A" strokeWidth="1.4" />
             <circle cx="48" cy="38" r="7" fill="#0C4A6E" stroke="#FEF08A" strokeWidth="1.2" />
             <text x="48" y="41" textAnchor="middle" fill="#FEF08A" fontWeight="900" fontSize="7.5" fontFamily="sans-serif">
               $
@@ -521,12 +524,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="chestWood" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('chestWood')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#78350F" />
                 <stop offset="50%" stopColor="#451A03" />
                 <stop offset="100%" stopColor="#1C0A00" />
               </linearGradient>
-              <linearGradient id="chestGoldTrim" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('chestGoldTrim')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF9D2" />
                 <stop offset="40%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#78350F" />
@@ -534,16 +537,16 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Chest Base */}
-            <rect x="12" y="46" width="76" height="42" rx="4" fill="url(#chestWood)" stroke="#FBBF24" strokeWidth="2.5" />
+            <rect x="12" y="46" width="76" height="42" rx="4" fill={`url(#${uid('chestWood')})`} stroke="#FBBF24" strokeWidth="2.5" />
 
             {/* Gold Straps with Rivets */}
-            <rect x="20" y="46" width="9" height="42" fill="url(#chestGoldTrim)" />
-            <rect x="71" y="46" width="9" height="42" fill="url(#chestGoldTrim)" />
+            <rect x="20" y="46" width="9" height="42" fill={`url(#${uid('chestGoldTrim')})`} />
+            <rect x="71" y="46" width="9" height="42" fill={`url(#${uid('chestGoldTrim')})`} />
 
             {/* Open Lid Angled Up */}
-            <polygon points="10,46 90,46 84,20 16,20" fill="url(#chestWood)" stroke="#FDE047" strokeWidth="2.2" />
-            <polygon points="20,20 29,20 29,46 20,46" fill="url(#chestGoldTrim)" />
-            <polygon points="71,20 80,20 80,46 71,46" fill="url(#chestGoldTrim)" />
+            <polygon points="10,46 90,46 84,20 16,20" fill={`url(#${uid('chestWood')})`} stroke="#FDE047" strokeWidth="2.2" />
+            <polygon points="20,20 29,20 29,46 20,46" fill={`url(#${uid('chestGoldTrim')})`} />
+            <polygon points="71,20 80,20 80,46 71,46" fill={`url(#${uid('chestGoldTrim')})`} />
 
             {/* Overflowing Gold Coins & Jewels */}
             <ellipse cx="50" cy="46" rx="32" ry="9" fill="#FBBF24" />
@@ -554,7 +557,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <polygon points="57,41 60,45 57,49 54,45" fill="#38BDF8" stroke="#FFF" strokeWidth="0.8" />
 
             {/* Keyhole Medallion */}
-            <circle cx="50" cy="62" r="7" fill="url(#chestGoldTrim)" stroke="#FEF08A" strokeWidth="1.2" />
+            <circle cx="50" cy="62" r="7" fill={`url(#${uid('chestGoldTrim')})`} stroke="#FEF08A" strokeWidth="1.2" />
             <circle cx="50" cy="61" r="1.8" fill="#000" />
             <path d="M49 61 L51 61 L52 66 L48 66 Z" fill="#000" />
           </svg>
@@ -564,7 +567,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="ingotBarA" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('ingotBarA')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="30%" stopColor="#FDE047" />
                 <stop offset="70%" stopColor="#D97706" />
@@ -573,11 +576,11 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Ingot 1 (Bottom) */}
-            <polygon points="14,66 86,66 76,84 6,84" fill="url(#ingotBarA)" stroke="#FFF" strokeWidth="1.5" />
+            <polygon points="14,66 86,66 76,84 6,84" fill={`url(#${uid('ingotBarA')})`} stroke="#FFF" strokeWidth="1.5" />
             {/* Ingot 2 (Middle) */}
-            <polygon points="20,44 80,44 70,62 10,62" fill="url(#ingotBarA)" stroke="#FFF" strokeWidth="1.5" />
+            <polygon points="20,44 80,44 70,62 10,62" fill={`url(#${uid('ingotBarA')})`} stroke="#FFF" strokeWidth="1.5" />
             {/* Ingot 3 (Top) */}
-            <polygon points="26,22 74,22 64,40 16,40" fill="url(#ingotBarA)" stroke="#FFF" strokeWidth="1.8" />
+            <polygon points="26,22 74,22 64,40 16,40" fill={`url(#${uid('ingotBarA')})`} stroke="#FFF" strokeWidth="1.8" />
 
             {/* Top Bar Embossed Mint Seal */}
             <ellipse cx="45" cy="31" rx="14" ry="5.5" fill="#78350F" opacity="0.35" />
@@ -598,7 +601,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="diaDollarGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('diaDollarGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="35%" stopColor="#F59E0B" />
                 <stop offset="80%" stopColor="#B45309" />
@@ -611,7 +614,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               x="50"
               y="74"
               textAnchor="middle"
-              fill="url(#diaDollarGold)"
+              fill={`url(#${uid('diaDollarGold')})`}
               stroke="#FFF"
               strokeWidth="2.5"
               fontWeight="900"
@@ -639,13 +642,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="rollGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('rollGreen')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#86EFAC" />
                 <stop offset="40%" stopColor="#22C55E" />
                 <stop offset="80%" stopColor="#15803D" />
                 <stop offset="100%" stopColor="#052E16" />
               </linearGradient>
-              <linearGradient id="goldClip" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('goldClip')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="50%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#78350F" />
@@ -653,12 +656,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Cylindrical Currency Roll */}
-            <ellipse cx="28" cy="50" rx="16" ry="32" fill="url(#rollGreen)" stroke="#FFF" strokeWidth="2" />
-            <path d="M28 18 L76 18 C92 18, 92 82, 76 82 L28 82 Z" fill="url(#rollGreen)" stroke="#FFF" strokeWidth="2" />
+            <ellipse cx="28" cy="50" rx="16" ry="32" fill={`url(#${uid('rollGreen')})`} stroke="#FFF" strokeWidth="2" />
+            <path d="M28 18 L76 18 C92 18, 92 82, 76 82 L28 82 Z" fill={`url(#${uid('rollGreen')})`} stroke="#FFF" strokeWidth="2" />
             <ellipse cx="76" cy="50" rx="14" ry="31" fill="#14532D" stroke="#4ADE80" strokeWidth="1.2" />
 
             {/* 24K Gold Money Clip Clamp */}
-            <rect x="48" y="14" width="16" height="72" rx="4" fill="url(#goldClip)" stroke="#FEF08A" strokeWidth="2" />
+            <rect x="48" y="14" width="16" height="72" rx="4" fill={`url(#${uid('goldClip')})`} stroke="#FEF08A" strokeWidth="2" />
             <circle cx="56" cy="50" r="4.5" fill="#78350F" stroke="#FEF08A" strokeWidth="1" />
             <text x="56" y="53" textAnchor="middle" fill="#FDE047" fontWeight="900" fontSize="8" fontFamily="sans-serif">
               $
@@ -670,13 +673,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="aceIngotGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('aceIngotGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFDEB" />
                 <stop offset="25%" stopColor="#FDE047" />
                 <stop offset="60%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
-              <linearGradient id="aceGleamLine" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient id={uid('aceGleamLine')} x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#FBBF24" stopOpacity="0" />
                 <stop offset="50%" stopColor="#FFF" stopOpacity="0.9" />
                 <stop offset="100%" stopColor="#FBBF24" stopOpacity="0" />
@@ -686,7 +689,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* 3D Gold Ingot Body - Angled Perspective */}
             <polygon points="18,30 32,14 82,14 68,30" fill="#FEF08A" stroke="#78350F" strokeWidth="1" />
             <polygon points="68,30 82,14 82,72 68,84" fill="#B45309" stroke="#78350F" strokeWidth="1" />
-            <polygon points="18,30 68,30 68,84 18,84" fill="url(#aceIngotGold)" stroke="#FFF" strokeWidth="1.5" />
+            <polygon points="18,30 68,30 68,84 18,84" fill={`url(#${uid('aceIngotGold')})`} stroke="#FFF" strokeWidth="1.5" />
 
             {/* Ingot Inset Bevel Frame */}
             <rect x="22" y="34" width="42" height="46" rx="3" fill="#1C1004" stroke="#FDE047" strokeWidth="1.2" />
@@ -699,7 +702,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Bold 3D Raised Ingot 'A' */}
             <path
               d="M43 45 L54 71 L48 71 L45 64 L41 64 L38 71 L32 71 Z M43 53 L41 60 L45 60 Z"
-              fill="url(#aceIngotGold)"
+              fill={`url(#${uid('aceIngotGold')})`}
               stroke="#FFF"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -723,13 +726,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="kingShieldGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('kingShieldGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF9D2" />
                 <stop offset="30%" stopColor="#F59E0B" />
                 <stop offset="70%" stopColor="#B45309" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
-              <linearGradient id="kingRuby" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('kingRuby')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FDA4AF" />
                 <stop offset="50%" stopColor="#E11D48" />
                 <stop offset="100%" stopColor="#4C0519" />
@@ -737,16 +740,16 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Crossed Golden King Scepters Behind Shield */}
-            <line x1="20" y1="20" x2="80" y2="80" stroke="url(#kingShieldGold)" strokeWidth="4" strokeLinecap="round" />
-            <circle cx="20" cy="20" r="5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="1" />
-            <line x1="80" y1="20" x2="20" y2="80" stroke="url(#kingShieldGold)" strokeWidth="4" strokeLinecap="round" />
-            <circle cx="80" cy="20" r="5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="1" />
+            <line x1="20" y1="20" x2="80" y2="80" stroke={`url(#${uid('kingShieldGold')})`} strokeWidth="4" strokeLinecap="round" />
+            <circle cx="20" cy="20" r="5" fill={`url(#${uid('kingRuby')})`} stroke="#FFF" strokeWidth="1" />
+            <line x1="80" y1="20" x2="20" y2="80" stroke={`url(#${uid('kingShieldGold')})`} strokeWidth="4" strokeLinecap="round" />
+            <circle cx="80" cy="20" r="5" fill={`url(#${uid('kingRuby')})`} stroke="#FFF" strokeWidth="1" />
 
             {/* Royal King's Crest Shield */}
             <path
               d="M50 16 L76 26 C76 56 64 74 50 82 C36 74 24 56 24 26 Z"
               fill="#1C0F08"
-              stroke="url(#kingShieldGold)"
+              stroke={`url(#${uid('kingShieldGold')})`}
               strokeWidth="2.5"
             />
             <path
@@ -757,13 +760,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             />
 
             {/* Imperial 5-Point Crown Atop Shield */}
-            <path d="M36 28 L42 20 L50 26 L58 20 L64 28 Z" fill="url(#kingShieldGold)" stroke="#FFF" strokeWidth="0.8" />
-            <circle cx="50" cy="18" r="2.5" fill="url(#kingRuby)" stroke="#FFF" strokeWidth="0.6" />
+            <path d="M36 28 L42 20 L50 26 L58 20 L64 28 Z" fill={`url(#${uid('kingShieldGold')})`} stroke="#FFF" strokeWidth="0.8" />
+            <circle cx="50" cy="18" r="2.5" fill={`url(#${uid('kingRuby')})`} stroke="#FFF" strokeWidth="0.6" />
 
             {/* Bold Regal 3D 'K' */}
             <path
               d="M38 34 H44 V52 L56 34 H64 L52 53 L66 72 H57 L44 55 V72 H38 Z"
-              fill="url(#kingShieldGold)"
+              fill={`url(#${uid('kingShieldGold')})`}
               stroke="#FFF"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -784,13 +787,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="queenGoldMedal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('queenGoldMedal')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="35%" stopColor="#FBBF24" />
                 <stop offset="70%" stopColor="#C084FC" />
                 <stop offset="100%" stopColor="#3B0764" />
               </linearGradient>
-              <linearGradient id="queenVelvet" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('queenVelvet')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#581C87" />
                 <stop offset="50%" stopColor="#2E1065" />
                 <stop offset="100%" stopColor="#0F031E" />
@@ -801,8 +804,8 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="50" cy="48" r="32" fill="none" stroke="#FDE047" strokeWidth="1.5" strokeDasharray="2,3" />
 
             {/* Royal Cameo Medallion Frame */}
-            <ellipse cx="50" cy="48" rx="27" ry="31" fill="url(#queenGoldMedal)" stroke="#FFF" strokeWidth="2" />
-            <ellipse cx="50" cy="48" rx="23" ry="27" fill="url(#queenVelvet)" stroke="#E9D5FF" strokeWidth="1" />
+            <ellipse cx="50" cy="48" rx="27" ry="31" fill={`url(#${uid('queenGoldMedal')})`} stroke="#FFF" strokeWidth="2" />
+            <ellipse cx="50" cy="48" rx="23" ry="27" fill={`url(#${uid('queenVelvet')})`} stroke="#E9D5FF" strokeWidth="1" />
 
             {/* Sparkling Queen's Diamond Tiara */}
             <path
@@ -818,7 +821,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Elegant Royal 'Q' */}
             <path
               d="M50 32 C41 32 34 38 34 50 C34 61 40 67 48 68 L53 73 L58 73 L55 67 C61 64 65 58 65 50 C65 38 59 32 50 32 Z M50 40 C55 40 58 44 58 50 C58 56 55 60 50 60 C45 60 42 56 42 50 C42 44 45 40 50 40 Z"
-              fill="url(#queenGoldMedal)"
+              fill={`url(#${uid('queenGoldMedal')})`}
               stroke="#FFF"
               strokeWidth="1.2"
             />
@@ -838,7 +841,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="jackKeyGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('jackKeyGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#E0F2FE" />
                 <stop offset="30%" stopColor="#38BDF8" />
                 <stop offset="70%" stopColor="#0284C7" />
@@ -848,9 +851,9 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
             {/* Dual Crossed Master Vault Keys */}
             <g opacity="0.85">
-              <line x1="22" y1="22" x2="78" y2="78" stroke="url(#jackKeyGold)" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="22" y1="22" x2="78" y2="78" stroke={`url(#${uid('jackKeyGold')})`} strokeWidth="4.5" strokeLinecap="round" />
               <circle cx="22" cy="22" r="7" fill="none" stroke="#38BDF8" strokeWidth="2.5" />
-              <line x1="78" y1="22" x2="22" y2="78" stroke="url(#jackKeyGold)" strokeWidth="4.5" strokeLinecap="round" />
+              <line x1="78" y1="22" x2="22" y2="78" stroke={`url(#${uid('jackKeyGold')})`} strokeWidth="4.5" strokeLinecap="round" />
               <circle cx="78" cy="22" r="7" fill="none" stroke="#38BDF8" strokeWidth="2.5" />
             </g>
 
@@ -858,7 +861,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <path
               d="M32 20 L68 20 L76 34 L68 76 L32 76 L24 34 Z"
               fill="#0A1424"
-              stroke="url(#jackKeyGold)"
+              stroke={`url(#${uid('jackKeyGold')})`}
               strokeWidth="2.2"
             />
             <path
@@ -874,7 +877,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Bold Glowing 'J' */}
             <path
               d="M44 38 H62 V44 H54 V64 C54 69 50 72 44 72 C38 72 34 69 34 64 H41 C41 66 42 67 44 67 C46 67 47 66 47 63 V38 Z"
-              fill="url(#jackKeyGold)"
+              fill={`url(#${uid('jackKeyGold')})`}
               stroke="#FFF"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -899,24 +902,24 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="bearPlaque" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('bearPlaque')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#78350F" />
                 <stop offset="50%" stopColor="#451A03" />
                 <stop offset="100%" stopColor="#1C0A00" />
               </linearGradient>
-              <linearGradient id="bearFur" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('bearFur')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#B45309" />
                 <stop offset="50%" stopColor="#78350F" />
                 <stop offset="100%" stopColor="#451A03" />
               </linearGradient>
-              <linearGradient id="wildBanner" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient id={uid('wildBanner')} x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#F59E0B" />
                 <stop offset="50%" stopColor="#FEF08A" />
                 <stop offset="100%" stopColor="#D97706" />
               </linearGradient>
             </defs>
             {/* Wooden Plaque Frame */}
-            <rect x="10" y="8" width="80" height="78" rx="16" fill="url(#bearPlaque)" stroke="#F59E0B" strokeWidth="2.5" />
+            <rect x="10" y="8" width="80" height="78" rx="16" fill={`url(#${uid('bearPlaque')})`} stroke="#F59E0B" strokeWidth="2.5" />
             <rect x="14" y="12" width="72" height="70" rx="12" fill="none" stroke="#92400E" strokeWidth="1.5" strokeDasharray="4 2" />
             {/* Bear Ears */}
             <circle cx="28" cy="24" r="10" fill="#78350F" stroke="#F59E0B" strokeWidth="1.5" />
@@ -924,7 +927,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="72" cy="24" r="10" fill="#78350F" stroke="#F59E0B" strokeWidth="1.5" />
             <circle cx="72" cy="24" r="5" fill="#FDE68A" />
             {/* Bear Head & Snout */}
-            <ellipse cx="50" cy="42" rx="28" ry="24" fill="url(#bearFur)" />
+            <ellipse cx="50" cy="42" rx="28" ry="24" fill={`url(#${uid('bearFur')})`} />
             <ellipse cx="50" cy="50" rx="16" ry="12" fill="#FDE68A" />
             <polygon points="50,44 43,40 57,40" fill="#1C0A00" />
             {/* Roaring Mouth & Fangs */}
@@ -940,7 +943,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <path d="M15 15 L22 30 M22 14 L29 28 M29 14 L35 27" stroke="#FEF08A" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
             {/* Carved Wood WILD Banner */}
             <rect x="16" y="68" width="68" height="22" rx="7" fill="#000" opacity="0.6" />
-            <rect x="14" y="66" width="72" height="22" rx="7" fill="url(#wildBanner)" stroke="#FFF" strokeWidth="1.5" />
+            <rect x="14" y="66" width="72" height="22" rx="7" fill={`url(#${uid('wildBanner')})`} stroke="#FFF" strokeWidth="1.5" />
             <rect x="16" y="68" width="68" height="18" rx="5" fill="#2E1005" stroke="#F59E0B" strokeWidth="1" />
             <text
               x="50"
@@ -964,40 +967,40 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="owlSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('owlSkyGrad')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#0B132B" />
                 <stop offset="60%" stopColor="#1C2541" />
                 <stop offset="100%" stopColor="#3A506B" />
               </linearGradient>
-              <linearGradient id="owlMoonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('owlMoonGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="35%" stopColor="#FEF08A" />
                 <stop offset="80%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#D97706" />
               </linearGradient>
-              <linearGradient id="owlFeatherBrown" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('owlFeatherBrown')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#78350F" />
                 <stop offset="50%" stopColor="#451A03" />
                 <stop offset="100%" stopColor="#1C0A00" />
               </linearGradient>
-              <radialGradient id="owlEyeGold" cx="40%" cy="35%" r="65%">
+              <radialGradient id={uid('owlEyeGold')} cx="40%" cy="35%" r="65%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="25%" stopColor="#FDE047" />
                 <stop offset="70%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#B45309" />
               </radialGradient>
-              <clipPath id="owlFrameClip">
+              <clipPath id={uid('owlFrameClip')}>
                 <circle cx="50" cy="46" r="38" />
               </clipPath>
             </defs>
 
             {/* Medallion Outer Ring with Moonlit Frost Glow */}
-            <circle cx="50" cy="46" r="38" fill="url(#owlSkyGrad)" stroke="#60A5FA" strokeWidth="2.5" />
+            <circle cx="50" cy="46" r="38" fill={`url(#${uid('owlSkyGrad')})`} stroke="#60A5FA" strokeWidth="2.5" />
             <circle cx="50" cy="46" r="35.5" fill="none" stroke="#93C5FD" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
 
-            <g clipPath="url(#owlFrameClip)">
+            <g clipPath={`url(#${uid('owlFrameClip')})`}>
               {/* Golden Full Moon Behind Owl */}
-              <circle cx="50" cy="36" r="26" fill="url(#owlMoonGrad)" />
+              <circle cx="50" cy="36" r="26" fill={`url(#${uid('owlMoonGrad')})`} />
               {/* Moon Surface Craters */}
               <circle cx="40" cy="24" r="3.5" fill="#F59E0B" opacity="0.25" />
               <circle cx="58" cy="22" r="2.5" fill="#F59E0B" opacity="0.2" />
@@ -1015,7 +1018,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <path d="M 68 67 Q 72 64 76 67" stroke="#16A34A" strokeWidth="1.5" fill="none" />
 
               {/* Owl Body Silhouette */}
-              <ellipse cx="50" cy="54" rx="22" ry="18" fill="url(#owlFeatherBrown)" stroke="#2E1005" strokeWidth="1" />
+              <ellipse cx="50" cy="54" rx="22" ry="18" fill={`url(#${uid('owlFeatherBrown')})`} stroke="#2E1005" strokeWidth="1" />
               {/* Folded Wings */}
               <path d="M 28 44 Q 24 58 36 68 Q 33 54 36 46 Z" fill="#451A03" stroke="#B45309" strokeWidth="0.8" />
               <path d="M 72 44 Q 76 58 64 68 Q 67 54 64 46 Z" fill="#451A03" stroke="#B45309" strokeWidth="0.8" />
@@ -1026,7 +1029,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <path d="M 45 64 Q 50 67 55 64" fill="none" stroke="#FDE68A" strokeWidth="1.2" strokeLinecap="round" />
 
               {/* Owl Head Feather Base */}
-              <ellipse cx="50" cy="38" rx="21" ry="17" fill="url(#owlFeatherBrown)" />
+              <ellipse cx="50" cy="38" rx="21" ry="17" fill={`url(#${uid('owlFeatherBrown')})`} />
 
               {/* Prominent Great Horned Ear Tufts (Horn Feathers) */}
               {/* Left Horn */}
@@ -1066,9 +1069,9 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
               {/* Hypnotic Golden Amber Owl Eyes */}
               {/* Left Eye */}
-              <g id="owlLeftEye">
+              <g id={uid('owlLeftEye')}>
                 <circle cx="39" cy="39" r="8" fill="#2E1005" stroke="#78350F" strokeWidth="1" />
-                <circle cx="39" cy="39" r="6.2" fill="url(#owlEyeGold)" stroke="#B45309" strokeWidth="0.8" />
+                <circle cx="39" cy="39" r="6.2" fill={`url(#${uid('owlEyeGold')})`} stroke="#B45309" strokeWidth="0.8" />
                 <circle cx="39" cy="39" r="3.4" fill="#09090D" />
                 <circle cx="37.8" cy="37.6" r="1.4" fill="#FFFFFF" />
                 <circle cx="40.5" cy="40.2" r="0.6" fill="#FFFFFF" />
@@ -1076,9 +1079,9 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               </g>
 
               {/* Right Eye */}
-              <g id="owlRightEye">
+              <g id={uid('owlRightEye')}>
                 <circle cx="61" cy="39" r="8" fill="#2E1005" stroke="#78350F" strokeWidth="1" />
-                <circle cx="61" cy="39" r="6.2" fill="url(#owlEyeGold)" stroke="#B45309" strokeWidth="0.8" />
+                <circle cx="61" cy="39" r="6.2" fill={`url(#${uid('owlEyeGold')})`} stroke="#B45309" strokeWidth="0.8" />
                 <circle cx="61" cy="39" r="3.4" fill="#09090D" />
                 <circle cx="59.8" cy="37.6" r="1.4" fill="#FFFFFF" />
                 <circle cx="62.5" cy="40.2" r="0.6" fill="#FFFFFF" />
@@ -1105,7 +1108,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </g>
 
             {/* SCATTER Pedestal Plaque */}
-            <g id="owlScatterBanner">
+            <g id={uid('owlScatterBanner')}>
               <rect x="12" y="72" width="76" height="22" rx="7" fill="#0F172A" stroke="#60A5FA" strokeWidth="2" />
               <rect x="14" y="74" width="72" height="18" rx="5" fill="#1E293B" stroke="#93C5FD" strokeWidth="1" />
               <text
@@ -1130,19 +1133,19 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="acornNutGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('acornNutGold')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="25%" stopColor="#FDE047" />
                 <stop offset="55%" stopColor="#F59E0B" />
                 <stop offset="85%" stopColor="#D97706" />
                 <stop offset="100%" stopColor="#78350F" />
               </linearGradient>
-              <linearGradient id="acornCapBark" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('acornCapBark')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#B45309" />
                 <stop offset="50%" stopColor="#78350F" />
                 <stop offset="100%" stopColor="#2E1005" />
               </linearGradient>
-              <linearGradient id="cashPlaqueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('cashPlaqueGrad')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#1E293B" />
                 <stop offset="50%" stopColor="#0F172A" />
                 <stop offset="100%" stopColor="#020617" />
@@ -1150,7 +1153,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Glowing Golden Aura Behind Acorn */}
-            <circle cx="50" cy="50" r="44" fill="url(#acornNutGold)" opacity="0.25" filter="blur(6px)" />
+            <circle cx="50" cy="50" r="44" fill={`url(#${uid('acornNutGold')})`} opacity="0.25" filter="blur(6px)" />
 
             {/* Radiant Autumn Leaves Behind */}
             <path d="M22 36 Q6 16 22 4 Q38 12 36 28 Z" fill="#16A34A" stroke="#86EFAC" strokeWidth="1.5" />
@@ -1162,7 +1165,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Large Golden Nut Body */}
             <path
               d="M26 36 Q18 68 50 92 Q82 68 74 36 Z"
-              fill="url(#acornNutGold)"
+              fill={`url(#${uid('acornNutGold')})`}
               stroke="#FFFBEB"
               strokeWidth="2.5"
               strokeLinejoin="round"
@@ -1174,7 +1177,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Textured Oak Cap */}
             <path
               d="M22 36 Q50 20 78 36 Q78 44 74 46 Q50 36 26 46 Q22 44 22 36 Z"
-              fill="url(#acornCapBark)"
+              fill={`url(#${uid('acornCapBark')})`}
               stroke="#FDE047"
               strokeWidth="1.8"
             />
@@ -1223,48 +1226,48 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="wolfNightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('wolfNightSky')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#020617" />
                 <stop offset="40%" stopColor="#0B132B" />
                 <stop offset="75%" stopColor="#1E293B" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <radialGradient id="wolfMoon" cx="42%" cy="40%" r="58%">
+              <radialGradient id={uid('wolfMoon')} cx="42%" cy="40%" r="58%">
                 <stop offset="0%" stopColor="#FFFFFF" />
                 <stop offset="35%" stopColor="#E0F2FE" />
                 <stop offset="75%" stopColor="#BAE6FD" />
                 <stop offset="100%" stopColor="#38BDF8" />
               </radialGradient>
-              <linearGradient id="wolfFurBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('wolfFurBody')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#475569" />
                 <stop offset="40%" stopColor="#334155" />
                 <stop offset="85%" stopColor="#1E293B" />
                 <stop offset="100%" stopColor="#0F172A" />
               </linearGradient>
-              <linearGradient id="wolfFurChest" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('wolfFurChest')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#F8FAFC" />
                 <stop offset="40%" stopColor="#CBD5E1" />
                 <stop offset="100%" stopColor="#64748B" />
               </linearGradient>
-              <radialGradient id="wolfAmberGlint" cx="35%" cy="35%" r="65%">
+              <radialGradient id={uid('wolfAmberGlint')} cx="35%" cy="35%" r="65%">
                 <stop offset="0%" stopColor="#FFFBEB" />
                 <stop offset="40%" stopColor="#FDE047" />
                 <stop offset="80%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#B45309" />
               </radialGradient>
-              <clipPath id="wolfMedallionClip">
+              <clipPath id={uid('wolfMedallionClip')}>
                 <circle cx="50" cy="50" r="41.5" />
               </clipPath>
             </defs>
 
             {/* Frost Cyan Medallion Outer Frame */}
-            <circle cx="50" cy="50" r="42" fill="url(#wolfNightSky)" stroke="#38BDF8" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="42" fill={`url(#${uid('wolfNightSky')})`} stroke="#38BDF8" strokeWidth="2.5" />
             <circle cx="50" cy="50" r="39.5" fill="none" stroke="#7DD3FC" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
 
-            <g clipPath="url(#wolfMedallionClip)">
+            <g clipPath={`url(#${uid('wolfMedallionClip')})`}>
               {/* 1. LUNAR HALO & RADIANT FULL MOON */}
               <circle cx="62" cy="36" r="30" fill="#38BDF8" opacity="0.22" filter="blur(6px)" />
-              <circle cx="62" cy="36" r="23" fill="url(#wolfMoon)" />
+              <circle cx="62" cy="36" r="23" fill={`url(#${uid('wolfMoon')})`} />
 
               {/* Subtle Lunar Craters / Maria */}
               <ellipse cx="68" cy="30" rx="4.5" ry="3.5" fill="#93C5FD" opacity="0.35" />
@@ -1308,7 +1311,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                    C 45 44, 40 50, 42 56
                    C 37 62, 36 70, 38 78
                    C 34 84, 32 92, 32 92 Z"
-                fill="url(#wolfFurBody)"
+                fill={`url(#${uid('wolfFurBody')})`}
                 stroke="#090E1A"
                 strokeWidth="1.2"
               />
@@ -1318,7 +1321,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                 d="M 36 28
                    C 35 22, 37 13, 40 10
                    C 42 11, 45 16, 46 25 Z"
-                fill="url(#wolfFurBody)"
+                fill={`url(#${uid('wolfFurBody')})`}
                 stroke="#0F172A"
                 strokeWidth="0.8"
               />
@@ -1343,10 +1346,10 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <path d="M 63.5 22.5 C 59 24.5, 54 27, 49 27.5" stroke="#94A3B8" strokeWidth="1.4" fill="none" strokeLinecap="round" />
 
               {/* Piercing Glowing Amber Wolf Eye in Lunar Howl */}
-              <g id="howlEye">
+              <g id={uid('howlEye')}>
                 {/* Slanted wolf eye slit angled with the howl */}
                 <polygon points="46,26 51,27.5 47,29.5" fill="#090E1A" />
-                <ellipse cx="48.5" cy="27.8" rx="2" ry="1.1" fill="url(#wolfAmberGlint)" />
+                <ellipse cx="48.5" cy="27.8" rx="2" ry="1.1" fill={`url(#${uid('wolfAmberGlint')})`} />
                 <ellipse cx="48.5" cy="27.8" rx="0.9" ry="0.9" fill="#090E1A" />
                 <circle cx="49" cy="27.4" r="0.4" fill="#FFFFFF" />
                 {/* Furrowed Brow Catching Moonlight */}
@@ -1362,7 +1365,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                    C 25 87, 26 77, 29 70
                    C 32 63, 35 56, 37 50
                    C 40 43, 44 38, 48 34 Z"
-                fill="url(#wolfFurChest)"
+                fill={`url(#${uid('wolfFurChest')})`}
                 opacity="0.95"
               />
 
@@ -1404,7 +1407,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg overflow-visible">
             <defs>
-              <linearGradient id="foxOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('foxOrange')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#FB923C" />
                 <stop offset="50%" stopColor="#EA580C" />
                 <stop offset="100%" stopColor="#9A3412" />
@@ -1412,12 +1415,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
             <circle cx="50" cy="50" r="42" fill="#431407" stroke="#F97316" strokeWidth="2.5" />
             {/* Fox Ears */}
-            <polygon points="26,18 42,38 24,42" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1" />
+            <polygon points="26,18 42,38 24,42" fill={`url(#${uid('foxOrange')})`} stroke="#F97316" strokeWidth="1" />
             <polygon points="28,24 38,36 28,38" fill="#1C1917" />
-            <polygon points="74,18 58,38 76,42" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1" />
+            <polygon points="74,18 58,38 76,42" fill={`url(#${uid('foxOrange')})`} stroke="#F97316" strokeWidth="1" />
             <polygon points="72,24 62,36 72,38" fill="#1C1917" />
             {/* Fox Face */}
-            <polygon points="24,42 76,42 50,78" fill="url(#foxOrange)" stroke="#F97316" strokeWidth="1.5" />
+            <polygon points="24,42 76,42 50,78" fill={`url(#${uid('foxOrange')})`} stroke="#F97316" strokeWidth="1.5" />
             {/* White Cheeks */}
             <polygon points="24,42 42,56 50,78 30,68" fill="#FFFBEB" />
             <polygon points="76,42 58,56 50,78 70,68" fill="#FFFBEB" />
@@ -1464,42 +1467,42 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="sqBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('sqBgGrad')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#2E1206" />
                 <stop offset="60%" stopColor="#1C0A02" />
                 <stop offset="100%" stopColor="#0B0401" />
               </linearGradient>
-              <linearGradient id="sqFurOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('sqFurOrange')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#F97316" />
                 <stop offset="40%" stopColor="#EA580C" />
                 <stop offset="100%" stopColor="#9A3412" />
               </linearGradient>
-              <linearGradient id="sqTailFluff" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient id={uid('sqTailFluff')} x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#EA580C" />
                 <stop offset="50%" stopColor="#F97316" />
                 <stop offset="100%" stopColor="#FDBA74" />
               </linearGradient>
-              <linearGradient id="sqAcornNut" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('sqAcornNut')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FEF08A" />
                 <stop offset="40%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#B45309" />
               </linearGradient>
-              <clipPath id="sqClip">
+              <clipPath id={uid('sqClip')}>
                 <circle cx="50" cy="50" r="41" />
               </clipPath>
             </defs>
 
             {/* Medallion Base in Autumn Forest Walnut with Golden Rim */}
-            <circle cx="50" cy="50" r="42" fill="url(#sqBgGrad)" stroke="#F59E0B" strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="42" fill={`url(#${uid('sqBgGrad')})`} stroke="#F59E0B" strokeWidth="2.5" />
             <circle cx="50" cy="50" r="39.5" fill="none" stroke="#FDE68A" strokeWidth="0.8" opacity="0.6" strokeDasharray="3 1.5" />
 
-            <g clipPath="url(#sqClip)">
+            <g clipPath={`url(#${uid('sqClip')})`}>
               {/* Forest Autumn Leaves in Background */}
               <path d="M 18 36 Q 6 22 20 12 Q 32 18 28 30 Z" fill="#15803D" opacity="0.4" />
               <path d="M 82 28 Q 94 14 82 4 Q 70 10 74 22 Z" fill="#D97706" opacity="0.4" />
 
               {/* 1. GIANT BUSHY S-CURVE SQUIRREL TAIL */}
-              <g id="squirrelTail">
+              <g id={uid('squirrelTail')}>
                 {/* Main Plumed Bushy Tail Body */}
                 <path
                   d="M 38 78
@@ -1508,7 +1511,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                      C 48 15, 48 24, 42 30
                      C 35 37, 28 42, 28 54
                      C 28 66, 36 72, 44 76 Z"
-                  fill="url(#sqTailFluff)"
+                  fill={`url(#${uid('sqTailFluff')})`}
                   stroke="#7C2D12"
                   strokeWidth="1.2"
                 />
@@ -1539,7 +1542,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <line x1="50" y1="84" x2="50" y2="86" stroke="#FDBA74" strokeWidth="0.8" />
 
               {/* Main Body */}
-              <ellipse cx="56" cy="58" rx="13" ry="16" fill="url(#sqFurOrange)" />
+              <ellipse cx="56" cy="58" rx="13" ry="16" fill={`url(#${uid('sqFurOrange')})`} />
               {/* Fluffy White/Cream Chest & Belly */}
               <path
                 d="M 58 48
@@ -1549,7 +1552,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               />
 
               {/* 3. HEAD, ADORABLE FACE & TUFTED EARS */}
-              <circle cx="63" cy="40" r="13" fill="url(#sqFurOrange)" stroke="#7C2D12" strokeWidth="0.8" />
+              <circle cx="63" cy="40" r="13" fill={`url(#${uid('sqFurOrange')})`} stroke="#7C2D12" strokeWidth="0.8" />
 
               {/* Tufted Ears */}
               <polygon points="56,26 62,15 64,26" fill="#9A3412" />
@@ -1577,7 +1580,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
               <line x1="73" y1="46" x2="82" y2="50" stroke="#FFFFFF" strokeWidth="0.8" strokeLinecap="round" opacity="0.9" />
 
               {/* 4. FRONT PAWS CLUTCHING A LARGE GOLDEN ACORN */}
-              <g id="squirrelAcorn" transform="translate(62, 54)">
+              <g id={uid('squirrelAcorn')} transform="translate(62, 54)">
                 <path d="M 0 -7 Q -2 -11 1 -12" stroke="#451A03" strokeWidth="1.5" fill="none" strokeLinecap="round" />
                 <path d="M -7 -6 C -7 -10, 7 -10, 7 -6 C 7 -4, -7 -4, -7 -6 Z" fill="#78350F" stroke="#451A03" strokeWidth="0.8" />
                 <line x1="-5" y1="-7" x2="5" y2="-7" stroke="#B45309" strokeWidth="0.6" />
@@ -1585,7 +1588,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                   d="M -6 -4
                      C -6 4, -4 10, 0 13
                      C 4 10, 6 4, 6 -4 Z"
-                  fill="url(#sqAcornNut)"
+                  fill={`url(#${uid('sqAcornNut')})`}
                   stroke="#78350F"
                   strokeWidth="0.9"
                 />
@@ -1604,33 +1607,33 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="needleDark" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('needleDark')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#166534" />
                 <stop offset="100%" stopColor="#14532D" />
               </linearGradient>
-              <linearGradient id="needleBright" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('needleBright')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#86EFAC" />
                 <stop offset="50%" stopColor="#22C55E" />
                 <stop offset="100%" stopColor="#15803D" />
               </linearGradient>
-              <linearGradient id="pineScaleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('pineScaleGrad')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#9A3412" />
                 <stop offset="45%" stopColor="#78350F" />
                 <stop offset="100%" stopColor="#3B1A08" />
               </linearGradient>
-              <linearGradient id="pineScaleRim" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('pineScaleRim')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#FEF08A" />
                 <stop offset="50%" stopColor="#F59E0B" />
                 <stop offset="100%" stopColor="#B45309" />
               </linearGradient>
-              <radialGradient id="pineWarmGlow" cx="50%" cy="55%" r="45%">
+              <radialGradient id={uid('pineWarmGlow')} cx="50%" cy="55%" r="45%">
                 <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
               </radialGradient>
             </defs>
 
             {/* Warm Woodland Backglow */}
-            <circle cx="50" cy="56" r="36" fill="url(#pineWarmGlow)" />
+            <circle cx="50" cy="56" r="36" fill={`url(#${uid('pineWarmGlow')})`} />
 
             {/* Solid Dark Base Silhouette Underlay */}
             <path
@@ -1647,113 +1650,113 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
             {/* OVERLAPPING REALISTIC WOODY SCALES (Bottom to Top shingled layering) */}
             {/* TIER 6 - BOTTOM TIP (y ~ 80-93) */}
-            <g id="pineTier6">
-              <path d="M 46 80 C 44 84, 46 90, 50 93 C 54 90, 56 84, 54 80 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 47 87 Q 50 92 53 87" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+            <g id={uid('pineTier6')}>
+              <path d="M 46 80 C 44 84, 46 90, 50 93 C 54 90, 56 84, 54 80 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 47 87 Q 50 92 53 87" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
             </g>
 
             {/* TIER 5 - LOWER CONE (y ~ 70-85) */}
-            <g id="pineTier5">
+            <g id={uid('pineTier5')}>
               {/* Lower Left Scale */}
-              <path d="M 36 71 C 31 75, 34 82, 42 84 C 47 82, 47 75, 36 71 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 34 78 Q 39 83 43 81" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 36 71 C 31 75, 34 82, 42 84 C 47 82, 47 75, 36 71 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 34 78 Q 39 83 43 81" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Lower Right Scale */}
-              <path d="M 64 71 C 69 75, 66 82, 58 84 C 53 82, 53 75, 64 71 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 66 78 Q 61 83 57 81" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 64 71 C 69 75, 66 82, 58 84 C 53 82, 53 75, 64 71 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 66 78 Q 61 83 57 81" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Lower Center Scale */}
-              <path d="M 50 69 C 43 73, 44 81, 50 85 C 56 81, 57 73, 50 69 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 45 79 Q 50 85 55 79" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <path d="M 50 69 C 43 73, 44 81, 50 85 C 56 81, 57 73, 50 69 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 79 Q 50 85 55 79" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="2" fill="none" strokeLinecap="round" />
               <polygon points="50,73 53,78 50,82 47,78" fill="#FDE047" opacity="0.6" />
               <circle cx="50" cy="80" r="1" fill="#FFFBEB" />
             </g>
 
             {/* TIER 4 - LOWER BELLY (y ~ 57-73) */}
-            <g id="pineTier4">
+            <g id={uid('pineTier4')}>
               {/* Lower Far-Left Flared */}
-              <path d="M 25 57 C 17 61, 18 69, 28 72 C 34 69, 34 62, 25 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 21 66 Q 26 72 30 69" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 25 57 C 17 61, 18 69, 28 72 C 34 69, 34 62, 25 57 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 21 66 Q 26 72 30 69" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Lower Far-Right Flared */}
-              <path d="M 75 57 C 83 61, 82 69, 72 72 C 66 69, 66 62, 75 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 79 66 Q 74 72 70 69" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 75 57 C 83 61, 82 69, 72 72 C 66 69, 66 62, 75 57 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 79 66 Q 74 72 70 69" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Lower Mid-Left */}
-              <path d="M 37 57 C 29 62, 31 71, 41 73 C 47 70, 46 62, 37 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 33 67 Q 38 73 42 70" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 37 57 C 29 62, 31 71, 41 73 C 47 70, 46 62, 37 57 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 33 67 Q 38 73 42 70" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
               <polygon points="37,61 40,66 37,70 34,66" fill="#F59E0B" opacity="0.5" />
               {/* Lower Mid-Right */}
-              <path d="M 63 57 C 71 62, 69 71, 59 73 C 53 70, 54 62, 63 57 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 67 67 Q 62 73 58 70" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 63 57 C 71 62, 69 71, 59 73 C 53 70, 54 62, 63 57 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 67 67 Q 62 73 58 70" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
               <polygon points="63,61 66,66 63,70 60,66" fill="#F59E0B" opacity="0.5" />
               {/* Lower Center */}
-              <path d="M 50 56 C 42 60, 43 70, 50 74 C 57 70, 58 60, 50 56 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 45 68 Q 50 74 55 68" stroke="url(#pineScaleRim)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+              <path d="M 50 56 C 42 60, 43 70, 50 74 C 57 70, 58 60, 50 56 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 68 Q 50 74 55 68" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="2.2" fill="none" strokeLinecap="round" />
               <polygon points="50,61 54,67 50,71 46,67" fill="#FEF08A" opacity="0.6" />
               <circle cx="50" cy="69" r="1.1" fill="#FFFBEB" />
             </g>
 
             {/* TIER 3 - WIDE MID BELLY (y ~ 43-63) */}
-            <g id="pineTier3">
+            <g id={uid('pineTier3')}>
               {/* Mid Far-Left Flared */}
-              <path d="M 23 43 C 14 47, 15 55, 25 58 C 31 55, 31 48, 23 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 18 51 Q 23 57 27 54" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 23 43 C 14 47, 15 55, 25 58 C 31 55, 31 48, 23 43 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 18 51 Q 23 57 27 54" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
               {/* Mid Far-Right Flared */}
-              <path d="M 77 43 C 86 47, 85 55, 75 58 C 69 55, 69 48, 77 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 82 51 Q 77 57 73 54" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 77 43 C 86 47, 85 55, 75 58 C 69 55, 69 48, 77 43 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 82 51 Q 77 57 73 54" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
               {/* Mid Center-Left */}
-              <path d="M 35 44 C 27 48, 28 58, 38 61 C 45 58, 45 49, 35 44 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 31 55 Q 36 61 41 57" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <path d="M 35 44 C 27 48, 28 58, 38 61 C 45 58, 45 49, 35 44 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 31 55 Q 36 61 41 57" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="2" fill="none" strokeLinecap="round" />
               <polygon points="36,49 40,55 36,59 32,55" fill="#F59E0B" opacity="0.5" />
               <circle cx="36" cy="56" r="1" fill="#FFFBEB" />
               {/* Mid Center-Right */}
-              <path d="M 65 44 C 73 48, 72 58, 62 61 C 55 58, 55 49, 65 44 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 69 55 Q 64 61 59 57" stroke="url(#pineScaleRim)" strokeWidth="2" fill="none" strokeLinecap="round" />
+              <path d="M 65 44 C 73 48, 72 58, 62 61 C 55 58, 55 49, 65 44 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 69 55 Q 64 61 59 57" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="2" fill="none" strokeLinecap="round" />
               <polygon points="64,49 68,55 64,59 60,55" fill="#F59E0B" opacity="0.5" />
               <circle cx="64" cy="56" r="1" fill="#FFFBEB" />
               {/* Primary Center Scale */}
-              <path d="M 50 43 C 41 47, 42 59, 50 63 C 58 59, 59 47, 50 43 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 44 57 Q 50 63 56 57" stroke="url(#pineScaleRim)" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+              <path d="M 50 43 C 41 47, 42 59, 50 63 C 58 59, 59 47, 50 43 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 44 57 Q 50 63 56 57" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="2.4" fill="none" strokeLinecap="round" />
               <polygon points="50,48 54,55 50,60 46,55" fill="#FEF08A" opacity="0.7" />
               <circle cx="50" cy="58" r="1.3" fill="#FFFBEB" />
             </g>
 
             {/* TIER 2 - UPPER CHEST (y ~ 31-48) */}
-            <g id="pineTier2">
+            <g id={uid('pineTier2')}>
               {/* Upper Left Outer */}
-              <path d="M 30 31 C 21 34, 22 42, 30 46 C 36 43, 37 36, 30 31 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 25 39 Q 29 45 33 42" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 30 31 C 21 34, 22 42, 30 46 C 36 43, 37 36, 30 31 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 25 39 Q 29 45 33 42" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Upper Right Outer */}
-              <path d="M 70 31 C 79 34, 78 42, 70 46 C 64 43, 63 36, 70 31 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 75 39 Q 71 45 67 42" stroke="url(#pineScaleRim)" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+              <path d="M 70 31 C 79 34, 78 42, 70 46 C 64 43, 63 36, 70 31 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 75 39 Q 71 45 67 42" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.6" fill="none" strokeLinecap="round" />
               {/* Upper Mid-Left */}
-              <path d="M 40 33 C 33 37, 34 45, 42 48 C 48 45, 48 37, 40 33 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 36 43 Q 41 48 44 45" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 40 33 C 33 37, 34 45, 42 48 C 48 45, 48 37, 40 33 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 36 43 Q 41 48 44 45" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
               {/* Upper Mid-Right */}
-              <path d="M 60 33 C 67 37, 66 45, 58 48 C 52 45, 52 37, 60 33 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 64 43 Q 59 48 56 45" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 60 33 C 67 37, 66 45, 58 48 C 52 45, 52 37, 60 33 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 64 43 Q 59 48 56 45" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
             </g>
 
             {/* TIER 1 - CROWN BASE (y ~ 24-38) */}
-            <g id="pineTier1">
+            <g id={uid('pineTier1')}>
               {/* Crown Left */}
-              <path d="M 40 24 C 34 27, 35 33, 41 36 C 46 34, 46 27, 40 24 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 37 31 Q 41 35 44 33" stroke="url(#pineScaleRim)" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              <path d="M 40 24 C 34 27, 35 33, 41 36 C 46 34, 46 27, 40 24 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 37 31 Q 41 35 44 33" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.4" fill="none" strokeLinecap="round" />
               {/* Crown Right */}
-              <path d="M 60 24 C 66 27, 65 33, 59 36 C 54 34, 54 27, 60 24 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 63 31 Q 59 35 56 33" stroke="url(#pineScaleRim)" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              <path d="M 60 24 C 66 27, 65 33, 59 36 C 54 34, 54 27, 60 24 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 63 31 Q 59 35 56 33" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.4" fill="none" strokeLinecap="round" />
               {/* Crown Center */}
-              <path d="M 50 25 C 44 28, 44 35, 50 38 C 56 35, 56 28, 50 25 Z" fill="url(#pineScaleGrad)" stroke="#451A03" strokeWidth="0.8" />
-              <path d="M 45 34 Q 50 39 55 34" stroke="url(#pineScaleRim)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M 50 25 C 44 28, 44 35, 50 38 C 56 35, 56 28, 50 25 Z" fill={`url(#${uid('pineScaleGrad')})`} stroke="#451A03" strokeWidth="0.8" />
+              <path d="M 45 34 Q 50 39 55 34" stroke={`url(#${uid('pineScaleRim')})`} strokeWidth="1.8" fill="none" strokeLinecap="round" />
             </g>
 
             {/* TOP STEM & EVERGREEN PINE NEEDLES */}
             {/* Dark green background needles */}
-            <path d="M 48 18 C 34 10, 18 14, 10 24" stroke="url(#needleDark)" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-            <path d="M 52 18 C 66 10, 82 14, 90 24" stroke="url(#needleDark)" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-            <path d="M 48 19 C 32 18, 16 26, 12 38" stroke="url(#needleDark)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            <path d="M 52 19 C 68 18, 84 26, 88 38" stroke="url(#needleDark)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 48 18 C 34 10, 18 14, 10 24" stroke={`url(#${uid('needleDark')})`} strokeWidth="2.6" fill="none" strokeLinecap="round" />
+            <path d="M 52 18 C 66 10, 82 14, 90 24" stroke={`url(#${uid('needleDark')})`} strokeWidth="2.6" fill="none" strokeLinecap="round" />
+            <path d="M 48 19 C 32 18, 16 26, 12 38" stroke={`url(#${uid('needleDark')})`} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 52 19 C 68 18, 84 26, 88 38" stroke={`url(#${uid('needleDark')})`} strokeWidth="2.2" fill="none" strokeLinecap="round" />
 
             {/* Midtone vibrant forest green needles */}
-            <path d="M 49 17 C 36 6, 24 8, 16 16" stroke="url(#needleBright)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            <path d="M 51 17 C 64 6, 76 8, 84 16" stroke="url(#needleBright)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 49 17 C 36 6, 24 8, 16 16" stroke={`url(#${uid('needleBright')})`} strokeWidth="2.2" fill="none" strokeLinecap="round" />
+            <path d="M 51 17 C 64 6, 76 8, 84 16" stroke={`url(#${uid('needleBright')})`} strokeWidth="2.2" fill="none" strokeLinecap="round" />
             <path d="M 49 18 C 38 12, 28 14, 22 22" stroke="#15803D" strokeWidth="2" fill="none" strokeLinecap="round" />
             <path d="M 51 18 C 62 12, 72 14, 78 22" stroke="#15803D" strokeWidth="2" fill="none" strokeLinecap="round" />
 
@@ -1813,12 +1816,12 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="oakArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('oakArrowGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#2E180E" />
                 <stop offset="50%" stopColor="#1E0F08" />
                 <stop offset="100%" stopColor="#0D0603" />
               </linearGradient>
-              <linearGradient id="oakEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('oakEmerald')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#6EE7B7" />
                 <stop offset="35%" stopColor="#10B981" />
                 <stop offset="80%" stopColor="#047857" />
@@ -1829,7 +1832,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Hand-Chipped Oak Arrowhead Base Plaque */}
             <path
               d="M50 12 L78 36 L66 74 L50 68 L34 74 L22 36 Z"
-              fill="url(#oakArrowGrad)"
+              fill={`url(#${uid('oakArrowGrad')})`}
               stroke="#B45309"
               strokeWidth="2.5"
               strokeLinejoin="round"
@@ -1848,7 +1851,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Carved Emerald Oak 'A' */}
             <path
               d="M50 25 L64 61 L56 61 L53 53 L47 53 L44 61 L36 61 Z M50 35 L47 47 L53 47 Z"
-              fill="url(#oakEmerald)"
+              fill={`url(#${uid('oakEmerald')})`}
               stroke="#A7F3D0"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -1869,7 +1872,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="pineStagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('pineStagGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FEF3C7" />
                 <stop offset="35%" stopColor="#F59E0B" />
                 <stop offset="75%" stopColor="#B45309" />
@@ -1900,7 +1903,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Golden Carved Rustic 'K' */}
             <path
               d="M38 32 H44 V50 L56 32 H64 L52 51 L66 70 H57 L44 53 V70 H38 Z"
-              fill="url(#pineStagGrad)"
+              fill={`url(#${uid('pineStagGrad')})`}
               stroke="#FEF3C7"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -1921,7 +1924,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="honeycombGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('honeycombGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#DDD6FE" />
                 <stop offset="30%" stopColor="#A855F7" />
                 <stop offset="75%" stopColor="#7C3AED" />
@@ -1945,7 +1948,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Carved Royal Amethyst 'Q' */}
             <path
               d="M50 30 C41 30 34 36 34 47 C34 57 40 63 48 64 L53 69 L58 69 L55 63 C61 60 65 55 65 47 C65 36 59 30 50 30 Z M50 37 C55 37 58 41 58 47 C58 53 55 56 50 56 C45 56 42 53 42 47 C42 41 45 37 50 37 Z"
-              fill="url(#honeycombGrad)"
+              fill={`url(#${uid('honeycombGrad')})`}
               stroke="#EDE9FE"
               strokeWidth="1.2"
             />
@@ -1965,7 +1968,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xl overflow-visible">
             <defs>
-              <linearGradient id="axeTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('axeTealGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#A5F3FC" />
                 <stop offset="30%" stopColor="#06B6D4" />
                 <stop offset="70%" stopColor="#0891B2" />
@@ -1993,7 +1996,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* Carved Teal 'J' */}
             <path
               d="M44 38 H62 V44 H54 V60 C54 65 50 68 44 68 C38 68 34 65 34 60 H41 C41 62 42 63 44 63 C46 63 47 62 47 59 V38 Z"
-              fill="url(#axeTealGrad)"
+              fill={`url(#${uid('axeTealGrad')})`}
               stroke="#FFF"
               strokeWidth="1.2"
               strokeLinejoin="round"
@@ -2578,13 +2581,13 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,111,205,0.8)] overflow-visible">
             <defs>
-              <linearGradient id="ps2BlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('ps2BlueGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#00F0FF" />
                 <stop offset="30%" stopColor="#006FCD" />
                 <stop offset="70%" stopColor="#003791" />
                 <stop offset="100%" stopColor="#4F46E5" />
               </linearGradient>
-              <linearGradient id="ps2BadgeChassis" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('ps2BadgeChassis')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#1E293B" />
                 <stop offset="50%" stopColor="#0F172A" />
                 <stop offset="100%" stopColor="#020617" />
@@ -2592,7 +2595,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Monolithic Ribbed PS2 Standee Plaque */}
-            <rect x="6" y="8" width="88" height="84" rx="4" fill="url(#ps2BadgeChassis)" stroke="#006FCD" strokeWidth="2.5" />
+            <rect x="6" y="8" width="88" height="84" rx="4" fill={`url(#${uid('ps2BadgeChassis')})`} stroke="#006FCD" strokeWidth="2.5" />
             <rect x="10" y="12" width="80" height="8" rx="1" fill="#020617" />
             <rect x="10" y="80" width="80" height="8" rx="1" fill="#020617" />
 
@@ -2610,7 +2613,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             <circle cx="76" cy="18" r="1.5" fill="#10B981" />
 
             {/* Iconic 128-Bit Stylized 'PS2' Monolithic Wordmark */}
-            <text x="50" y="56" textAnchor="middle" fill="url(#ps2BlueGrad)" fontWeight="900" fontSize="30" fontFamily="'Impact', 'Arial Black', sans-serif" letterSpacing="2.5" stroke="#E0F2FE" strokeWidth="0.8">
+            <text x="50" y="56" textAnchor="middle" fill={`url(#${uid('ps2BlueGrad')})`} fontWeight="900" fontSize="30" fontFamily="'Impact', 'Arial Black', sans-serif" letterSpacing="2.5" stroke="#E0F2FE" strokeWidth="0.8">
               PS2
             </text>
 
@@ -2626,7 +2629,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(56,189,248,0.8)] overflow-visible">
             <defs>
-              <radialGradient id="ps2DiscSheen" cx="50%" cy="50%" r="50%">
+              <radialGradient id={uid('ps2DiscSheen')} cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#0F172A" />
                 <stop offset="18%" stopColor="#1E293B" />
                 <stop offset="22%" stopColor="#E2E8F0" />
@@ -2636,7 +2639,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
                 <stop offset="90%" stopColor="#C084FC" />
                 <stop offset="100%" stopColor="#0284C7" />
               </radialGradient>
-              <linearGradient id="discHoloPrism" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('discHoloPrism')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="rgba(255,255,255,0.8)" />
                 <stop offset="30%" stopColor="rgba(56,189,248,0.7)" />
                 <stop offset="60%" stopColor="rgba(236,72,153,0.7)" />
@@ -2645,11 +2648,11 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             </defs>
 
             {/* Disc Outer Rim */}
-            <circle cx="50" cy="50" r="44" fill="url(#ps2DiscSheen)" stroke="#BAE6FD" strokeWidth="2" />
+            <circle cx="50" cy="50" r="44" fill={`url(#${uid('ps2DiscSheen')})`} stroke="#BAE6FD" strokeWidth="2" />
 
             {/* Prismatic Rainbow Laser Reflection Cones */}
-            <path d="M50 50 L18 18 A44 44 0 0 1 82 18 Z" fill="url(#discHoloPrism)" opacity="0.45" />
-            <path d="M50 50 L82 82 A44 44 0 0 1 18 82 Z" fill="url(#discHoloPrism)" opacity="0.45" />
+            <path d="M50 50 L18 18 A44 44 0 0 1 82 18 Z" fill={`url(#${uid('discHoloPrism')})`} opacity="0.45" />
+            <path d="M50 50 L82 82 A44 44 0 0 1 18 82 Z" fill={`url(#${uid('discHoloPrism')})`} opacity="0.45" />
 
             {/* Clear Center Spindle Ring */}
             <circle cx="50" cy="50" r="18" fill="#020617" stroke="#E2E8F0" strokeWidth="1.5" />
@@ -2672,7 +2675,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(168,85,247,0.7)] overflow-visible">
             <defs>
-              <linearGradient id="memCardBody" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('memCardBody')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#1E1B4B" />
                 <stop offset="40%" stopColor="#0F172A" />
                 <stop offset="100%" stopColor="#020617" />
@@ -2682,7 +2685,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
             {/* 8MB Memory Card Silhouette with Notched Corner */}
             <path
               d="M18 10 H76 L84 18 V88 H18 Z"
-              fill="url(#memCardBody)"
+              fill={`url(#${uid('memCardBody')})`}
               stroke="#A855F7"
               strokeWidth="2.5"
             />
@@ -2722,27 +2725,27 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(96,165,250,0.8)] overflow-visible">
             <defs>
-              <linearGradient id="eeChipBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('eeChipBody')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#1E293B" />
                 <stop offset="50%" stopColor="#0B132B" />
                 <stop offset="100%" stopColor="#020617" />
               </linearGradient>
-              <linearGradient id="eeGoldPins" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={uid('eeGoldPins')} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#FDE047" />
                 <stop offset="100%" stopColor="#D97706" />
               </linearGradient>
             </defs>
 
             {/* Silicon Ceramic Chip Package */}
-            <rect x="14" y="14" width="72" height="72" rx="4" fill="url(#eeChipBody)" stroke="#38BDF8" strokeWidth="2" />
+            <rect x="14" y="14" width="72" height="72" rx="4" fill={`url(#${uid('eeChipBody')})`} stroke="#38BDF8" strokeWidth="2" />
 
             {/* Gold Wire Leads / Pins on Perimeter */}
             {[...Array(8)].map((_, i) => (
               <React.Fragment key={i}>
-                <rect x={18 + i * 8} y="8" width="4" height="6" fill="url(#eeGoldPins)" />
-                <rect x={18 + i * 8} y="86" width="4" height="6" fill="url(#eeGoldPins)" />
-                <rect x="8" y={18 + i * 8} width="6" height="4" fill="url(#eeGoldPins)" />
-                <rect x="86" y={18 + i * 8} width="6" height="4" fill="url(#eeGoldPins)" />
+                <rect x={18 + i * 8} y="8" width="4" height="6" fill={`url(#${uid('eeGoldPins')})`} />
+                <rect x={18 + i * 8} y="86" width="4" height="6" fill={`url(#${uid('eeGoldPins')})`} />
+                <rect x="8" y={18 + i * 8} width="6" height="4" fill={`url(#${uid('eeGoldPins')})`} />
+                <rect x="86" y={18 + i * 8} width="6" height="4" fill={`url(#${uid('eeGoldPins')})`} />
               </React.Fragment>
             ))}
 
@@ -2903,7 +2906,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
         return (
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_4px_12px_rgba(129,140,248,0.8)] overflow-visible">
             <defs>
-              <linearGradient id="towerGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id={uid('towerGlassGrad')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#C7D2FE" />
                 <stop offset="35%" stopColor="#818CF8" />
                 <stop offset="70%" stopColor="#4338CA" />
@@ -2923,7 +2926,7 @@ export const SymbolRenderer: React.FC<SymbolRendererProps> = ({
 
             {/* Monolith 2 (Main front right) */}
             <polygon points="46,24 64,14 64,68 46,78" fill="#4338CA" />
-            <polygon points="64,14 78,22 78,74 64,68" fill="url(#towerGlassGrad)" />
+            <polygon points="64,14 78,22 78,74 64,68" fill={`url(#${uid('towerGlassGrad')})`} />
             <polygon points="46,24 64,14 78,22 60,32" fill="#E0E7FF" opacity="0.9" />
 
             {/* Atmospheric Starlight Specks */}

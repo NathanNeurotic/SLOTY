@@ -44,7 +44,10 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
     visible: false,
     isHovering: false,
   });
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(() =>
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window)
+  );
 
   const particlesRef = useRef<Particle[]>([]);
   const shockwavesRef = useRef<Shockwave[]>([]);
@@ -52,14 +55,22 @@ export const ThemedCursorFX: React.FC<ThemedCursorFXProps> = ({
   const animFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Detect touch-only screen
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(pointer: coarse)');
+    const onMqChange = (e: MediaQueryListEvent) => setIsTouchDevice(e.matches);
+    mq.addEventListener('change', onMqChange);
+    return () => {
+      mq.removeEventListener('change', onMqChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const isTouch =
       typeof window !== 'undefined' &&
       (window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window);
-    setIsTouchDevice(isTouch);
 
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!enabled || !canvas) return;
 
     const handleResize = () => {
       canvas.width = window.innerWidth;

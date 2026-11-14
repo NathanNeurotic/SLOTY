@@ -32,7 +32,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
   return (
     <div className="relative w-full flex flex-col items-center flex-1 min-h-0 justify-center">
       {/* Main Floor Arena with generous clearance for lever & flank cards - dynamic vertical centering */}
-      <div className="w-full flex items-center justify-center gap-2 sm:gap-4 xl:gap-10 2xl:gap-14 px-1 sm:px-2 py-0.5 flex-1 min-h-0">
+      <div className="w-full flex items-stretch justify-center gap-2 sm:gap-4 xl:gap-5 2xl:gap-10 px-1 sm:px-2 py-0.5 flex-1 min-h-0 min-w-0">
         {/* Left Flank: Neighbor Terminal (in Floor Mode) OR Full Mascot Standee */}
         {isFloorMode && leftNeighbor ? (
           <div className="hidden md:block transition-all duration-300 flex-shrink-0">
@@ -50,13 +50,13 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
         ) : null}
 
         {/* Center Seat: Primary Slot Machine */}
-        <div className="flex-1 min-h-0 max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center my-auto">
+        <div className="flex-1 min-h-0 min-w-0 max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl z-10 flex flex-col justify-center">
           {children}
         </div>
 
         {/* Right Flank: Neighbor Terminal (in Floor Mode) OR Full Perk Guide Standee */}
         {isFloorMode && rightNeighbor ? (
-          <div className="hidden md:block transition-all duration-300 flex-shrink-0 xl:ml-4 2xl:ml-8">
+          <div className="hidden md:block transition-all duration-300 flex-shrink-0 w-44 xl:w-48 2xl:w-56 xl:ml-3 2xl:ml-8">
             <NeighborTerminal
               peer={rightNeighbor}
               seatNumber={3}
@@ -65,7 +65,7 @@ export const CasinoFloorBank: React.FC<CasinoFloorBankProps> = ({
             />
           </div>
         ) : (
-          <div className="hidden xl:flex flex-col items-center justify-center transition-all duration-300 flex-shrink-0 pb-2 z-20 xl:ml-8 2xl:ml-12">
+          <div className="hidden xl:flex flex-col items-center justify-center transition-all duration-300 flex-shrink-0 pb-2 z-20 xl:w-48 2xl:w-56 xl:ml-4 2xl:ml-8">
             <GamePerkCard
               activeGameId={activeGameId}
               onOpenPaytable={onOpenPaytable}

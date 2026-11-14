@@ -48,7 +48,9 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               onClick={() => handleSelect(g.id)}
               disabled={disabled}
               title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
+              className={`flex items-center space-x-0.5 sm:space-x-1 ${
+                isActive ? 'px-1.5 sm:px-2.5 py-0.5 sm:py-1' : 'w-6 h-6 sm:w-auto sm:px-2 p-0 justify-center'
+              } text-[8px] sm:text-[10px] font-black uppercase transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-[#003875] via-[#0052a3] to-[#006FCD] text-white border border-cyan-300 shadow-[0_0_15px_rgba(0,111,205,0.9)] scale-[1.02]'
                   : 'bg-[#0a0d17] text-slate-400 hover:text-cyan-300 border border-[#1e293b]'
@@ -59,7 +61,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               }}
             >
               <span className="text-xs shrink-0">{g.icon}</span>
-              <span className="leading-none whitespace-nowrap truncate">{g.shortName}</span>
+              <span className={`leading-none whitespace-nowrap truncate ${isActive ? '' : 'hidden lg:inline'}`}>{g.shortName}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse ml-0.5 shadow-[0_0_6px_#00F0FF]" />
               )}
@@ -91,7 +93,9 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               onClick={() => handleSelect(g.id)}
               disabled={disabled}
               title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 font-mono text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
+              className={`flex items-center space-x-0.5 sm:space-x-1 ${
+                isActive ? 'px-1.5 sm:px-2.5 py-0.5 sm:py-1' : 'w-6 h-6 sm:w-auto sm:px-2 p-0 justify-center'
+              } font-mono text-[8px] sm:text-[10px] font-black uppercase transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 text-white border border-cyan-300 shadow-[0_0_12px_#06B6D4] scale-[1.02]'
                   : 'bg-slate-950 text-slate-400 hover:text-cyan-300 hover:bg-slate-900 border border-slate-700'
@@ -102,7 +106,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               }}
             >
               <span className="text-xs shrink-0">{g.icon}</span>
-              <span className="leading-none whitespace-nowrap truncate">{g.shortName}</span>
+              <span className={`leading-none whitespace-nowrap truncate ${isActive ? '' : 'hidden lg:inline'}`}>{g.shortName}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 bg-cyan-300 animate-ping ml-0.5" />
               )}
@@ -134,7 +138,9 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               onClick={() => handleSelect(g.id)}
               disabled={disabled}
               title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-              className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase transition-all ${
+              className={`flex items-center space-x-0.5 sm:space-x-1 ${
+                isActive ? 'px-1.5 sm:px-2.5 py-0.5 sm:py-1' : 'w-6 h-6 sm:w-auto sm:px-2 p-0 justify-center'
+              } text-[8px] sm:text-[10px] font-black uppercase transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-900 text-amber-100 border-2 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.7)] scale-[1.02]'
                   : 'bg-[#140803] text-stone-400 hover:text-amber-200 border border-[#78350f]'
@@ -145,7 +151,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
               }}
             >
               <span className="text-xs shrink-0">{g.icon}</span>
-              <span className="leading-none tracking-wide whitespace-nowrap truncate">{g.shortName}</span>
+              <span className={`leading-none tracking-wide whitespace-nowrap truncate ${isActive ? '' : 'hidden lg:inline'}`}>{g.shortName}</span>
             </button>
           );
         })}
@@ -173,7 +179,9 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             onClick={() => handleSelect(g.id)}
             disabled={disabled}
             title={`${g.name} (${g.reels}x${g.rows} Reels • ${g.defaultLines} Lines)`}
-            className={`flex items-center space-x-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[8.5px] sm:text-[10px] font-black uppercase font-mono transition-all ${
+            className={`flex items-center space-x-0.5 sm:space-x-1 ${
+              isActive ? 'px-1.5 sm:px-2.5 py-0.5 sm:py-1' : 'w-6 h-6 sm:w-auto sm:px-2 p-0 justify-center'
+            } text-[8px] sm:text-[10px] font-black uppercase font-mono transition-all ${
               isActive
                 ? 'bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-amber-950 border border-yellow-100 shadow-[0_0_15px_rgba(245,158,11,0.9)] scale-[1.02]'
                 : 'bg-black/90 text-yellow-500/70 hover:text-yellow-200 border border-yellow-500/30'
@@ -184,7 +192,7 @@ export const GameSelector: React.FC<GameSelectorProps> = ({
             }}
           >
             <span className="text-xs shrink-0">{g.icon}</span>
-            <span className="leading-none tracking-wide whitespace-nowrap truncate">{g.shortName}</span>
+            <span className={`leading-none tracking-wide whitespace-nowrap truncate ${isActive ? '' : 'hidden lg:inline'}`}>{g.shortName}</span>
           </button>
         );
       })}

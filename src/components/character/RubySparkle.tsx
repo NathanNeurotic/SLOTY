@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { soundManager } from '../../audio/soundManager';
 import { Star, Sparkles } from 'lucide-react';
-import hostessImg from '../../assets/hostess_ruby.jpg';
+import hostessImg from '../../assets/hostess_ruby.webp';
 
 export type RubyState = 'idle' | 'spinning' | 'anticipation' | 'win' | 'bigwin' | 'fever';
 
@@ -70,6 +70,7 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
   const [currentQuote, setCurrentQuote] = useState(VAULT_IDLE_QUOTES[0]);
   const [isTapped, setIsTapped] = useState(false);
   const [tapBonusText, setTapBonusText] = useState<string | null>(null);
+  const [cooldownLeft, setCooldownLeft] = useState(0);
   const quoteTimerRef = useRef<number | null>(null);
 
   // Compute operational state
@@ -110,7 +111,9 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     }
 
     const nextQuote = pool[Math.floor(Math.random() * pool.length)];
-    setCurrentQuote(nextQuote);
+    const rafId = requestAnimationFrame(() => {
+      setCurrentQuote(nextQuote);
+    });
 
     // Dynamic rotation during idle state
     if (rubyState === 'idle') {
@@ -121,22 +124,50 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
     }
 
     return () => {
+      cancelAnimationFrame(rafId);
       if (quoteTimerRef.current) clearInterval(quoteTimerRef.current);
     };
   }, [rubyState]);
 
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const t = window.setTimeout(() => setCooldownLeft((prev) => Math.max(0, prev - 1)), 1000);
+    return () => clearTimeout(t);
+  }, [cooldownLeft]);
+
+  const tapTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    };
+  }, []);
+
   const handleRubyClick = () => {
     soundManager.unlockAudio();
     soundManager.playButtonClick();
+
+    if (cooldownLeft > 0) {
+      setIsTapped(true);
+      setTapBonusText(`Vault charm cooling (${cooldownLeft}s)`);
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      tapTimerRef.current = window.setTimeout(() => {
+        setIsTapped(false);
+        setTapBonusText(null);
+      }, 1200);
+      return;
+    }
+
     soundManager.playGoldBarClank();
     setIsTapped(true);
+    setCooldownLeft(8);
     setTapBonusText('+50 COINS!');
 
     if (onRewardCoins) {
       onRewardCoins(50);
     }
 
-    setTimeout(() => {
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    tapTimerRef.current = window.setTimeout(() => {
       setIsTapped(false);
       setTapBonusText(null);
     }, 1200);
@@ -194,7 +225,7 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
   return (
     <div
       onClick={handleRubyClick}
-      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-56 ${
+      className={`relative group cursor-pointer select-none transition-transform duration-200 flex flex-col items-center w-full max-w-[196px] 2xl:max-w-[224px] ${
         isTapped ? 'scale-105' : 'hover:scale-[1.02]'
       }`}
       title="Click Ruby Sparkle for lucky sparkles, friendly cheers & free coins!"
@@ -244,7 +275,7 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
       )}
 
       {/* High-Resolution Illustrated Curvy Hostess Standee */}
-      <div className="relative w-52 h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black border-yellow-400/60 shadow-[0_0_30px_rgba(244,63,94,0.5)]">
+      <div className="relative w-[92%] aspect-[208/340] max-h-[340px] rounded-2xl overflow-hidden border-2 shadow-2xl bg-black border-yellow-400/60 shadow-[0_0_30px_rgba(244,63,94,0.5)]">
         <img
           src={hostessImg}
           alt="Ruby Sparkle"
@@ -276,8 +307,8 @@ export const RubySparkle: React.FC<RubySparkleProps> = ({
 
       {/* 3D Grounded VIP Stanchion & Velvet Pedestal Base */}
       <div className="w-full flex flex-col items-center -mt-2 z-10 pointer-events-none">
-        <div className="w-48 h-3 bg-gradient-to-r from-amber-700 via-yellow-300 to-amber-700 rounded-t-md border-t border-yellow-100 shadow-md" />
-        <div className="w-56 h-6 bg-gradient-to-r from-[#4a0614] via-[#880d25] to-[#4a0614] rounded-b-xl border-b-2 border-x-2 border-yellow-500 shadow-2xl relative flex items-center justify-center">
+        <div className="w-[86%] h-3 bg-gradient-to-r from-amber-700 via-yellow-300 to-amber-700 rounded-t-md border-t border-yellow-100 shadow-md" />
+        <div className="w-full h-6 bg-gradient-to-r from-[#4a0614] via-[#880d25] to-[#4a0614] rounded-b-xl border-b-2 border-x-2 border-yellow-500 shadow-2xl relative flex items-center justify-center">
           <div className="w-16 h-1 bg-yellow-400/60 rounded-full" />
         </div>
         <div className="w-60 h-3 bg-black/70 blur-sm rounded-full -mt-1" />

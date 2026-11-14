@@ -62,7 +62,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
-      <div className="relative w-full max-w-lg rounded-3xl bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-yellow-400/40 p-4 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.4)] flex flex-col">
+      <div className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-gradient-to-b from-casino-900 via-casino-950 to-black border-2 border-yellow-400/40 p-4 sm:p-6 shadow-[0_0_50px_rgba(245,158,11,0.4)] flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
